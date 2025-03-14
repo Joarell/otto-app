@@ -1,19 +1,20 @@
 {
-  "name": "otto-app-ts",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "deploy": "wrangler deploy",
-    "dev": "wrangler dev",
-    "start": "wrangler dev",
-    "test": "vitest",
-    "cf-typegen": "wrangler types"
-  },
-  "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.5.2",
-    "typescript": "^5.5.2",
-    "vitest": "2.0.5",
-    "wrangler": "4",
-    "zod": "^3.23.8"
-  }
+	"name": "otto-app",
+	"version": "0.0.0",
+	"scripts": {
+		"deploy": "wrangler deploy",
+		"dev": "wrangler dev",
+		"start": "wrangler dev",
+		"test": "vitest",
+		"cf-typegen": "wrangler types"
+	},
+	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "^0.5.2",
+		"typescript": "^5.5.2",
+		"vitest": "2.0.5",
+		"wrangler": "4",
+		"zod": "^3.23.8"
+	},
+	"repository": "https://github.com/Joarell/otto-app",
+	"private": true
 }
