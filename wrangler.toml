@@ -18,12 +18,6 @@ binding = "OTTO_USERS"
 id = "4fab5368eb2448598eb2436317b2838c"
 preview_id = "20380952390000000000009000011111"
 
-# workers_dev = true
-
-# Workers Logs
-# Docs: https://developerequest: Request, env: Contexts.cloudflare.com/workers/observability/logs/workers-logs/
-# Configuration: https://developers.cloudflare.com/workers/observability/logs/workers-logs/#enable-workers-logs
-
 [observability]
 enabled = true
 
