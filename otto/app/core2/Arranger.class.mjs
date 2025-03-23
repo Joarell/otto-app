@@ -1,4 +1,3 @@
-
 import ArrangerLargestCanvas from "./Arranger.largest.works.mjs";
 import ArrangerNoCanvas from "./Arranger.no.canvas.mjs";
 import ArrangerSameSize from "./Arranger.same.size.class.mjs";
