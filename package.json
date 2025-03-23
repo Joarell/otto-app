@@ -16,5 +16,8 @@
 		"zod": "^3.23.8"
 	},
 	"repository": "https://github.com/Joarell/otto-app",
-	"private": true
+	"private": true,
+	"dependencies": {
+		"hono": "^4.7.4"
+	}
 }

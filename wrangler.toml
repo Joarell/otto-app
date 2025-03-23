@@ -3,14 +3,25 @@ name = "otto-app"
 main = "src/index.ts"
 compatibility_date = "2024-11-06"
 compatibility_flags = ["nodejs_compat"]
-assets = { directory = "app/otto", binding = "ASSETS", not_found_handling = "404-page", html_handling = "auto-trailing-slash" }
-routes = [
-	{ pattern = "app.ottocratesolver.com", custom_domain = true }
-]
+# assets = { directory = "otto/app", binding = "ASSETS", not_found_handling = "404-page" }
+assets = { directory = "./otto/app", binding = "ASSETS", not_found_handling = "404-page", run_worker_first = true, html_handling = "auto-trailing-slash" }
+# routes = [
+# 	{ pattern = "app.ottocratesolver.com", custom_domain = true }
+# ]
+
+# workers_dev = true
 
 # Workers Logs
-# Docs: https://developers.cloudflare.com/workers/observability/logs/workers-logs/
+# Docs: https://developerequest: Request, env: Contexts.cloudflare.com/workers/observability/logs/workers-logs/
 # Configuration: https://developers.cloudflare.com/workers/observability/logs/workers-logs/#enable-workers-logs
 
 [observability]
 enabled = true
+
+[dev]
+ip = "localhost"
+port = 9091
+local_protocol = "http"
+
+# [placement]
+# mode = "smart"
