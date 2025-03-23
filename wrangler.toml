@@ -13,7 +13,7 @@ routes = [
 	{ pattern = "app.ottocratesolver.com", custom_domain = true }
 ]
 
-[kv_namespaces]
+[[kv_namespaces]]
 binding = "OTTO_USERS"
 id = "4fab5368eb2448598eb2436317b2838c"
 preview_id = "20380952390000000000009000011111"
