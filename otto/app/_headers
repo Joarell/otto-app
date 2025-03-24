@@ -1,0 +1,7 @@
+/otto/*
+  Access-Control-Allow-Method: GET, POST, UPDATE, OPTIONS
+  Access-Control-Allow-Origin: https://ottocratesolver.com/*, https://app.ottocratesolver.com
+  Cache-Control: GET, POST, UPDATE, OPTIONS
+  X-Robots-Tag: nosnippet
+  Very: origin
+  Origin: https://ottocratesolver.com, https://app.ottocratesolver.com
