@@ -1,4 +1,5 @@
 import { WorkerEntrypoint } from 'cloudflare:workers';
+import { Headers } from '../worker-configuration';
 
 export default class Otto extends WorkerEntrypoint {
 	async fetch(request: Request) {
@@ -12,8 +13,11 @@ export default class Otto extends WorkerEntrypoint {
 
 			console.log('HEADERS:', backEnd.headers)
 			if (backEnd.ok) {
-				const app = await this.env.ASSETS.fetch(appReq);
-				return(new Response(app.body, { status: app.status, headers: backEnd.headers }));
+				const { body, status, headers } = await this.env.ASSETS.fetch(appReq);
+				const newHeaders = new Headers(backEnd.headers)
+
+				newHeaders.append(headers);
+				return(new Response(body, { status, headers: newHeaders }));
 			};
 		}
 		return(backEnd ? backEnd: await this.env.back.fetch(request));
