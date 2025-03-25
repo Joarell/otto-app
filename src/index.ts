@@ -1,5 +1,4 @@
 import { WorkerEntrypoint } from 'cloudflare:workers';
-import { Headers } from '../worker-configuration';
 
 export default class Otto extends WorkerEntrypoint {
 	async fetch(request: Request) {
