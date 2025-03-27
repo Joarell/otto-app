@@ -3,7 +3,7 @@ import { WorkerEntrypoint } from 'cloudflare:workers';
 export default class extends WorkerEntrypoint {
 	async fetch(request: Request) {
 		const url =	new URL(request.url);
-		const ok =	['https://ottocratesovler.com', 'https://app.ottocratesovler.com', null];
+		const ok =	['https://ottocratesolver.com', 'https://app.ottocratesolver.com', null];
 		let auth: Response;
 
 		console.log('origin', request.headers.get('origin'));
