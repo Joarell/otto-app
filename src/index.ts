@@ -4,10 +4,12 @@ export default class extends WorkerEntrypoint {
 	async fetch(request: Request) {
 		const url =	new URL(request.url);
 		const ok =	['https://ottocratesolver.com', 'https://app.ottocratesolver.com', null];
+		const origin = ok.includes(request.headers.get('origin'));
+		const access = request.method === 'GET' && origin;
 		let auth: Response;
 
-		console.log('origin', request.headers.get('origin'));
-		if(ok.includes(request.headers.get('origin')))
+		// console.log('origin', request.headers.get('origin'));
+		if(access)
 			return(await this.env.ASSETS.fetch(request));
 		switch(url.pathname) {
 			case '/':
