@@ -13,9 +13,10 @@ export default class Otto extends WorkerEntrypoint {
 			console.log(backEnd.headers)
 			if (backEnd.ok) {
 				const app = await this.env.ASSETS.fetch(appReq);
-				return(new Response(
-					app.body, { status: backEnd.status, headers: backEnd.headers }
-				));
+				return(
+					url.pathname.startwWith('/') ? app:
+					new Response(backEnd.body, { status: backEnd.status, headers: backEnd.headers })
+				);
 			};
 		};
 		return(backEnd ? backEnd: await this.env.back.fetch(request));
