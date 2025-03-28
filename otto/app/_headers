@@ -1,9 +1,25 @@
-/otto/app/*
+/otto/*
   Access-Control-Allow-Method: GET, POST, UPDATE, OPTIONS
   Access-Control-Allow-Origin: https://ottocratesolver.com
   Access-Control-Allow-Headers: X-Requested-With
   Access-Control-Allow-Credentials: true
   Access-Control-Allow-Request-Headers: cencodeingontent-type,x-pingother,content-encoding
+  Content-type: text/html
+  Content-type: text/css
+  Content-type: text/javascript
+  Cache-Control: public, max-age=28800, immutable
+  X-Robots-Tag: nosnippet
+  Very: Accept-Language
+
+./*
+  Access-Control-Allow-Method: GET, POST, UPDATE, OPTIONS
+  Access-Control-Allow-Origin: https://ottocratesolver.com
+  Access-Control-Allow-Headers: X-Requested-With
+  Access-Control-Allow-Credentials: true
+  Access-Control-Allow-Request-Headers: cencodeingontent-type,x-pingother,content-encoding
+  Content-type: text/html
+  Content-type: text/css
+  Content-type: text/javascript
   Cache-Control: public, max-age=28800, immutable
   X-Robots-Tag: nosnippet
   Very: Accept-Language
