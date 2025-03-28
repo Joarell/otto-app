@@ -8,6 +8,7 @@ export default class extends WorkerEntrypoint {
 		const access = request.method === 'GET' && origin;
 		let auth: Response;
 
+		console.log("Header", request.headers);
 		if(request.method === 'OPTIONS')
 			return(await this.env.back.fetch(request));
 		switch(url.pathname) {
