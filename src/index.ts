@@ -22,6 +22,7 @@ export default class extends WorkerEntrypoint {
 					newHeaders.set('content-type', 'text/html; charset=utf-8');
 					newHeaders.append('content-type', 'text/css; charset=utf-8');
 					newHeaders.append('content-type', 'text/javascript; charset=utf-8');
+					newHeaders.set('cache-control', 'max-age=28800, proxy-revalidate, immutable');
 					return(
 						new Response(APP.body, { status: 200, headers: newHeaders })
 					);
