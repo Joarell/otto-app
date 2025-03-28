@@ -4,6 +4,6 @@
   Access-Control-Allow-Headers: X-Requested-With
   Access-Control-Allow-Credentials: true
   Access-Control-Allow-Request-Headers: cencodeingontent-type,x-pingother,content-encoding
-  Cache-Control: GET, POST, UPDATE, OPTIONS
+  Cache-Control: public, max-age=28800, immutable
   X-Robots-Tag: nosnippet
   Very: Origin
