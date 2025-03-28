@@ -8,13 +8,13 @@ export default class extends WorkerEntrypoint {
 		const access = request.method === 'GET' && origin;
 		let auth: Response;
 
+		if(request.method === 'OPTIONS')
+			return(await this.env.back.fetch(request));
 		switch(url.pathname) {
 			case '/':
 				auth =		await this.env.back.fetch(request);
-				const msg = await auth.text();
-				console.log('ROOT', msg);
 				return(
-					msg === 'ok' ? await this.env.ASSETS.fetch(request):
+					auth.ok ? await this.env.ASSETS.fetch(request):
 						new Response('Not Found!', { status: 404 })
 				);
 			case '/:name':
@@ -22,7 +22,7 @@ export default class extends WorkerEntrypoint {
 				const checkIn = await this.env.OTTO_USERS.get(await auth.text());
 				console.log('APP', checkIn);
 				return(
-					checkIn && checkIn !== null ?
+					checkInmsg === 'ok' && checkIn !== null ?
 						await this.env.ASSETS.fetch(request): auth
 				);
 			default:
