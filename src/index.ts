@@ -13,10 +13,20 @@ export default class extends WorkerEntrypoint {
 		switch(url.pathname) {
 			case '/':
 				auth =		await this.env.back.fetch(request);
-				return(
-					auth.ok ? await this.env.ASSETS.fetch(request):
-						new Response('Not Found!', { status: 404 })
-				);
+				if (auth.ok) {
+					const APP = await this.env.ASSETS.fetch(request);
+					const newHeaders = new Headers(APP.headers)
+
+					newHeaders.set('Access-Control-Allow-Origin', 'https://ottocratesolver.com')
+					newHeaders.set('Vary', `Accept-Language`);
+					newHeaders.set('content-type', 'text/html; charset=utf-8');
+					newHeaders.append('content-type', 'text/css; charset=utf-8');
+					newHeaders.append('content-type', 'text/javascript; charset=utf-8');
+					return(
+						new Response(APP.body, { status: 200, headers: newHeaders })
+					);
+				}
+				return(new Response('Not Found!', { status: 404 }));
 			case '/:name':
 				auth = await this.env.back.fetch(request);
 				const checkIn = await this.env.OTTO_USERS.get(await auth.text());
