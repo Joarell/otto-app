@@ -3,41 +3,39 @@ import { WorkerEntrypoint } from 'cloudflare:workers';
 export default class extends WorkerEntrypoint {
 	async fetch(request: Request) {
 		const url =	new URL(request.url);
-		const ok =	[
-			'https://app.ottocratesolver.com/',
-			'https://ottocratesolver.com/',
-			'https://app.ottocratesolver.com',
-			'https://ottocratesolver.com'
-		];
-		const origin = ok.includes(request.headers.get('referer'));
-		const access = request.method === 'GET' && origin;
+		const app = new URL('https://app.ottocratesolver.com');
+		const name: string | null = url.searchParams.get('name');
+		const host = url.host === 'app.ottocratesolver.com' || url.host === 'ottocratesolver.com';
 
-		console.log('Origin', origin);
-		if(request.method === 'OPTIONS')
-			return(await this.env.back.fetch(request));
-		if(origin && url.pathname === '/')
-			return(await this.env.ASSETS.fetch(request))
-		switch(url.pathname) {
-			case '/':
-				request.headers.forEach((value, key) => {
-					console.log(`${key}: ${value}`)
-				});
-				const auth = await this.env.back.fetch(request);
-				if (auth.ok) {
-					const APP = await this.env.ASSETS.fetch(request);
-					const newHeaders = new Headers(APP.headers)
+		if(name) {
+			const checkIn = new Promise(async (resolve, reject) => {
+				const user: string | null = await this.env.OTTO_USERS.get(name);
+				console.log('NAME:', user);
+				user !== null ? resolve(user): reject("Empty");
+			});
+			const logged = await checkIn;
+			return(
+				logged !== "Empty" ?
+					await this.env.ASSETS.fetch(app):
+					new Response("Not found!", { status: 401 })
+			);
+		}
 
-					newHeaders.set('Access-Control-Allow-Origin', 'https://ottocratesolver.com')
-					newHeaders.set('Vary', `Accept-Language`);
-					newHeaders.set('content-type', 'text/html; charset=utf-8');
-					newHeaders.append('content-type', 'text/css; charset=utf-8');
-					newHeaders.append('content-type', 'text/javascript; charset=utf-8');
-					newHeaders.set('cache-control', 'max-age=28800, proxy-revalidate, immutable');
-					return(new Response(APP.body, { status: 200, headers: newHeaders }));
-				}
-				return(new Response('Not Found!', { status: 404 }));
-			default:
-				return(await this.env.back.fetch(request));
-		};
+		if(url.pathname.startsWith('/api/v1/login')) {
+			const login: Response = await this.env.back.fetch(request);
+			const auth = request.headers.get('Authorization');
+
+			console.log('Basic', auth);
+			console.log('STATUS:', login.status);
+			return(
+				login.status === 200 ?
+					new Response(await this.env.ASSETS.fetch(app), { status: 301 }): login
+			);
+		}
+		else if(host) {
+			const auth: Response = await this.env.back.fetch(app);
+			return(auth.status === 200 ? await this.env.ASSETS.fetch(request): auth);
+		}
+		return(await this.env.back.fetch(request));
 	};
 };
