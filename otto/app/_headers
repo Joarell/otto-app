@@ -1,11 +1,24 @@
-/otto/app/*
-  Authorization: Basic realm='Otto accss login.' charset=UTF-8
+/api/v1/login
+  Access-Control-Allow-Origin: https://ottocratesolver.com
+  Authorization: Basic realm='Otto access login.' charset=UTF-8
   Access-Control-Allow-Method: GET, POST, UPDATE, OPTIONS
   Access-Control-Allow-Headers: X-Requested-With
   Access-Control-Allow-Credentials: true
   Access-Control-Allow-Request-Headers: cencodeingontent-type,x-pingother,content-encoding
-  Content-type: text/html, text/css, text/javascript, dns-message
-  Cache-Control: public, max-age=28800, immutable
-  X-Robots-Tag: nosnippet
+  Cache-Control: private, max-age=28800, immutable
+  Redirect: true
+  Location: https://app.ottocratesolver.com
+
+/*
+  Access-Control-Allow-Origin: https://ottocratesolver.com
+  Authorization: Basic realm='Otto access login.' charset=UTF-8
+  Access-Control-Allow-Method: GET, POST, UPDATE, OPTIONS
+  Access-Control-Allow-Headers: X-Requested-With
+  Access-Control-Allow-Credentials: true
+  Access-Control-Allow-Request-Headers: cencodeingontent-type,x-pingother,content-encoding
+  Content-type: text/html; text/css; text/javascript; dns-message
+  Cache-Control: private, max-age=28800, immutable
+  X-Robots-Tag: no-index
   Very: Accept-Language, Cookie
-  Proxy-Authorization: Bearer realm="Otto app"
+  Proxy-Authorization: Bearer realm="Otto app", charset=UTF-8
+  Accept-Ranges: bytes
