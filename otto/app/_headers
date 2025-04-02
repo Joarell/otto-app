@@ -14,7 +14,7 @@
 
 
 /*
-  Access-Control-Allow-Origin: *
+  Access-Control-Allow-Origin: https://ottocratesolver.com
 
 # /*
 #   Access-Control-Allow-Origin: https://app.ottocratesolver.com
