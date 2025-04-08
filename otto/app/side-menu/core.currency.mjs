@@ -67,7 +67,7 @@ export async function getCurrencyValue() {
 		headers: {
 			'Content-Type': 'application/json; charset=UTF-8'
 		},
-	}).then(body => body.json()).catch(err => alert(`CurrencyError: ${err}!`));
+	}).then(async body => await body.json()).catch(err => alert(`CurrencyError: ${err}!`));
 	const { rates } =	getCurrecy.response;
 	const storage =		globalThis.sessionStorage;
 
