@@ -22,7 +22,7 @@ function setOfflineRef(doc) {
  * @param {Crater} content The solved list result from the algorithm.
 */
 async function getNewTokens(content) {
-	const url =		'/shift/tokens';
+	const url =		'https://app.ottocratesolver.com/api/v1/shift/tokens';
 	const HEADER =	{ 'Content-Type': 'application/json; charset=UTF-8' };
 
 	try {
@@ -63,7 +63,7 @@ function checkStatusCode(code, info, data, header) {
 */
 export async function upDateCrateSizes(solved) {
 	const HEADER =	{ 'Content-Type': 'application/json; charset=UTF-8', };
-	const url = '/update/estimate';
+	const url = 'https://app.ottocratesolver.com/api/v1/update/estimates';
 	const { reference, list, crates } = solved;
 	const INFO = {
 		reference,
@@ -93,7 +93,7 @@ export async function upDateCrateSizes(solved) {
  */
 async function upDateEstimateClient(data, header, content) {
 	if (confirm("This estimate already exist. Would you like to update it?")){
-		const url = '/update/estimate';
+		const url = 'https://app.ottocratesolver.com/api/v1/update/estimates';
 
 		try {
 			const result = await fetch (url, {
@@ -117,7 +117,7 @@ async function upDateEstimateClient(data, header, content) {
  */
 async function postDataFromClientSide(content) {
 	const DATA =	JSON.stringify(content);
-	const url =		`http://localhost:8787/api/v1/newEstimate`;
+	const url =		`https://app.ottocratesolver.com/api/v1/newEstimate`;
 	const HEADER =	{
 		'Content-Type': 'application/json; charset=UTF-8',
 	};

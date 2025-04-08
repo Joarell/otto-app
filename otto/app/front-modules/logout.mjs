@@ -11,7 +11,7 @@ function cleanCacheSW () {
 
 
 export async function logout() {
-	const url = '/logout';
+	const url = 'https://app.ottocratesolver.com/api/v1/logout';
 	const cookies = "id=deleted; sessin=deleted; name=deleted; expires=Thu, 01 Jan 1970 00:00:00 GMT";
 
 	if (confirm("Are you sure to logout?")) {
@@ -29,7 +29,7 @@ export async function logout() {
 
 
 export async function forceLogout() {
-	const url = '/logout';
+	const url = 'https://app.ottocratesolver.com/api/v1/logout';
 	const cookies = "id=deleted; sessin=deleted; name=deleted; expires=Thu, 01 Jan 1970 00:00:00 GMT";
 
 	await fetch(url, {

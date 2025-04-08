@@ -96,7 +96,7 @@ async function setDBFetched(result) {
  * @param {String} doc The reference/document with artwork list.
  */
 async function fetchDB(doc) {
-	const url =		`/estimates/${doc}`;
+	const url =		`https://app.ottocratesolver.com/api/v1/estimates/${doc}`;
 	const HEADER =	{
 		"Content-Type": "application/json; charset=UTF-8",
 	};
