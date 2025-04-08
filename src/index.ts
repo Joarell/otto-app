@@ -4,7 +4,6 @@ export default class extends WorkerEntrypoint {
 	async fetch(request: Request) {
 		const url =		new URL(request.url);
 		const app =		new URL('https://app.ottocratesolver.com');
-		const user =	JSON.parse(await this.env.OTTO_USERS.get('Pass'));
 
 		if (request.method === 'OPTIONS')
 			return (await this.env.back.fetch(request));
@@ -13,25 +12,26 @@ export default class extends WorkerEntrypoint {
 			const auth: Response = await this.env.back.fetch(request);
 			await caches.default.put(url, auth.clone());
 			return (auth);
-		};
+		}
+		const cookies = Object.fromEntries(request.headers).cookie;
+		const headers = new Headers();
 
-		console.log('THE PASS:', user);
-		const checkIn: Response =	await this.env.back.fetch(app);
-		const asset: Response =		await this.env.ASSETS.fetch(request);
+		headers.set('Cookies', `${cookies}`);
 
-		if (user) {
-			const headers: Headers = new Headers(asset.headers);
+		const auth =	new Request(app, {
+			method: request.method,
+			headers
+		});
+		const checkIn: Response = await this.env.back.fetch(auth);
+		const asset: Response = await this.env.ASSETS.fetch(request);
+		const cache = checkIn.status === 200 && await caches.default.match(request.url);
 
-			headers.append('set-cookie', `__Secure-Name=${user.userName}; max-age=28800; HttpOnly; SameSite=Strict; Path=/; Secure; Domain=ottocratesolver.com`);
-			headers.append('set-cookie',`__Secure-RefToken=${user.refToken}; max-age=3600; HttpOnly; SameSite=Strict; Path=/; Secure; Domain=ottocratesolver.com`);
-			headers.append('set-cookie',`__Secure-Session-ID=${user.session}; max-age=28800; HttpOnly; SameSite=Strict; Path=/; Secure; Domain=ottocratesolver.com`,);
-			headers.append('set-cookie',`__Secure-Access=${user.access}; max-age=28800; HttpOnly; SameSite=Strict; Path=/; Secure; Domain=ottocratesolver.com`,);
-
-			const response = new Response(asset.body, {
-				status: asset.status,
-				headers
-			});
-			return(response);
+		if(cache)
+			return(await caches.default.match(request.url));
+		if (checkIn.status === 200) {
+			console.log('Credentials', request.headers.get('Cookie'));
+			await caches.default.put(request, asset.clone());
+			return(asset);
 		};
 		return (checkIn.status === 200 ? asset: checkIn);
 	};

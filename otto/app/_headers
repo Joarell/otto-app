@@ -1,10 +1,18 @@
 /api/v1/login
   Access-Control-Allow-Origin: https://ottocratesolver.com
+  Access-Control-Allow-Headers: Content-type, X-Requested-With, Authorization
   Access-Control-Allow-Method: GET, POST, UPDATE, OPTIONS
+  Access-Control-Allow-Credentials: true
+  Location: https://app.ottocratesolver.com
+  Redirect: true
 
 /*
   Access-Control-Allow-Origin: https://ottocratesolver.com
+  Access-Control-Allow-Headers: Content-type, X-Requested-With, Authorization
+  Access-Control-Allow-Credentials: true
   Access-Control-Allow-Method: GET, POST, UPDATE, OPTIONS
+  Cache-Control: private, max-age=28800, immutable
+  X-Robots-Tag: no-index
 
 #   Authorization: Basic realm='Otto access login.' charset=UTF-8
 #   Access-Control-Allow-Method: GET, POST, UPDATE, OPTIONS
