@@ -61,7 +61,7 @@ export function conversionCurrency(opt1, opt2, val1, val2) {
 
 
 export async function getCurrencyValue() {
-	const url =			'https://app.ottocratesolver.com/api/v1/currencies';
+	const url =			'/api/v1/currencies';
 	const getCurrecy =	await fetch(url, {
 		method: "GET",
 		headers: {
