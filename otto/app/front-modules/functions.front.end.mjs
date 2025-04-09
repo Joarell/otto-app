@@ -83,7 +83,7 @@ export async function crate(fetched = false) {
 	const padding =		document.createElement('padding-dialog');
 	const weak =		new WeakSet();
 	const fragment =	new DocumentFragment();
-	const grant =		localStorage.getItem('tier');
+	const grant =		document.cookie('=')[1];
 	const e_code =		localStorage.getItem('refNumb') ??
 		document.getElementById('input_estimate').value;
 	let list;
@@ -125,7 +125,7 @@ export async function cleanInputs(fetched = false) {
 	const RENDER =	document.getElementById("show-layer");
 	const dialog =	document.querySelectorAll('padding-dialog').length;
 	const root =	document.querySelector(':root');
-	const granted =	localStorage.getItem('tier');
+	const granted =	document.cookie('=')[1];
 
 	RENDER.hasChildNodes() ? openDisplay() : false;
 	fetched ? await Promise.resolve(sessionStorage.setItem('pane1', 'clear'))
@@ -137,7 +137,6 @@ export async function cleanInputs(fetched = false) {
 	displayAirCub();
 	dialog > 0 ? sessionStorage.setItem("CLOSED", "NOW") : false;
 	root.style.setProperty("--layer-state", "none");
-	localStorage.setItem('tier', granted);
 };
 
 
@@ -151,7 +150,6 @@ async function parseArtWork() {
 	const avoid =	[
 		"doneList",
 		"mode",
-		"tier",
 		"storage",
 		"currency",
 		"currency",

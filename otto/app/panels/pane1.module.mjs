@@ -31,7 +31,7 @@ globalThis.document.onreadystatechange = () => {
 	const len =		pane.childNodes.length;
 	const getter =	localStorage.getItem("refNumb");
 	const mode =	localStorage.getItem("mode");
-	const grants =	localStorage.getItem("tier");
+	const grants =	document.cookie('=')[1];
 
 	if (len && getter)
 		len > 1 ? true : setTimeout(() => showCrates1(getter), 50);
