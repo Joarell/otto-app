@@ -4,13 +4,8 @@ type Auth = { response: Response, headers: Headers };
 
 export default class extends WorkerEntrypoint {
 	async fetch(request: Request) {
-		if (request.method === 'OPTIONS')
-			return (await this.env.back.fetch(request));
-
 		const url =			new URL(request.url);
-		const authConsult =	await this.authCheck(request);
-		const { status } =	authConsult.response;
-		const cookies =		Object.fromEntries(request.headers).cookie;
+		const authAccess =	await this.authCheck(request);
 		const routes: string[] = [
 			'/api/v1/boot/login',
 			'/api/v1/currencies',
@@ -18,39 +13,46 @@ export default class extends WorkerEntrypoint {
 			'/api/v1/shift/tokens',
 			'/api/v1/newEstimate',
 			'/api/v1/logout',
-			'/api/v1/newEstimate/:ref_id',
+			'/api/v1/estimates/:ref_id',
 			'/api/v1/update/estimates'
 		];
 
-		if (routes.includes(url.pathname) && status === 200) {
-			const revert =  request.method === "GET" ?
-				await this.env.back.fetch(new Request(request.url, {
-					method: request.method,
-					headers: authConsult.headers
-				})): await this.env.back.fetch(new Request(request.url, {
-					method: request.method,
-					headers: authConsult.headers,
-					body: request.body
-				}));
-			return(revert);
-		}
-		else if (routes.includes(url.pathname) && status !== 200)
-			return(authConsult.response);
+		if (request.method === 'OPTIONS')
+			return (await this.env.back.fetch(request));
 		else if (url.pathname.startsWith('/api/v1/login')) {
-			const result: Response = cookies ?
-				authConsult.response: await this.env.back.fetch(request);
-
-			result.status === 200 ?
-				await caches.default.put(url, result.clone()): 0;
+			const result: Response = await this.env.back.fetch(request);
 			return (result);
-		};
-		return(await this.appAssets(request, authConsult));
+		}
+		else if (routes.includes(url.pathname))
+			return(await this.ottoAPIRoutes(request));
+		return(await this.appAssets(request, authAccess));
+	};
+
+	/**
+	* @method reach the Otto API for DB queries.
+	* @param request - the client content for access and cookies.
+	*/
+	private async ottoAPIRoutes(request: Request): Promise<Response> {
+		const cookies =	Object.fromEntries(request.headers).cookie;
+		const headers =	new Headers();
+
+		headers.set('Cookies', `${cookies}`);
+		const revert = request.method === "GET" ?
+			this.env.back.fetch(new Request(request.url, {
+				method: request.method,
+				headers,
+			})): this.env.back.fetch(new Request(request.url, {
+				method: request.method,
+				headers,
+				body: request.body
+			}));
+		return(await revert);
 	};
 
 	/**
 	* @method returns the app assets.
-	* @param request - the client request assests.
-	* @param auth - the user authorization for all assests
+	* @param request - the client request assets.
+	* @param auth - the user authorization for all assets
 	*/
 	private async appAssets(request: Request, auth: Auth): Promise<Response | undefined> {
 		const asset: Response = await this.env.ASSETS.fetch(request);
