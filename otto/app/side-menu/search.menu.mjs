@@ -96,7 +96,7 @@ async function setDBFetched(result) {
  * @param {String} doc The reference/document with artwork list.
  */
 async function fetchDB(doc) {
-	const url =		`https://app.ottocratesolver.com/api/v1/estimates/${doc}`;
+	const url =		`/api/v1/estimates/${doc}`;
 	const HEADER =	{
 		"Content-Type": "application/json; charset=UTF-8",
 	};
@@ -107,12 +107,11 @@ async function fetchDB(doc) {
 		await fetch(url, {
 			method: "GET",
 			headers: HEADER,
-		}).then((estimate) => {
-			data = estimate.json();
-			return(data);
-		}).then(setDBFetched);
+		}).then(async estimate => estimate.json())
+		.then(setDBFetched)
+		.catch(e => alert(`Search ERROR! \n ${e}`));
 		return(data);
-	}
+	};
 };
 
 

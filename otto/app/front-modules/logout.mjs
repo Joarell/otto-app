@@ -12,31 +12,23 @@ function cleanCacheSW () {
 
 export async function logout() {
 	const url = '/api/v1/logout';
-	const cookies = "id=deleted; sessin=deleted; name=deleted; expires=Thu, 01 Jan 1970 00:00:00 GMT";
 
 	if (confirm("Are you sure to logout?")) {
-		await fetch(url, {
-			method: "GET",
-			cookie: cookies,
-			headers: { 'Content-Type': 'application/json; charset=UTF-8' },
-		}).then(cleanCacheSW).then(res => globalThis.location.assign(res.url))
+		await fetch(url, { method: "GET" })
+		.then(cleanCacheSW).then(res => globalThis.location.assign(res.url))
 		.catch(async () => {
 			await Promise.resolve(cleanCacheSW)
 			.then(globalThis.location.replace("https://ottocratesolver.com/login"));
 		});
-	}
+	};
 };
 
 
 export async function forceLogout() {
 	const url = '/api/v1/logout';
-	const cookies = "id=deleted; sessin=deleted; name=deleted; expires=Thu, 01 Jan 1970 00:00:00 GMT";
 
-	await fetch(url, {
-		method: "GET",
-		cookie: cookies,
-		headers: { 'Content-Type': 'application/json; charset=UTF-8' },
-	}).then(cleanCacheSW).then(res => globalThis.location.assign(res.url))
+	await fetch(url, { method: "GET" })
+	.then(cleanCacheSW).then(res => globalThis.location.assign(res.url))
 	.catch(async () => {
 		await Promise.resolve(cleanCacheSW)
 		.then(globalThis.location.replace("https://ottocratesolver.com/login"));
