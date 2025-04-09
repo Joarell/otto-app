@@ -1,6 +1,6 @@
 //       ╭──────────────────────────────────────────────────────────────╮
 //       │ ╭──────────────────────────────────────────────────────────╮ │
-//       │ │    INFO: Here you are goint to find these functions:     │ │
+//       │ │    INFO: Here you are going to find these functions:     │ │
 //       │ │                      currencyName()                      │ │
 //       │ │                     populateCoins()                      │ │
 //       │ │                   conversionCurrency()                   │ │
@@ -61,14 +61,11 @@ export function conversionCurrency(opt1, opt2, val1, val2) {
 
 
 export async function getCurrencyValue() {
-	const url =			'/api/v1/currencies';
-	const getCurrecy =	await fetch(url, {
-		method: "GET",
-		headers: {
-			'Content-Type': 'application/json; charset=UTF-8'
-		},
-	}).then(async body => await body.json()).catch(err => alert(`CurrencyError: ${err}!`));
-	const { rates } =	getCurrecy.response;
+	const url =	'/api/v1/currencies';
+	const getCurrency =	await fetch(url, { method: "GET", })
+		.then(async values =>  await values.json())
+		.catch(err => alert(`CurrencyError: ${err}!`));
+	const { rates } =	getCurrency.response;
 	const storage =		globalThis.sessionStorage;
 
 	return(rates && storage.setItem("currency", JSON.stringify(rates)));
