@@ -18,10 +18,7 @@ const val = new Worker(new URL('./worker.login.mjs', import.meta.url), { type: "
 
 globalThis.onload = async () => {
 	const color =	localStorage.getItem("mode");
-	const cookie =  document.cookie.split('=')[1];
 
-	//val.postMessage(cookie);
-	//val.onmessage = info => !info.data ? forceLogout() : false;
 	browserStoragePrepare();
 	color === null ? localStorage.setItem("mode", "light") : false;
 	setCheckRadio();
@@ -112,8 +109,9 @@ function loadingPage() {
 
 function browserStoragePrepare() {
 	const ref =		localStorage.getItem("refNumb");
-	const grants =	document.cookie.split('=')[1];
+	let grants =	document.cookie;
 
+	grants = grants.split('=')[1];
 	if (ref)
 		document.getElementById("input_estimate").value = ref;
 	createIDB();

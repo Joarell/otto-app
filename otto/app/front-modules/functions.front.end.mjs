@@ -78,16 +78,17 @@ export async function displayAirCub() {
 // │                         list to possible crates.                         │
 // ╰──────────────────────────────────────────────────────────────────────────╯
 export async function crate(fetched = false) {
-	const cratesAsCm =	await checkMetric();
 	const estimate =	{};
 	const padding =		document.createElement('padding-dialog');
 	const weak =		new WeakSet();
 	const fragment =	new DocumentFragment();
-	const grant =		document.cookie('=')[1];
 	const e_code =		localStorage.getItem('refNumb') ??
 		document.getElementById('input_estimate').value;
+	let grant =			document.cookie;
 	let list;
+	const cratesAsCm =	await checkMetric();
 
+	grant = grant.split('=')[1];
 	if (fetched || confirm("Ready to crate all works?") && cratesAsCm) {
 		estimate.reference =	e_code;
 		list =					await parseArtWork();
@@ -125,8 +126,9 @@ export async function cleanInputs(fetched = false) {
 	const RENDER =	document.getElementById("show-layer");
 	const dialog =	document.querySelectorAll('padding-dialog').length;
 	const root =	document.querySelector(':root');
-	const granted =	document.cookie('=')[1];
+	let granted =	document.cookie;
 
+	granted = granted.split('=')[1]
 	RENDER.hasChildNodes() ? openDisplay() : false;
 	fetched ? await Promise.resolve(sessionStorage.setItem('pane1', 'clear'))
 		.then(globalThis.document.getElementById("input_estimate").select()):
@@ -179,7 +181,7 @@ async function checkMetric() {
 	const list =		await parseArtWork();
 	let crates;
 
-	if (!list)
+	if (list.length === 0)
 		return(alert("Oops! Sounds like you do not added any work yet. Please, try again!"));
 	crates = await Promise.resolve(new UnitAdapter(list, UNIT));
 	return (crates);

@@ -31,14 +31,12 @@ globalThis.document.onreadystatechange = () => {
 	const len =		pane.childNodes.length;
 	const getter =	localStorage.getItem("refNumb");
 	const mode =	localStorage.getItem("mode");
-	const grants =	document.cookie('=')[1];
 
 	if (len && getter)
 		len > 1 ? true : setTimeout(() => showCrates1(getter), 50);
 	setTimeout(loadingPage, 2300);
 	changeMode(mode);
-	grants === "OFF" || grants === "FULL" ?
-		globalThis.navigator.serviceWorker.register("./sw.pane1.mjs"): false;
+	globalThis.navigator.serviceWorker.register("./sw.pane1.mjs");
 };
 
 function loadingPage() {

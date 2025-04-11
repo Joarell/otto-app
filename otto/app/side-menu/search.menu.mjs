@@ -63,20 +63,10 @@ export async function checkBrowserDB(doc) {
  */
 async function setDBFetched(result) {
 	try {
-		if (result.length > 0 || result?.hasOwnProperty('crates')) {
-			const { crates, works, reference_id } = result[0];
-			const fetched = {
-				crates,
-				list: result[1]?.hasOwnProperty('crates') ?
-				resetList(result[1]):
-				resetList(works.list),
-				reference: reference_id,
-			};
-			const data = JSON.stringify(fetched);
-
-			document.getElementById("input_estimate").value = reference_id;
+		if (result?.hasOwnProperty('crates')) {
+			document.getElementById("input_estimate").value = result.reference;
 			globalThis.sessionStorage.clear();
-			globalThis.sessionStorage.setItem("FETCHED", data);
+			globalThis.sessionStorage.setItem("FETCHED", JSON.stringify(result, null));
 		}
 		else
 			throw new TypeError("Data not found!");
@@ -91,17 +81,15 @@ async function setDBFetched(result) {
  */
 async function fetchDB(doc) {
 	const url =		`/api/v1/estimates/${doc}`;
-	const HEADER =	{
+	const headers =	{
 		"Content-Type": "application/json; charset=UTF-8",
 	};
 
 	if (globalThis.navigator.onLine) {
-		let data;
-
-		await fetch(url, {
+		const data = await fetch(url, {
 			method: "GET",
-			headers: HEADER,
-		}).then(async estimate => estimate.json())
+			headers
+		}).then(async estimate => await estimate.json())
 		.then(setDBFetched)
 		.catch(e => alert(`Search ERROR! \n ${e}`));
 		return(data);

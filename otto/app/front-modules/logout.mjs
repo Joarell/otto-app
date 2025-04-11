@@ -11,6 +11,9 @@ function cleanCacheSW () {
 
 
 export async function logout() {
+	/**
+	* @constant {url}
+	*/
 	const url = '/api/v1/logout';
 
 	if (confirm("Are you sure to logout?")) {

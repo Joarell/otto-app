@@ -27,13 +27,11 @@ globalThis.onload = async () => {
 	const mode =		localStorage.getItem("mode");
 	const stPanel =		document.getElementById("status");
 	const searched =	sessionStorage.getItem("FETCHED");
-	const grants =		document.cookie('=')[1];
 
 	stPanel.hasChildNodes() ? true : setTimeout(await statusTable(), 200);
 	changeMode(mode);
 	searched ? setTimeout(statusTable, 200) : setTimeout(restorePanel, 200);
-	grants === "OFF" || grants === "FULL" ?
-		globalThis.navigator.serviceWorker.register("./sw.status.mjs") : false;
+	globalThis.navigator.serviceWorker.register("./sw.status.mjs");
 };
 
 function changeMode(color) {
