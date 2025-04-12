@@ -54,7 +54,15 @@ export default class extends WorkerEntrypoint {
 		if (status === 200) {
 			await caches.default.put(request, asset.clone());
 			return(asset);
-		};
+		}
+		else if(auth.response.redirected && status === 404)
+			return(new Response(null, {
+				status: 301,
+				headers: {
+					'location': 'https://ottocratesolver.com/login',
+					'redirect': 'true'
+				}
+			}))
 		return (status === 200 ? asset: auth.response);
 	};
 
