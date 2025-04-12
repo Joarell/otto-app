@@ -4,7 +4,6 @@ const assets =		[
 	'/',
 	'./pane1.module.mjs',
 	'../stylesheet.min.css',
-	'./pane1_crates.html',
 ];
 
 

@@ -11,7 +11,7 @@
   Access-Control-Allow-Headers: Content-type, X-Requested-With, Authorization
   Access-Control-Allow-Credentials: true
   Access-Control-Allow-Method: GET, POST, UPDATE, OPTIONS
-  Cache-Control: public, max-age=28800, stale-while-revalidate
+  Cache-Control: private, max-age=28800, s-maxage=28800, stale-while-revalidate=3600, stale-if-error=28800
   X-Robots-Tag: no-index
 
 #   Authorization: Basic realm='Otto access login.' charset=UTF-8

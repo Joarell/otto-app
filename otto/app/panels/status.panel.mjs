@@ -31,7 +31,7 @@ globalThis.onload = async () => {
 	stPanel.hasChildNodes() ? true : setTimeout(await statusTable(), 200);
 	changeMode(mode);
 	searched ? setTimeout(statusTable, 200) : setTimeout(restorePanel, 200);
-	globalThis.navigator.serviceWorker.register("./sw.status.mjs");
+	// globalThis.navigator.serviceWorker.register("./sw.status.mjs");
 };
 
 function changeMode(color) {

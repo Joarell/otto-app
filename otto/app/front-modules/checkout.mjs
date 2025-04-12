@@ -14,7 +14,7 @@ import { openCloseDisplay } from '../plotter/layer.controller.mjs'
 import { forceLogout } from './logout.mjs';
 // import { checkTokens } from './token.checkout.mjs';
 
-const val = new Worker(new URL('./worker.login.mjs', import.meta.url), { type: "module" });
+// const val = new Worker(new URL('./worker.login.mjs', import.meta.url), { type: "module" });
 
 globalThis.onload = async () => {
 	const color =	localStorage.getItem("mode");
@@ -117,7 +117,7 @@ function browserStoragePrepare() {
 	createIDB();
 	if (grants === "OFF" || grants === "FULL") {
 		createOffLineIDB();
-		globalThis.navigator.serviceWorker.register('./sw.mjs');
+		globalThis.navigator.serviceWorker.register('../sw.mjs');
 	}
 	return (mod.displayCub() && mod.displayAirCub() && mod.countWorks());
 };

@@ -1,28 +1,36 @@
 const CACHENAME =	'craterCache_v1';
 const assets =		[
 	'/',
-	'/app/',
-	'./main.min.mjs',
-	'./manifest.json',
-	'./index.html',
-	'./stylesheet.min.css',
-	'./images/favicon.ico',
-	'./images/notification.png',
-	'./images/favicon-16x16.png',
-	'./images/favicon-32x32.png',
-	'./images/apple-touch-icon.png',
-	'./images/android-chrome-192x192.png',
-	'./images/maskable_icon_x48.png',
-	'./images/maskable_icon_x64.png',
-	'./images/maskable_icon_x72.png',
-	'./images/maskable_icon_x96.png',
-	'./images/maskable_icon_x128.png',
-	'./images/maskable_icon_x192.png',
-	'./images/maskable_icon_x256.png',
-	'./images/maskable_icon_x384.png',
-	'./images/maskable_icon_x512.png',
-	'./images/maskable_icon_x1024.png',
-	'./images/maskable_icon.png',
+	'/main.min.mjs',
+	'/manifest.json',
+	'/index.html',
+	'/stylesheet.min.css',
+	'/images/favicon.ico',
+	'/images/notification.png',
+	'/images/favicon-16x16.png',
+	'/images/favicon-32x32.png',
+	'/images/apple-touch-icon.png',
+	'/images/android-chrome-192x192.png',
+	'/images/maskable_icon_x48.png',
+	'/images/maskable_icon_x64.png',
+	'/images/maskable_icon_x72.png',
+	'/images/maskable_icon_x96.png',
+	'/images/maskable_icon_x128.png',
+	'/images/maskable_icon_x192.png',
+	'/images/maskable_icon_x256.png',
+	'/images/maskable_icon_x384.png',
+	'/images/maskable_icon_x512.png',
+	'/images/maskable_icon_x1024.png',
+	'/images/maskable_icon.png',
+	'/panels/clip.board.caller.mjs',
+	'/panels/clip.board.formatter.mjs',
+	'/panels/pane1.module.mjs',
+	'/panels/pane1_crates.html',
+	'/panels/pane2_crates_open.html',
+	'/panels/pane2.module.mjs',
+	'/panels/status.panel.mjs',
+	'/panels/status_panel.html',
+	'/panels/worker.IDB.crates.mjs',
 ];
 
 
@@ -63,7 +71,6 @@ globalThis.addEventListener('fetch', event => {
 	return (AVOID.includes(URL) ? 0 :
 		event.respondWith(caches.open(CACHENAME).then((cache) => {
 			return(cache.match(event.request).then((response) => {
-				console.log(`REQUEST: ${event.request.url}`)
 				const fetchPromise = fetch(event.request).then(networkResponse => {
 					cache.put(event.request, networkResponse.clone());
 					return(networkResponse);

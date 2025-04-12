@@ -3,9 +3,8 @@
 const CACHENAME =	'status_V1';
 const assets =		[
 	'/',
-	'./status_panel.html',
-	'../stylesheet.min.css',
 	'./status.panel.mjs',
+	'../stylesheet.min.css',
 ];
 
 

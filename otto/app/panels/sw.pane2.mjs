@@ -5,7 +5,6 @@ const assets =		[
 	'/',
 	'./pane2.module.mjs',
 	'../stylesheet.min.css',
-	'./pane2_crates_open.html',
 ];
 
 

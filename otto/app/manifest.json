@@ -70,8 +70,7 @@
 			"type": "image/png"
 		}
 	],
-	"id": "/",
-	"start_url": "/",
+	"start_url": "https://app.ottocratesolver.com",
 	"background_color": "#162789",
 	"display_override": ["fullscreen", "minimal-ui"],
 	"display": "standalone",

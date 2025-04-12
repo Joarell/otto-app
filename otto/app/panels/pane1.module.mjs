@@ -36,7 +36,7 @@ globalThis.document.onreadystatechange = () => {
 		len > 1 ? true : setTimeout(() => showCrates1(getter), 50);
 	setTimeout(loadingPage, 2300);
 	changeMode(mode);
-	globalThis.navigator.serviceWorker.register("./sw.pane1.mjs");
+	// globalThis.navigator.serviceWorker.register("./sw.pane1.mjs");
 };
 
 function loadingPage() {

@@ -3,7 +3,6 @@
 const CACHENAME =	'craterCache_v1';
 const assets =		[
 	'/',
-	'/app/',
 	'./main.min.mjs',
 	'./manifest.json',
 	'./index.html',
