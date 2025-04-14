@@ -1282,12 +1282,6 @@ tbody:nth-child(even) {
  * ╰─────────────────────────────────────────────────────────╯
 */
 
-#padding-template {
-	display: none;
-	visibility: hidden;
-}
-
-
 .pad {
 	visibility: hidden;
 	display: flex;
@@ -1318,9 +1312,8 @@ tbody:nth-child(even) {
 
 
 .dialog {
-	display: none;
+	display: block;
 	container-type: normal;
-	visibility: hidden;
 	container-name: pad-crates;
 	border-radius: 1rem;
 	background: none;
@@ -1328,7 +1321,7 @@ tbody:nth-child(even) {
 	position: absolute;
 	opacity: .9;
 	z-index: 100;
-	margin: 1.5% 82% auto .3%;
+	margin: 2% 82% auto .3%;
 	& .crates-done {
 		height: 18cqb;
 	}

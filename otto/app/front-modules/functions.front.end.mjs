@@ -79,9 +79,7 @@ export async function displayAirCub() {
 // ╰──────────────────────────────────────────────────────────────────────────╯
 export async function crate(fetched = false) {
 	const estimate =	{};
-	const padding =		document.createElement('padding-dialog');
 	const weak =		new WeakSet();
-	const fragment =	new DocumentFragment();
 	const e_code =		localStorage.getItem('refNumb') ??
 		document.getElementById('input_estimate').value;
 	let grant =			document.cookie;
@@ -99,19 +97,33 @@ export async function crate(fetched = false) {
 		// INFO: triggers to each panel render the result
 		sessionStorage.setItem("pane1", "populate");
 		setTimeout(() => {
-			const closeDialog =	document.querySelector('.side-menu');
-			const root =		document.querySelector(':root');
+			const root =		document.querySelector('.root');
 
-			closeDialog?.getElementsByTagName('padding-dialog')?.length > 0 ?
-				sessionStorage.setItem('CLOSED', 'NOW') : false;
-			fragment.appendChild(padding);
-			document.querySelector(".side-menu").appendChild(fragment);
+			addPanelInfoData();
 			grant === 'FULL' || grant === 'PLOTTER' ?
 				root.style.setProperty("--layer-state", "block") : false;
 		}, 150);
 	}
 	weak.add(estimate);
 	return ('Crated');
+};
+
+
+async function addPanelInfoData() {
+	const content =		await parseArtWork();
+	const padding =		document.createElement('panel-info');
+	const fragment =	new DocumentFragment();
+	const sideMenu =	document.querySelector('.side-menu');
+	const node =		document.getElementById('editCrates');
+
+	padding.setAttribute('content', content.length);
+	padding.id = 'editCrates';
+	fragment.appendChild(padding);
+	return(
+		sideMenu.children.length === 1 ?
+			sideMenu.appendChild(fragment):
+			node.setAttribute('content', content.length)
+	);
 };
 
 

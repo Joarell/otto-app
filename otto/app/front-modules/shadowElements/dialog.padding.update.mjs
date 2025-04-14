@@ -1,29 +1,32 @@
-
-const shadowRoots = new WeakMap();
+import { template } from "./template.panel.mjs";
+import { populateCrates, alterCrateSizes } from "./populate.dialog.mjs";
 
 
 /**
  * @class Build the <dialog> element to popup when the user needs to customize the crate padding;
 */
 export class DialogPadding extends HTMLElement {
+	#shadowRoot = new WeakMap();
+	static observedAttributes = ["content"];
+
 	constructor () {
 		super();
-		const shadow =		this.attachShadow({ mode: "open" });
+		const shadow =	this.attachShadow({ mode: "open" });
 
-		this.close =		this.close.bind(this);
-		this.apply =		this.apply.bind(this);
-		shadowRoots.set(this, shadow);
+		this.close =	this.close.bind(this);
+		this.apply =	this.apply.bind(this);
+		this.#shadowRoot.set(this, shadow);
 	};
 
 	/**
 	 * @method Populates the dialog popup when clicked.;
 	*/
-	connectedCallback() {
-		const shadowRoot =	shadowRoots.get(this);
+	async connectedCallback() {
+		const shadowRoot =	this.#shadowRoot.get(this);
 		const link =		document.createElement('link');
-		const template =	document.getElementById('padding-template');
 		const clone =		template.content.cloneNode(true);
 		const node =		document.importNode(clone, true);
+
 
 		link.rel =	'stylesheet';
 		link.type =	'text/css';
@@ -44,19 +47,8 @@ export class DialogPadding extends HTMLElement {
 				setTimeout(() => applyBtn.disabled = false, 10000);
 			}
 		});
-
-		globalThis.onstorage = () => {
-			const closeDialog = sessionStorage.getItem('CLOSED');
-
-			if (closeDialog) {
-				shadowRoot.getElementById('padding-close').click();
-				sessionStorage.removeItem('CLOSED');
-			};
-		};
-		setTimeout(() => {
-			shadowRoot.getElementById("modal").style.display = "unset";
-			shadowRoot.getElementById("modal").style.visibility = "visible";
-		}, 400);
+		const frameUl = shadowRoot.getElementById('crate-list');
+		await populateCrates(frameUl);
 	};
 
 	/**
@@ -78,18 +70,23 @@ export class DialogPadding extends HTMLElement {
 	/**
 	 * @method Update when the dialog popup.
 	 */
-	attributeChangeCallback(attrName, oldVal, newVal) {
+	async attributeChangedCallback(attrName, oldVal, newVal) {
 		console.log(`Setup values ${attrName}, ${oldVal}, and ${newVal}`);
+		const shadowRoot = this.#shadowRoot.get(this);
+		return(
+			oldVal !== null ?
+			await populateCrates(shadowRoot.getElementById('crate-list')): 0
+		);
 	};
 
 	/**
 	 * @function call worker to updates the solved list applying the new sizes
 	 */
 	apply() {
-		const X =		this.shadowRoot.getElementById('pad_length');
-		const Z =		this.shadowRoot.getElementById('pad_depth');
-		const Y =		this.shadowRoot.getElementById('pad_height');
-		const storage =	sessionStorage;
+		const X =			this.shadowRoot.getElementById('pad_length');
+		const Z =			this.shadowRoot.getElementById('pad_depth');
+		const Y =			this.shadowRoot.getElementById('pad_height');
+		const storage =		sessionStorage;
 
 		if ([X.value, Z.value, Y.value].includes("")) {
 			alert('ATTENTION: Character not allow found!');
@@ -108,10 +105,9 @@ export class DialogPadding extends HTMLElement {
 	close() {
 		const closeDialog =	document.querySelector('.side-menu');
 
-		this.shadowRoot.getElementById('modal').removeAttribute('open');
-		closeDialog.getElementsByTagName('padding-dialog').length > 0 ?
+		closeDialog.getElementsByTagName('panel-info').length > 0 ?
 			document.querySelector(".side-menu").lastElementChild.remove() : false;
 	};
 };
 
-globalThis.customElements.define('padding-dialog', DialogPadding);
+globalThis.customElements.define('panel-info', DialogPadding);
