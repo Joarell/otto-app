@@ -117,6 +117,8 @@ async function addPanelInfoData() {
 	const node =		document.getElementById('editCrates');
 
 	padding.setAttribute('content', content.length);
+	padding.setAttribute('name', 'padding');
+	padding.setAttribute('type', 'padding');
 	padding.id = 'editCrates';
 	fragment.appendChild(padding);
 	return(

@@ -7,7 +7,7 @@ import { populateCrates, alterCrateSizes } from "./populate.dialog.mjs";
 */
 export class DialogPadding extends HTMLElement {
 	#shadowRoot = new WeakMap();
-	static observedAttributes = ["content"];
+	static observedAttributes = ["content", "type"];
 
 	constructor () {
 		super();
@@ -26,7 +26,6 @@ export class DialogPadding extends HTMLElement {
 		const link =		document.createElement('link');
 		const clone =		template.content.cloneNode(true);
 		const node =		document.importNode(clone, true);
-
 
 		link.rel =	'stylesheet';
 		link.type =	'text/css';
@@ -71,8 +70,9 @@ export class DialogPadding extends HTMLElement {
 	 * @method Update when the dialog popup.
 	 */
 	async attributeChangedCallback(attrName, oldVal, newVal) {
-		console.log(`Setup values ${attrName}, ${oldVal}, and ${newVal}`);
 		const shadowRoot = this.#shadowRoot.get(this);
+
+		console.log(attrName);
 		return(
 			oldVal !== null ?
 			await populateCrates(shadowRoot.getElementById('crate-list')): 0
