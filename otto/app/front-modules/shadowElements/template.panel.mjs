@@ -23,40 +23,18 @@ template.innerHTML = `
 
 
 export const status = document.createElement('template');
-status.innerHTML = `<div class="table" id="status"></div>`;
+status.innerHTML = `<div class="table" id='content-list'></div>`;
 
 
 export const pane1 = document.createElement('template');
 pane1.innerHTML = `
-<div class="loading-panels">
-	<div class="cube" aria-hidden="false">
-		<div class="face front"></div>
-		<div class="face back"></div>
-		<div class="face right"></div>
-		<div class="face left"></div>
-		<div class="face top"></div>
-		<div class="face bottom"></div>
-	</div>
-</div>
-<main class="panel-content" aria-hidden="true">
-	<div class="crates-only" id="crates-only">
-	</div>
-</main> `;
+<div class="panel-content">
+	<div class="crates-only" id="crates-only"></div>
+</div> `;
 
 
 export const pane2 = document.createElement('template');
 pane2.innerHTML = `
-<div class="loading-panels">
-	<div class="cube" aria-hidden="true">
-		<div class="face front"></div>
-		<div class="face back"></div>
-		<div class="face right"></div>
-		<div class="face left"></div>
-		<div class="face top"></div>
-		<div class="face bottom"></div>
-	</div>
-</div>
-<main class="panel-content" aria-hidden="true">
-	<div class="crates-opened" id="opened-crates">
-	</div>
-</main> `;
+<div class="panel-content">
+	<div class="crates-opened" id="opened-crates"></div>
+</div> `;

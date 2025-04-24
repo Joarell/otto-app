@@ -197,6 +197,5 @@ async function updateCratesData(data, newSizes) {
 	}, 0);
 	data.crates.airCubTotal = +(airCubTotal).toFixed(3);
 	data.whichAirPort = [{ PAX, CARGO }];
-	await Promise.resolve(addNewWorksToIndexedDB(data, 'crate'))
-		.finally(globalThis.sessionStorage.setItem('pane1', 'populate'));
+	await Promise.resolve(addNewWorksToIndexedDB(data, 'crate'));
 };

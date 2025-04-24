@@ -1,4 +1,3 @@
-
 import * as status from '../front-modules/functions.front.end.mjs';
 import { addNewWorksToIndexedDB } from '../front-modules/link.storage.mjs';
 import { openDisplay } from '../plotter/layer.controller.mjs';
@@ -30,6 +29,12 @@ function resetList(list) {
 };
 
 
+function addPanelFetched() {
+	const status = document.getElementById("statusList");
+	return(status.setAttribute('content', 'FETCHED'));
+};
+
+
 // NOTE: the path is different with or without the bundle file.
 /**
  * @param {String} doc The reference/document with artwork list.
@@ -50,6 +55,7 @@ export async function checkBrowserDB(doc) {
 	if (checkIDB) {
 		document.getElementById("input_estimate").value = doc;
 		sessionStorage.setItem("FETCHED", JSON.stringify(checkIDB));
+		addPanelFetched();
 		closeDialog();
 		setDBFetched([checkIDB]);
 		return("IDB data Found.");
@@ -65,11 +71,13 @@ async function setDBFetched(result) {
 	try {
 		if (result?.hasOwnProperty('crates')) {
 			document.getElementById("input_estimate").value = result.reference;
+			addPanelFetched();
 			globalThis.sessionStorage.clear();
-			globalThis.sessionStorage.setItem("FETCHED", JSON.stringify(result, null));
+			return(
+				globalThis.sessionStorage.setItem("FETCHED", JSON.stringify(result, null))
+			);
 		}
-		else
-			throw new TypeError("Data not found!");
+		throw new TypeError("Data not found!");
 	} catch (err) {
 		return(err);
 	};

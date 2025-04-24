@@ -155,7 +155,7 @@
 					<div class="container__status">
 						<h2 class="title"><i class="nf nf-md-format_list_text"></i> List</h2>
 						<div class="container__status__pane">
-							<iframe loading="lazy" class="container__status__pane__frame" title="Work's list" id="status-frame" src="./panels/status_panel.html"></iframe>
+							<div loading="lazy" class="container__status__pane__frame" title="Work's list" id="status-frame"></div>
 							<div class="container__status__counter">
 								<p id="count">Count works: 0 </p>
 								<p id="cub-meter">Cub: 0</p>
@@ -175,13 +175,13 @@
 							<h2><i class="nf nf-md-widgets_outline"></i> Results</h2>
 							<div class="container__results result--panels">
 								<div class="copy-pane1">
-									<iframe loading="lazy" class="container__results--open" title="Works set" src="./panels/pane1_crates.html"></iframe>
+									<div loading="lazy" class="container__results--open" id="first_pane" title="Works set"></div>
 									<button class="IO__press--btn copy" id="copy-pane1">COPY
 										<p class="copy-message" id="copy-message">Copied!</p>
 									</button>
 								</div>
 								<div class="copy-pane2">
-									<iframe loading="lazy" class="container__results--crates" title="List done" src="./panels/pane2_crates_open.html"></iframe>
+									<div loading="lazy" class="container__results--crates" id="second_pane" title="List done"></div>
 									<button class="IO__press--btn copy" id="copy-pane2">COPY <p class="copy-message">Copied!</p>
 									</button>
 								</div>

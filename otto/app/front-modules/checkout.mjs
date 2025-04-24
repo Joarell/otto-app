@@ -17,13 +17,28 @@ import { forceLogout } from './logout.mjs';
 // const val = new Worker(new URL('./worker.login.mjs', import.meta.url), { type: "module" });
 
 globalThis.onload = async () => {
-	const color =	localStorage.getItem("mode");
+	const color =		localStorage.getItem("mode");
+	const statusFrame = document.getElementById("status-frame");
 
+	if(statusFrame.children.length === 0)
+		statusFrame.append(addPanelInfo());
 	browserStoragePrepare();
 	color === null ? localStorage.setItem("mode", "light") : false;
 	setCheckRadio();
 	setModeColor();
 	setTimeout(loadingPage, 1500);
+};
+
+
+export function addPanelInfo() {
+	const fragment =	new DocumentFragment();
+	const status =		document.createElement("panel-info");
+
+	status.setAttribute('name', 'status');
+	status.id = 'statusList';
+	status.class = 'addedStatus';
+	status.setAttribute('content', 0);
+	return(fragment.appendChild(status));
 };
 
 
@@ -76,22 +91,34 @@ export const crate = () => {
 
 
 export const clearAll = () => {
-	const mode =	localStorage.getItem("mode");
-	const unit =	localStorage.getItem("metrica");
-	const element =	document.querySelector(".result");
-	const plotter =	document.getElementById('layers');
-	const menu =	document.querySelector(".plotter__menu");
+	const mode =		localStorage.getItem("mode");
+	const unit =		localStorage.getItem("metrica");
+	const element =		document.querySelector(".result");
+	const plotter =		document.getElementById('layers');
+	const menu =		document.querySelector(".plotter__menu");
+	const status =		document.getElementById("statusList");
+	const statusFrame = document.getElementById("status-frame");
+	const pane1 = 		document.getElementById("first_pane");
+	const pane2 = 		document.getElementById("second_pane");
+	const closeDialog =	document.querySelector('.side-menu');
 
 	if (confirm("Do you really want to delete the whole list?")) {
 		mod.cleanInputs(true);
 		localStorage.clear();
 		sessionStorage.clear();
-		sessionStorage.setItem("clean", "eraser");
 		localStorage.setItem("mode", mode);
 		localStorage.setItem("metrica", unit);
 		globalThis.document.getElementById("input_estimate").value = "";
 		openCloseDisplay([element, plotter, menu]);
-	}
+		status.setAttribute('content', undefined);
+		pane1.removeChild(document.getElementById('first-pane'));
+		pane2.removeChild(document.getElementById('second-pane'));
+		statusFrame.removeChild(document.getElementById('statusList'));
+		statusFrame.append(addPanelInfo());
+		closeDialog.getElementsByTagName('panel-info').length > 0 ?
+			document.querySelector(".side-menu")
+			.lastElementChild.setAttribute('name', 'close') : false;
+	};
 };
 
 
