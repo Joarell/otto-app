@@ -71,11 +71,9 @@ async function setDBFetched(result) {
 	try {
 		if (result?.hasOwnProperty('crates')) {
 			document.getElementById("input_estimate").value = result.reference;
-			addPanelFetched();
 			globalThis.sessionStorage.clear();
-			return(
-				globalThis.sessionStorage.setItem("FETCHED", JSON.stringify(result, null))
-			);
+			globalThis.sessionStorage.setItem("FETCHED", JSON.stringify(result, null))
+			return(addPanelFetched());
 		}
 		throw new TypeError("Data not found!");
 	} catch (err) {
