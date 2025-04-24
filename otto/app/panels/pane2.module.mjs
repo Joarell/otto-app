@@ -1,53 +1,6 @@
 // ╭────────────────────────────────────────────────────╮
 // │ This is the trigger activated by the create button. │
 // ╰────────────────────────────────────────────────────╯
-globalThis.addEventListener("storage", async () => {
-	const press =	sessionStorage.getItem("pane2");
-	const getter =	localStorage.getItem("refNumb");
-	const copy =	sessionStorage.getItem("copy2");
-	const mode =	localStorage.getItem("mode");
-	const works =	sessionStorage.getItem("codes");
-	const fetched =	sessionStorage.getItem("FETCHED");
-
-	changeMode(mode);
-	if (press) {
-		sessionStorage.removeItem("pane2");
-		sessionStorage.removeItem("FETCHED");
-		press === "populate" && fetched ?
-			await Promise.resolve(globalThis.location.reload())
-			.then(showCrates2(getter))
-			.finally(sessionStorage.removeItem('pane2')):
-			globalThis.location.reload();
-	}
-	else if (copy && works) {
-		sessionStorage.removeItem("copy2");
-		globalThis.location.reload();
-	};
-}, true);
-
-globalThis.document.onreadystatechange = () => {
-	const pane =	document.getElementById("opened-crates");
-	const len =		pane.childNodes.length;
-	const getter =	localStorage.getItem("refNumb");
-	const mode =	localStorage.getItem("mode");
-
-	if (len && getter)
-		len > 1 ? true : setTimeout(() => showCrates2(getter), 50);
-	setTimeout(loadingPage, 2300);
-	changeMode(mode);
-	// globalThis.navigator.serviceWorker.register("./sw.pane2.mjs");
-};
-
-function loadingPage() {
-	const animation =	document.querySelector(".loading-panels");
-	const pageApp =		document.querySelector(".panel-content");
-
-	animation.style.display = "none";
-	animation.setAttribute("aria-hidden", true);
-	pageApp.setAttribute("aria-hidden", false);
-	pageApp.setAttribute("aria-hidden", true);
-}
-
 function changeMode(color) {
 	const body = document.body.classList;
 
@@ -226,13 +179,13 @@ function addHTMLTableLine({ crates }, table, kind) {
 // ╭───────────────────────────────────────────────────────────╮
 // │ Returns all crates from the indexedDB or gets from cloud. │
 // ╰───────────────────────────────────────────────────────────╯
-export async function showCrates2(estimate) {
+export async function showCrates2(estimate, pane) {
 	const { crates } =	await getIDBDataBrowser(estimate);
 	const element =		document.createElement("table");
-	const pane =		document.getElementById("opened-crates");
 	let key;
 
-	if (!crates) return;
+	if (!crates)
+		return;
 	createHeader(element);
 	for (key in crates) {
 		if (crates[key].hasOwnProperty("crates")) {
@@ -241,7 +194,7 @@ export async function showCrates2(estimate) {
 				: false;
 		}
 	}
-	sessionStorage.removeItem("pane2");
-	pane.appendChild(element);
-	return "done";
+	while(pane.firstChild)
+		pane.removeChild(pane.firstChild)
+	return(pane.appendChild(element));
 }

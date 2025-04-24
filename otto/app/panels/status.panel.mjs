@@ -1,46 +1,13 @@
 // ╭───────────────────────────────────────────────────────────────────╮
 // │ Calls to each change on the localStorage to update the list pane. │
 // ╰───────────────────────────────────────────────────────────────────╯
-globalThis.addEventListener( "storage", async () => {
-	const check =		localStorage.getItem("storage");
-	const newList =		sessionStorage.getItem("FETCHED");
-	const clear =		sessionStorage.getItem("clean");
-	const mode =		localStorage.getItem("mode");
-	const works =		sessionStorage.getItem("codes");
-
-	changeMode(mode);
-	if (clear === "eraser") {
-		globalThis.location.reload();
-		sessionStorage.removeItem("clean");
-		!check ? sessionStorage.setItem("pane1", "clear"):
-			localStorage.removeItem('storage');
-	}
-	else if (works && check) {
-		globalThis.location.reload();
-		localStorage.removeItem('storage');
-	};
-	newList !== null ? await Promise.resolve(statusTablePopulate(newList)).then(
-		setTimeout( globalThis.sessionStorage.removeItem("FETCHED"), 200,)) : 0;
-}, true);
-
-globalThis.onload = async () => {
-	const mode =		localStorage.getItem("mode");
-	const stPanel =		document.getElementById("status");
-	const searched =	sessionStorage.getItem("FETCHED");
-
-	stPanel.hasChildNodes() ? true : setTimeout(await statusTable(), 200);
-	changeMode(mode);
-	searched ? setTimeout(statusTable, 200) : setTimeout(restorePanel, 200);
-	// globalThis.navigator.serviceWorker.register("./sw.status.mjs");
-};
-
 function changeMode(color) {
 	const body = document.body.classList;
 
 	body.remove("light-mode");
 	body.remove("dark-mode");
 	return color === "dark" ? body.add("dark-mode") : body.add("light-mode");
-}
+};
 
 function restorePanel() {
 	const list =	localStorage;
@@ -96,7 +63,7 @@ function restorePanel() {
 			}
 		});
 	plot.appendChild(element);
-}
+};
 
 export function statusTablePopulate(data) {
 	let metric;
@@ -118,49 +85,52 @@ export function statusTablePopulate(data) {
 	localStorage.setItem("refNumb", reference);
 	localStorage.setItem("metrica", metric);
 	localStorage.setItem("mode", mode);
-	globalThis.location.reload();
-}
+};
 
 // ╭────────────────────────────────────────────────────╮
 // │ Returns the HTML table with all works in the list. │
 // ╰────────────────────────────────────────────────────╯
-export async function statusTable() {
-	const element =	document.createElement("table");
-	const plot =	document.getElementById("status");
+export async function statusTable(plot, table = false) {
 	const list =	localStorage;
 	const codes =	getOrder();
 	let metric;
+	let element =	document.createElement("table");
 
 	list.getItem("metrica") === "in - inches"
 		? (metric = "in")
 		: (metric = "cm");
 	createHeader(element);
-	sessionStorage.setItem("test", codes);
-	codes.map((code) => {
-		let work;
+	element.id = "works-list";
+	if (table && codes) {
+		element = 		plot;
+		element.id =	"works-list";
+		const last =	codes.at(-1);
+		codes.map((code) => {
+			let work;
 
-		work = JSON.parse(list.getItem(code));
-		work = Object.values(work);
-		element.innerHTML += work
-			.map((item, index) => {
-				if (!item) return;
-				return index === 0
-					? `<tbody><tr><td>${item}</td>`
-					: index === 3
-					? `<td>${item}</td><td>${metric}</td></tr></tbody>`
-					: `<td>${item}</td>`;
-			}, 0)
-			.join("");
-	});
-	plot.appendChild(element);
-	return "done";
-}
+			work = JSON.parse(list.getItem(code));
+			work = Object.values(work);
+			element.innerHTML += work
+				.map((item, index) => {
+					if (!item || last !== code)
+						return;
+					return index === 0
+						? `<tbody><tr><td>${item}</td>`
+						: index === 3
+						? `<td>${item}</td><td>${metric}</td></tr></tbody>`
+						: `<td>${item}</td>`;
+				}, 0)
+				.join("");
+		});
+	};
+	return(table ? element : plot.appendChild(element));
+};
 
 function getOrder() {
 	const session = JSON.parse(sessionStorage.getItem("codes"));
 	const allCodes = session ? session.map((code) => code[1]) : false;
 	return allCodes ? allCodes : false;
-}
+};
 
 // ╭───────────────────────────────────────────────────────────────────────╮
 // │ This is the header creator when the page or localStorage are updated. │
@@ -168,7 +138,8 @@ function getOrder() {
 export function createHeader(table) {
 	const head = document.createElement("tr");
 
-	while (table.firstChild) table.removeChild(table.firstChild);
+	while (table.firstChild)
+		table.removeChild(table.firstChild);
 	head.innerHTML = `
 		<tr>
 			<th>CODE</th>
@@ -179,4 +150,4 @@ export function createHeader(table) {
 		</tr>
 	`;
 	return table.appendChild(head);
-}
+};

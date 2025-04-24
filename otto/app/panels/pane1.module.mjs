@@ -1,53 +1,6 @@
 // ╭────────────────────────────────────────────────────╮
 // │ This is the trigger activated by the create button. │
 // ╰────────────────────────────────────────────────────╯
-globalThis.addEventListener("storage", async () => {
-	const press =	sessionStorage.getItem("pane1");
-	const getter =	localStorage.getItem("refNumb");
-	const copy =	sessionStorage.getItem("copy1");
-	const mode =	localStorage.getItem("mode");
-	const works =	sessionStorage.getItem("codes");
-	const fetched =	sessionStorage.getItem("FETCHED");
-
-	changeMode(mode);
-	if (press) {
-		sessionStorage.removeItem("pane1");
-		press === "populate" && fetched ?
-			await Promise.resolve(globalThis.location.reload())
-			.then(showCrates1(getter))
-			.then(sessionStorage.setItem("pane2", "populate"))
-			.finally(sessionStorage.removeItem('pane1')):
-			await Promise.resolve(sessionStorage.setItem("pane2", "clear"))
-			.finally(globalThis.location.reload());
-	}
-	else if (copy && works) {
-		sessionStorage.removeItem("copy1");
-		globalThis.location.reload();
-	};
-}, true);
-
-globalThis.document.onreadystatechange = () => {
-	const pane =	document.getElementById("crates-only");
-	const len =		pane.childNodes.length;
-	const getter =	localStorage.getItem("refNumb");
-	const mode =	localStorage.getItem("mode");
-
-	if (len && getter)
-		len > 1 ? true : setTimeout(() => showCrates1(getter), 50);
-	setTimeout(loadingPage, 2300);
-	changeMode(mode);
-	// globalThis.navigator.serviceWorker.register("./sw.pane1.mjs");
-};
-
-function loadingPage() {
-	const animation =	document.querySelector(".loading-panels");
-	const pageApp =		document.querySelector(".panel-content");
-
-	animation.style.display = "none";
-	animation.setAttribute("aria-hidden", true);
-	pageApp.setAttribute("aria-hidden", false);
-}
-
 function changeMode(color) {
 	const body = document.body.classList;
 
@@ -132,29 +85,28 @@ function addHTMLTableLine(data, unit, table) {
 // ╭───────────────────────────────────────────────────────────╮
 // │ Returns all crates from the indexedDB or gets from cloud. │
 // ╰───────────────────────────────────────────────────────────╯
-export async function showCrates1(estimate) {
+export async function showCrates1(estimate, pane) {
 	const { crates } =	await getIDBINFO(estimate);
 	const element =		document.createElement("table");
-	const pane =		document.getElementById("crates-only");
 	let key =			0;
 	let metric;
 
-	if (!crates) return;
+	if (!crates)
+		return;
 	localStorage.getItem("metrica") === "in - inches"
 		? (metric = "in")
 		: (metric = "cm");
 	createHeader(element);
 	for (key in crates) {
 		if (crates[key].hasOwnProperty("crates")) {
-			crates[key].crates.length > 0
-				? addHTMLTableLine(crates[key], metric, element)
+			crates[key].crates.length > 0 ?
+				addHTMLTableLine(crates[key], metric, element)
 				: false;
 		}
 	}
-	sessionStorage.removeItem("pane1");
-	pane.appendChild(finishedRender(element, crates));
-	return "done";
-}
+	// sessionStorage.removeItem("pane1");
+	return(pane.appendChild(finishedRender(element, crates)));
+};
 
 function finishedRender(table, info) {
 	table.innerHTML += `<tr>
@@ -180,5 +132,5 @@ function finishedRender(table, info) {
 		<td>Total Cub:</td>
 		<td>${info.airCubTotal}</td>
 		</tr>`;
-	return table;
-}
+	return(table);
+};

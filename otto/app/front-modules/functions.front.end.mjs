@@ -31,9 +31,12 @@ export async function countWorks() {
 	const result =	await parseArtWork();
 	let counter =	document.getElementById("count");
 
+	result && result.length > 0 ?
+		document.getElementById('statusList')
+			.setAttribute('content', result.length): false;
 	counter.innerText =	result ? "Counting: " + result?.length : "Counting 0";
 	return (counter);
-}
+};
 
 
 // ╭─────────────────────────────────────────────────────────────────────╮
@@ -50,7 +53,7 @@ export async function displayCub() {
 	}, 0) ?? 0;
 	element.innerText = "Cub: " + ((result * COMA) / COMA).toFixed(3) + "m³";
 	return (element);
-}
+};
 
 
 // ╭──────────────────────────────────────────────────────────────────────────╮
@@ -60,7 +63,7 @@ export async function displayAirCub() {
 	let result;
 	let element;
 	let std_msg;
-	const COMA = 1000;
+	const COMA =	1000;
 
 	std_msg =		"Air-Cub: ";
 	element =		document.getElementById("cub-air");
@@ -70,8 +73,31 @@ export async function displayAirCub() {
 	}, 0) ?? 0;
 	element.innerText = std_msg + ((result * COMA) / COMA).toFixed(3);
 	return (element);
-}
+};
 
+
+function setPanels() {
+	const fragment1 =	new DocumentFragment();
+	const fragment2 =	new DocumentFragment();
+	const pane1 =		document.createElement('panel-info');
+	const pane2 =		document.createElement('panel-info');
+	const firstPane =	document.getElementById('first_pane');
+	const secondPane =	document.getElementById('second_pane');
+
+	while(firstPane.firstChild)
+		firstPane.removeChild(firstPane.firstChild);
+	while(secondPane.firstChild)
+		secondPane.removeChild(secondPane.firstChild);
+
+	pane1.id = 'first-pane';
+	pane2.id = 'second-pane';
+	pane1.setAttribute('name', 'pane1');
+	pane2.setAttribute('name', 'pane2');
+	fragment1.append(pane1);
+	fragment2.append(pane2);
+	firstPane.append(fragment1);
+	secondPane.append(fragment2);
+};
 
 // ╭──────────────────────────────────────────────────────────────────────────╮
 // │ This function is the main function of the webapp. It solves the art work │
@@ -88,14 +114,13 @@ export async function crate(fetched = false) {
 
 	grant = grant.split('=')[1];
 	if (fetched || confirm("Ready to crate all works?") && cratesAsCm) {
+		setPanels();
 		estimate.reference =	e_code;
 		list =					await parseArtWork();
 		estimate.list =			list.map(art => art.data);
 		estimate.crates =		cratesAsCm;
 		addNewWorksToIndexedDB(estimate, fetched);
 
-		// INFO: triggers to each panel render the result
-		sessionStorage.setItem("pane1", "populate");
 		setTimeout(() => {
 			const root =		document.querySelector('.root');
 
@@ -103,7 +128,7 @@ export async function crate(fetched = false) {
 			grant === 'FULL' || grant === 'PLOTTER' ?
 				root.style.setProperty("--layer-state", "block") : false;
 		}, 150);
-	}
+	};
 	weak.add(estimate);
 	return ('Crated');
 };
@@ -116,9 +141,8 @@ async function addPanelInfoData() {
 	const sideMenu =	document.querySelector('.side-menu');
 	const node =		document.getElementById('editCrates');
 
-	padding.setAttribute('content', content.length);
+	// padding.setAttribute('content', content.length);
 	padding.setAttribute('name', 'padding');
-	padding.setAttribute('type', 'padding');
 	padding.id = 'editCrates';
 	fragment.appendChild(padding);
 	return(
@@ -144,10 +168,8 @@ export async function cleanInputs(fetched = false) {
 
 	granted = granted.split('=')[1]
 	RENDER.hasChildNodes() ? openDisplay() : false;
-	fetched ? await Promise.resolve(sessionStorage.setItem('pane1', 'clear'))
-		.then(globalThis.document.getElementById("input_estimate").select()):
-		await Promise.resolve(sessionStorage.setItem('clean', 'eraser'))
-		.then(globalThis.document.getElementById("input_code").select());
+		globalThis.document.getElementById("input_estimate").select();
+		globalThis.document.getElementById("input_code").select();
 	countWorks();
 	displayCub();
 	displayAirCub();

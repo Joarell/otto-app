@@ -145,8 +145,7 @@ export async function movingDataToSesseionStorage(reference, fetched = false) {
 			const obj = db.result;
 
 			globalThis.sessionStorage.setItem(reference, JSON.stringify(obj));
-			fetched === false ? await saveTheCurrentEstimate(db.result) :
-				sessionStorage.setItem('pane1', "populate");
+			fetched === false ? await saveTheCurrentEstimate(db.result) : 0;
 			fetched === 'crate' ? await upDateCrateSizes(db.result): 0;
 		};
 	};

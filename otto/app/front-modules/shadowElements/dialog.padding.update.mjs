@@ -1,13 +1,17 @@
-import { template } from "./template.panel.mjs";
-import { populateCrates, alterCrateSizes } from "./populate.dialog.mjs";
+import { template, status, pane1, pane2 } from "./template.panel.mjs";
+import { populateCrates } from "./populate.dialog.mjs";
+import { statusTable, statusTablePopulate } from "../../panels/status.panel.mjs"
+import { showCrates1 } from "../../panels/pane1.module.mjs";
+import { showCrates2 } from "../../panels/pane2.module.mjs";
 
 
 /**
  * @class Build the <dialog> element to popup when the user needs to customize the crate padding;
 */
 export class DialogPadding extends HTMLElement {
+	#type = [];
 	#shadowRoot = new WeakMap();
-	static observedAttributes = ["content", "type"];
+	static observedAttributes = [ "name", "content", "mode" ];
 
 	constructor () {
 		super();
@@ -21,7 +25,29 @@ export class DialogPadding extends HTMLElement {
 	/**
 	 * @method Populates the dialog popup when clicked.;
 	*/
-	async connectedCallback() {
+	connectedCallback() {
+		this.#type.map(async name => {
+			switch(name) {
+				case 'padding':
+					return(await this.#populatePaddingCrate());
+				// case 'status':
+				// 	return(await this.#populateStatus());
+				case 'pane1':
+					return(await this.#populatePane1());
+				case 'pane2':
+					return(await this.#populatePane2());
+				case 'close':
+					return(this.close());
+				default:
+					return;
+			};
+		});
+	};
+
+	/**
+	* @method populates the padding dialog info.
+	*/
+	async #populatePaddingCrate() {
 		const shadowRoot =	this.#shadowRoot.get(this);
 		const link =		document.createElement('link');
 		const clone =		template.content.cloneNode(true);
@@ -51,32 +77,115 @@ export class DialogPadding extends HTMLElement {
 	};
 
 	/**
+	* @method populates the status panel.
+	*/
+	async #populateStatus() {
+		const shadowRoot =	this.#shadowRoot.get(this);
+		const link =		document.createElement('link');
+		const clone =		status.content.cloneNode(true);
+		const node =		document.importNode(clone, true);
+		const table =		shadowRoot.getElementById('works-list');
+
+		link.rel =	'stylesheet';
+		link.type =	'text/css';
+		link.href = './stylesheet.css';
+		shadowRoot.append(node);
+		shadowRoot.appendChild(link);
+
+		return(
+			table ? await statusTable(table, true):
+				await statusTable(shadowRoot.querySelector("#content-list"))
+		);
+	};
+
+	/**
+	* @method populates the first pane with all crates.
+	*/
+	async #populatePane1() {
+		const shadowRoot =	this.#shadowRoot.get(this);
+		const link =		document.createElement('link');
+		const clone =		pane1.content.cloneNode(true);
+		const node =		document.importNode(clone, true);
+		const reference =	localStorage.getItem('refNumb');
+
+		link.rel =	'stylesheet';
+		link.type =	'text/css';
+		link.href = './stylesheet.css';
+		shadowRoot.append(node);
+		shadowRoot.appendChild(link);
+		const cratePane =	shadowRoot.getElementById('crates-only');
+		return(reference ? await showCrates1(reference, cratePane): false);
+	};
+
+	/**
+	* @method populates the second panel with all crates opened.
+	*/
+	async #populatePane2() {
+		const shadowRoot =	this.#shadowRoot.get(this);
+		const link =		document.createElement('link');
+		const clone =		pane2.content.cloneNode(true);
+		const node =		document.importNode(clone, true);
+		const reference =	localStorage.getItem('refNumb');
+
+		link.rel =	'stylesheet';
+		link.type =	'text/css';
+		link.href = './stylesheet.css';
+		shadowRoot.append(node);
+		shadowRoot.appendChild(link);
+
+		shadowRoot.append(node);
+		shadowRoot.appendChild(link);
+		const openPane =	shadowRoot.getElementById('opened-crates');
+		return(reference ? await showCrates2(reference, openPane): false);
+	};
+
+	async #fetchedResult() {
+		const result = sessionStorage.getItem('FETCHED');
+
+		statusTablePopulate(result);
+		return(await this.#populateStatus());
+	};
+
+	/** @method Update when the dialog popup.
+	 */
+	async attributeChangedCallback(attrName, oldVal, newVal) {
+		const shadowRoot = 	this.#shadowRoot.get(this);
+		const status =		oldVal < newVal && attrName === 'content' && newVal !== 'FETCHED';
+
+		// console.log(`Shadow: ${attrName}, ${oldVal}, ${newVal}`);
+		this.#type.push(newVal);
+		if(attrName === 'content' && newVal === 'FETCHED')
+			return(await this.#fetchedResult());
+		switch(attrName) {
+			case 'padding':
+				return(
+					oldVal ? await populateCrates(shadowRoot.querySelector('#crate-list')): 0
+				);
+			case 'content':
+				return(oldVal === null || status ? await this.#populateStatus(): 0);
+			case 'name':
+				return(newVal === 'close' ? this.close(): 0);
+			case 'pane1':
+				return(await this.#populatePane1());
+			case 'pane2':
+				return(await this.#populatePane2());
+			default:
+				return(false);
+		};
+	};
+
+	/**
 	 * @method Removes the dialog popup when clicked.;
 	 */
 	disconnectedCallback() {
-		this.shadowRoot.getElementById('padding-apply')
-			.removeEventListener('click', this.close, true);
-		this.shadowRoot.getElementById('padding-close')
-			.removeEventListener('click', this.close, true);
-	};
+		const shadowRoot = 	this.#shadowRoot.get(this);
 
-	/**
-	 * @method Called when the dialog popup moves to the another document.
-	 */
-	adoptedCallback() {
-	};
-
-	/**
-	 * @method Update when the dialog popup.
-	 */
-	async attributeChangedCallback(attrName, oldVal, newVal) {
-		const shadowRoot = this.#shadowRoot.get(this);
-
-		console.log(attrName);
-		return(
-			oldVal !== null ?
-			await populateCrates(shadowRoot.getElementById('crate-list')): 0
-		);
+		if(shadowRoot.getElementById('padding-apply')) {
+			shadowRoot.getElementById('padding-apply')
+				.removeEventListener('click', this.close, true);
+			shadowRoot.getElementById('padding-close')
+				.removeEventListener('click', this.close, true);
+		}
 	};
 
 	/**
@@ -105,6 +214,7 @@ export class DialogPadding extends HTMLElement {
 	close() {
 		const closeDialog =	document.querySelector('.side-menu');
 
+		this.disconnectedCallback();
 		closeDialog.getElementsByTagName('panel-info').length > 0 ?
 			document.querySelector(".side-menu").lastElementChild.remove() : false;
 	};
