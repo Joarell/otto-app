@@ -81,20 +81,23 @@ export class DialogPadding extends HTMLElement {
 	*/
 	async #populateStatus() {
 		const shadowRoot =	this.#shadowRoot.get(this);
-		const link =		document.createElement('link');
-		const clone =		status.content.cloneNode(true);
-		const node =		document.importNode(clone, true);
 		const table =		shadowRoot.getElementById('works-list');
 
-		link.rel =	'stylesheet';
-		link.type =	'text/css';
-		link.href = './stylesheet.css';
-		shadowRoot.append(node);
-		shadowRoot.appendChild(link);
+		if(!table) {
+			const link =		document.createElement('link');
+			const clone =		status.content.cloneNode(true);
+			const node =		document.importNode(clone, true);
 
-		return(
-			table ? await statusTable(table, true):
-				await statusTable(shadowRoot.querySelector("#content-list"))
+			document.getElementById('crate-btn').disabled = true;
+			link.rel =	'stylesheet';
+			link.type =	'text/css';
+			link.href = './stylesheet.css';
+			shadowRoot.append(node);
+			shadowRoot.appendChild(link);
+		};
+
+		return(table ? await statusTable(table, true):
+			await statusTable(shadowRoot.querySelector("#content-list"))
 		);
 	};
 
@@ -139,6 +142,9 @@ export class DialogPadding extends HTMLElement {
 		return(reference ? await showCrates2(reference, openPane): false);
 	};
 
+	/**
+	* @method set the panes when the result is fetched.
+	*/
 	async #fetchedResult() {
 		const result = sessionStorage.getItem('FETCHED');
 

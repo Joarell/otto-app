@@ -91,8 +91,10 @@ export function statusTablePopulate(data) {
 // │ Returns the HTML table with all works in the list. │
 // ╰────────────────────────────────────────────────────╯
 export async function statusTable(plot, table = false) {
-	const list =	localStorage;
-	const codes =	getOrder();
+	const list =		localStorage;
+	const codes =		getOrder();
+	const crateBTN =	document.getElementById('crate-btn');
+
 	let metric;
 	let element =	document.createElement("table");
 
@@ -102,6 +104,7 @@ export async function statusTable(plot, table = false) {
 	createHeader(element);
 	element.id = "works-list";
 	if (table && codes) {
+		crateBTN.disabled ? crateBTN.disabled = false: false;
 		element = 		plot;
 		element.id =	"works-list";
 		const last =	codes.at(-1);

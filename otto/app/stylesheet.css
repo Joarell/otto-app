@@ -473,13 +473,16 @@ tbody:nth-child(even) {
 		animation-fill-mode: forwards;
 	}
 	& div > div {
+		padding-top: .5rem;
 		height: 15rem;
 		width: 100%;
 		border: .1rem solid var(--iframes-bg);
 		border-radius: 1rem;
-		overflow-y: scroll;
+		overflow-y: clip;
 		overflow-x: clip;
 		&:hover {
+			overflow-y: scroll;
+			overflow-x: clip;
 			border: transparent;
 			border-radius: 1rem;
 			box-shadow: var(--shadow1);
@@ -1702,7 +1705,12 @@ tbody:nth-child(even) {
 			height: max(14.2vw);
 			border: .1rem solid var(--iframes-bg);
 			border-radius: 1rem;
+			overflow-y: clip;
+			overflow-x: clip;
+			padding: .5rem;
 			&:hover {
+				overflow-y: scroll;
+				overflow-x: clip;
 				border: transparent;
 				border-radius: 1rem;
 				box-shadow: var(--shadow1);
