@@ -90,9 +90,21 @@ export const crate = () => {
 };
 
 
+function clearBrowserStorage() {
+	const mode = localStorage.getItem("mode");
+	const unit = localStorage.getItem("metrica");
+
+	localStorage.clear();
+	sessionStorage.clear();
+	localStorage.setItem("mode", mode);
+	localStorage.setItem("metrica", unit);
+	mod.countWorks();
+	mod.displayCub();
+	mod.displayAirCub();
+};
+
+
 export const clearAll = () => {
-	const mode =		localStorage.getItem("mode");
-	const unit =		localStorage.getItem("metrica");
 	const element =		document.querySelector(".result");
 	const plotter =		document.getElementById('layers');
 	const menu =		document.querySelector(".plotter__menu");
@@ -100,20 +112,18 @@ export const clearAll = () => {
 	const statusFrame = document.getElementById("status-frame");
 	const pane1 = 		document.getElementById("first_pane");
 	const pane2 = 		document.getElementById("second_pane");
-	const closeDialog =	document.querySelector('.side-menu');
+	const closeDialog =	document.querySelector(".side-menu");
 
 	if (confirm("Do you really want to delete the whole list?")) {
+		clearBrowserStorage();
 		mod.cleanInputs(true);
-		localStorage.clear();
-		sessionStorage.clear();
-		localStorage.setItem("mode", mode);
-		localStorage.setItem("metrica", unit);
 		globalThis.document.getElementById("input_estimate").value = "";
+		globalThis.document.getElementById("input_estimate").select();
 		openCloseDisplay([element, plotter, menu]);
 		status.setAttribute('content', undefined);
-		pane1.removeChild(document.getElementById('first-pane'));
-		pane2.removeChild(document.getElementById('second-pane'));
 		statusFrame.removeChild(document.getElementById('statusList'));
+		pane1.firstChild ? pane1.removeChild(document.getElementById('first-pane')): 0;
+		pane2.firstChild ? pane2.removeChild(document.getElementById('second-pane')): 0;
 		statusFrame.append(addPanelInfo());
 		closeDialog.getElementsByTagName('panel-info').length > 0 ?
 			document.querySelector(".side-menu")

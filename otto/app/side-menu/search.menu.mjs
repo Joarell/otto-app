@@ -1,4 +1,5 @@
-import * as status from '../front-modules/functions.front.end.mjs';
+import { addPanelInfo } from '../front-modules/checkout.mjs';
+import * as mod from '../front-modules/functions.front.end.mjs';
 import { addNewWorksToIndexedDB } from '../front-modules/link.storage.mjs';
 import { openDisplay } from '../plotter/layer.controller.mjs';
 
@@ -8,9 +9,9 @@ function closeDialog() {
 
 	closeDialog?.getElementsByTagName('padding-dialog')?.length > 0 ?
 		sessionStorage.setItem('CLOSED', 'NOW') : false;
-	status.displayCub();
-	status.displayAirCub();
-	status.countWorks();
+	mod.displayCub();
+	mod.displayAirCub();
+	mod.countWorks();
 };
 
 
@@ -31,7 +32,18 @@ function resetList(list) {
 
 function addPanelFetched() {
 	const status = document.getElementById("statusList");
-	return(status.setAttribute('content', 'FETCHED'));
+	const statusFrame = document.getElementById("status-frame");
+	const closeDialog =	document.querySelector('.side-menu');
+
+	statusFrame.removeChild(document.getElementById('statusList'));
+	statusFrame.append(addPanelInfo());
+	status.setAttribute('content', 'FETCHED')
+	closeDialog.getElementsByTagName('panel-info').length > 0 ?
+		document.querySelector(".side-menu")
+		.lastElementChild.setAttribute('name', 'close') : false;
+	mod.displayCub();
+	mod.displayAirCub();
+	mod.countWorks();
 };
 
 
@@ -56,7 +68,6 @@ export async function checkBrowserDB(doc) {
 		document.getElementById("input_estimate").value = doc;
 		sessionStorage.setItem("FETCHED", JSON.stringify(checkIDB));
 		addPanelFetched();
-		closeDialog();
 		setDBFetched([checkIDB]);
 		return("IDB data Found.");
 	};
@@ -143,7 +154,7 @@ export async function searchEstimate() {
 						addNewWorksToIndexedDB(result, true);
 					}
 					else
-						status.crate(true)
+						mod.crate(true)
 				});
 		});
 	};
@@ -155,6 +166,6 @@ export async function searchEstimate() {
  */
 function memoization(before) {
 	return async (after) => {
-		before && before !== after ? status.cleanInputs(true) : false;
+		before && before !== after ? mod.cleanInputs(true) : false;
 	};
 }
