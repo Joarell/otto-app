@@ -410,8 +410,7 @@ tbody:nth-child(even) {
    ╰──────────────────────────────────────────────────────────╯
 */
 
-:is(.popup, .plotter, .container__insert, .container__status, .result-left,
-.result, .menu) {
+:is(.popup, .plotter, .container__insert, .container__status, .result-left, .result, .menu) {
 	padding: 2rem;
 	font-size: var(--fonts);
 	font-weight: 600;

@@ -1,5 +1,3 @@
-
-
 import { plotter } from "./layers.mjs";
 import Converter from "../core2/Converter.class.mjs";
 
@@ -40,10 +38,9 @@ async function unitAdapterSetCrates(unit, solved) {
 				}
 			};
 		});
-		localStorage.setItem('doneList', JSON.stringify({...crates}));
+		return(localStorage.setItem('doneList', JSON.stringify({...crates})));
 	}
-	else
-		localStorage.setItem('doneList', JSON.stringify({...solved}));
+	return(localStorage.setItem('doneList', JSON.stringify({...solved})));
 }
 
 
