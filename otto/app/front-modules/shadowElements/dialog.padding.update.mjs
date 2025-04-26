@@ -67,7 +67,7 @@ export class DialogPadding extends HTMLElement {
 
 			if (this.apply()) {
 				applyBtn.disabled = true;
-				setTimeout(() => applyBtn.disabled = false, 10000);
+				setTimeout(() => applyBtn.disabled = false, 1000);
 			}
 		});
 		const frameUl = shadowRoot.getElementById('crate-list');
@@ -197,10 +197,10 @@ export class DialogPadding extends HTMLElement {
 	 * @function call worker to updates the solved list applying the new sizes
 	 */
 	apply() {
-		const X =			this.shadowRoot.getElementById('pad_length');
-		const Z =			this.shadowRoot.getElementById('pad_depth');
-		const Y =			this.shadowRoot.getElementById('pad_height');
-		const storage =		sessionStorage;
+		const X =		this.shadowRoot.getElementById('pad_length');
+		const Z =		this.shadowRoot.getElementById('pad_depth');
+		const Y =		this.shadowRoot.getElementById('pad_height');
+		const storage =	sessionStorage;
 
 		if ([X.value, Z.value, Y.value].includes("")) {
 			alert('ATTENTION: Character not allow found!');
