@@ -90,15 +90,14 @@ export function statusTablePopulate(data) {
 // ╭────────────────────────────────────────────────────╮
 // │ Returns the HTML table with all works in the list. │
 // ╰────────────────────────────────────────────────────╯
-export async function statusTable(plot, table = false) {
-	const list =		localStorage;
+export async function statusTable(plot, table = false, fetched) {
+	const storage =		localStorage;
 	const codes =		getOrder();
 	const crateBTN =	document.getElementById('crate-btn');
-
 	let metric;
-	let element =	document.createElement("table");
+	let element =		document.createElement("table");
 
-	list.getItem("metrica") === "in - inches"
+	storage.getItem("metrica") === "in - inches"
 		? (metric = "in")
 		: (metric = "cm");
 	createHeader(element);
@@ -107,15 +106,15 @@ export async function statusTable(plot, table = false) {
 		crateBTN.disabled ? crateBTN.disabled = false: false;
 		element = 		plot;
 		element.id =	"works-list";
-		const last =	codes.at(-1);
 		codes.map((code) => {
+			if(codes.at(-1) !== code && !fetched)
+				return;
 			let work;
 
-			work = JSON.parse(list.getItem(code));
+			work = JSON.parse(storage.getItem(code));
 			work = Object.values(work);
-			element.innerHTML += work
-				.map((item, index) => {
-					if (!item || last !== code)
+			element.innerHTML += work.map((item, index) => {
+					if (!item)
 						return;
 					return index === 0
 						? `<tbody><tr><td>${item}</td>`

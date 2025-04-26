@@ -30,8 +30,6 @@ export class DialogPadding extends HTMLElement {
 			switch(name) {
 				case 'padding':
 					return(await this.#populatePaddingCrate());
-				// case 'status':
-				// 	return(await this.#populateStatus());
 				case 'pane1':
 					return(await this.#populatePane1());
 				case 'pane2':
@@ -82,11 +80,12 @@ export class DialogPadding extends HTMLElement {
 	async #populateStatus() {
 		const shadowRoot =	this.#shadowRoot.get(this);
 		const table =		shadowRoot.getElementById('works-list');
+		const result =		sessionStorage.getItem('FETCHED');
 
 		if(!table) {
-			const link =		document.createElement('link');
-			const clone =		status.content.cloneNode(true);
-			const node =		document.importNode(clone, true);
+			const link =	document.createElement('link');
+			const clone =	status.content.cloneNode(true);
+			const node =	document.importNode(clone, true);
 
 			document.getElementById('crate-btn').disabled = true;
 			link.rel =	'stylesheet';
@@ -96,7 +95,7 @@ export class DialogPadding extends HTMLElement {
 			shadowRoot.appendChild(link);
 		};
 
-		return(table ? await statusTable(table, true):
+		return(table ? await statusTable(table, true, result):
 			await statusTable(shadowRoot.querySelector("#content-list"))
 		);
 	};
