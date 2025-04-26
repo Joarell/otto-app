@@ -15,25 +15,10 @@ function closeDialog() {
 };
 
 
-// NOTE: reset the code changed by the data base in order to render on status panel.
-/**
- * @param {Crater} list The Crater object fetched from the DB.
- */
-function resetList(list) {
-	const reset = [];
-
-	list.map((work) => {
-		const { code, x, z, y } = work;
-		reset.push({ code, x, z, y });
-	});
-	return reset;
-};
-
-
 function addPanelFetched() {
-	const status = document.getElementById("statusList");
-	const statusFrame = document.getElementById("status-frame");
-	const closeDialog =	document.querySelector('.side-menu');
+	const status =		document.getElementById("statusList");
+	const statusFrame =	document.getElementById("status-frame");
+	const closeDialog =	document.querySelector(".side-menu");
 
 	statusFrame.removeChild(document.getElementById('statusList'));
 	statusFrame.append(addPanelInfo());
