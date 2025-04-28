@@ -1,18 +1,6 @@
 import { addPanelInfo } from '../front-modules/checkout.mjs';
 import * as mod from '../front-modules/functions.front.end.mjs';
 import { addNewWorksToIndexedDB } from '../front-modules/link.storage.mjs';
-import { openDisplay } from '../plotter/layer.controller.mjs';
-
-
-function closeDialog() {
-	const closeDialog =	document.querySelector('.side-menu');
-
-	closeDialog?.getElementsByTagName('padding-dialog')?.length > 0 ?
-		sessionStorage.setItem('CLOSED', 'NOW') : false;
-	mod.displayCub();
-	mod.displayAirCub();
-	mod.countWorks();
-};
 
 
 function addPanelFetched() {

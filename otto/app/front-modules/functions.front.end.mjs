@@ -108,11 +108,10 @@ export async function crate(fetched = false) {
 	const weak =		new WeakSet();
 	const e_code =		localStorage.getItem('refNumb') ??
 		document.getElementById('input_estimate').value;
-	let grant =			document.cookie;
+	let grant =			document.cookie.split('=')[1];
 	let list;
 	const cratesAsCm =	await checkMetric();
 
-	grant = grant.split('=')[1];
 	if (fetched || confirm("Ready to crate all works?") && cratesAsCm) {
 		setPanels();
 		estimate.reference =	e_code;
@@ -121,13 +120,9 @@ export async function crate(fetched = false) {
 		estimate.crates =		cratesAsCm;
 		addNewWorksToIndexedDB(estimate, fetched);
 
-		setTimeout(() => {
-			const root =		document.querySelector('.root');
-
-			addPanelInfoData();
-			grant === 'FULL' || grant === 'PLOTTER' ?
-				root.style.setProperty("--layer-state", "block") : false;
-		}, 150);
+		addPanelInfoData();
+		grant === 'FULL' || grant === 'PLOTTER' || !grant ?
+			document.getElementById('crate-layers').disabled = false : 0;
 	};
 	weak.add(estimate);
 	return ('Crated');
@@ -141,7 +136,6 @@ async function addPanelInfoData() {
 	const sideMenu =	document.querySelector('.side-menu');
 	const node =		document.getElementById('editCrates');
 
-	// padding.setAttribute('content', content.length);
 	padding.setAttribute('name', 'padding');
 	padding.id = 'editCrates';
 	fragment.appendChild(padding);
