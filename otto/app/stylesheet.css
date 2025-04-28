@@ -131,8 +131,7 @@
 	--menu-col: #00C2DD;
 	--pressed: #77797E;
 	scroll-behavior: smooth;
-	--layer-state: none;
-	/*--layer-state: block;*/
+	--layer-state: block;
 }
 
 
@@ -1256,7 +1255,7 @@ tbody:nth-child(even) {
 		position: absolute;
 		height: 100%;
 		width: 100%;
-		background: var(--preview);
+		background: var(--background);
 		box-shadow: var(--shadow1);
 		/*border: .1px solid var(--color3);*/
 		transition: all .2s linear;
@@ -1271,7 +1270,7 @@ tbody:nth-child(even) {
 		position: absolute;
 		height: 100%;
 		width: 100%;
-		background: var(--preview);
+		background: var(--background);
 		box-shadow: var(--shadow1);
 		/*border: .5px solid var(--color3);*/
 		transition: all .2s linear;

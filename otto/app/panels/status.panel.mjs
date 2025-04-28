@@ -104,11 +104,12 @@ export async function statusTable(plot, table = false, fetched) {
 	element.id = "works-list";
 	if (table && codes) {
 		crateBTN.disabled ? crateBTN.disabled = false: false;
+		while(plot.firstChild)
+			plot.removeChild(plot.firstChild);
+		createHeader(plot);
 		element = 		plot;
 		element.id =	"works-list";
 		codes.map((code) => {
-			if(codes.at(-1) !== code && !fetched)
-				return;
 			let work;
 
 			work = JSON.parse(storage.getItem(code));

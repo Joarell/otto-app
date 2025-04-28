@@ -19,13 +19,16 @@ import { forceLogout } from './logout.mjs';
 globalThis.onload = async () => {
 	const color =		localStorage.getItem("mode");
 	const statusFrame = document.getElementById("status-frame");
+	const list =		document.getElementById('statusList');
 
-	if(statusFrame.children.length === 0)
+	console.log(list);
+	list ? list.setAttribute('content', 'reload'):
 		statusFrame.append(addPanelInfo());
 	browserStoragePrepare();
 	color === null ? localStorage.setItem("mode", "light") : false;
 	setCheckRadio();
 	setModeColor();
+	document.getElementById('crate-layers').disabled = true;
 	setTimeout(loadingPage, 1500);
 };
 
