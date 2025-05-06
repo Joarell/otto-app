@@ -76,7 +76,7 @@ export async function displayAirCub() {
 };
 
 
-function setPanels() {
+export function setPanels() {
 	const fragment1 =	new DocumentFragment();
 	const fragment2 =	new DocumentFragment();
 	const pane1 =		document.createElement('panel-info');
@@ -130,20 +130,16 @@ export async function crate(fetched = false) {
 
 
 async function addPanelInfoData() {
-	const content =		await parseArtWork();
 	const padding =		document.createElement('panel-info');
 	const fragment =	new DocumentFragment();
 	const sideMenu =	document.querySelector('.side-menu');
-	const node =		document.getElementById('editCrates');
 
 	padding.setAttribute('name', 'padding');
 	padding.id = 'editCrates';
 	fragment.appendChild(padding);
-	return(
-		sideMenu.children.length === 1 ?
-			sideMenu.appendChild(fragment):
-			node.setAttribute('content', content.length)
-	);
+	sideMenu.children.length === 2 ?
+		sideMenu.removeChild(sideMenu.lastElementChild): false;
+	return(sideMenu.children.length === 1 ? sideMenu.appendChild(fragment): false);
 };
 
 

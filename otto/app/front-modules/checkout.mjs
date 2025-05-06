@@ -21,7 +21,6 @@ globalThis.onload = async () => {
 	const statusFrame = document.getElementById("status-frame");
 	const list =		document.getElementById('statusList');
 
-	console.log(list);
 	list ? list.setAttribute('content', 'reload'):
 		statusFrame.append(addPanelInfo());
 	browserStoragePrepare();
