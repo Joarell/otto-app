@@ -35,7 +35,7 @@ export default class extends WorkerEntrypoint {
 		const result = {
 			response: await this.env.back.fetch(auth),
 			headers,
-		}
+		};
 		return(result);
 	};
 
