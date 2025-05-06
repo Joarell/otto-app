@@ -1,5 +1,5 @@
 import CubCalc from '../../core2/CubCalc.class.mjs';
-import { addNewWorksToIndexedDB } from '../link.storage.mjs';
+import { setPanels } from '../functions.front.end.mjs';
 
 
 /**
@@ -30,9 +30,9 @@ async function catchAllCrates() {
  * @param {Number} num - The crate order number
 */
 function setNewCrateLine(kind, crate, num) {
-	const unit = localStorage.getItem('metrica') === 'in - inches' ? 'in' : 'cm';
-	const li = document.createElement('li');
-	const size = `${crate[0]} x ${crate[1]} x ${crate[2]} - ${unit}`;
+	const unit =	localStorage.getItem('metrica') === 'in - inches' ? 'in' : 'cm';
+	const li =		document.createElement('li');
+	const size =	`${crate[0]} x ${crate[1]} x ${crate[2]} - ${unit}`;
 	const kindMap = new Map();
 
 	kindMap.set('tubeCrate', ' <i class="nf nf-md-cylinder"></i>');
@@ -47,11 +47,11 @@ function setNewCrateLine(kind, crate, num) {
 
 /**
  * @function Adds all crates to the dialog menu
+ * @param {HTMLTemplateElement} frame
 */
 export async function populateCrates(frame) {
 	const { crates } =	await catchAllCrates();
 	const list =		new DocumentFragment();
-	const change =		globalThis.sessionStorage.getItem('SetCrates');
 	let count = 0;
 	let option;
 
@@ -68,8 +68,6 @@ export async function populateCrates(frame) {
 			}, 0);
 		};
 	};
-	change ? globalThis.sessionStorage.setItem('pane-1', 'populate') : false;
-	globalThis.sessionStorage.removeItem('PopulateCrates');
 	return(frame.appendChild(list));
 };
 
@@ -77,9 +75,8 @@ export async function populateCrates(frame) {
 /**
  * @function Gets the selected crate towards be altered.
 */
-export async function alterCrateSizes() {
+export async function alterCrateSizes(list) {
 	const selectedCrates =	[];
-	const list =			document.getElementById('crate-list');
 	let crate =				0;
 	let item;
 
@@ -87,7 +84,6 @@ export async function alterCrateSizes() {
 		item.childNodes[0].childNodes[0].checked ? selectedCrates.push(crate) : false;
 		crate++;
 	};
-	globalThis.sessionStorage.removeItem('PopulateCrates');
 	return (
 		selectedCrates.length === 0 ?
 			alert("WARNING: None crate selected!") :
@@ -101,9 +97,9 @@ export async function alterCrateSizes() {
  * @param {Array} list Array with the crate number to update.
 */
 async function updateCrateSizes(list) {
-	const SOLVED = await catchAllCrates();
-	const { crates } = SOLVED;
-	const memoCrate = [];
+	const SOLVED =		await catchAllCrates();
+	const { crates } =	SOLVED;
+	const memoCrate =	[];
 	let count = 0;
 
 	Object.entries(crates).map(data => {
@@ -125,7 +121,6 @@ async function updateCrateSizes(list) {
 	});
 	updateCratesData(SOLVED, memoCrate);
 	globalThis.sessionStorage.removeItem('SetCrates');
-	globalThis.location.reload();
 };
 
 
@@ -134,12 +129,12 @@ async function updateCrateSizes(list) {
  * @function Subtracts from default padding values the new ones.
 */
 function addNewSize(crate) {
-	const metrica = localStorage.getItem('metrica').split('-')[0].trimEnd();
-	const DEFAULTPAD = metrica === "cm" ? [23, 23, 28] : [9.039, 9.039, 11];
-	const sizes = JSON.parse(sessionStorage.getItem('SetCrates'));
-	const checkX = DEFAULTPAD[0] >= +sizes[0];
-	const checkZ = DEFAULTPAD[1] >= +sizes[1];
-	const checkY = DEFAULTPAD[2] >= +sizes[2];
+	const metrica =		localStorage.getItem('metrica').split('-')[0].trimEnd();
+	const DEFAULTPAD =	metrica === "cm" ? [23, 23, 28] : [9.039, 9.039, 11];
+	const sizes =		JSON.parse(sessionStorage.getItem('SetCrates'));
+	const checkX =		DEFAULTPAD[0] >= +sizes[0];
+	const checkZ =		DEFAULTPAD[1] >= +sizes[1];
+	const checkY =		DEFAULTPAD[2] >= +sizes[2];
 
 	if (sizes.includes(""))
 		return (crate);
@@ -153,6 +148,9 @@ function addNewSize(crate) {
 		+(+sizes[1] + (crate[1] - DEFAULTPAD[1])).toFixed(3) :
 		+sizes[1] + (crate[1] - DEFAULTPAD[1]);
 	crate[2] = metrica === "in" ?
+		+(+sizes[2] + (crate[2] - DEFAULTPAD[2])).toFixed(3) :
+		+sizes[2] + (crate[2] - DEFAULTPAD[2]);
+	crate[3] = metrica === "in" ?
 		+(+sizes[3] + (crate[3] - DEFAULTPAD[3])).toFixed(3) :
 		crate[3] = new CubCalc(crate[0], crate[1], crate[2]).cubCalcAir;
 	return (crate);
@@ -182,9 +180,12 @@ function airPortOptions(crate) {
  * @param {Array} newSizes new sizes to subtract from the solved crates
 */
 async function updateCratesData(data, newSizes) {
-	let airCubTotal = 0;
-	let PAX = 0;
-	let CARGO = 0;
+	const WORKER =		new Worker(
+		new URL('../worker.storage.save.mjs', import.meta.url), { type: "module" }
+	);
+	let airCubTotal =	0;
+	let PAX =			0;
+	let CARGO =			0;
 
 	data.crates.allCrates.map((crate, index) => {
 		if (index === newSizes[0]) {
@@ -197,5 +198,12 @@ async function updateCratesData(data, newSizes) {
 	}, 0);
 	data.crates.airCubTotal = +(airCubTotal).toFixed(3);
 	data.whichAirPort = [{ PAX, CARGO }];
-	await Promise.resolve(addNewWorksToIndexedDB(data, 'crate'));
+	WORKER.postMessage(data);
+	await new Promise((resolve, reject) => {
+		WORKER.onmessage = (res) => {
+			const { data } = res;
+			data === 'OK' ? resolve(true): reject(console.log(data));
+		};
+	}).then(msg => msg === true ? setPanels(): false)
+	return(true);
 };

@@ -1,5 +1,5 @@
 import { template, status, pane1, pane2 } from "./template.panel.mjs";
-import { populateCrates } from "./populate.dialog.mjs";
+import { alterCrateSizes, populateCrates } from "./populate.dialog.mjs";
 import { statusTable, statusTablePopulate } from "../../panels/status.panel.mjs"
 import { showCrates1 } from "../../panels/pane1.module.mjs";
 import { showCrates2 } from "../../panels/pane2.module.mjs";
@@ -56,9 +56,6 @@ export class DialogPadding extends HTMLElement {
 		link.href = './stylesheet.css';
 		shadowRoot.append(node);
 		shadowRoot.appendChild(link);
-
-		globalThis.sessionStorage.setItem('PopulateCrates', "call");
-		shadowRoot.getElementById('modal').setAttribute('open', '');
 		shadowRoot.getElementById('padding-close')
 			.addEventListener('click', this.close);
 		shadowRoot.getElementById('padding-apply')
@@ -68,7 +65,7 @@ export class DialogPadding extends HTMLElement {
 			if (this.apply()) {
 				applyBtn.disabled = true;
 				setTimeout(() => applyBtn.disabled = false, 1000);
-			}
+			};
 		});
 		const frameUl = shadowRoot.getElementById('crate-list');
 		await populateCrates(frameUl);
@@ -102,8 +99,9 @@ export class DialogPadding extends HTMLElement {
 
 	/**
 	* @method populates the first pane with all crates.
+	* @param {boolean} [update=false] - set the update status panel.
 	*/
-	async #populatePane1() {
+	async #populatePane1(update = false) {
 		const shadowRoot =	this.#shadowRoot.get(this);
 		const link =		document.createElement('link');
 		const clone =		pane1.content.cloneNode(true);
@@ -116,13 +114,16 @@ export class DialogPadding extends HTMLElement {
 		shadowRoot.append(node);
 		shadowRoot.appendChild(link);
 		const cratePane =	shadowRoot.getElementById('crates-only');
+		if(update)
+			while(cratePane.firstChild)
+				cratePane.removeChild(cratePane.firstChild);
 		return(reference ? await showCrates1(reference, cratePane): false);
 	};
 
 	/**
 	* @method populates the second panel with all crates opened.
 	*/
-	async #populatePane2() {
+	async #populatePane2(update = false) {
 		const shadowRoot =	this.#shadowRoot.get(this);
 		const link =		document.createElement('link');
 		const clone =		pane2.content.cloneNode(true);
@@ -138,6 +139,9 @@ export class DialogPadding extends HTMLElement {
 		shadowRoot.append(node);
 		shadowRoot.appendChild(link);
 		const openPane =	shadowRoot.getElementById('opened-crates');
+		if(update)
+			while(openPane.firstChild)
+				openPane.removeChild(openPane.firstChild);
 		return(reference ? await showCrates2(reference, openPane): false);
 	};
 
@@ -155,7 +159,7 @@ export class DialogPadding extends HTMLElement {
 	 */
 	async attributeChangedCallback(attrName, oldVal, newVal) {
 		const shadowRoot = 	this.#shadowRoot.get(this);
-		const status =		oldVal < newVal && attrName === 'content' && newVal !== 'FETCHED';
+		const status =		oldVal !== newVal && attrName === 'content' && newVal !== 'FETCHED';
 
 		// console.log(`Shadow: ${attrName}, ${oldVal}, ${newVal}`);
 		this.#type.push(newVal);
@@ -196,11 +200,13 @@ export class DialogPadding extends HTMLElement {
 	/**
 	 * @function call worker to updates the solved list applying the new sizes
 	 */
-	apply() {
-		const X =		this.shadowRoot.getElementById('pad_length');
-		const Z =		this.shadowRoot.getElementById('pad_depth');
-		const Y =		this.shadowRoot.getElementById('pad_height');
-		const storage =	sessionStorage;
+	async apply() {
+		const X =			this.shadowRoot.getElementById('pad_length');
+		const Z =			this.shadowRoot.getElementById('pad_depth');
+		const Y =			this.shadowRoot.getElementById('pad_height');
+		const storage =		sessionStorage;
+		const shadowRoot =	this.#shadowRoot.get(this);
+		const padding = 	shadowRoot.querySelector('#crate-list');
 
 		if ([X.value, Z.value, Y.value].includes("")) {
 			alert('ATTENTION: Character not allow found!');
@@ -210,7 +216,8 @@ export class DialogPadding extends HTMLElement {
 			structuredClone([X.value, Z.value, Y.value]
 		)));
 		[ X, Z, Y].map(size => size.value = '');
-		return (true);
+		await alterCrateSizes(padding);
+		setTimeout(async () => await populateCrates(padding) , 100);
 	};
 
 	/**
