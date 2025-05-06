@@ -1240,7 +1240,7 @@ tbody:nth-child(even) {
 
 
 .layer__open__close {
-	display: var(--layer-state);
+	display: var(block, --layer-state);
 	inset: 0;
 	position: relative;
 	transition: display 1s ease-in-out;

@@ -11,10 +11,6 @@
 import * as mod from './functions.front.end.mjs'
 import { createIDB, createOffLineIDB } from './link.storage.mjs';
 import { openCloseDisplay } from '../plotter/layer.controller.mjs'
-import { forceLogout } from './logout.mjs';
-// import { checkTokens } from './token.checkout.mjs';
-
-// const val = new Worker(new URL('./worker.login.mjs', import.meta.url), { type: "module" });
 
 globalThis.onload = async () => {
 	const color =		localStorage.getItem("mode");
@@ -27,7 +23,6 @@ globalThis.onload = async () => {
 	color === null ? localStorage.setItem("mode", "light") : false;
 	setCheckRadio();
 	setModeColor();
-	document.getElementById('crate-layers').disabled = true;
 	setTimeout(loadingPage, 1500);
 };
 

@@ -111,6 +111,7 @@ export async function crate(fetched = false) {
 	let grant =			document.cookie.split('=')[1];
 	let list;
 	const cratesAsCm =	await checkMetric();
+	const root =	document.querySelector(':root');
 
 	if (fetched || confirm("Ready to crate all works?") && cratesAsCm) {
 		setPanels();
@@ -123,6 +124,7 @@ export async function crate(fetched = false) {
 		addPanelInfoData();
 		grant === 'FULL' || grant === 'PLOTTER' || !grant ?
 			document.getElementById('crate-layers').disabled = false : 0;
+		root.style.setProperty("--layer-state", "block");
 	};
 	weak.add(estimate);
 	return ('Crated');
