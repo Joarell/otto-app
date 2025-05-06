@@ -7,7 +7,7 @@ function changeMode(color) {
 	body.remove("light-mode");
 	body.remove("dark-mode");
 	return color === "dark" ? body.add("dark-mode") : body.add("light-mode");
-}
+};
 
 // ╭───────────────────────────────────────────────────────────────────────╮
 // │ This is the header creator when the page or localStorage are updated. │
@@ -28,7 +28,7 @@ export function createHeader(table) {
 		</tr></tbody>
 	`;
 	return table.append(head);
-}
+};
 
 async function getIDBINFO(ref) {
 	const WORKER = new Worker(
@@ -45,7 +45,7 @@ async function getIDBINFO(ref) {
 		};
 	});
 	return request;
-}
+};
 
 function airPortStatus(create, sizeUnit) {
 	const MAXX = sizeUnit === "cm" ? 300 : 118.11; // INFO: cm and in max size
@@ -56,7 +56,7 @@ function airPortStatus(create, sizeUnit) {
 	const Y = create[2];
 
 	return X <= MAXX && Z <= MAXZ && Y <= MAXY ? "PAX" : "CARGO";
-}
+};
 
 function addHTMLTableLine(data, unit, table) {
 	const { crates } = data;
@@ -80,7 +80,7 @@ function addHTMLTableLine(data, unit, table) {
 				.join("");
 		}
 	}, 0);
-}
+};
 
 // ╭───────────────────────────────────────────────────────────╮
 // │ Returns all crates from the indexedDB or gets from cloud. │
@@ -104,7 +104,6 @@ export async function showCrates1(estimate, pane) {
 				: false;
 		}
 	}
-	// sessionStorage.removeItem("pane1");
 	return(pane.appendChild(finishedRender(element, crates)));
 };
 

@@ -7,7 +7,7 @@ function changeMode(color) {
 	body.remove("light-mode");
 	body.remove("dark-mode");
 	return color === "dark" ? body.add("dark-mode") : body.add("light-mode");
-}
+};
 
 // ╭───────────────────────────────────────────────────────────────────────╮
 // │ This is the header creator when the page or localStorage are updated. │
@@ -28,7 +28,7 @@ export function createHeader(table) {
 		</tr></tbody>
 	`;
 	return table.appendChild(head);
-}
+};
 
 async function getIDBDataBrowser(ref) {
 	const WORKER = new Worker(
@@ -45,7 +45,7 @@ async function getIDBDataBrowser(ref) {
 		};
 	});
 	return(request);
-}
+};
 
 function layerInterface(layer, num, unit) {
 	if (!Array.isArray(layer))
@@ -68,7 +68,7 @@ function layerInterface(layer, num, unit) {
 		}
 	}, 0).join("");
 	return(content);
-}
+};
 
 function addSameSizeLayerWorksLine({ works }, table, unit, create) {
 	const AUX =		Array.isArray(works[0][0]) ? works[0] : works;
@@ -94,7 +94,7 @@ function addSameSizeLayerWorksLine({ works }, table, unit, create) {
 		});
 	}
 	return table;
-}
+};
 
 function addHTMLLayerWorksLine({ works }, table, unit, kind, create) {
 	let layer;
@@ -174,7 +174,7 @@ function addHTMLTableLine({ crates }, table, kind) {
 		} else
 			addHTMLLayerWorksLine(crates[i], table, UNIT, kind, crates[i - 1]);
 	}, 0);
-}
+};
 
 // ╭───────────────────────────────────────────────────────────╮
 // │ Returns all crates from the indexedDB or gets from cloud. │
@@ -197,4 +197,4 @@ export async function showCrates2(estimate, pane) {
 	while(pane.firstChild)
 		pane.removeChild(pane.firstChild)
 	return(pane.appendChild(element));
-}
+};
