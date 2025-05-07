@@ -151,7 +151,7 @@ function browserStoragePrepare() {
 	createIDB();
 	if (grants === "OFF" || grants === "FULL") {
 		createOffLineIDB();
-		globalThis.navigator.serviceWorker.register('../sw.mjs');
+		// globalThis.navigator.serviceWorker.register('../sw.mjs');
 	}
 	return (mod.displayCub() && mod.displayAirCub() && mod.countWorks());
 };

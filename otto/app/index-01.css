@@ -3,10 +3,20 @@
 header {
 	background: var(--gradient);
 	text-align: center;
-	height: 8rem;
 	font-family: 'Big Shoulders Stencil Display', cursive;
 	overflow: clip;
 	border-radius: 1rem;
+	border: 1rem red;
+	/* position: absolute; */
+	height: 5dvh;
+	width: 99dvw;
+	/* isolation: isolate; */
+	/* & { */
+		/* height: 100dvh; */
+		/* width: 99dvw; */
+		/* clip-path: var(--header-path-open); */
+		/* clip-path: var(--header-path-close, --header-path-open); */
+	/* } */
 }
 
 
@@ -16,7 +26,7 @@ footer {
 	grid-area: header;
 	background: var(--gradient1);
 	text-align: center;
-	height: 8rem;
+	height: 3rem;
 	font-family: 'Big Shoulders Stencil Display', cursive;
 	overflow: clip;
 	border-radius: 1rem;
@@ -25,8 +35,12 @@ footer {
 
 .header--title, .container__footer {
 	margin: 0 0;
-	font-size: 13rem;
-	opacity: .05;
+	font-size: 5rem;
+	opacity: .1;
+}
+
+.container__footer {
+	text-align: center;
 }
 
 

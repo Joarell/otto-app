@@ -132,6 +132,8 @@
 	--pressed: #77797E;
 	scroll-behavior: smooth;
 	--layer-state: block;
+	--header-path-open: path("M 2000,0 L 0,0 L 0,1000 L 255,1900 L 256,66 A 10,10 0,0,1 267,60 L 2000,60 Z");
+	--header-path-close: path("M 2000,0 L 0,0 L 0,40 A 10,10 0,0,0 10,50 L 2000,60 Z");
 }
 
 
@@ -1302,7 +1304,7 @@ tbody:nth-child(even) {
 		grid-template-columns: repeat(auto-fit, minmax(mian(25rem, 10cqw), 1fr));
 		column-gap: var(--colg);
 		row-gap: var(--rowg);
-		padding: 2% 20%;
+		padding: 2% 30%;
 	}
 
 	.accordion-panel:has([aria-expanded="false"]) {
@@ -1352,8 +1354,8 @@ tbody:nth-child(even) {
 	*/
 	/* Made by Kailoyan Todorov - from https://uiverse.io/bociKond/wise-bat-13 */
 	.spinner {
-		width: 10rem;
-		height: 10rem;
+		width: 5rem;
+		height: 5rem;
 		--clr: var(--dark-blue2);
 		--clr-alpha: var(--gradient);
 		animation: spinner 3.6s infinite ease;
@@ -1366,14 +1368,14 @@ tbody:nth-child(even) {
 
 		& > div {
 			background-color: var(--clr-alpha);
-			height: 100%;
+			height: 50%;
 			position: absolute;
-			width: 100%;
+			width: 50%;
 			border: .2rem solid var(--clr);
 		}
 
 		& div:nth-of-type(1) {
-			transform: translateZ(-5rem) rotateY(180deg);
+			transform: translateZ(-1.4rem) rotateY(180deg);
 		}
 
 		& div:nth-of-type(2) {
@@ -1397,7 +1399,7 @@ tbody:nth-child(even) {
 		}
 
 		& div:nth-of-type(6) {
-			transform: translateZ(5rem);
+			transform: translateZ(1.4rem);
 		}
 	}
 
@@ -1760,7 +1762,7 @@ tbody:nth-child(even) {
 			justify-content: space-between;
 		}
 		& div:nth-of-type(2):has(h3) {
-			margin-top: 8rem;
+			margin-top: 3rem;
 		}
 	}
 
