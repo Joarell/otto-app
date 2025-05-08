@@ -4,7 +4,6 @@ type Auth = { response: Response, headers: Headers };
 
 export default class extends WorkerEntrypoint {
 	async fetch(request: Request) {
-		return(this.env.ASSETS.fetch(request));
 		const url =			new URL(request.url);
 		const authAccess =	await this.authCheck(request);
 
