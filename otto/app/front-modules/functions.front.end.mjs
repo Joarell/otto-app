@@ -159,7 +159,7 @@ export async function cleanInputs(fetched = false) {
 	let granted =	document.cookie;
 
 	granted = granted.split('=')[1]
-	RENDER.hasChildNodes() ? openDisplay() : false;
+	RENDER && RENDER.hasChildNodes() ? openDisplay() : false;
 		globalThis.document.getElementById("input_estimate").select();
 		globalThis.document.getElementById("input_code").select();
 	countWorks();

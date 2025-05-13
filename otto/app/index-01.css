@@ -1,26 +1,18 @@
 
 
 header {
-	background: var(--gradient);
-	text-align: center;
+	background: transparent;
+	text-align: left;
 	font-family: 'Big Shoulders Stencil Display', cursive;
 	overflow: clip;
-	border-radius: 1rem;
-	border: 1rem red;
-	/* position: absolute; */
+	border-bottom: .1rem solid var(--lines);
 	height: 5dvh;
 	width: 99dvw;
-	/* isolation: isolate; */
-	/* & { */
-		/* height: 100dvh; */
-		/* width: 99dvw; */
-		/* clip-path: var(--header-path-open); */
-		/* clip-path: var(--header-path-close, --header-path-open); */
-	/* } */
 }
 
 
 footer {
+	display: none;
 	position: relative;
 	place-items: center;
 	grid-area: header;
@@ -37,6 +29,9 @@ footer {
 	margin: 0 0;
 	font-size: 5rem;
 	opacity: .1;
+	& > h1 {
+		color: var(--iframes-bg);
+	}
 }
 
 .container__footer {
