@@ -801,8 +801,23 @@ tbody:nth-child(even) {
 			grid-area: 2 / 1 / 2 / 2;
 			align-self: end;
 			justify-self: center;
-			width: 50%;
-			height: 50%;
+			& {
+				display: grid;
+				grid-template-columns: 1fr;
+				grid-template-rows: 1fr;
+				& .logo-otto {
+					width: 70%;
+					height: 70%;
+					grid-area: 1 / 1 / 1 / 1;
+					align-self: center;
+					justify-self: center;
+				}
+				& .spinner {
+					grid-area: 1 / 1 / 1 / 1;
+					align-self: center;
+					justify-self: center;
+				}
+			}
 		}
 	}
 	& .left-section, .right-section {
@@ -1781,8 +1796,9 @@ tbody:nth-child(even) {
 	*/
 	/* Made by Kailoyan Todorov - from https://uiverse.io/bociKond/wise-bat-13 */
 	.spinner {
-		width: 5rem;
-		height: 5rem;
+		margin-top: 2rem;
+		width: 2rem;
+		height: 2rem;
 		--clr: var(--dark-blue2);
 		--clr-alpha: var(--gradient);
 		animation: spinner 3.6s infinite ease;
@@ -1798,11 +1814,11 @@ tbody:nth-child(even) {
 			height: 50%;
 			position: absolute;
 			width: 50%;
-			border: .2rem solid var(--clr);
+			border: .1rem solid var(--clr);
 		}
 
 		& div:nth-of-type(1) {
-			transform: translateZ(-1.4rem) rotateY(180deg);
+			transform: translateZ(-.5rem) rotateY(180deg);
 		}
 
 		& div:nth-of-type(2) {
@@ -1826,7 +1842,7 @@ tbody:nth-child(even) {
 		}
 
 		& div:nth-of-type(6) {
-			transform: translateZ(1.4rem);
+			transform: translateZ(.5rem);
 		}
 	}
 
