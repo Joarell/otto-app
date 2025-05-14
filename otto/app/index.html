@@ -47,7 +47,7 @@
 					<section class="side-menu">
 						<div class="section__menu">
 							<div class="section-right-up">
-								<div class="coins">
+								<div class="coins left-menu">
 									<button class="trigger-menu" id="exchange-btn" aria-controls="exchange--content" aria-expanded="false">
 										<svg aria-label="currency" class="menu-icon" id="exchange-btn">
 											<use href="#exchange-material" id="ex-btn"></use>
@@ -147,9 +147,15 @@
 						</div>
 						</div>
 						<div class="IO__press" id="IO--btn">
-							<button type="button" class="IO__press--btn add--btn" id="add-btn">ADD</button>
-							<button type="button" class="IO__press--btn del--btn" id="remove-btn">DEL</button>
-							<button type="button" class="IO__press--btn clear--btn" id="clear-btn">Reset</button>
+							<button type="button" class="IO__press--btn add--btn" id="add-btn">ADD
+								<!-- <svg class="copy-message" preserveAspectRatio="none"> <use href="#copy-content-icon"></use> </svg> -->
+							</button>
+							<button type="button" class="IO__press--btn del--btn" id="remove-btn">DEL
+								<!-- <svg class="copy-message" preserveAspectRatio="none"> <use href="#copy-content-icon"></use> </svg> -->
+							</button>
+							<button type="button" class="IO__press--btn clear--btn" id="clear-btn">Reset
+								<!-- <svg class="copy-message" preserveAspectRatio="none"> <use href="#copy-content-icon"></use> </svg> -->
+							</button>
 						</div>
 						<div class="IO__press__crate">
 							<button name="waves" class="IO__crate" id="crate-btn">
@@ -161,13 +167,17 @@
 					</div>
 				</div>
 				<div class="container-bottom" aria-labelledby="results panel">
-					<div class="container__results copy-pane1">
-						<div loading="lazy" class="container__results--open" id="first_pane" title="Works set"></div>
-						<!-- <button class="IO__press--btn copy" id="copy-pane1">COPY <p class="copy-message" id="copy-message">Copied!</p></button> -->
+					<div class="container__results">
+						<button class="copy copy-pane1" id="copy-pane1">
+							<div loading="lazy" class="container__results--open" id="first_pane" title="Works set"></div>
+							<svg class="copy-message" preserveAspectRatio="none"> <use href="#copy-content-icon"></use> </svg>
+						</button>
 					</div>
-					<div class="container__results  copy-pane2">
-						<div loading="lazy" class="container__results--crates" id="second_pane" title="List done"></div>
-						<!-- <button class="IO__press--btn copy" id="copy-pane2">COPY <p class="copy-message">Copied!</p> </button> -->
+					<div class="container__results copy-pane2">
+						<button class="copy copy-pane2" id="copy-pane2">
+							<div loading="lazy" class="container__results--crates" id="second_pane" title="List done"></div>
+							<svg class="copy-message" preserveAspectRatio="none"> <use href="#copy-content-icon"></use> </svg>
+						</button>
 					</div>
 					<!-- <div class="container__results result--panels"></div> -->
 					<!-- <div class="container-interactive"> -->
@@ -249,44 +259,44 @@
 				</div>
 				<div class="package-crates">
 					<div class="top-btns">
-						<div class='copy-content'>
-							<button id="content-copy" type="">
-								<svg class="" preserveAspectRatio="none"> <use href="#copy-content-icon"></use> </svg>
-							</button>
-						</div>
 						<div class="content-settings">
-							<button id="settings-content"type="">
+							<button class="settings-content" id="settings-content"type="">
 								<svg class="" preserveAspectRatio="none"><use href="#content-settings"></use></svg>
 							</button>
 						</div>
 					</div>
-					<div>
-					</div>
-					<div class="first-pane"> </div>
-					<div class="seccond-pane"> </div>
+					<div></div>
+					<button class="copy-contents1" id="content-copy1" type="">
+						<div id="first-pane"></div>
+						<svg class="copy-message" preserveAspectRatio="none"> <use href="#copy-content-icon"></use> </svg>
+					</button>
+					<button class="copy-contents2" id="content-copy2" type="">
+						<div id="seccond-pane"></div>
+						<svg class="copy-message" preserveAspectRatio="none"> <use href="#copy-content-icon"></use> </svg>
+					</button>
 					<div class="bottom-btns">
 						<div>
-							<button type="">
+							<button type="" class="package-material">
 								<svg class="" preserveAspectRatio="none"><use href="#package-material"></use></svg>
 							</button>
 						</div>
 						<div>
-							<button type="">
+							<button type="" class="reset-sizes">
 								<svg class="" preserveAspectRatio="none"><use href="#check-sizes"></use></svg>
 							</button>
 						</div>
 						<div>
-							<button class="add__new__filed" type="" disabled>
+							<button class="add__new__field" type="" disabled>
 								<svg class="" preserveAspectRatio="none"><use href="#add-fields"></use></svg>
 							</button>
 						</div>
 						<div>
-							<button type="">
+							<button type="" class="confirm-btn">
 								<svg class="" preserveAspectRatio="none"><use href="#confirm-btn"></use></svg>
 							</button>
 						</div>
 						<div>
-							<button type="">
+							<button type="" class="cancel-btn">
 								<svg class="" preserveAspectRatio="none"><use href="#cancel-btn"></use></svg>
 							</button>
 						</div>
@@ -369,7 +379,7 @@
 						</div>
 					</div>
 				</template>
-				<svg width="0" height="0" class="hidden board-icon" preserveAspectRatio="none">
+				<svg id="" class="hidden board-icon" preserveAspectRatio="none">
 					<symbol>
 						<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
 						<svg id="package-material" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -397,7 +407,7 @@
 					</symbol>
 					<symbol>
 						<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-						<svg id="add-fields" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<svg id="add-fields" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" overflow="visible">
 							<path opacity="0.5" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" fill="#1C274C"/>
 							<path d="M12.75 9C12.75 8.58579 12.4142 8.25 12 8.25C11.5858 8.25 11.25 8.58579 11.25 9L11.25 11.25H9C8.58579 11.25 8.25 11.5858 8.25 12C8.25 12.4142 8.58579 12.75 9 12.75H11.25V15C11.25 15.4142 11.5858 15.75 12 15.75C12.4142 15.75 12.75 15.4142 12.75 15L12.75 12.75H15C15.4142 12.75 15.75 12.4142 15.75 12C15.75 11.5858 15.4142 11.25 15 11.25H12.75V9Z" fill="#1C274C"/>
 						</svg>
@@ -463,7 +473,7 @@
 					<symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" id="arrow-right-material">
 						<path d="M400-280v-400l200 200-200 200Z"></path>
 					</symbol>
-					<symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 96 960 960" id="exchange-material">
+					<symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 50 960 980" id="exchange-material">
 						<path
 							d="M480 1016q-112 0-216-66T100 799v137H40V696h240v60H143q51 77 145.5 138.5T480 956q78 0 147.5-30t121-81.5Q800 793 830 723.5T860 576h60q0 91-34.5 171T791 887q-60 60-140 94.5T480 1016Zm-29-153v-54q-45-12-75.5-38.5T324 698l51-17q12 38 42.5 60t69.5 22q40 0 66.5-19.5T580 692q0-33-25-55.5T463 586q-60-25-90-54t-30-78q0-44 30-75t80-38v-51h55v51q38 4 66 24t45 55l-48 23q-15-28-37-42t-52-14q-39 0-61.5 18T398 454q0 32 26 51t84 43q69 29 98 61t29 83q0 25-9 46t-25.5 36Q584 789 560 798.5T506 811v52h-55ZM40 576q0-91 34.5-171T169 265q60-60 140-94.5T480 136q112 0 216 66t164 151V216h60v240H680v-60h137q-51-77-145-138.5T480 196q-78 0-147.5 30t-121 81.5Q160 359 130 428.5T100 576H40Z">
 						</path>
@@ -473,7 +483,7 @@
 							d="M796 935 533 672q-30 26-69.959 40.5T378 727q-108.162 0-183.081-75Q120 577 120 471t75-181q75-75 181.5-75t181 75Q632 365 632 471.15 632 514 618 554q-14 40-42 75l264 262-44 44ZM377 667q81.25 0 138.125-57.5T572 471q0-81-56.875-138.5T377 275q-82.083 0-139.542 57.5Q180 390 180 471t57.458 138.5Q294.917 667 377 667Z">
 						</path>
 					</symbol>
-					<symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 96 960 960" id="regua-material">
+					<symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 -80 960 900" id="regua-material">
 						<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
 						<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path opacity="0.5" d="M6 2H8.25H9.75H11.25H12.75H14.25H15.75H17.25L18.75 2.00008C19.9896 2.00126 20.6376 2.02062 21.1111 2.33706C21.3295 2.48298 21.517 2.67048 21.6629 2.88886C22 3.39331 22 4.09554 22 5.5C22 6.90446 22 7.60669 21.6629 8.11114C21.517 8.32952 21.3295 8.51702 21.1111 8.66294C20.6067 9 19.9045 9 18.5 9H11C10.0572 9 9.58579 9 9.29289 9.29289C9 9.58579 9 10.0572 9 11V18.5C9 19.9045 9 20.6067 8.66294 21.1111C8.51702 21.3295 8.32952 21.517 8.11114 21.6629C7.60669 22 6.90446 22 5.5 22C4.09554 22 3.39331 22 2.88886 21.6629C2.67048 21.517 2.48298 21.3295 2.33706 21.1111C2.02062 20.6376 2.00126 19.9896 2.00008 18.75L2 17.25V15.75V14.25V12.75V11.25V9.75V8.25V6C2 4.11438 2 3.17157 2.58579 2.58579C3.17157 2 4.11438 2 6 2Z" fill="#1C274C"/>
