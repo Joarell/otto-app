@@ -14,6 +14,7 @@
 		<link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
 		<script async type="module" src="./main.min.mjs"></script>
 		<script async type="module" src="./front-modules/shadowElements/dialog.padding.update.mjs"></script>
+		<!-- <script src="https://cdn.plot.ly/plotly-3.0.1.min.js" charset="utf-8"></script> -->
 		<link rel="stylesheet" href="./stylesheet.css" type="text/css" />
 		<link rel="manifest" href="./manifest.json" crossorigin="use-credentials">
 		<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,20 +38,20 @@
 					<section class="side-menu">
 						<div class="section__menu">
 							<div class="section-right-up">
-								<div class="coins left-menu">
-									<button class="trigger-menu" id="exchange-btn" aria-controls="exchange--content" aria-expanded="false">
-										<svg aria-label="currency" class="menu-icon" id="exchange-btn">
-											<use href="#exchange-material" id="ex-btn"></use>
-										</svg>
-									</button>
-								</div>
-								<div class="size_converter">
-									<button class="trigger-menu units" aria-controls="units-conversion" id="units-btn" aria-expanded="false">
-										<svg aria-label="units converter menu" class="menu-icon" id="units-btn">
-											<use href="#regua-material" id="unit-btn"></use>
-										</svg>
-									</button>
-								</div>
+								<!-- <div class="coins left-menu"> -->
+								<!-- 	<button class="trigger-menu" id="exchange-btn" aria-controls="exchange--content" aria-expanded="false"> -->
+								<!-- 		<svg aria-label="currency" class="menu-icon" id="exchange-btn"> -->
+								<!-- 			<use href="#exchange-material" id="ex-btn"></use> -->
+								<!-- 		</svg> -->
+								<!-- 	</button> -->
+								<!-- </div> -->
+								<!-- <div class="size_converter"> -->
+								<!-- 	<button class="trigger-menu units" aria-controls="units-conversion" id="units-btn" aria-expanded="false"> -->
+								<!-- 		<svg aria-label="units converter menu" class="menu-icon" id="units-btn"> -->
+								<!-- 			<use href="#regua-material" id="unit-btn"></use> -->
+								<!-- 		</svg> -->
+								<!-- 	</button> -->
+								<!-- </div> -->
 								<div class="section__menu--btn layer__open__close">
 									<button aria-label="Checking layer" class="layers-btn" data-popup="" id="crate-layers" disabled>
 										<svg aria-hidden="true" class="preview-icon" id="layer-crate" preserveAspectRatio="none">
@@ -82,6 +83,36 @@
 						</div>
 					</div>
 				</div>
+				<template id="Render">
+					<div class="plotter" id="layers" aria-hidden="false" aria-controls="crate-layers" aria-expanded="true">
+						<div class="plotter__header">
+							<h2>⊂ Internal Layers</h2>
+							<div class="plotter__menu" aria-hidden="true" aria-controls="crate-layers" aria-expanded="false">
+								<div class="plotter__menu__crates" id="display-crates">
+									<div class="plotter__crate__list" id="crate-list">
+										<select class="crates-done" id="selected-crate"></select>
+									</div>
+								</div>
+							</div>
+							<p id="layer-count">Current layer: 0 / 0 </p>
+						</div>
+						<div class="plotter__display" id="plotter-display">
+							<!-- <svg class="crate-layer"></svg> -->
+						</div>
+						<div class="layer-button">
+							<button name="Previous" class="IO__press--layer " id="layer-prev">
+								<svg id="previous" preserveAspectRatio="none">
+									<use xlink:href="#arrow-left-layer" id="previous"></use>
+								</svg>
+							</button>
+							<button name="Next" class="IO__press--layer" id="layer-next">
+								<svg id="next" preserveAspectRatio="none">
+									<use xlink:href="#arrow-right-layer" id="next"></use>
+								</svg>
+							</button>
+						</div>
+					</div>
+				</template>
 				<div class="otto__interface container__status__pane" id="body-app">
 					<div class="container__insert">
 						<div class="container__status__counter">
@@ -145,12 +176,9 @@
 						</div>
 						</div>
 						<div class="IO__press" id="IO--btn">
-							<button type="button" class="IO__press--btn add--btn" id="add-btn">ADD
-							</button>
-							<button type="button" class="IO__press--btn del--btn" id="remove-btn">DEL
-							</button>
-							<button type="button" class="IO__press--btn clear--btn" id="clear-btn">Reset
-							</button>
+							<button type="button" class="IO__press--btn add--btn" id="add-btn">ADD</button>
+							<button type="button" class="IO__press--btn del--btn" id="remove-btn">DEL</button>
+							<button type="button" class="IO__press--btn clear--btn" id="clear-btn">Reset</button>
 						</div>
 						<div class="IO__press__crate">
 							<button name="waves" class="IO__crate" id="crate-btn">
@@ -163,34 +191,63 @@
 				</div>
 				<div class="container-bottom" aria-labelledby="results panel">
 					<div class="container__results">
-						<button class="copy copy-pane1" id="copy-pane1">
+						<button class="copy copy-pane1" id="copy-pane1" aria-hidden="false">
 							<div loading="lazy" class="container__results--open" id="first_pane" title="Works set"></div>
 							<svg class="copy-message" preserveAspectRatio="none"> <use href="#copy-content-icon"></use> </svg>
 						</button>
+						<!-- <div class="menu__input" aria-hidden="true" role="region"> -->
+						<!-- 	<form class="menu__currency"> -->
+						<!-- 		<div> -->
+						<!-- 			<select id="coin1" class="currency-menu"> -->
+						<!-- 				<option selected>BRL</option> -->
+						<!-- 			</select> -->
+						<!-- 			<div> -->
+						<!-- 				<input type="text" name="currency" inputmode="numeric" class="IO__add--form get__currency" id="coin1-input" required> -->
+						<!-- 			</div> -->
+						<!-- 		</div> -->
+						<!-- 		<div> -->
+						<!-- 			<select id="coin2" class="currency-menu"> -->
+						<!-- 				<option selected>USD</option> -->
+						<!-- 			</select> -->
+						<!-- 			<div> -->
+						<!-- 				<input type="text" name="currency" inputmode="numeric" class="IO__add--form get__currency" id="coin2-input" required> -->
+						<!-- 			</div> -->
+						<!-- 		</div> -->
+						<!-- 	</form> -->
+						<!-- </div> -->
 					</div>
 					<div class="container__results copy-pane2">
-						<button class="copy copy-pane2" id="copy-pane2">
+						<button class="copy copy-pane2" id="copy-pane2" aria-hidden="false">
 							<div loading="lazy" class="container__results--crates" id="second_pane" title="List done"></div>
 							<svg class="copy-message" preserveAspectRatio="none"> <use href="#copy-content-icon"></use> </svg>
 						</button>
+						<!-- <div class="menu__input" aria-hidden="true" role="region"> -->
+						<!-- 	<form class="menu__units" id="units"> -->
+						<!-- 		<div> -->
+						<!-- 			<select id="units1"> -->
+						<!-- 				<option selected>inches</option> -->
+						<!-- 				<option>meters</option> -->
+						<!-- 				<option>centimeters</option> -->
+						<!-- 			</select> -->
+						<!-- 			<div> -->
+						<!-- 				<input type="text" name="measure" inputmode="numeric" class="get__measure IO__add--form" id="input-unit1" required value=0> -->
+						<!-- 			</div> -->
+						<!-- 		</div> -->
+						<!-- 		<div> -->
+						<!-- 			<select id="units2"> -->
+						<!-- 				<option selected>centimeters</option> -->
+						<!-- 				<option>inches</option> -->
+						<!-- 				<option>meters</option> -->
+						<!-- 			</select> -->
+						<!-- 			<div> -->
+						<!-- 				<input type="text" name="measures" inputmode="numeric" class="get__measure IO__add--form" id="input-unit2" required value=0> -->
+						<!-- 			</div> -->
+						<!-- 		</div> -->
+						<!-- 	</form> -->
+						<!-- </div> -->
 					</div>
+
 					<!-- 				<span class="menu__option--text" data-role="popover" data-popover-text="currency">currency</span> -->
-					<!-- 				<div class="menu__input" aria-hidden="true" role="region"> -->
-					<!-- 					<form class="menu__currency"> -->
-					<!-- 						<div> -->
-					<!-- 							<select id="coin1" class="currency-menu"> -->
-					<!-- 								<option selected>brl</option> -->
-					<!-- 							</select> -->
-					<!-- 							<select id="coin2" class="currency-menu"> -->
-					<!-- 								<option selected>usd</option> -->
-					<!-- 							</select> -->
-					<!-- 						</div> -->
-					<!-- 						<div> -->
-					<!-- 							<input type="text" name="currency" inputmode="numeric" class="get__currency menu__input--form" id="coin1-input" required> -->
-					<!-- 							<input type="text" name="currency" inputmode="numeric" class="get__currency menu__input--form" id="coin2-input" required> -->
-					<!-- 						</div> -->
-					<!-- 					</form> -->
-					<!-- 				</div> -->
 					<!-- 			</h3> -->
 					<!-- 		</div> -->
 					<!-- 		<div class="accordion-panel units-conversion" aria-hidden="true" aria-labelledby="units-conversion" role="region"> -->
@@ -202,24 +259,6 @@
 					<!-- 				</button> -->
 					<!-- 				<span lang="en" class="menu__option--text" data-role="popover" data-popover-text="units">units</span> -->
 					<!-- 				<div class="menu__input" aria-hidden="true" role="region"> -->
-					<!-- 					<form class="menu__units" id="units"> -->
-					<!-- 						<div> -->
-					<!-- 							<select id="units1"> -->
-					<!-- 								<option selected>inches</option> -->
-					<!-- 								<option>meters</option> -->
-					<!-- 								<option>centimeters</option> -->
-					<!-- 							</select> -->
-					<!-- 							<select id="units2"> -->
-					<!-- 								<option selected>centimeters</option> -->
-					<!-- 								<option>inches</option> -->
-					<!-- 								<option>meters</option> -->
-					<!-- 							</select> -->
-					<!-- 						</div> -->
-					<!-- 						<div> -->
-					<!-- 							<input type="text" name="measure" inputmode="numeric" class="get__measure menu__input--form" id="input-unit1" required value=0> -->
-					<!-- 							<input type="text" name="measures" inputmode="numeric" class="get__measure menu__input--form" id="input-unit2" required value=0> -->
-					<!-- 						</div> -->
-					<!-- 					</form> -->
 					<!-- 				</div> -->
 					<!-- 			</h3> -->
 					<!-- 		</div> -->
@@ -318,36 +357,6 @@
 					</div>
 				</template>
 				<!-- <div id="show-layer"></div> -->
-				<template id="Render">
-					<div class="plotter" id="layers" aria-hidden="true" aria-controls="crate-layers" aria-expanded="false">
-						<div class="plotter__header">
-							<h2>⊂ Internal Layers</h2>
-							<div class="plotter__menu" aria-hidden="true" aria-controls="crate-layers" aria-expanded="false">
-								<div class="plotter__menu__crates" id="display-crates">
-									<div class="plotter__crate__list" id="crate-list">
-										<select class="crates-done" id="selected-crate"></select>
-									</div>
-								</div>
-							</div>
-							<p id="layer-count">Current layer: 0 / 0 </p>
-						</div>
-						<div class="plotter__display">
-							<svg class="crate-layer"></svg>
-						</div>
-						<div class="layer-button">
-							<button name="Previous" class="IO__press--btn " id="layer-prev">
-								<svg id="previous" preserveAspectRatio="none">
-									<use xlink:href="#arrow-left-material" id="previous"></use>
-								</svg>
-							</button>
-							<button name="Next" class="IO__press--btn " id="layer-next">
-								<svg id="next" preserveAspectRatio="none">
-									<use xlink:href="#arrow-right-material" id="next"></use>
-								</svg>
-							</button>
-						</div>
-					</div>
-				</template>
 				<svg id="" class="hidden board-icon" preserveAspectRatio="none">
 					<symbol>
 						<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
@@ -438,9 +447,6 @@
 								<rect width="647" height="731" fill="white"></rect>
 							</clipPath>
 						</defs>
-					</symbol>
-					<symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" id="arrow-right-material">
-						<path d="M400-280v-400l200 200-200 200Z"></path>
 					</symbol>
 					<symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 50 960 980" id="exchange-material">
 						<path
@@ -589,6 +595,20 @@
 						<path fill="#002A3D"
 							d="M172 166.445C175.068 166.445 177.556 168.932 177.556 172C177.556 175.068 175.068 177.556 172 177.556C168.932 177.556 166.444 175.068 166.444 172C166.444 168.932 168.932 166.445 172 166.445ZM172 177.021C174.773 177.021 177.021 174.773 177.021 172C177.021 169.227 174.773 166.979 172 166.979C169.227 166.979 166.979 169.227 166.979 172C166.979 174.773 169.227 177.021 172 177.021Z"
 							id="center"></path>
+						<symbol>
+							<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+							<svg id="arrow-left-layer" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path opacity="0.5" d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22Z" fill="#1C274C"/>
+								<path d="M12.9697 8.46967C13.2626 8.17678 13.7374 8.17678 14.0303 8.46967C14.3232 8.76256 14.3232 9.23744 14.0303 9.53033L11.5607 12L14.0303 14.4697C14.3232 14.7626 14.3232 15.2374 14.0303 15.5303C13.7374 15.8232 13.2626 15.8232 12.9697 15.5303L9.96967 12.5303C9.67678 12.2374 9.67678 11.7626 9.96967 11.4697L12.9697 8.46967Z" fill="#1C274C"/>
+							</svg>
+						</symbol>
+						<symbol>
+							<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+							<svg id="arrow-right-layer" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path opacity="0.5" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="#1C274C"/>
+								<path d="M11.0303 8.46967C10.7374 8.17678 10.2626 8.17678 9.96967 8.46967C9.67678 8.76256 9.67678 9.23744 9.96967 9.53033L12.4393 12L9.96967 14.4697C9.67678 14.7626 9.67678 15.2374 9.96967 15.5303C10.2626 15.8232 10.7374 15.8232 11.0303 15.5303L14.0303 12.5303C14.3232 12.2374 14.3232 11.7626 14.0303 11.4697L11.0303 8.46967Z" fill="#1C274C"/>
+							</svg>
+						</symbol>
 					</svg>
 				</div>
 				<div>
@@ -596,5 +616,4 @@
 				</div>
 			</footer>
 		</body>
-
 </html>
