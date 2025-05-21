@@ -1,8 +1,5 @@
-
-
-import { plotter } from "./layers.mjs";
 import { displayClean, populateOptions } from "./select.menu.mjs";
-
+const { Plotly } = globalThis;
 
 export function openCloseDisplay (element, template) {
 	element.map(plotter => {
@@ -92,3 +89,26 @@ export function changeCrateDisplay() {
 	displayClean();
 	return(renderLayer(+crateNum.split(' ')[1]));
 };
+
+// const data = [{
+//     type: 'volume',
+//     x: [10, 10, 10, 10, 50, 50, 50, 50],
+//     y: [10, 50, 10, 50, 10, 50, 10, 50],
+//     z: [50, 50, 10, 10, 50, 50, 10, 10],
+// 	value: [1,2,3,4,5,6,7,8],
+//     opacity: 0.5,
+// }];
+//
+// const layout = {
+//     scene: {
+//         // xaxis: {range: [-0.2, 1.2]},
+//         // yaxis: {range: [-0.2, 1.2]},
+//         // zaxis: {range: [-0.2, 1.2]},
+//         xaxis: {range: [-10, 100]},
+//         yaxis: {range: [-10, 100]},
+//         zaxis: {range: [-10, 100]},
+//         aspectratio: {x: 200, y: 200, z: 200}
+//     }
+// };
+//
+// Plotly.newPlot('plotter-display', data, layout, {showSendToCloud: true});

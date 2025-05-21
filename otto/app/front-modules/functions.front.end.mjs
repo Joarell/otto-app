@@ -121,7 +121,7 @@ export async function crate(fetched = false) {
 		estimate.crates =		cratesAsCm;
 		addNewWorksToIndexedDB(estimate, fetched);
 
-		addPanelInfoData();
+		// addPanelInfoData();
 		grant === 'FULL' || grant === 'PLOTTER' || !grant ?
 			document.getElementById('crate-layers').disabled = false : 0;
 		root.style.setProperty("--layer-state", "block");

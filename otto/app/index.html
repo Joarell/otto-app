@@ -273,15 +273,253 @@
 							</button>
 						</div>
 					</div>
-					<div></div>
-					<button class="copy-contents1" id="content-copy1" type="">
-						<div id="first-pane"></div>
-						<svg class="copy-message" preserveAspectRatio="none"> <use href="#copy-content-icon"></use> </svg>
-					</button>
-					<button class="copy-contents2" id="content-copy2" type="">
-						<div id="seccond-pane"></div>
-						<svg class="copy-message" preserveAspectRatio="none"> <use href="#copy-content-icon"></use> </svg>
-					</button>
+					<div class="copy-contents1" id="content-copy1">
+						<div class="select-materials" aria-hidden="false" role="option">
+							<div class="all-materials">
+								<h3>Select the packing materials to apply on the artwork:</h3>
+								<div>
+									<div>
+										<input type="checkbox" name="material-1"></input>
+										<label name="material-1">Glassine:</label>
+									</div>
+									<div>
+										<input type="checkbox" name="material-2"></input>
+										<label name="material-2">Glassine with silicon:</label>
+									</div>
+									<div>
+										<input type="checkbox" name="material-3"></input>
+										<label name="material-3">Cardboard:</label>
+									</div>
+									<div>
+										<input type="checkbox" name="material-4"></input>
+										<label name="material-4">Bubble plastic:</label>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- <div class="new-material-form" id="new-material-form" aria-hidden="false"> -->
+						<!-- 	<div class="new-material" id="new-material" aria-hidden="false"> -->
+						<!-- 		<h3 class="material-report">Adds new packing material and playwood:</h3> -->
+						<!-- 		<div class="material-sizes"> -->
+						<!-- 			<input class="material-name" placeholder="Type" required></input> -->
+						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="L" name="length" maxlength="7" required> -->
+						<!-- 			<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required> -->
+						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required> -->
+						<!-- 			<input class="material-price" type="text" inputmode="numeric" placeholder="Price" required></input> -->
+						<!-- 			<select> -->
+						<!-- 				<option selected>Sheet</option> -->
+						<!-- 				<option>Roll</option> -->
+						<!-- 			</select> -->
+						<!-- 		</div> -->
+						<!-- 	</div> -->
+						<!-- 	<div class="new-material" id="new-material" aria-hidden="false"> -->
+						<!-- 		<div class="material-sizes"> -->
+						<!-- 			<input class="material-name" placeholder="Type" required></input> -->
+						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="L" name="length" maxlength="7" required> -->
+						<!-- 			<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required> -->
+						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required> -->
+						<!-- 			<input class="material-price" placeholder="Price" required></input> -->
+						<!-- 			<select> -->
+						<!-- 				<option selected>Sheet</option> -->
+						<!-- 				<option>Roll</option> -->
+						<!-- 			</select> -->
+						<!-- 		</div> -->
+						<!-- 	</div> -->
+						<!-- 	<div class="new-material" id="new-material" aria-hidden="false"> -->
+						<!-- 		<div class="material-sizes"> -->
+						<!-- 			<input class="material-name" placeholder="Type" required></input> -->
+						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="L" name="length" maxlength="7" required> -->
+						<!-- 			<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required> -->
+						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required> -->
+						<!-- 			<input class="material-price" placeholder="Price" required></input> -->
+						<!-- 			<select> -->
+						<!-- 				<option selected>Sheet</option> -->
+						<!-- 				<option>Roll</option> -->
+						<!-- 			</select> -->
+						<!-- 		</div> -->
+						<!-- 	</div> -->
+						<!-- 	<div class="new-material" id="new-material" aria-hidden="false"> -->
+						<!-- 		<div class="material-sizes"> -->
+						<!-- 			<input class="material-name" placeholder="Type" required></input> -->
+						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="L" name="length" maxlength="7" required> -->
+						<!-- 			<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required> -->
+						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required> -->
+						<!-- 			<input class="material-price" placeholder="Price" required></input> -->
+						<!-- 			<select> -->
+						<!-- 				<option selected>Sheet</option> -->
+						<!-- 				<option>Roll</option> -->
+						<!-- 			</select> -->
+						<!-- 		</div> -->
+						<!-- 	</div> -->
+						<!-- </div> -->
+
+						<!-- <div class="packge upPane"id="first-pane"> -->
+						<!-- 	<h3 class="material-report">Crates and artworks packing list:</h3> -->
+						<!-- 	<details> -->
+						<!-- 		<summary> -->
+						<!-- 			crate 01 - 123 x 32x 128 - cm -->
+						<!-- 		</summary> -->
+						<!-- 		<details> -->
+						<!-- 			<summary>layer1</summary> -->
+						<!-- 			<ol> -->
+						<!-- 				<li><a href="#estimate_getter">work01 - 100 x 10 x 100 - cm</a></li> -->
+						<!-- 				<li><a href="#">work02 - 100 x 10 x 100 - cm</a></li> -->
+						<!-- 				<li><a href="#">work03 - 100 x 10 x 100 - cm</a></li> -->
+						<!-- 				<li><a href="#">work04 - 100 x 10 x 100 - cm</a></li> -->
+						<!-- 			</ol> -->
+						<!-- 		</details> -->
+						<!-- 		<details> -->
+						<!-- 			<summary>layer2</summary></details> -->
+						<!-- 		<details> -->
+						<!-- 			<summary>layer3</summary></details> -->
+						<!-- 		<details> -->
+						<!-- 			<summary>layer4</summary></details> -->
+						<!-- 	</details> -->
+						<!-- </div> -->
+					</div>
+					<div class="copy-contents2" id="content-copy2" type="">
+						<div class="packing-materials" aria-hidden="false" role="none">
+							<h3>Packing materials for updating:</h3>
+							<div class="material-info">
+								 <div class="check-material">
+									<input type="checkbox" name="material-1"></input>
+									<label name="material-1">Glassine:</label>
+								</div>
+								<div class="material-sizes">
+									<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="L" name="length" maxlength="7" required>
+									<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required>
+									<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required>
+								</div>
+								<input class="material-price" placeholder="Price" required></input>
+							</div>
+							<div class="material-info">
+								 <div class="check-material">
+									<input type="checkbox" name="material-2"></input>
+									<label name="material-3">Cardboard:</label>
+								</div>
+								<div class="material-sizes">
+									<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="L" name="length" maxlength="7" required>
+									<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required>
+									<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required>
+								</div>
+								<input class="material-price" placeholder="Price" required></input>
+							</div>
+							<div class="material-info">
+								 <div class="check-material">
+									<input type="checkbox" name="material-3"></input>
+									<label name="material-3">Bubble plastic:</label>
+								</div>
+								<div class="material-sizes">
+									<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="L" name="length" maxlength="7" required>
+									<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required>
+									<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required>
+								</div>
+								<input class="material-price" placeholder="Price" required></input>
+							</div>
+							<div class="material-info">
+								 <div class="check-material">
+									<input type="checkbox" name="material4"></input>
+									<label name="material-4">Tyvek:</label>
+								</div>
+								<div class="material-sizes">
+									<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="L" name="length" maxlength="7" required>
+									<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required>
+									<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required>
+								</div>
+								<input class="material-price" placeholder="Price" required></input>
+							</div>
+						</div>
+
+						<!-- <div class="package downPane" id="second-pane"> -->
+						<!-- 	<table class="work1" id="work1" aria-hidden="true" role="none"> -->
+						<!-- 		<tr> -->
+						<!-- 			<th><h4>Work2</h3></th> -->
+						<!-- 		</tr> -->
+						<!-- 		<tr> -->
+						<!-- 			<th>Type</th> -->
+						<!-- 			<th>Demand</th> -->
+						<!-- 			<th>Prop/Area</th> -->
+						<!-- 			<th>Reuse</th> -->
+						<!-- 			<th>Residual</th> -->
+						<!-- 			<th>Material unit</th> -->
+						<!-- 			<th>Total cost $</th> -->
+						<!-- 		</tr> -->
+						<!-- 		<tr> -->
+						<!-- 			<td>Glassine</td> -->
+						<!-- 			<td>22 m²</td> -->
+						<!-- 			<td>40%</td> -->
+						<!-- 			<td>Yes</td> -->
+						<!-- 			<td>60%</td> -->
+						<!-- 			<td>roll</td> -->
+						<!-- 			<td>$ 2.50</td> -->
+						<!-- 		</tr> -->
+						<!-- 		<tr> -->
+						<!-- 			<td>Card board</td> -->
+						<!-- 			<td>22 m²</td> -->
+						<!-- 			<td>40%</td> -->
+						<!-- 			<td>No</td> -->
+						<!-- 			<td>60%</td> -->
+						<!-- 			<td>sheet</td> -->
+						<!-- 			<td>$ 10.00</td> -->
+						<!-- 		</tr> -->
+						<!-- 		<tr> -->
+						<!-- 			<td>Subtotal:</td> -->
+						<!-- 			<td></td> -->
+						<!-- 			<td></td> -->
+						<!-- 			<td></td> -->
+						<!-- 			<td></td> -->
+						<!-- 			<td></td> -->
+						<!-- 			<td>$ 15.00</td> -->
+						<!-- 		</tr> -->
+						<!-- 		<tr></tr> -->
+						<!-- 	</table> -->
+						<!-- 	<table> -->
+						<!-- 		<h3 class="material-report">Whole used material to the list:</h3> -->
+						<!-- 		<tr> -->
+						<!-- 			<th>Type</th> -->
+						<!-- 			<th>Used total</th> -->
+						<!-- 			<th>Residual total</th> -->
+						<!-- 		</tr> -->
+						<!-- 		<tr> -->
+						<!-- 			<td>Glassine</td> -->
+						<!-- 			<td>44 m²</td> -->
+						<!-- 			<td>120 m²</td> -->
+						<!-- 		</tr> -->
+						<!-- 		<tr> -->
+						<!-- 			<td>Card boards</td> -->
+						<!-- 			<td>2</td> -->
+						<!-- 			<td>110 m²</td> -->
+						<!-- 		</tr> -->
+						<!-- 	</table> -->
+						<!-- 	<table class="work1" id="work1" aria-hidden="true" role="none"> -->
+						<!-- 		<tr> -->
+						<!-- 			<th><h3>Work2</h3></th> -->
+						<!-- 		</tr> -->
+						<!-- 		<tr> -->
+						<!-- 			<th>Type</th> -->
+						<!-- 			<th>Used</th> -->
+						<!-- 			<th>Total cost $</th> -->
+						<!-- 		</tr> -->
+						<!-- 		<tr> -->
+						<!-- 			<td>Glassine</td> -->
+						<!-- 			<td>22 m²</td> -->
+						<!-- 			<td>$ 5.00</td> -->
+						<!-- 		</tr> -->
+						<!-- 		<tr> -->
+						<!-- 			<td>Card board</td> -->
+						<!-- 			<td>22 m²</td> -->
+						<!-- 			<td>$ 10.00</td> -->
+						<!-- 		</tr> -->
+						<!-- 		<tr> -->
+						<!-- 			<td>Subtotal:</td> -->
+						<!-- 			<td></td> -->
+						<!-- 			<td>$ 15.00</td> -->
+						<!-- 		</tr> -->
+						<!-- 	</table> -->
+						<!-- </div> -->
+						<!-- <svg class="copy-message" preserveAspectRatio="none"><use href="#copy-content-icon"></use></svg> -->
+					</div>
 					<div class="bottom-btns">
 						<div>
 							<button type="" class="package-material">
@@ -608,6 +846,28 @@
 								<path opacity="0.5" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="#1C274C"/>
 								<path d="M11.0303 8.46967C10.7374 8.17678 10.2626 8.17678 9.96967 8.46967C9.67678 8.76256 9.67678 9.23744 9.96967 9.53033L12.4393 12L9.96967 14.4697C9.67678 14.7626 9.67678 15.2374 9.96967 15.5303C10.2626 15.8232 10.7374 15.8232 11.0303 15.5303L14.0303 12.5303C14.3232 12.2374 14.3232 11.7626 14.0303 11.4697L11.0303 8.46967Z" fill="#1C274C"/>
 							</svg>
+						</symbol>
+						<symbol>
+							<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+							<svg id="arrow-right-dark-materials" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+								<path d="M8.00001 14.6667C11.6819 14.6667 14.6667 11.6819 14.6667 8.00004C14.6667 4.31814 11.6819 1.33337 8.00001 1.33337C4.31811 1.33337 1.33334 4.31814 1.33334 8.00004C1.33334 11.6819 4.31811 14.6667 8.00001 14.6667Z" fill="#1C274C"/>
+								<path d="M8.00001 10.6667L10.6667 8.00004L8.00001 5.33337" fill="#1C274C"/>
+								<path d="M8.00001 10.6667L10.6667 8.00004M10.6667 8.00004L8.00001 5.33337M10.6667 8.00004H5.33334M14.6667 8.00004C14.6667 11.6819 11.6819 14.6667 8.00001 14.6667C4.31811 14.6667 1.33334 11.6819 1.33334 8.00004C1.33334 4.31814 4.31811 1.33337 8.00001 1.33337C11.6819 1.33337 14.6667 4.31814 14.6667 8.00004Z" stroke="#757575" stroke-linecap="round" stroke-linejoin="round"/>
+							</svg>
+						</symbol>
+						<symbol id="list__not-opened">
+							<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+							<svg id="arrow-right-materials" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+								<path d="M8.00001 10.6667L10.6667 8.00004M10.6667 8.00004L8.00001 5.33337M10.6667 8.00004H5.33334M14.6667 8.00004C14.6667 11.6819 11.6819 14.6667 8.00001 14.6667C4.31811 14.6667 1.33334 11.6819 1.33334 8.00004C1.33334 4.31814 4.31811 1.33337 8.00001 1.33337C11.6819 1.33337 14.6667 4.31814 14.6667 8.00004Z" stroke="#757575" stroke-linecap="round" stroke-linejoin="round"/>
+							</svg>
+
+						</symbol>
+						<symbol>
+							<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+							<svg id="arrow-down-materials" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+								<path d="M5.33334 8.00004L8.00001 10.6667M8.00001 10.6667L10.6667 8.00004M8.00001 10.6667V5.33337M14.6667 8.00004C14.6667 11.6819 11.6819 14.6667 8.00001 14.6667C4.31811 14.6667 1.33334 11.6819 1.33334 8.00004C1.33334 4.31814 4.31811 1.33337 8.00001 1.33337C11.6819 1.33337 14.6667 4.31814 14.6667 8.00004Z" stroke="#757575" stroke-linecap="round" stroke-linejoin="round"/>
+							</svg>
+
 						</symbol>
 					</svg>
 				</div>
