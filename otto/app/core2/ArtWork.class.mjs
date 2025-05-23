@@ -4,12 +4,22 @@ import Hexaedro from "./Hexaedro.class.mjs";
 
 
 export default class ArtWork extends Hexaedro {
+	#coordinates;
+	#packMaterials;
 	#code;
 	#x;
 	#z;
 	#y;
 
-	constructor (code, x, z, y) {
+	/**
+	* @param { String } code
+	* @param { Number } x
+	* @param { Number } z
+	* @param { Number } y
+	* @typedef { [Array:Number] } Materials
+	* @param { Materials } pack
+	*/
+	constructor (code, x, z, y, pack) {
 		super(x, z, y);
 		try {
 			if (!code || code.trim() <= 0) {
@@ -20,6 +30,7 @@ export default class ArtWork extends Hexaedro {
 		catch (err) {
 			return (err);
 		}
+		this.#packMaterials =	pack;
 		this.#code =	""+code;
 		this.#x =		+x;
 		this.#z =		+z;
@@ -50,5 +61,40 @@ export default class ArtWork extends Hexaedro {
 
 	get data () {
 		return ({ code : this.#code, x : this.#x, z : this.#z, y : this.#y});
+	};
+
+	/**
+	* @field - returns the array with the artwork packed.
+	*/
+	get packingTheWork() {
+		let packed = [this.#x, this.#z, this.#y];
+		this.#packMaterials.map(type => {
+			packed[0] = packed[0] + type[1];
+			packed[1] = packed[1] + type[1];
+			packed[2] = packed[2] + type[1];
+		});
+		return(packed);
+	};
+
+	/**
+	* @field - returns the total area needed to cover packing.
+	*/
+	get packingDemanded() {
+		const { x, z, y } =	this;
+		const area =		2 * ((x * y) + (x * z) + (y * z));
+
+		return(area);
+	};
+
+	get cratePosition() {
+		return(this.#coordinates);
+	};
+
+	/**
+	*  @typedef { Array:number } Coordinate
+	*  @param { Coordinate } values
+	*/
+	set coordinates(values) {
+		this.#coordinates = values;
 	};
 };
