@@ -176,9 +176,9 @@
 						</div>
 						</div>
 						<div class="IO__press" id="IO--btn">
-							<button type="button" class="IO__press--btn add--btn" id="add-btn">ADD</button>
-							<button type="button" class="IO__press--btn del--btn" id="remove-btn">DEL</button>
-							<button type="button" class="IO__press--btn clear--btn" id="clear-btn">Reset</button>
+							<button type="button" class="IO__press--btn add--btn" id="add-btn" disabled>ADD</button>
+							<button type="button" class="IO__press--btn del--btn" id="remove-btn" disabled>DEL</button>
+							<button type="button" class="IO__press--btn clear--btn" id="clear-btn" disabled>Reset</button>
 						</div>
 						<div class="IO__press__crate">
 							<button name="waves" class="IO__crate" id="crate-btn">
@@ -273,40 +273,40 @@
 							</button>
 						</div>
 					</div>
-					<div class="copy-contents1" id="content-copy1">
-						<div class="select-materials" aria-hidden="false" role="option">
-							<div class="all-materials">
-								<h3>Select the packing materials to apply on the artwork:</h3>
-								<div>
-									<div>
-										<input type="checkbox" name="material-1"></input>
-										<label name="material-1">Glassine:</label>
-									</div>
-									<div>
-										<input type="checkbox" name="material-2"></input>
-										<label name="material-2">Glassine with silicon:</label>
-									</div>
-									<div>
-										<input type="checkbox" name="material-3"></input>
-										<label name="material-3">Cardboard:</label>
-									</div>
-									<div>
-										<input type="checkbox" name="material-4"></input>
-										<label name="material-4">Bubble plastic:</label>
-									</div>
-								</div>
-							</div>
-						</div>
+					<div class="contents1" id="content1">
+						<!-- <div class="select-materials" aria-hidden="false" role="option"> -->
+						<!-- 	<div class="all-materials"> -->
+						<!-- 		<h3>Select the packing materials to apply on the artwork:</h3> -->
+						<!-- 		<div> -->
+						<!-- 			<div> -->
+						<!-- 				<input type="checkbox" name="material-1"></input> -->
+						<!-- 				<label name="material-1">Glassine:</label> -->
+						<!-- 			</div> -->
+						<!-- 			<div> -->
+						<!-- 				<input type="checkbox" name="material-2"></input> -->
+						<!-- 				<label name="material-2">Glassine with silicon:</label> -->
+						<!-- 			</div> -->
+						<!-- 			<div> -->
+						<!-- 				<input type="checkbox" name="material-3"></input> -->
+						<!-- 				<label name="material-3">Cardboard:</label> -->
+						<!-- 			</div> -->
+						<!-- 			<div> -->
+						<!-- 				<input type="checkbox" name="material-4"></input> -->
+						<!-- 				<label name="material-4">Bubble plastic:</label> -->
+						<!-- 			</div> -->
+						<!-- 		</div> -->
+						<!-- 	</div> -->
+						<!-- </div> -->
 
 						<!-- <div class="new-material-form" id="new-material-form" aria-hidden="false"> -->
 						<!-- 	<div class="new-material" id="new-material" aria-hidden="false"> -->
-						<!-- 		<h3 class="material-report">Adds new packing material and playwood:</h3> -->
+						<!-- 		<h3 class="material-report">Add new packing material and playwood:</h3> -->
 						<!-- 		<div class="material-sizes"> -->
 						<!-- 			<input class="material-name" placeholder="Type" required></input> -->
 						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="L" name="length" maxlength="7" required> -->
 						<!-- 			<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required> -->
 						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required> -->
-						<!-- 			<input class="material-price" type="text" inputmode="numeric" placeholder="Price" required></input> -->
+						<!-- 			<input class="material-price" type="number" inputmode="numeric" placeholder="Price" pattern="\d+(\.\d{1,2})?" required></input> -->
 						<!-- 			<select> -->
 						<!-- 				<option selected>Sheet</option> -->
 						<!-- 				<option>Roll</option> -->
@@ -319,7 +319,7 @@
 						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="L" name="length" maxlength="7" required> -->
 						<!-- 			<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required> -->
 						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required> -->
-						<!-- 			<input class="material-price" placeholder="Price" required></input> -->
+						<!-- 			<input class="material-price" type="number" placeholder="Price" pattern="\d+(\.\d{1,2})?" required></input> -->
 						<!-- 			<select> -->
 						<!-- 				<option selected>Sheet</option> -->
 						<!-- 				<option>Roll</option> -->
@@ -332,7 +332,7 @@
 						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="L" name="length" maxlength="7" required> -->
 						<!-- 			<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required> -->
 						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required> -->
-						<!-- 			<input class="material-price" placeholder="Price" required></input> -->
+						<!-- 			<input class="material-price" type="number" placeholder="Price" pattern="\d+(\.\d{1,2})?" required></input> -->
 						<!-- 			<select> -->
 						<!-- 				<option selected>Sheet</option> -->
 						<!-- 				<option>Roll</option> -->
@@ -345,7 +345,7 @@
 						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="L" name="length" maxlength="7" required> -->
 						<!-- 			<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required> -->
 						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required> -->
-						<!-- 			<input class="material-price" placeholder="Price" required></input> -->
+						<!-- 			<input class="material-price" type="number" placeholder="Price" pattern="\d+(\.\d{1,2})?" required></input> -->
 						<!-- 			<select> -->
 						<!-- 				<option selected>Sheet</option> -->
 						<!-- 				<option>Roll</option> -->
@@ -378,7 +378,7 @@
 						<!-- 	</details> -->
 						<!-- </div> -->
 					</div>
-					<div class="copy-contents2" id="content-copy2" type="">
+					<div class="contents2" id="content-copy2" type="">
 						<div class="packing-materials" aria-hidden="false" role="none">
 							<h3>Packing materials for updating:</h3>
 							<div class="material-info">
@@ -391,7 +391,7 @@
 									<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required>
 									<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required>
 								</div>
-								<input class="material-price" placeholder="Price" required></input>
+								<input class="material-price" type="number" placeholder="Price" pattern="\d+(\.\d{1,2})?" required></input>
 							</div>
 							<div class="material-info">
 								 <div class="check-material">
@@ -403,7 +403,7 @@
 									<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required>
 									<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required>
 								</div>
-								<input class="material-price" placeholder="Price" required></input>
+								<input class="material-price" type="number" placeholder="Price" pattern="\d+(\.\d{1,2})?" required></input>
 							</div>
 							<div class="material-info">
 								 <div class="check-material">
@@ -415,7 +415,7 @@
 									<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required>
 									<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required>
 								</div>
-								<input class="material-price" placeholder="Price" required></input>
+								<input class="material-price" type="number" placeholder="Price" pattern="\d+(\.\d{1,2})?" required></input>
 							</div>
 							<div class="material-info">
 								 <div class="check-material">
@@ -427,7 +427,7 @@
 									<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required>
 									<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required>
 								</div>
-								<input class="material-price" placeholder="Price" required></input>
+								<input class="material-price" type="number" placeholder="Price" pattern="\d+(\.\d{1,2})?" required></input>
 							</div>
 						</div>
 
