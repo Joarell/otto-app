@@ -13,7 +13,7 @@ import { saveTheCurrentEstimate, upDateCrateSizes } from "./bridge.link.web.db.m
 
 
 /**
- * @function Creates a new indexedDB table in the browser for all results.
+ * @function Creates a new indexedDB table in the browser for all crate results.
 */
 export function createIDB() {
 	const dataName =	"Results";
@@ -26,8 +26,28 @@ export function createIDB() {
 		const db = event.target.result;
 		let object;
 
-		object = db.createObjectStore(dataName, {keyPath: "reference"});
+		object = db.createObjectStore(dataName, { keyPath: "reference" });
 		object.createIndex( "reference", "reference", { unique: true });
+	};
+};
+
+
+/**
+ * @function Creates a new indexedDB table in the browser for all Materials results.
+*/
+export function createIDBMaterials() {
+	const dataName =	"Materials";
+	const request =		globalThis.indexedDB.open(dataName);
+
+	request.onerror = (event) => {
+		alert(`ATTENTION! ${event.target.errorCode}`);
+	};
+	request.onupgradeneeded = (event) => {
+		const db = event.target.result;
+		let object;
+
+		object = db.createObjectStore(dataName, { keyPath: "material" });
+		object.createIndex( "material", "material", { unique: true });
 	};
 };
 

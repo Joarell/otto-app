@@ -1,5 +1,3 @@
-
-
 globalThis.onmessage = (estimate) => {
 	const dataName	= "Results";
 	const request	= globalThis.indexedDB.open(dataName);

@@ -9,7 +9,7 @@
 // ╰───────────────────────────────────────────────────────────────────────╯
 
 import * as mod from './functions.front.end.mjs'
-import { createIDB, createOffLineIDB } from './link.storage.mjs';
+import { createIDBMaterials, createIDB, createOffLineIDB } from './link.storage.mjs';
 import { openCloseDisplay } from '../plotter/layer.controller.mjs'
 
 globalThis.onload = async () => {
@@ -23,7 +23,19 @@ globalThis.onload = async () => {
 	color === null ? localStorage.setItem("mode", "light") : false;
 	setCheckRadio();
 	setModeColor();
-	setTimeout(loadingPage, 1500);
+	populateRightPanels();
+	// setTimeout(loadingPage, 1500);
+};
+
+
+export function populateRightPanels() {
+	const fragment1 = 			new DocumentFragment();
+	const fragment2 = 			new DocumentFragment();
+	const materialsAvailable =	document.createElement('package-info');
+	const updateMaterials =		document.createElement('package-info');
+
+	materialsAvailable.setAttribute('name', 'select-materials');
+	fragment1.appendChild(materialsAvailable);
 };
 
 
@@ -45,7 +57,7 @@ export function addPanelInfo() {
 if (!localStorage.getItem("metrica")) {
 	const metrica =	document.getElementById("cm").value;
 	localStorage.setItem("metrica", metrica);
-}
+};
 
 
 export function setUnit() {
@@ -149,6 +161,7 @@ function browserStoragePrepare() {
 	if (ref)
 		document.getElementById("input_estimate").value = ref;
 	createIDB();
+	createIDBMaterials();
 	if (grants === "OFF" || grants === "FULL") {
 		createOffLineIDB();
 		// globalThis.navigator.serviceWorker.register('../sw.mjs');
