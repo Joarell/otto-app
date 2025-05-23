@@ -1727,9 +1727,9 @@ wrangler@3.100.0:
     fsevents "~2.3.2"
 
 wrangler@4:
-  version "4.16.0"
-  resolved "https://registry.yarnpkg.com/wrangler/-/wrangler-4.16.0.tgz#2c88fbe8550231cd138f417840c32c6e78052f5e"
-  integrity sha512-zQojiBJKAWRVG4WdUgTP5/i9N5UcwOixhWljnBrcKxJd+kpqUXVV/L03ytO+0cnr5IhgYUs7qhjd8EWU6UwPfg==
+  version "4.16.1"
+  resolved "https://registry.yarnpkg.com/wrangler/-/wrangler-4.16.1.tgz#3d3bcd0a78c84fb2e27068afeceb7d6524470d2a"
+  integrity sha512-YiLdWXcaQva2K/bqokpsZbySPmoT8TJFyJPsQPZumnkgimM9+/g/yoXArByA+pf+xU8jhw7ybQ8X1yBGXv731g==
   dependencies:
     "@cloudflare/kv-asset-handler" "0.4.0"
     "@cloudflare/unenv-preset" "2.3.2"
@@ -1778,6 +1778,6 @@ zod@^3.22.3:
   integrity sha512-OdqJE9UDRPwWsrHjLN2F8bPxvwJBK22EHLWtanu0LSYr5YqzsaaW3RMgmjwr8Rypg5k+meEJdSPXJZXE/yqOMg==
 
 zod@^3.23.8:
-  version "3.25.16"
-  resolved "https://registry.yarnpkg.com/zod/-/zod-3.25.16.tgz#c73cdb6a5440115f28f27a2c9bca0ce9d19bece7"
-  integrity sha512-3lOav31WLa1MstEvkM0QlcsFjKmJ2TI9IFYlIVpLE3upguhaeiRfPOzqqtisS/Hetk4ri2fLLC3OtW15lS5jxQ==
+  version "3.25.20"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.25.20.tgz#c36739c52f6d01cf04c53bf56d99f2f5488739ee"
+  integrity sha512-z03fqpTMDF1G02VLKUMt6vyACE7rNWkh3gpXVHgPTw28NPtDFRGvcpTtPwn2kMKtQ0idtYJUTxchytmnqYswcw==
