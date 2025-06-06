@@ -7,15 +7,15 @@ globalThis.onmessage = (newList) => {
 	}
 	request.onsuccess = async (event) => {
 		const db =			event.target.result;
-		const object =		db.transaction(dataName, "readwrite")
-			.objectStore(dataName);
-		const existsInIDB =	object.get(materials);
+		const object =		db.transaction(dataName, 'readwrite').objectStore(dataName);
+		const existsInIDB =	object.get(newList.data.materials);
 
 		existsInIDB.onsuccess = async () => {
-			await Promise.resolve(object.delete(existsInIDB.materials))
-				.then(object.add(materials));
+			existsInIDB.result ?
+				await Promise.resolve(object.delete(existsInIDB.result.materials))
+				.then(object.add(newList.data)): object.add(newList.data);
 			// movingDataToSesseionStorage(reference, fetched);
+			globalThis.postMessage('Saved');
 		};
-		// onLine ? 'ok' : addNewWorksToIndexedDBOffLine(materials);
-	}
+	};
 };

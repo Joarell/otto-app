@@ -1,20 +1,21 @@
-globalThis.onmessage = () => {
-	const dataName	= "Materials";
-	const request	= globalThis.indexedDB.open(dataName);
+globalThis.onmessage = (type) => {
+	const request	= globalThis.indexedDB.open(type.data);
 
 	request.onerror = (event) => {
 		console.log(`WARNING: ${event.target.errorCode}`);
+		globalThis.postMessage(false);
 	};
-	request.onsuccess = () => {
-		const db = request
+	request.onsuccess = (event) => {
+		const db = event
+		.target
 		.result
-		.transaction("Results")
-		.objectStore("Results")
-		.get("materials");
+		.transaction("Materials")
+		.objectStore("Materials")
+		.get("packing");
 
 		db.onerror = () => {
 			globalThis.postMessage(false);
-		}
+		};
 		db.onsuccess = () => {
 			globalThis.postMessage(db.result);
 		};

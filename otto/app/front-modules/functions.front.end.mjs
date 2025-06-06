@@ -182,12 +182,13 @@ async function parseArtWork() {
 		"mode",
 		"storage",
 		"currency",
-		"currency",
 		"metrica",
 		"refNumb",
 		"offResults",
 		"FETCHED",
-	]
+		"materials",
+		"packing",
+	];
 
 	Object.entries(DB).map(data => {
 		!avoid.includes(data[0]) ? temp.push(JSON.parse(data[1])) : false;

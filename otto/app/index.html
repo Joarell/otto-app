@@ -14,6 +14,8 @@
 		<link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
 		<script async type="module" src="./main.min.mjs"></script>
 		<script async type="module" src="./front-modules/shadowElements/dialog.padding.update.mjs"></script>
+		<script async type="module" src="./side-menu/package_panel/Package.Component.Up.mjs"></script>
+		<script async type="module" src="./side-menu/package_panel/Package.Component.Down.mjs"></script>
 		<!-- <script src="https://cdn.plot.ly/plotly-3.0.1.min.js" charset="utf-8"></script> -->
 		<link rel="stylesheet" href="./stylesheet.css" type="text/css" />
 		<link rel="manifest" href="./manifest.json" crossorigin="use-credentials">
@@ -33,25 +35,25 @@
 								<svg class="" preserveAspectRatio="none"><use href="#user-avatar"></use></svg>
 							</span>
 						</div>
-						<lable>User name</lable>
+						<label>User name</label>
 					</div>
 					<section class="side-menu">
 						<div class="section__menu">
-							<div class="section-right-up">
-								<!-- <div class="coins left-menu"> -->
-								<!-- 	<button class="trigger-menu" id="exchange-btn" aria-controls="exchange--content" aria-expanded="false"> -->
-								<!-- 		<svg aria-label="currency" class="menu-icon" id="exchange-btn"> -->
-								<!-- 			<use href="#exchange-material" id="ex-btn"></use> -->
-								<!-- 		</svg> -->
-								<!-- 	</button> -->
-								<!-- </div> -->
-								<!-- <div class="size_converter"> -->
-								<!-- 	<button class="trigger-menu units" aria-controls="units-conversion" id="units-btn" aria-expanded="false"> -->
-								<!-- 		<svg aria-label="units converter menu" class="menu-icon" id="units-btn"> -->
-								<!-- 			<use href="#regua-material" id="unit-btn"></use> -->
-								<!-- 		</svg> -->
-								<!-- 	</button> -->
-								<!-- </div> -->
+							<!-- <div class="section-right-up"> -->
+							<!-- 	<div class="coins left-menu"> -->
+							<!-- 		<button class="trigger-menu" id="exchange-btn" aria-controls="exchange--content" aria-expanded="false"> -->
+							<!-- 			<svg aria-label="currency" class="menu-icon" id="exchange-btn"> -->
+							<!-- 				<use href="#exchange-material" id="ex-btn"></use> -->
+							<!-- 			</svg> -->
+							<!-- 		</button> -->
+							<!-- 	</div> -->
+							<!-- 	<div class="size_converter"> -->
+							<!-- 		<button class="trigger-menu units" aria-controls="units-conversion" id="units-btn" aria-expanded="false"> -->
+							<!-- 			<svg aria-label="units converter menu" class="menu-icon" id="units-btn"> -->
+							<!-- 				<use href="#regua-material" id="unit-btn"></use> -->
+							<!-- 			</svg> -->
+							<!-- 		</button> -->
+							<!-- 	</div> -->
 								<div class="section__menu--btn layer__open__close">
 									<button aria-label="Checking layer" class="layers-btn" data-popup="" id="crate-layers" disabled>
 										<svg aria-hidden="true" class="preview-icon" id="layer-crate" preserveAspectRatio="none">
@@ -123,7 +125,7 @@
 						<div loading="lazy" class="container__status__pane__frame" title="Work's list" id="status-frame"></div>
 						<div class="searcher">
 							<div class="menu__fetch">
-								<input type="text" class="IO__add--form get__estimate" id="estimate_getter" placeholder="Search" autocomplete="on" required>
+								<input type="text" class="IO__add--form get__estimate" id="estimate_getter" placeholder="Search" autocomplete="on" required="true">
 							</div>
 						</div>
 						<div class="IO__sizes__code">
@@ -135,13 +137,13 @@
 							</div>
 							<div class="LDH">
 								<span>
-									<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="Length" name="length" maxlength="7" required>
+									<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="Length" autocomplete="on" name="length" maxlength="7" required="true">
 								</span>
 								<span>
-									<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="Depth" maxlength="7" required>
+									<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" autocomplete="on" placeholder="Depth" maxlength="7" required="true">
 								</span>
 								<span>
-									<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="Height" name="height" maxlength="7" required>
+									<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="Height" autocomplete="on" name="height" maxlength="7" required="true">
 								</span>
 							</div>
 						</div>
@@ -176,9 +178,9 @@
 						</div>
 						</div>
 						<div class="IO__press" id="IO--btn">
-							<button type="button" class="IO__press--btn add--btn" id="add-btn" disabled>ADD</button>
-							<button type="button" class="IO__press--btn del--btn" id="remove-btn" disabled>DEL</button>
-							<button type="button" class="IO__press--btn clear--btn" id="clear-btn" disabled>Reset</button>
+							<button type="button" class="IO__press--btn add--btn" id="add-btn">ADD</button>
+							<button type="button" class="IO__press--btn del--btn" id="remove-btn" disabled="true">DEL</button>
+							<button type="button" class="IO__press--btn clear--btn" id="clear-btn" disabled="true">Reset</button>
 						</div>
 						<div class="IO__press__crate">
 							<button name="waves" class="IO__crate" id="crate-btn">
@@ -221,30 +223,6 @@
 							<div loading="lazy" class="container__results--crates" id="second_pane" title="List done"></div>
 							<svg class="copy-message" preserveAspectRatio="none"> <use href="#copy-content-icon"></use> </svg>
 						</button>
-						<!-- <div class="menu__input" aria-hidden="true" role="region"> -->
-						<!-- 	<form class="menu__units" id="units"> -->
-						<!-- 		<div> -->
-						<!-- 			<select id="units1"> -->
-						<!-- 				<option selected>inches</option> -->
-						<!-- 				<option>meters</option> -->
-						<!-- 				<option>centimeters</option> -->
-						<!-- 			</select> -->
-						<!-- 			<div> -->
-						<!-- 				<input type="text" name="measure" inputmode="numeric" class="get__measure IO__add--form" id="input-unit1" required value=0> -->
-						<!-- 			</div> -->
-						<!-- 		</div> -->
-						<!-- 		<div> -->
-						<!-- 			<select id="units2"> -->
-						<!-- 				<option selected>centimeters</option> -->
-						<!-- 				<option>inches</option> -->
-						<!-- 				<option>meters</option> -->
-						<!-- 			</select> -->
-						<!-- 			<div> -->
-						<!-- 				<input type="text" name="measures" inputmode="numeric" class="get__measure IO__add--form" id="input-unit2" required value=0> -->
-						<!-- 			</div> -->
-						<!-- 		</div> -->
-						<!-- 	</form> -->
-						<!-- </div> -->
 					</div>
 
 					<!-- 				<span class="menu__option--text" data-role="popover" data-popover-text="currency">currency</span> -->
@@ -265,285 +243,45 @@
 					<!-- 	</div> -->
 					<!-- </div> -->
 				</div>
-				<div class="package-crates">
+				<div class="package-crates" id="package-crates">
 					<div class="top-btns">
 						<div class="content-settings">
 							<button class="settings-content" id="settings-content"type="">
-								<svg class="" preserveAspectRatio="none"><use href="#content-settings"></use></svg>
+								<svg class="" id="settings-content" preserveAspectRatio="none"><use id="settings-content" href="#content-settings"></use></svg>
 							</button>
 						</div>
 					</div>
-					<div class="contents1" id="content1">
-						<!-- <div class="select-materials" aria-hidden="false" role="option"> -->
-						<!-- 	<div class="all-materials"> -->
-						<!-- 		<h3>Select the packing materials to apply on the artwork:</h3> -->
-						<!-- 		<div> -->
-						<!-- 			<div> -->
-						<!-- 				<input type="checkbox" name="material-1"></input> -->
-						<!-- 				<label name="material-1">Glassine:</label> -->
-						<!-- 			</div> -->
-						<!-- 			<div> -->
-						<!-- 				<input type="checkbox" name="material-2"></input> -->
-						<!-- 				<label name="material-2">Glassine with silicon:</label> -->
-						<!-- 			</div> -->
-						<!-- 			<div> -->
-						<!-- 				<input type="checkbox" name="material-3"></input> -->
-						<!-- 				<label name="material-3">Cardboard:</label> -->
-						<!-- 			</div> -->
-						<!-- 			<div> -->
-						<!-- 				<input type="checkbox" name="material-4"></input> -->
-						<!-- 				<label name="material-4">Bubble plastic:</label> -->
-						<!-- 			</div> -->
-						<!-- 		</div> -->
-						<!-- 	</div> -->
-						<!-- </div> -->
-
-						<!-- <div class="new-material-form" id="new-material-form" aria-hidden="false"> -->
-						<!-- 	<div class="new-material" id="new-material" aria-hidden="false"> -->
-						<!-- 		<h3 class="material-report">Add new packing material and playwood:</h3> -->
-						<!-- 		<div class="material-sizes"> -->
-						<!-- 			<input class="material-name" placeholder="Type" required></input> -->
-						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="L" name="length" maxlength="7" required> -->
-						<!-- 			<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required> -->
-						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required> -->
-						<!-- 			<input class="material-price" type="number" inputmode="numeric" placeholder="Price" pattern="\d+(\.\d{1,2})?" required></input> -->
-						<!-- 			<select> -->
-						<!-- 				<option selected>Sheet</option> -->
-						<!-- 				<option>Roll</option> -->
-						<!-- 			</select> -->
-						<!-- 		</div> -->
-						<!-- 	</div> -->
-						<!-- 	<div class="new-material" id="new-material" aria-hidden="false"> -->
-						<!-- 		<div class="material-sizes"> -->
-						<!-- 			<input class="material-name" placeholder="Type" required></input> -->
-						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="L" name="length" maxlength="7" required> -->
-						<!-- 			<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required> -->
-						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required> -->
-						<!-- 			<input class="material-price" type="number" placeholder="Price" pattern="\d+(\.\d{1,2})?" required></input> -->
-						<!-- 			<select> -->
-						<!-- 				<option selected>Sheet</option> -->
-						<!-- 				<option>Roll</option> -->
-						<!-- 			</select> -->
-						<!-- 		</div> -->
-						<!-- 	</div> -->
-						<!-- 	<div class="new-material" id="new-material" aria-hidden="false"> -->
-						<!-- 		<div class="material-sizes"> -->
-						<!-- 			<input class="material-name" placeholder="Type" required></input> -->
-						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="L" name="length" maxlength="7" required> -->
-						<!-- 			<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required> -->
-						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required> -->
-						<!-- 			<input class="material-price" type="number" placeholder="Price" pattern="\d+(\.\d{1,2})?" required></input> -->
-						<!-- 			<select> -->
-						<!-- 				<option selected>Sheet</option> -->
-						<!-- 				<option>Roll</option> -->
-						<!-- 			</select> -->
-						<!-- 		</div> -->
-						<!-- 	</div> -->
-						<!-- 	<div class="new-material" id="new-material" aria-hidden="false"> -->
-						<!-- 		<div class="material-sizes"> -->
-						<!-- 			<input class="material-name" placeholder="Type" required></input> -->
-						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="L" name="length" maxlength="7" required> -->
-						<!-- 			<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required> -->
-						<!-- 			<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required> -->
-						<!-- 			<input class="material-price" type="number" placeholder="Price" pattern="\d+(\.\d{1,2})?" required></input> -->
-						<!-- 			<select> -->
-						<!-- 				<option selected>Sheet</option> -->
-						<!-- 				<option>Roll</option> -->
-						<!-- 			</select> -->
-						<!-- 		</div> -->
-						<!-- 	</div> -->
-						<!-- </div> -->
-
-						<!-- <div class="packge upPane"id="first-pane"> -->
-						<!-- 	<h3 class="material-report">Crates and artworks packing list:</h3> -->
-						<!-- 	<details> -->
-						<!-- 		<summary> -->
-						<!-- 			crate 01 - 123 x 32x 128 - cm -->
-						<!-- 		</summary> -->
-						<!-- 		<details> -->
-						<!-- 			<summary>layer1</summary> -->
-						<!-- 			<ol> -->
-						<!-- 				<li><a href="#estimate_getter">work01 - 100 x 10 x 100 - cm</a></li> -->
-						<!-- 				<li><a href="#">work02 - 100 x 10 x 100 - cm</a></li> -->
-						<!-- 				<li><a href="#">work03 - 100 x 10 x 100 - cm</a></li> -->
-						<!-- 				<li><a href="#">work04 - 100 x 10 x 100 - cm</a></li> -->
-						<!-- 			</ol> -->
-						<!-- 		</details> -->
-						<!-- 		<details> -->
-						<!-- 			<summary>layer2</summary></details> -->
-						<!-- 		<details> -->
-						<!-- 			<summary>layer3</summary></details> -->
-						<!-- 		<details> -->
-						<!-- 			<summary>layer4</summary></details> -->
-						<!-- 	</details> -->
-						<!-- </div> -->
-					</div>
-					<div class="contents2" id="content-copy2" type="">
-						<div class="packing-materials" aria-hidden="false" role="none">
-							<h3>Packing materials for updating:</h3>
-							<div class="material-info">
-								 <div class="check-material">
-									<input type="checkbox" name="material-1"></input>
-									<label name="material-1">Glassine:</label>
-								</div>
-								<div class="material-sizes">
-									<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="L" name="length" maxlength="7" required>
-									<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required>
-									<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required>
-								</div>
-								<input class="material-price" type="number" placeholder="Price" pattern="\d+(\.\d{1,2})?" required></input>
-							</div>
-							<div class="material-info">
-								 <div class="check-material">
-									<input type="checkbox" name="material-2"></input>
-									<label name="material-3">Cardboard:</label>
-								</div>
-								<div class="material-sizes">
-									<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="L" name="length" maxlength="7" required>
-									<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required>
-									<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required>
-								</div>
-								<input class="material-price" type="number" placeholder="Price" pattern="\d+(\.\d{1,2})?" required></input>
-							</div>
-							<div class="material-info">
-								 <div class="check-material">
-									<input type="checkbox" name="material-3"></input>
-									<label name="material-3">Bubble plastic:</label>
-								</div>
-								<div class="material-sizes">
-									<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="L" name="length" maxlength="7" required>
-									<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required>
-									<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required>
-								</div>
-								<input class="material-price" type="number" placeholder="Price" pattern="\d+(\.\d{1,2})?" required></input>
-							</div>
-							<div class="material-info">
-								 <div class="check-material">
-									<input type="checkbox" name="material4"></input>
-									<label name="material-4">Tyvek:</label>
-								</div>
-								<div class="material-sizes">
-									<input class="IO__add--form" type="text" inputmode="numeric" id="input_length" placeholder="L" name="length" maxlength="7" required>
-									<input  class="IO__add--form" type="text" inputmode="numeric" id="input_depth" name="depth" placeholder="D" maxlength="7" required>
-									<input class="IO__add--form" type="text" inputmode="numeric" id="input_height" placeholder="H" name="height" maxlength="7" required>
-								</div>
-								<input class="material-price" type="number" placeholder="Price" pattern="\d+(\.\d{1,2})?" required></input>
-							</div>
-						</div>
-
-						<!-- <div class="package downPane" id="second-pane"> -->
-						<!-- 	<table class="work1" id="work1" aria-hidden="true" role="none"> -->
-						<!-- 		<tr> -->
-						<!-- 			<th><h4>Work2</h3></th> -->
-						<!-- 		</tr> -->
-						<!-- 		<tr> -->
-						<!-- 			<th>Type</th> -->
-						<!-- 			<th>Demand</th> -->
-						<!-- 			<th>Prop/Area</th> -->
-						<!-- 			<th>Reuse</th> -->
-						<!-- 			<th>Residual</th> -->
-						<!-- 			<th>Material unit</th> -->
-						<!-- 			<th>Total cost $</th> -->
-						<!-- 		</tr> -->
-						<!-- 		<tr> -->
-						<!-- 			<td>Glassine</td> -->
-						<!-- 			<td>22 m²</td> -->
-						<!-- 			<td>40%</td> -->
-						<!-- 			<td>Yes</td> -->
-						<!-- 			<td>60%</td> -->
-						<!-- 			<td>roll</td> -->
-						<!-- 			<td>$ 2.50</td> -->
-						<!-- 		</tr> -->
-						<!-- 		<tr> -->
-						<!-- 			<td>Card board</td> -->
-						<!-- 			<td>22 m²</td> -->
-						<!-- 			<td>40%</td> -->
-						<!-- 			<td>No</td> -->
-						<!-- 			<td>60%</td> -->
-						<!-- 			<td>sheet</td> -->
-						<!-- 			<td>$ 10.00</td> -->
-						<!-- 		</tr> -->
-						<!-- 		<tr> -->
-						<!-- 			<td>Subtotal:</td> -->
-						<!-- 			<td></td> -->
-						<!-- 			<td></td> -->
-						<!-- 			<td></td> -->
-						<!-- 			<td></td> -->
-						<!-- 			<td></td> -->
-						<!-- 			<td>$ 15.00</td> -->
-						<!-- 		</tr> -->
-						<!-- 		<tr></tr> -->
-						<!-- 	</table> -->
-						<!-- 	<table> -->
-						<!-- 		<h3 class="material-report">Whole used material to the list:</h3> -->
-						<!-- 		<tr> -->
-						<!-- 			<th>Type</th> -->
-						<!-- 			<th>Used total</th> -->
-						<!-- 			<th>Residual total</th> -->
-						<!-- 		</tr> -->
-						<!-- 		<tr> -->
-						<!-- 			<td>Glassine</td> -->
-						<!-- 			<td>44 m²</td> -->
-						<!-- 			<td>120 m²</td> -->
-						<!-- 		</tr> -->
-						<!-- 		<tr> -->
-						<!-- 			<td>Card boards</td> -->
-						<!-- 			<td>2</td> -->
-						<!-- 			<td>110 m²</td> -->
-						<!-- 		</tr> -->
-						<!-- 	</table> -->
-						<!-- 	<table class="work1" id="work1" aria-hidden="true" role="none"> -->
-						<!-- 		<tr> -->
-						<!-- 			<th><h3>Work2</h3></th> -->
-						<!-- 		</tr> -->
-						<!-- 		<tr> -->
-						<!-- 			<th>Type</th> -->
-						<!-- 			<th>Used</th> -->
-						<!-- 			<th>Total cost $</th> -->
-						<!-- 		</tr> -->
-						<!-- 		<tr> -->
-						<!-- 			<td>Glassine</td> -->
-						<!-- 			<td>22 m²</td> -->
-						<!-- 			<td>$ 5.00</td> -->
-						<!-- 		</tr> -->
-						<!-- 		<tr> -->
-						<!-- 			<td>Card board</td> -->
-						<!-- 			<td>22 m²</td> -->
-						<!-- 			<td>$ 10.00</td> -->
-						<!-- 		</tr> -->
-						<!-- 		<tr> -->
-						<!-- 			<td>Subtotal:</td> -->
-						<!-- 			<td></td> -->
-						<!-- 			<td>$ 15.00</td> -->
-						<!-- 		</tr> -->
-						<!-- 	</table> -->
-						<!-- </div> -->
-						<!-- <svg class="copy-message" preserveAspectRatio="none"><use href="#copy-content-icon"></use></svg> -->
-					</div>
+					<div class="contents1" id="contents1"></div>
+					<div class="contents2" id="contents2"></div>
 					<div class="bottom-btns">
 						<div>
-							<button type="" class="package-material">
-								<svg class="" preserveAspectRatio="none"><use href="#package-material"></use></svg>
+							<button type="" class="packages" id="packages">
+								<svg class="materials" id="materials" preserveAspectRatio="none"><use id="materials" href="#package-material"></use></svg>
 							</button>
 						</div>
 						<div>
-							<button type="" class="reset-sizes">
-								<svg class="" preserveAspectRatio="none"><use href="#check-sizes"></use></svg>
+							<button type="" class="works-packed" id="works-packed">
+								<svg id="pack-opts" preserveAspectRatio="none"><use id="pack-opts" href="#check-sizes"></use></svg>
 							</button>
 						</div>
 						<div>
-							<button class="add__new__field" type="" disabled>
-								<svg class="" preserveAspectRatio="none"><use href="#add-fields"></use></svg>
+							<button type="" class="reset-sizes" id="reset-sizes" disabled="true">
+								<svg id="reset-szs" preserveAspectRatio="none"><use id="reset-szs" href="#regua-material"></use></svg>
 							</button>
 						</div>
 						<div>
-							<button type="" class="confirm-btn">
-								<svg class="" preserveAspectRatio="none"><use href="#confirm-btn"></use></svg>
+							<button class="add__new__field" id="add__new__field" disabled="true">
+								<svg id="adding-material" preserveAspectRatio="none"><use id="adding-material" href="#add-fields"></use></svg>
 							</button>
 						</div>
 						<div>
-							<button type="" class="cancel-btn">
-								<svg class="" preserveAspectRatio="none"><use href="#cancel-btn"></use></svg>
+							<button type="" class="confirm-btn" id="confirm-save" disabled="true">
+								<svg id="confirm-ok" preserveAspectRatio="none"><use id="confirm-ok" href="#confirm-btn"></use></svg>
+							</button>
+						</div>
+						<div>
+							<button type="" class="cancel-btn" id="cancel-remove" disabled="true">
+								<svg class="" id="cancel-remove" preserveAspectRatio="none"><use id="cancel-remove" href="#cancel-btn"></use></svg>
 							</button>
 						</div>
 					</div>

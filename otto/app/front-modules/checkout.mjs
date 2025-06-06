@@ -29,13 +29,23 @@ globalThis.onload = async () => {
 
 
 export function populateRightPanels() {
-	const fragment1 = 			new DocumentFragment();
-	const fragment2 = 			new DocumentFragment();
-	const materialsAvailable =	document.createElement('package-info');
-	const updateMaterials =		document.createElement('package-info');
+	const fragment1 =	 new DocumentFragment();
+	const fragment2 =	 new DocumentFragment();
+	const materials =	document.createElement('pack-up');
+	const report =		document.createElement('pack-down');
+	const paneUp =		document.getElementById('contents1');
+	const packDown =	document.getElementById('contents2');
 
-	materialsAvailable.setAttribute('name', 'select-materials');
-	fragment1.appendChild(materialsAvailable);
+	materials.setAttribute('name', 'select-materials');
+	materials.className = 'materials';
+	materials.ariaHidden = 'false';
+	report.setAttribute('name', 'update-materials');
+	report.setAttribute('content', '0');
+	report.className = 'update-materials';
+	fragment1.appendChild(materials);
+	fragment2.appendChild(report);
+	paneUp.appendChild(fragment1);
+	packDown.appendChild(fragment2);
 };
 
 
@@ -165,7 +175,7 @@ function browserStoragePrepare() {
 	if (grants === "OFF" || grants === "FULL") {
 		createOffLineIDB();
 		// globalThis.navigator.serviceWorker.register('../sw.mjs');
-	}
+	};
 	return (mod.displayCub() && mod.displayAirCub() && mod.countWorks());
 };
 

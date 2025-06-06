@@ -46,8 +46,8 @@ export function createIDBMaterials() {
 		const db = event.target.result;
 		let object;
 
-		object = db.createObjectStore(dataName, { keyPath: "material" });
-		object.createIndex( "material", "material", { unique: true });
+		object = db.createObjectStore(dataName, { keyPath: "materials" });
+		object.createIndex( "materials", "materials", { unique: true });
 	};
 };
 

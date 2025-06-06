@@ -1,4 +1,9 @@
 export default class AvailableMaterials {
+	#WORKER = new Worker(
+		new URL("./commands/worker.grab.materials.mjs",
+		import.meta.url),
+		{ type: "module" },
+	);
 	#entry
 
 	/**
@@ -9,50 +14,53 @@ export default class AvailableMaterials {
 	};
 
 	/**
-	* @method - returns all materials available.
-	*/
-	async #grabIDBMaterials() {
-	};
-
-	/**
-	* @method - returns the warning to add some materials.
-	*/
-	async #emptyMaterials() {
-	};
-
-	/**
 	* @method - returns all stored materials available.
 	*/
-	async #demandedMaterials() {
-		const WORKER = new Worker(
-			new URL("./worker.grab.materials.mjs", import.meta.url),
-			{ type: "module" },
-		);
+	async #grabMaterialsIDB() {
 		let request;
 
-		WORKER.postMessage();
-		request = await new Promise((resolve, reject) => {
-			WORKER.onmessage = (res) => {
+		this.#WORKER.postMessage("Materials");
+		request = await new Promise(resolve => {
+			this.#WORKER.onmessage = (res) => {
 				const { data } = res;
-				data?.reference === ref ? resolve(data) : reject(res);
+				resolve(data);
 			};
 		});
 		return(request);
 	};
 
-
 	/**
 	* @method - populates the HTMLElement passed through the class.
 	*/
 	async #addsTheInfo() {
-		const materials = await this.#demandedMaterials();
-		alert(materials);
+		const materials =	await this.#grabMaterialsIDB();
+
+		if(!materials)
+			return(false);
+		materials.types.map((pack, i) => {
+			const material = document.createElement('div');
+
+			material.id = 'populate-materials';
+			material.innerHTML = `
+				<input type="checkbox" name="${pack[0]}" id="material-${i}"></input>
+				<label for="material-${i}" name="material-${i}">${pack[0]}</label>
+			`;
+			this.#entry.appendChild(material);
+		}, 0);
+		return(this.#entry);
 	};
 
 	/**
-	* @method call to populate the element.
+	* @field call to populate the element.
 	*/
 	get populate() {
 		return(this.#addsTheInfo());
+	};
+
+	/**
+	* @field retrieve all materials available.
+	*/
+	get allMaterials() {
+		return(this.#grabMaterialsIDB());
 	};
 };

@@ -31,6 +31,7 @@ const assets =		[
 	'/panels/status.panel.mjs',
 	'/panels/status_panel.html',
 	'/panels/worker.IDB.crates.mjs',
+	'/side-menu/*',
 ];
 
 
