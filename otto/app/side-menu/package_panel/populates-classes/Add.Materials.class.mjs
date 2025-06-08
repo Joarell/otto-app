@@ -10,12 +10,11 @@ export default class AddNewMaterial {
 	* @method - set the panel information.
 	*/
 	async #showPanelInfo() {
-		const entryPoint1 =	document.getElementById('content1');
-		const entryPoint2 =	document.getElementById('content2');
+		const entryPoint =	document.getElementById('content1');
 		const settingsBtn =	document.getElementById('settings-content');
 		const addBtn =		document.getElementById('confirm-save');
 		const cancel =		document.getElementById('cancel-remove');
-		const populated =	new AddPackingMaterials(entryPoint1);
+		const populated =	new AddPackingMaterials(entryPoint);
 
 		document.getElementById('add__new__field').disabled = false;
 		settingsBtn.style.backgroundColor = "var(--yellow-select)";

@@ -11,7 +11,7 @@ export class PackageInfoUp extends HTMLElement {
 	#type = [];
 	#shadowRoot = new WeakMap();
 	static observedAttributes = [ "name", "content" ];
-	#reg = new RegExp("^[A-Za-z0-9\s]+$");
+	#reg = new RegExp("^[A-Za-z\ 0-9\s]+$");
 	#link;
 	#lastElement;
 
@@ -19,7 +19,7 @@ export class PackageInfoUp extends HTMLElement {
 		super();
 		const shadow =			this.attachShadow({ mode: "open" });
 
- 		this.#link =			document.createElement('link');
+		this.#link =			document.createElement('link');
 		this.#link.rel =		'stylesheet';
 		this.#link.type =		'text/css';
 		this.#link.href =		'./stylesheet.css';
@@ -74,8 +74,7 @@ export class PackageInfoUp extends HTMLElement {
 		const content =	document.querySelector(".update-materials");
 		const value =	+content.getAttribute('content');
 
-		console.log(`Value: ${value} and ${typeof value}`);
-		content.setAttribute("content", JSON.stringify(value + 1));
+		content.setAttribute("content", "update");
 	};
 
 	/**
@@ -83,28 +82,18 @@ export class PackageInfoUp extends HTMLElement {
 	*/
 	#inputListener() {
 		globalThis.document.querySelector(".package-crates")
-		.addEventListener("input", (async element => {
-			const { className } =	element.target;
-			const value =			element.target.getAttribute('content');
+			.addEventListener("input", (async element => {
+				const { className } =	element.target;
+				const value =		element.target.getAttribute('content');
 
-			if (value > 0 && className === "packing-materials")
-				return ;
-			switch(className) {
-				case 'update-materials':
-					element
-						.target
-						.shadowRoot
-						.querySelector(".packing-materials")
-						.addEventListener("input", this.#updateMaterials, true);
-					break ;
-				default :
-					element
-						.target
-						.shadowRoot
-						.querySelector(".select-materials")
-						.addEventListener("input", this.#localStoreSelectedMaterials, true);
-			};
-		}), true);
+				if (value !== 0 && className === "packing-materials")
+					return ;
+				element
+					.target
+					.shadowRoot
+					.querySelector(".select-materials")
+					.addEventListener("input", this.#localStoreSelectedMaterials, true);
+			}), true);
 	};
 
 	/**
@@ -149,6 +138,8 @@ export class PackageInfoUp extends HTMLElement {
 				case 'confirm-save':
 					this.#inputListener();
 					return(this.#saveMaterials());
+				case 'contents2':
+					return(this.#updateMaterials());
 			};
 		}), true);
 	};
@@ -200,6 +191,7 @@ export class PackageInfoUp extends HTMLElement {
 	* @method - check if there is some materials available to select.
 	*/
 	async #checkMaterialsAvailable() {
+		this.#inputListener();
 		if(await new AvailableMaterials().allMaterials)
 			return(true);
 		await this.#populateAddMaterials();
@@ -219,17 +211,12 @@ export class PackageInfoUp extends HTMLElement {
 		const materialsInfo =	new AvailableMaterials(node.lastElementChild);
 		const types =			await materialsInfo.allMaterials;
 		const fragment =		new DocumentFragment();
-		const addBtn =			document.getElementById('confirm-save');
-		const cancel =			document.getElementById('cancel-remove');
 		const settingsBtn =		document.getElementById('settings-content');
-		const down =			document.querySelector(".update-materials").shadowRoot;
-		const content =			down.querySelector(".packing-materials");
 
-		// content.setAttribute('content', '1');
-		cancel.disabled = true;
-		addBtn.disabled = true;
 		settingsBtn.style.backgroundColor = "transparent";
 		document.getElementById('add__new__field').disabled = true;
+		document.getElementById('confirm-btn').disabled = true;
+		document.getElementById('cancel-btn').disabled = true;
 		if(types) {
 			shadowRoot.appendChild(this.#link);
 			fragment.append(await materialsInfo.populate)

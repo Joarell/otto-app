@@ -65,12 +65,33 @@ export default class AddPackingMaterials {
 		fragment.append(node);
 		!this.#materials ? this.#materials = await this.#grabNewMaterials() : 0;
 		this.#materials.types.map((pack, i) => {
-			const material = document.createElement('div');
+			const material =	document.createElement('div');
+			let select =		document.createElement('select');
 
 			material.className = "material-info";
+			switch(pack[5]) {
+				case 'Sheet':
+					select.innerHTML = `
+						<option selected>Sheet</option>
+						<option>Roll</option>
+						<option>Wood</option>`;
+					break;
+				case 'Roll':
+					select.innerHTML = `
+						<option>Sheet</option>
+						<option selected>Roll</option>
+						<option>Wood</option>`;
+					break;
+				case 'Wood':
+					select.innerHTML = `
+						<option>Sheet</option>
+						<option>Roll</option>
+						<option selected>Wood</option>`;
+					break;
+			};
 			material.innerHTML = `
 				<div class="check-material">
-					<input type="checkbox" id="material-${i}" name="material-${i}"></input>
+					<input type="checkbox" id="material-${i}" name="${pack[0]}"></input>
 					<label for="material-${i}" name="material-${i}">${pack[0]}:</label>
 				</div>
 				<div class="material-sizes">
@@ -80,6 +101,7 @@ export default class AddPackingMaterials {
 				</div>
 				<input class="material-price" type="number" placeholder="$ ${pack[4]}" pattern="\d+(\.\d{1,2})?" required></input>
 			`;
+			material.appendChild(select);
 			fragment.appendChild(material);
 		}, 0);
 		while(content && content.firstChild)
@@ -91,14 +113,7 @@ export default class AddPackingMaterials {
 	* @method - save all materials in IDB.
 	*/
 	async #storeNewMaterials() {
-		const materials =	JSON.parse(globalThis.localStorage.getItem('materials'));
-
-		if(materials) {
-			materials.map(pack => this.#materials.types.push(pack));
-			localStorage.setItem('materials', JSON.stringify(this.#materials.types));
-		}
-		else
-			localStorage.setItem('materials', JSON.stringify(this.#materials.types));
+		localStorage.setItem('materials', JSON.stringify(this.#materials.types));
 		this.#COMMANDWORKER.postMessage(this.#materials);
 		const message = await new Promise((resolve) => {
 			this.#COMMANDWORKER.onmessage = (res) => {

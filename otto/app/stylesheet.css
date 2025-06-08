@@ -307,7 +307,7 @@ input {
 		}
 	}
 	&::placeholder {
-		opacity: .3;
+		opacity: .5;
 		font-weight: 300;
 		font-style: italic;
 		font-size: .8rem;
@@ -780,6 +780,12 @@ tbody:nth-child(even) {
 	& .contents2 {
 		grid-area: 4 / 1 / 5 / 1;
 		padding: .5rem;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		flex-basis: 1;
+		flex-grow: 1;
+		cursor: pointer;
 		& .downPane {
 			position: relative;
 			& table:is([aria-hidden="true"]) {
@@ -1126,13 +1132,14 @@ tbody:nth-child(even) {
 }
 
 .packing-materials:is([aria-hidden="false"]) {
-	padding: .1rem;
 	& h3 {
+		width: 100%;
 		color: var(--p__color--mode);
 		position: relative;
 		padding: .5rem;
 		margin: 0;
 		margin-bottom: 1rem;
+		flex-basis: 1;
 		&::before {
 			content: "";
 			inset: 0;
@@ -1140,12 +1147,37 @@ tbody:nth-child(even) {
 			border-bottom: solid 1px var(--lines);
 		}
 	}
+	& p {
+		flex-basis: 1;
+		text-align-last: left;
+		text-align: start;
+		margin: 0 0 .5rem 0;
+		width: 100%;
+	}
 	& .material-info {
 		display: grid;
-		grid-template-columns: 1fr 1.5fr 1fr;
+		grid-template-columns: 1fr 1.5fr 1fr 1fr;
 		width: 100%;
 		justify-self: start;
 		column-gap: .5rem;
+		& select {
+			border: .1rem solid var(--pressed);
+			border-radius: .2rem;
+			height: 1.2rem;
+			background-color: transparent;
+			color: var(--pressed);
+			text-align: center;
+			& option {
+				text-align: center;
+				border: .1rem solid var(--pressed);
+				border-radius: .2rem;
+			}
+			&:open {
+				text-align: center;
+				border-radius: .1rem;
+				background-color: transparent;
+			}
+		}
 		& input {
 			width: 100%;
 			height: 1.8ch;

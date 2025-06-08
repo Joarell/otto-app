@@ -13,8 +13,9 @@ templateMaterials.innerHTML = `
 */
 export const availableMaterials = document.createElement('template');
 availableMaterials.innerHTML = `
-<div class="packing-materials" aria-hidden="false" role="none">
+<div class="packing-materials" aria-hidden="false" role="none" content="0">
 	<h3>Packing materials for updating in ${globalThis.localStorage.getItem('metrica').split('-')[1]}:</h3>
+	<p>Press this pane to save your updates.</p>
 </div>
 `;
 
