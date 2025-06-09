@@ -1,12 +1,11 @@
 import AvailableMaterials from "./populates-classes/Available.Materials.class.mjs";
 import AddPackingMaterials from "./populates-classes/Update.Materials.class.mjs";
-import { availableMaterials } from "./templates.mjs";
+import UsedMaterialsTable from "./populates-classes/Used.Materials.class.mjs";
 
 /**
 * @class - Otto's side menu double panels.
 */
 export class PackageInfoDown extends HTMLElement {
-	#type = [];
 	#shadowRoot = new WeakMap();
 	static observedAttributes = [ "name", "content" ];
 	#link;
@@ -113,13 +112,13 @@ export class PackageInfoDown extends HTMLElement {
 
 		if (materials) {
 			const shadowRoot =		this.#shadowRoot.get(this);
-			const entry =			document.querySelector(".packing-materials");
+			const entry =			document.querySelector(".update-materials");
 			const defaultPanel =	new AddPackingMaterials(entry);
 			const fragment =		new DocumentFragment();
 
 			fragment.append(await defaultPanel.populatePanels(2));
-			shadowRoot.append(this.#link);
 			shadowRoot.appendChild(fragment);
+			shadowRoot.appendChild(this.#link);
 			shadowRoot.appendChild(await defaultPanel.secondPanelPopulate);
 		};
 	};
@@ -127,37 +126,24 @@ export class PackageInfoDown extends HTMLElement {
 	/**
 	* @method - Hides useless panel info.
 	*/
-	#hiddenContent() {
-		const materials =		document.getElementById('select-materials');
-		const pack =			document.getElementById('packing-materials');
-		const cratesPackage =	document.getElementById('first-pane');
-
-		materials ? materials.ariaHidden = "true": false;
-		pack ? pack.ariaHidden = "true": false;
-		cratesPackage ? cratesPackage.ariaHidden = "true": false
-	};
-
-	/**
-	* @method - populates the first panel with all crates with works packed.
-	*/
-	async #populatePackedWorksInCrates() {
+	#hiddenContent(element) {
+		if(element === null)
+			return ;
+		const { shadowRoot } = document.querySelector('.update-materials');
+		while(shadowRoot.firstChild)
+			shadowRoot.removeChild(shadowRoot.firstChild);
 	};
 
 	/**
 	* @method - populates the second panel with all materials used and the selected works package info.
 	*/
 	async #populateMaterialsUsed() {
-	};
+		const panel = document.querySelector('.update-materials');
+		const { shadowRoot } = panel;
+		const table = new UsedMaterialsTable(shadowRoot);
 
-	/**
-	* @method - check the options to check the selected materials for updating
-	*/
-	#checkMaterialsForUpdating() {
-		globalThis.document.querySelector(".packing-materials")
-			.addEventListener("input", (element => {
-				this.#updateMaterials();
-				// switch(event.target.className)
-		}), true);
+		table.setupTable;
+		return(shadowRoot.appendChild(this.#link));
 	};
 
 	/**
@@ -180,7 +166,9 @@ export class PackageInfoDown extends HTMLElement {
 	*/
 	async attributeChangedCallback(attName, oldVal, newVal) {
 		// const shadowRoot = 	this.#shadowRoot.get(this);
+		const check = oldVal === 'update-materials' && newVal === 'materials-used';
 
+		check || oldVal === 'materials-used' ? this.#hiddenContent(oldVal) : 0;
 		switch(newVal) {
 			case 'update-materials':
 				return(await this.#populateUpdateMaterials());
@@ -188,8 +176,8 @@ export class PackageInfoDown extends HTMLElement {
 				return(this.#updateMaterials());
 			case 'update':
 				return(this.#updateMaterials());
-			// case 'materials-used':
-			// 	return();
+			case 'materials-used':
+				return(await this.#populateMaterialsUsed());
 		};
 	};
 };

@@ -91,10 +91,11 @@ cratesPacked.innerHTML = `
 */
 export const materialsTable = document.createElement('template');
 materialsTable.innerHTML = `
-<div class="package downPane" id="second-pane">
-	<table class="work1" id="work1" aria-hidden="true" role="none">
+<div class="downPane" id="second-pane">
+	<h3 class="material-report">Used material applied to the list:</h3>
+	<table class="work1" id="work1" aria-hidden="false" role="none">
 		<tr>
-			<th><h4>Work2</h3></th>
+			<th><h5>Work2</h5></th>
 		</tr>
 		<tr>
 			<th>Type</th>
@@ -135,7 +136,7 @@ materialsTable.innerHTML = `
 		<tr></tr>
 	</table>
 	<table>
-		<h3 class="material-report">Whole used material to the list:</h3>
+		<h4 class="material-report">Whole used material to the list:</h4>
 		<tr>
 			<th>Type</th>
 			<th>Used total</th>
@@ -152,32 +153,6 @@ materialsTable.innerHTML = `
 			<td>110 m²</td>
 		</tr>
 	</table>
-	<table class="work1" id="work1" aria-hidden="true" role="none">
-		<tr>
-			<th><h3>Work2</h3></th>
-		</tr>
-		<tr>
-			<th>Type</th>
-			<th>Used</th>
-			<th>Total cost $</th>
-		</tr>
-		<tr>
-			<td>Glassine</td>
-			<td>22 m²</td>
-			<td>$ 5.00</td>
-		</tr>
-		<tr>
-			<td>Card board</td>
-			<td>22 m²</td>
-			<td>$ 10.00</td>
-		</tr>
-		<tr>
-			<td>Subtotal:</td>
-			<td></td>
-			<td>$ 15.00</td>
-		</tr>
-	</table>
 </div>
-<svg class="copy-message" preserveAspectRatio="none"><use href="#copy-content-icon"></use></svg>
 </div>
 `;

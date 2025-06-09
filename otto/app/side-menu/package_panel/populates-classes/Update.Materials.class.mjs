@@ -2,12 +2,6 @@ import { availableMaterials, newMaterials } from "../templates.mjs";
 import AvailableMaterials from "./Available.Materials.class.mjs";
 
 export default class AddPackingMaterials {
-	/** @type { Worker } QUERYWORKER */
-	#QUERYWORKER = new Worker(
-		new URL("./commands/worker.grab.materials.mjs", import.meta.url),
-		{ type: "module" },
-	);
-
 	/** @type { Worker } COMMANDWORKER */
 	#COMMANDWORKER = new Worker(
 		new URL("./commands/worker.save.materials.mjs", import.meta.url),

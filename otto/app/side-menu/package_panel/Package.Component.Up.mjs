@@ -13,7 +13,6 @@ export class PackageInfoUp extends HTMLElement {
 	static observedAttributes = [ "name", "content" ];
 	#reg = new RegExp("^[A-Za-z\ 0-9\s]+$");
 	#link;
-	#lastElement;
 
 	constructor() {
 		super();
@@ -71,9 +70,7 @@ export class PackageInfoUp extends HTMLElement {
 	* @adds new fields to fill with new pack materials;
 	*/
 	async #updateMaterials() {
-		const content =	document.querySelector(".update-materials");
-		const value =	+content.getAttribute('content');
-
+		const content = document.querySelector(".update-materials");
 		content.setAttribute("content", "update");
 	};
 
@@ -97,6 +94,18 @@ export class PackageInfoUp extends HTMLElement {
 	};
 
 	/**
+	* @method - toggles the down pane.
+	*/
+	#toggleMaterialsReportAndUpdate() {
+		const downPane =	document.querySelector(".update-materials");
+		const name =		downPane.getAttribute('name');
+
+		name === "materials-used" ?
+			downPane.setAttribute('name', 'update-materials'):
+			downPane.setAttribute('name', 'materials-used')
+	};
+
+	/**
 	* @method - check the options to active the confirm button.
 	*/
 	#checkSPressButton() {
@@ -107,7 +116,6 @@ export class PackageInfoUp extends HTMLElement {
 			const { className } =	shadowRoot.lastElementChild;
 			const { id } =			element.target;
 
-			this.#lastElement = `.${className}`;
 			switch(id) {
 				case 'settings-content':
 					return(className !== 'new-material' ? this.#cleanPanel(id, className): 0);
@@ -124,8 +132,10 @@ export class PackageInfoUp extends HTMLElement {
 					return(className !== 'upPane' ? await this.#populatePackedWorksInCrates(): 0);
 				case 'works-packed':
 					return(className !== 'upPane' ? await this.#populatePackedWorksInCrates(): 0);
+				case 'reset-sizes':
+					return(this.#toggleMaterialsReportAndUpdate());
 				case 'reset-szs':
-					return(className !== 'upPane' ? await this.#populatePackedWorksInCrates(): 0);
+					return(this.#toggleMaterialsReportAndUpdate());
 				case 'adding-material':
 					return(this.#addNewField());
 				case 'add__new__field':
@@ -205,6 +215,9 @@ export class PackageInfoUp extends HTMLElement {
 		if(!await this.#checkMaterialsAvailable())
 			return(true);
 		this.#hiddenContent();
+		document.getElementById('add__new__field').disabled = true;
+		document.getElementById('confirm-save').disabled = true;
+		document.getElementById('cancel-remove').disabled = true;
 		const shadowRoot =		this.#shadowRoot.get(this);
 		const clone =			templateMaterials.content.cloneNode(true);
 		const node =			document.importNode(clone, true);
@@ -214,9 +227,6 @@ export class PackageInfoUp extends HTMLElement {
 		const settingsBtn =		document.getElementById('settings-content');
 
 		settingsBtn.style.backgroundColor = "transparent";
-		document.getElementById('add__new__field').disabled = true;
-		document.getElementById('confirm-btn').disabled = true;
-		document.getElementById('cancel-btn').disabled = true;
 		if(types) {
 			shadowRoot.appendChild(this.#link);
 			fragment.append(await materialsInfo.populate)
@@ -252,25 +262,13 @@ export class PackageInfoUp extends HTMLElement {
 	};
 
 	/**
-	* @method - populates the second panel to updates the available materials already added.
-	*/
-	async #populateUpdateMaterials() {
-	};
-
-	/**
 	* @method - Hides useless panel info.
 	*/
 	#hiddenContent() {
-		const shadowRoot = 		this.#shadowRoot.get(this);
-		const materials =		document.getElementById('select-materials');
-		const pack =			document.getElementById('packing-materials');
-		const cratesPackage =	document.getElementById('first-pane');
-		const child =			shadowRoot.querySelector(this.#lastElement);
-
-		child ? child.remove() : 0;
-		materials ? materials.ariaHidden = "true": false;
-		pack ? pack.ariaHidden = "true": false;
-		cratesPackage ? cratesPackage.ariaHidden = "true": false
+		const { shadowRoot } = document.querySelector(".materials");
+		while(shadowRoot.firstChild)
+			shadowRoot.removeChild(shadowRoot.firstChild);
+		return(shadowRoot.append(this.#link));
 	};
 
 	/**
@@ -287,12 +285,6 @@ export class PackageInfoUp extends HTMLElement {
 	};
 
 	/**
-	* @method - populates the second panel with all materials used and the selected works package info.
-	*/
-	async #populateMaterialsUsed() {
-	};
-
-	/**
 	* @method - calls the correct method to populates panels.
 	*/
 	async connectedCallBack() {
@@ -300,14 +292,10 @@ export class PackageInfoUp extends HTMLElement {
 			switch(name) {
 				case 'select-materials':
 					return(await this.#populateMaterialsUpPanel());
-				case 'update-materials':
-					return(await this.#populateUpdateMaterials());
 				case 'add-materials':
 					return(await this.#populateAddMaterials());
 				case 'packed-works':
 					return(await this.#populatePackedWorksInCrates());
-				case 'materials-used':
-					return(await this.#populateMaterialsUsed());
 			};
 		});
 	};
@@ -335,14 +323,10 @@ export class PackageInfoUp extends HTMLElement {
 				return(await this.#populateMaterialsUpPanel());
 			case 'packages':
 				return(await this.#populateMaterialsUpPanel());
-			case 'update-materials':
-				return(await this.#populateUpdateMaterials());
 			case 'settings-content':
 				return(await this.#populateAddMaterials());
 			case 'packed-works':
 				return(await this.#populatePackedWorksInCrates());
-			// case 'materials-used':
-			// 	return();
 		};
 	};
 };

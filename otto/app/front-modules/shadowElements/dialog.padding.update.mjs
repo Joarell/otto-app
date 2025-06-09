@@ -18,7 +18,7 @@ export class DialogPadding extends HTMLElement {
 		super();
 		const shadow =	this.attachShadow({ mode: "open" });
 
- 		this.#link =		document.createElement('link');
+		this.#link =		document.createElement('link');
 		this.#link.rel =	'stylesheet';
 		this.#link.type =	'text/css';
 		this.#link.href =	'./stylesheet.css';
@@ -85,6 +85,9 @@ export class DialogPadding extends HTMLElement {
 			const node =	document.importNode(clone, true);
 
 			document.getElementById('crate-btn').disabled = true;
+			document.getElementById('remove-btn').disabled = true;
+			document.getElementById('clear-btn').disabled = true;
+			document.getElementById('reset-sizes').disabled = true;
 			shadowRoot.append(node);
 			shadowRoot.appendChild(this.#link);
 		};
@@ -126,7 +129,7 @@ export class DialogPadding extends HTMLElement {
 		shadowRoot.appendChild(this.#link);
 
 		shadowRoot.append(node);
-		shadowRoot.appendChild(link);
+		shadowRoot.appendChild(this.#link);
 		const openPane =	shadowRoot.getElementById('opened-crates');
 		if(update)
 			while(openPane.firstChild)

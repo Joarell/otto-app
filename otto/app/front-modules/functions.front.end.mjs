@@ -111,7 +111,9 @@ export async function crate(fetched = false) {
 	let grant =			document.cookie.split('=')[1];
 	let list;
 	const cratesAsCm =	await checkMetric();
-	const root =	document.querySelector(':root');
+	const root =		document.querySelector(':root');
+	const material =	document.querySelector('.update-materials');
+	const upPanel =		document.querySelector('.materials')
 
 	if (fetched || confirm("Ready to crate all works?") && cratesAsCm) {
 		setPanels();
@@ -120,8 +122,9 @@ export async function crate(fetched = false) {
 		estimate.list =			list.map(art => art.data);
 		estimate.crates =		cratesAsCm;
 		addNewWorksToIndexedDB(estimate, fetched);
-
 		// addPanelInfoData();
+		material.setAttribute('name', 'materials-used');
+		upPanel.setAttribute('name', 'packed-works');
 		grant === 'FULL' || grant === 'PLOTTER' || !grant ?
 			document.getElementById('crate-layers').disabled = false : 0;
 		root.style.setProperty("--layer-state", "block");
@@ -149,6 +152,8 @@ async function addPanelInfoData() {
 //│ This function cleans all fields and puts the cursor in the code input box.│
 //╰───────────────────────────────────────────────────────────────────────────╯
 export async function cleanInputs(fetched = false) {
+	document.getElementById('remove-btn').disabled = false
+	document.getElementById('clear-btn').disabled = false
 	document.getElementById("input_code").value =	"";
 	document.getElementById("input_length").value =	"";
 	document.getElementById("input_depth").value =	"";
@@ -156,12 +161,15 @@ export async function cleanInputs(fetched = false) {
 	const RENDER =	document.getElementById("show-layer");
 	const dialog =	document.querySelectorAll('padding-dialog').length;
 	const root =	document.querySelector(':root');
+	const packs =	document.querySelector('.update-materials');
 	let granted =	document.cookie;
 
 	granted = granted.split('=')[1]
 	RENDER && RENDER.hasChildNodes() ? openDisplay() : false;
 		globalThis.document.getElementById("input_estimate").select();
 		globalThis.document.getElementById("input_code").select();
+	packs.getAttribute('name') !== 'update-materials' ?
+		packs.setAttribute('name', 'update-materials'): 0;
 	countWorks();
 	displayCub();
 	displayAirCub();
