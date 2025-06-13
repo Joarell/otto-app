@@ -127,7 +127,7 @@ export class PackageInfoDown extends HTMLElement {
 	* @method - Hides useless panel info.
 	*/
 	#hiddenContent(element) {
-		if(element === null)
+		if(!element)
 			return ;
 		const { shadowRoot } = document.querySelector('.update-materials');
 		while(shadowRoot.firstChild)

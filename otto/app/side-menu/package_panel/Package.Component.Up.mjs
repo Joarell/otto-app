@@ -31,7 +31,8 @@ export class PackageInfoUp extends HTMLElement {
 	* @property { [ Array: number | string ] } types - the material list data.
 	*/
 	async #saveMaterials() {
-		const shadowRoot =	this.#shadowRoot.get(this);
+		const materials =	document.querySelector('.materials');
+		const { shadowRoot } = materials;
 		const entry =		shadowRoot.getElementById('new-material');
 		const saver =		new AddPackingMaterials(entry);
 		/** @type { Material } */
@@ -63,6 +64,7 @@ export class PackageInfoUp extends HTMLElement {
 		if (next) {
 			saver.saveMaterials = addedMaterials;
 			await saver.saveinfo;
+			return(materials.setAttribute('name', 'select-materials'));
 		};
 	};
 
@@ -81,16 +83,50 @@ export class PackageInfoUp extends HTMLElement {
 		globalThis.document.querySelector(".package-crates")
 			.addEventListener("input", (async element => {
 				const { className } =	element.target;
-				const value =		element.target.getAttribute('content');
+				const value =			element.target.getAttribute('content');
+				const customElement =	element .target .shadowRoot
+										.querySelector(".select-materials");
 
 				if (value !== 0 && className === "packing-materials")
 					return ;
-				element
-					.target
-					.shadowRoot
-					.querySelector(".select-materials")
+				if(customElement)
+					customElement
 					.addEventListener("input", this.#localStoreSelectedMaterials, true);
 			}), true);
+	};
+
+	async #toggleReportDownPanel(work) {
+		const { shadowRoot } =	document.querySelector('.update-materials');
+		const list =			shadowRoot.querySelectorAll('table');
+
+		Object.entries(list).map(node => {
+			const { id } =	node[1];
+			if(!node[1].id && node[1].tagName !== 'TABLE')
+				return ;
+			const compare =	id === work;
+
+			if(!compare)
+				node[1].ariaHidden = 'true';
+			else if(compare && (node[1].ariaHidden === 'true'))
+				node[1].ariaHidden = 'false';
+			else if(compare && (node[1].ariaHidden === 'false'))
+				node[1].ariaHidden = 'true';
+		});
+	};
+
+	#packedReportToggle() {
+		const { shadowRoot } =	document.querySelector('.materials');
+		const packed =			shadowRoot.getElementById('first-pane')
+
+		if(!packed)
+			return ;
+		packed.addEventListener('click', (async event => {
+			const { tagName } =	event.target;
+			const { id } =		event.target;
+
+			event.stopImmediatePropagation();
+			tagName === "A" ? await this.#toggleReportDownPanel(id): 0;
+		}), true);
 	};
 
 	/**
@@ -150,8 +186,30 @@ export class PackageInfoUp extends HTMLElement {
 					return(this.#saveMaterials());
 				case 'contents2':
 					return(this.#updateMaterials());
+				default :
+					return(this.#packedReportToggle());
 			};
 		}), true);
+	};
+
+	/**
+	* @method - sets the materials after the page is loaded.
+	*/
+	#loadPageSelection() {
+		const { shadowRoot } =	document.querySelector(".materials");
+		const list =			shadowRoot.querySelector('.select-materials');
+		const materials =		JSON.parse(localStorage.getItem('packing'));
+		let temp;
+		let i;
+
+		if(!materials)
+			return ;
+		for(i in list.children)
+			if (list.children.item(i).id === 'populate-materials') {
+				temp = list.children.item(i).children.item(0).name;
+				materials.includes(temp) ?
+				list.children.item(i).children.item(0).checked = true : 0;
+			};
 	};
 
 	/**
@@ -167,7 +225,7 @@ export class PackageInfoUp extends HTMLElement {
 			if (list.children.item(i).id === 'populate-materials')
 				list.children.item(i).children.item(0).checked ?
 					materials.push(list.children.item(i).children.item(0).name): 0;
-		return(globalThis.localStorage.setItem('packing', JSON.stringify(materials)));
+		return(localStorage.setItem('packing', JSON.stringify(materials)));
 	};
 
 	/**
@@ -230,7 +288,8 @@ export class PackageInfoUp extends HTMLElement {
 		if(types) {
 			shadowRoot.appendChild(this.#link);
 			fragment.append(await materialsInfo.populate)
-			return(shadowRoot.appendChild(fragment));
+			shadowRoot.appendChild(fragment);
+			return(this.#loadPageSelection());
 		};
 	};
 
@@ -277,11 +336,10 @@ export class PackageInfoUp extends HTMLElement {
 	async #populatePackedWorksInCrates() {
 		this.#hiddenContent();
 		const shadowRoot =	this.#shadowRoot.get(this);
-		const works =		new PackedWorks();
-		const fragment =	new DocumentFragment();
+		const works =		new PackedWorks(shadowRoot);
 
-		fragment.append(await works.showWorksPacked);
-		return(shadowRoot.append(fragment));
+		shadowRoot.append(this.#link)
+		return(await works.showWorksPacked);
 	};
 
 	/**

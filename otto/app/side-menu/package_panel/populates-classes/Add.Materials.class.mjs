@@ -28,7 +28,7 @@ export default class AddNewMaterial {
 	* @method - adds new field for new material options.
 	*/
 	async #addNewOpts() {
-		const clone =		newOption.content.cloneNode(true);
+		const clone = newOption.content.cloneNode(true);
 		return(document.importNode(clone, true));
 	};
 
