@@ -108,6 +108,8 @@ export async function showCrates1(estimate, pane) {
 };
 
 function finishedRender(table, info) {
+	const { whichAirPort, airCubTotal } = info;
+
 	table.innerHTML += `<tr>
 		<td>-</td>
 		<td>-</td>
@@ -120,16 +122,16 @@ function finishedRender(table, info) {
 	table.innerHTML += `<tr>
 		<td>AIRPORT</td>
 		<td>PAX</td>
-		<td>${info.whichAirPort[0].PAX}</td>
+		<td>${whichAirPort[0].PAX}</td>
 		</tr>`;
 	table.innerHTML += `<tr>
 		<td>AIRPORT</td>
 		<td>CARGO</td>
-		<td>${info.whichAirPort[1].CARGO}</td>
+		<td>${whichAirPort[1].CARGO}</td>
 		</tr>`;
 	table.innerHTML += `<tr>
 		<td>Total Cub:</td>
-		<td>${info.airCubTotal}</td>
+		<td>${airCubTotal}</td>
 		</tr>`;
 	return(table);
 };

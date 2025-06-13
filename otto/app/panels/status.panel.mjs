@@ -115,7 +115,7 @@ export async function statusTable(plot, table = false, fetched) {
 			work = JSON.parse(storage.getItem(code));
 			work = Object.values(work);
 			element.innerHTML += work.map((item, index) => {
-					if (!item)
+					if (!item || Array.isArray(item))
 						return;
 					return index === 0
 						? `<tbody><tr><td>${item}</td>`
