@@ -153,12 +153,14 @@ function setStatusCrateType(kind, unit) {
 
 function addHTMLTableLine({ crates }, table, kind) {
 	const UNIT = localStorage.getItem("metrica") === "cm - centimeters" ? "cm" : "in";
+	const blankRow = document.createElement('tr');
 
+	blankRow.innerHTML =`<span></span><span></span><span></span><span></span><span></span><span></span><span></span>`
 	crates.map((done, i) => {
 		if (i % 2 === 0) {
 			const port = airPortStatus(done, UNIT);
-			table.innerHTML += done
-				.map((info, i) => {
+			table.appendChild(blankRow);
+			table.innerHTML += done.map((info, i) => {
 					switch (i) {
 						case 0:
 							return `<tbody><tr><td>${port}</td><td>CREATE</td><td>${info}</td>`;

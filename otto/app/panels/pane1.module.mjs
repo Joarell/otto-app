@@ -60,12 +60,14 @@ function airPortStatus(create, sizeUnit) {
 
 function addHTMLTableLine(data, unit, table) {
 	const { crates } = data;
+	const blankRow = document.createElement('tr');
 
+	blankRow.innerHTML =`<span></span><span></span><span></span><span></span><span></span><span></span><span></span>`
 	crates.map((create, i) => {
 		if (i % 2 === 0) {
 			const port = airPortStatus(create, unit);
-			table.innerHTML += create
-				.map((info, i) => {
+			table.appendChild(blankRow);
+			table.innerHTML += create.map((info, i) => {
 					switch (i) {
 						case 0:
 							return `<tbody><tr><td>${port}</td><td>CREATE</td><td>${info}</td>`;
