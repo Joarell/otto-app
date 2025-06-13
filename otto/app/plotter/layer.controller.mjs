@@ -39,7 +39,7 @@ export async function openDisplay() {
 		default :
 			closeDisplay([display, menu], RENDER);
 	};
-	if (display.ariaHidden === 'false') {
+	if (display && display.ariaHidden === 'false') {
 		await populateOptions();
 		renderLayer();
 		setTimeout(

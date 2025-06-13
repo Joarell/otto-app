@@ -152,8 +152,6 @@ async function addPanelInfoData() {
 //│ This function cleans all fields and puts the cursor in the code input box.│
 //╰───────────────────────────────────────────────────────────────────────────╯
 export async function cleanInputs(fetched = false) {
-	document.getElementById('remove-btn').disabled = false
-	document.getElementById('clear-btn').disabled = false
 	document.getElementById("input_code").value =	"";
 	document.getElementById("input_length").value =	"";
 	document.getElementById("input_depth").value =	"";
@@ -197,13 +195,17 @@ async function parseArtWork() {
 		"materials",
 		"packing",
 	];
-
+	// const packs = JSON.parse(globalThis.localStorage.getItem('packing'));
+	//
+	// if(!packs || packs.length === 0)
+	// 	return(alert(`Please, select a packing material to applyt to the artwork.`));
 	Object.entries(DB).map(data => {
 		!avoid.includes(data[0]) ? temp.push(JSON.parse(data[1])) : false;
 	});
 	if (temp.length > 0)
 		works = temp.map(work => {
-			return(new ArtWork(work.code, work.x, work.z, work.y));
+			const { code, x, z, y, packing } = work;
+			return(new ArtWork(code, x, z, y, packing));
 		});
 	return(works ? works : undefined);
 };

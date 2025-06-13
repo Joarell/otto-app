@@ -103,7 +103,11 @@ export async function statusTable(plot, table = false, fetched) {
 	createHeader(element);
 	element.id = "works-list";
 	if (table && codes) {
-		crateBTN.disabled ? crateBTN.disabled = false: false;
+		if (crateBTN.disabled ){
+			crateBTN.disabled = false;
+			document.getElementById('remove-btn').disabled = false
+			document.getElementById('clear-btn').disabled = false
+		};
 		while(plot.firstChild)
 			plot.removeChild(plot.firstChild);
 		createHeader(plot);

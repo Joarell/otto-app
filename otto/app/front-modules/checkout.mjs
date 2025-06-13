@@ -101,7 +101,7 @@ export const crate = () => {
 	const element = document.querySelector(".result");
 
 	if (sessionStorage.getItem('codes')) {
-		element.ariaHidden === 'true' ? openCloseDisplay([element]) : false;
+		element && element.ariaHidden === 'true' ? openCloseDisplay([element]) : false;
 		setTimeout(
 			() => globalThis.scroll({ top: 300, behavior: "smooth" }), 1000
 		);

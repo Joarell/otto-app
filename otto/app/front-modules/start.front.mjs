@@ -14,6 +14,19 @@ import ArtWork from '../core2/ArtWork.class.mjs';
 import * as mod from './functions.front.end.mjs'
 
 
+function definedPackingMaterials() {
+	const packs =		JSON.parse(globalThis.localStorage.getItem('packing'));
+	const materials =	JSON.parse(globalThis.localStorage.getItem('materials'));
+	const filtered =	[];
+
+	if(!packs || packs.length === 0)
+		return(false);
+	packs.filter(type => {
+		return(materials.map(opts => opts[0] === type ? filtered.push(opts) : 0));
+	});
+	return(filtered);
+};
+
 // ╭────────────────────────────────────────────────────────────────────────╮
 // │ This function validates all inputs of the fields provided by the user. │
 // ╰────────────────────────────────────────────────────────────────────────╯
@@ -21,25 +34,30 @@ export function checkWork(work) {
 	const checked =		regValid(intParser([work[1], work[2], work[3]]));
 	const regex =		/[^-a-z-A-Z-0-9]/g;
 	const estimate =	document.getElementById("input_estimate").value;
+	const materials =	definedPackingMaterials();
 	let i =				0;
 
+	if(!materials) {
+		alert('Please, select some packing material to apply to the artwork.');
+		return(false);
+	};
+	if (regex.test(work[0]) || regex.test(estimate)) {
+		alert(`Found special character NOT allowed on "Work code",\
+		or "Estimate" input. Please, try again!`);
+		return (false);
+	};
 	for (i in localStorage.key(i)){
 		if(work[0] === localStorage.key(i)){
 			alert(`${work[0]} already added to the list. Please, try again`);
 			return(false);
-		}
-	}
-	switch (regex.test(work[0]) || regex.test(estimate)) {
-		case true:
-			alert(`Found special character NOT allowed on "Work code",\
-			or "Estimate" input. Please, try again!`);
-			return (false);
-	}
+		};
+	};
 	checkReference();
-	return ( Array.isArray(checked) ?
-		new ArtWork(work[0], checked[0], checked[1], checked[2]) : false
+	return (
+		Array.isArray(checked) ?
+		new ArtWork(work[0], checked[0], checked[1], checked[2], materials) : false
 	);
-}
+};
 
 
 // ╭──────────────────────────────────────────────────────╮
@@ -50,7 +68,7 @@ export function intParser(dimensions) {
 		return parseInt(size);
 	});
 	return (result);
-}
+};
 
 // ╭────────────────────────────────────────────────────────────────────╮
 // │ Regular expression function to validate if all inputs are numbers. │
@@ -78,7 +96,7 @@ export function regValid(sizes_parsed) {
 		}
 	}
 	return (sizes_parsed);
-}
+};
 
 
 //╭───────────────────────────────────────────────────────────────────────────╮
@@ -86,7 +104,7 @@ export function regValid(sizes_parsed) {
 //│Secondly, calls the other functions from the modules when all verifications│
 //│                           were done and right.                            │
 //╰───────────────────────────────────────────────────────────────────────────╯
-export function catchWork() {
+export async function catchWork() {
 	const estimate =	document.getElementById("input_estimate").value;
 	const cod =			document.getElementById("input_code").value;
 	const length =		document.getElementById("input_length").value;
@@ -102,8 +120,8 @@ export function catchWork() {
 			return (mod.cleanInputs());
 	}
 	tmp = checkWork([cod, length, depth, height]);
-	if (tmp !== false) {
-		orderWorks(tmp.data);
+	if (tmp) {
+		await orderWorks(tmp.data);
 		localStorage.setItem(tmp.data.code, JSON.stringify(tmp.data));
 		localStorage.setItem("storage", "art-work");
 		mod.countWorks();
@@ -112,7 +130,7 @@ export function catchWork() {
 		mod.cleanInputs();
 	}
 	return (mod.cleanInputs());
-}
+};
 
 
 // ╭─────────────────────────────────────────────────────────────────╮
@@ -134,7 +152,7 @@ export function catchRemove() {
 		alert(`"${work}" was not found in the list. Please, try again!`);
 	localStorage.setItem("storage", "art-work");
 	return(mod.cleanInputs());
-}
+};
 
 
 // ╭─────────────────────────────────────────────────────────────────╮
@@ -156,10 +174,10 @@ export function checkReference() {
 		}
 	}
 	localStorage.setItem("refNumb", actual);
-}
+};
 
 
-function orderWorks({ code }){
+async function orderWorks({ code }){
 	const storage =	sessionStorage;
 	const array =	JSON.parse(storage.getItem("codes"));
 	let num;
