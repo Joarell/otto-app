@@ -8,6 +8,7 @@ export default class AddPackingMaterials {
 		{ type: "module" },
 	);
 	#entry;
+	/** typedef { Array } */
 	#materials;
 
 	/**
@@ -68,19 +69,41 @@ export default class AddPackingMaterials {
 					select.innerHTML = `
 						<option selected>Sheet</option>
 						<option>Roll</option>
-						<option>Wood</option>`;
+						<option>Plywood</option>
+						<option>Pinewood</option>
+						<option>Tape</option>`;
 					break;
 				case 'Roll':
 					select.innerHTML = `
 						<option>Sheet</option>
 						<option selected>Roll</option>
-						<option>Wood</option>`;
+						<option>Plywood</option>
+						<option>Pinewood</option>
+						<option>Tape</option>`;
 					break;
-				case 'Wood':
+				case 'Plywood':
 					select.innerHTML = `
 						<option>Sheet</option>
 						<option>Roll</option>
-						<option selected>Wood</option>`;
+						<option selected>Plywood</option>
+						<option>Pinewood</option>
+						<option>Tape</option>`;
+					break;
+				case 'Pinewood':
+					select.innerHTML = `
+						<option>Sheet</option>
+						<option>Roll</option>
+						<option>Plywood</option>
+						<option selected>Pinewood</option>
+						<option>Tape</option>`;
+					break;
+				case 'Tape':
+					select.innerHTML = `
+						<option>Sheet</option>
+						<option>Roll</option>
+						<option>Plywood</option>
+						<option>Pinewood</option>
+						<option selected>Tape</option>`;
 					break;
 			};
 			material.innerHTML = `
@@ -107,14 +130,47 @@ export default class AddPackingMaterials {
 	* @method - save all materials in IDB.
 	*/
 	async #storeNewMaterials() {
+		const checkMaterials =	await this.#grabNewMaterials();
+
+		if(checkMaterials) {
+			const stored =	new Set(checkMaterials.types);
+			const added =	new Set(this.#materials.types);
+			const diff =	added.difference(stored);
+			const values =	diff.entries();
+			let i =			0;
+			let pack;
+
+			for(pack of values)
+				i % 2 === 0 ? checkMaterials.types.push(pack[i]) : i++;
+		};
 		localStorage.setItem('materials', JSON.stringify(this.#materials.types));
+		checkMaterials ? this.#COMMANDWORKER.postMessage(checkMaterials):
 		this.#COMMANDWORKER.postMessage(this.#materials);
 		const message = await new Promise((resolve) => {
 			this.#COMMANDWORKER.onmessage = (res) => {
 				resolve(res.data);
 			};
 		});
+		checkMaterials ? this.#materials = checkMaterials: 0;
 		return (message === "Saved" ? this.#updateDownPanel(): 0);
+	};
+
+	/**
+	* @method - remove and update materials on panels.
+	*/
+	async #removeAndUpdateMaterials() {
+		const { shadowRoot } =	document.querySelector(".materials");
+		const content =			shadowRoot.querySelector(".select-materials");
+		const materials =		await this.#grabNewMaterials();
+
+		materials.types.map((pack, i) => this.#materials.includes(pack[0]) ?
+			materials.types.splice(i, 1): 0, 0);
+		while(content && content.children.length > 1)
+			content.removeChild(content.lastElementChild)
+		this.#materials = materials;
+		this.#COMMANDWORKER.postMessage(this.#materials);
+		await this.#updateDownPanel();
+		return(this.#entry.setAttribute('name', 'update'));
 	};
 
 	/**
@@ -149,6 +205,10 @@ export default class AddPackingMaterials {
 
 	get saveinfo() {
 		return(this.#storeNewMaterials());
+	};
+
+	get removeMaterials() {
+		return(this.#removeAndUpdateMaterials());
 	};
 
 	/**

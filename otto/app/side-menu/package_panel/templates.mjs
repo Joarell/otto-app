@@ -50,7 +50,9 @@ newOption.innerHTML = `
 	<select>
 		<option selected>Sheet</option>
 		<option>Roll</option>
-		<option>Wood</option>
+		<option>Pinewood</option>
+		<option>Plywood</option>
+		<option>Tape</option>
 	</select>
 </div>
 `;
@@ -159,3 +161,5 @@ materialsTable.innerHTML = `
 	// 		<td>110 m²</td>
 	// 	</tr>
 	// </table>
+
+// 0 : Array(6) 0 : "Glassine" 1 : "90" 2 : "0.5" 3 : "150" 4 : "40" 5 : "Roll" length : 6 1 : Array(6) 0 : "Cardboard" 1 : "100" 2 : "0.3" 3 : "120" 4 : "1" 5 : "Sheet" length : 6 2 : Array(6) 0 : "Tyvek" 1 : "7.5" 2 : "0.01" 3 : "300" 4 : "50" 5 : "Roll" length : 6 3 : Array(6) 0 : "Bubble Plastic" 1 : "120" 2 : "0.05" 3 : "100" 4 : "20" 5 : "Sheet" length : 6 length : 4

@@ -28,7 +28,7 @@ export default class ArrangerSameSize {
 		const x =	work[1];
 		const y =	work[3];
 		const cub =	work[4];
-	
+
 		return (art[1] === x && art[3] === y && art[4] === cub);
 	};
 
@@ -40,7 +40,7 @@ export default class ArrangerSameSize {
 
 			for(i in list) {
 				if (this.#checker(list[i], work) && !sameSize.includes(list[i]))
-					getter.push(list[i]);	
+					getter.push(list[i]);
 			};
 			if (getter.length >= 4)
 				getter.map(element => {

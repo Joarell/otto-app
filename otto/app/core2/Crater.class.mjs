@@ -116,13 +116,14 @@ export default class Crater {
 		let key =		0;
 		const setCub =	(sizes) => {
 			const COORDINATES = 3;
-			if (Array.isArray(sizes) && sizes.length === COORDINATES) {
+			if (Array.isArray(sizes) && sizes.length >= COORDINATES) {
 				const X =			sizes[0];
 				const Z =			sizes[1];
 				const Y =			sizes[2];
 				const cubCrate =	new CubCalc(X, Z, Y).cubCalcAir;
-
-				sizes.push(cubCrate);
+				const data = 		sizes.length === 4 ?
+					sizes.splice(3, 1, cubCrate) : sizes.push(cubCrate);
+				!Array.isArray(data[0]) ? sizes.push(data) : 0;
 			};
 		};
 
@@ -137,16 +138,14 @@ export default class Crater {
 	#totalCub() {
 		let key =	0;
 		let total =	[];
-		const setTotalCub =	(crate) => {
-			if (Array.isArray(crate)) {
-				total.push(crate[3]);
-			};
+		const setTotalCub =	crate => {
+			Array.isArray(crate) ? total.push(crate[3]) : 0;
 		};
 
 		for (key in this.#crates)
 			this.#crates[key]?.crates?.map(setTotalCub);
-		total = total.reduce((sum, val) => +(sum + val).toFixed(3), 0);
-		this.#crates.airCubTotal = total;
+		total = total.reduce((sum, val) => sum + val, 0);
+		this.#crates.airCubTotal = (total).toFixed(3);
 	};
 
 	#totalCubBackUp() {

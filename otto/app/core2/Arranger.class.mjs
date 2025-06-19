@@ -15,11 +15,12 @@ export default class Arranger {
 		if(dataChecker && dataChecker.constructor.name === 'TypeError')
 			return (dataChecker);
 		this.#solver();
+		console.log(this.#works)
 		return(Object.assign(Arranger, { list: this.#works }));
 	};
 
 	#solver () {
-		this.#start();
+		this.#manySizes();
 		this.#sameSizeTrail();
 		this.#noCanvasTrail();
 		this.#largestCanvasTrail();
@@ -50,7 +51,7 @@ export default class Arranger {
 		};
 	};
 
-	#start () {
+	#manySizes () {
 		this.#works = new ArrangerStarter(this.#works);
 	};
 

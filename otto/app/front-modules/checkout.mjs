@@ -110,13 +110,13 @@ export const crate = () => {
 
 
 function clearBrowserStorage() {
-	const mode = localStorage.getItem("mode");
-	const unit = localStorage.getItem("metrica");
+	const { mode, metrica, materials } = localStorage;
 
 	localStorage.clear();
 	sessionStorage.clear();
 	localStorage.setItem("mode", mode);
-	localStorage.setItem("metrica", unit);
+	localStorage.setItem("metrica", metrica);
+	localStorage.setItem("materials", materials);
 	mod.countWorks();
 	mod.displayCub();
 	mod.displayAirCub();
@@ -147,6 +147,7 @@ export const clearAll = () => {
 		closeDialog.getElementsByTagName('panel-info').length > 0 ?
 			document.querySelector(".side-menu")
 			.lastElementChild.setAttribute('name', 'close') : false;
+		document.querySelector(".materials").setAttribute('name', 'select-materials');
 	};
 };
 

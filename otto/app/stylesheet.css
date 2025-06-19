@@ -973,6 +973,18 @@ tbody:nth-child(even) {
 	&:hover {
 		overflow-y: scroll;
 	}
+	& h4 {
+		color: var(--p__color--mode);
+		position: relative;
+		width: 100%;
+		&::before {
+			content: "";
+			inset: 0;
+			position: absolute;
+			border-top: solid 1px var(--lines);
+			border-bottom: solid 1px var(--lines);
+		}
+	}
 }
 
 .upPane {

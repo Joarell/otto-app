@@ -1,12 +1,10 @@
-
-
 export default class CraterPythagoras {
 	#largest;
 
 	constructor (canvas) {
 		if(!canvas || canvas.length === 0)
 			return({ largest: false });
-		this.#largest = canvas;
+		this.#largest = canvas.map(art => art.arr);
 		return(this.#pitagorasCrater());
 	};
 

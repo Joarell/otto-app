@@ -5,7 +5,7 @@ export default class CraterSameSize {
 		if(!list || list.length === 0)
 			return({ sameSize: false});
 
-		this.#peces = list;
+		this.#peces = list.map(art => art.arr);
 		return (this.#startCrateTrail());
 	};
 

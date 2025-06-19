@@ -104,6 +104,29 @@ export class PackageInfoDown extends HTMLElement {
 		return(await this.#updateMaterialsInfo(updated, content));
 	};
 
+	async #removeMaterials() {
+		const { shadowRoot } =	document.querySelector(".update-materials");
+		const content =			shadowRoot.querySelector(".packing-materials");
+		const { children } =	content;
+		const list =			[];
+		let aux;
+
+		for(aux of children) {
+			const { className } = aux;
+
+			if(className === "material-info")
+				aux.children.item(0).children.item(0).checked ?
+					list.push(aux.children.item(0).children.item(0).name) : 0;
+		};
+		if(list.length > 0) {
+			const upPanel =	document.querySelector('.materials');
+			const update =	new AddPackingMaterials(upPanel);
+
+			update.saveMaterials = list;
+			await update.removeMaterials;
+		};
+	};
+
 	/**
 	* @method - populates the second panel to updates the available materials already added.
 	*/
@@ -178,6 +201,8 @@ export class PackageInfoDown extends HTMLElement {
 				return(this.#updateMaterials());
 			case 'materials-used':
 				return(await this.#populateMaterialsUsed());
+			case 'remove-material':
+				return(await this.#removeMaterials());
 		};
 	};
 };

@@ -275,7 +275,6 @@ export class PackageInfoUp extends HTMLElement {
 		this.#hiddenContent();
 		document.getElementById('add__new__field').disabled = true;
 		document.getElementById('confirm-save').disabled = true;
-		document.getElementById('cancel-remove').disabled = true;
 		const shadowRoot =		this.#shadowRoot.get(this);
 		const clone =			templateMaterials.content.cloneNode(true);
 		const node =			document.importNode(clone, true);
@@ -297,12 +296,15 @@ export class PackageInfoUp extends HTMLElement {
 	* @method - remove the last field added for new material.
 	*/
 	#removeField() {
-		const shadowRoot =		this.#shadowRoot.get(this);
-		const newMaterials =	shadowRoot.getElementById('new-material');
+		const shadow =			this.#shadowRoot.get(this);
+		const newMaterials =	shadow.getElementById('new-material') ?? null;
+		const { className } =	newMaterials ? newMaterials.lastElementChild: 0;
+		const removeMaterial =	document.querySelector('.update-materials');
 
 		return(
-			newMaterials.lastElementChild.className === 'material-sizes' ?
-				newMaterials.removeChild(newMaterials.lastElementChild): 0
+			className && className === 'material-sizes' ? newMaterials
+				.removeChild(newMaterials.lastElementChild): removeMaterial
+					.setAttribute('name', 'remove-material')
 		);
 	};
 
@@ -371,10 +373,11 @@ export class PackageInfoUp extends HTMLElement {
 	*/
 	async attributeChangedCallback(attName, oldVal, newVal) {
 		!oldVal ? this.#checkSPressButton() : 0;
-		// const shadowRoot = 	this.#shadowRoot.get(this);
 
 		this.#type.push(newVal);
 		switch(newVal) {
+			case 'update':
+				return(await this.#populateMaterialsUpPanel());
 			case 'select-materials':
 				return(await this.#populateMaterialsUpPanel());
 			case 'materials':

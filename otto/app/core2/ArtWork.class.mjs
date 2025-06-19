@@ -6,7 +6,7 @@ import Hexaedro from "./Hexaedro.class.mjs";
 export default class ArtWork extends Hexaedro {
 	coordinates;
 	packMaterials;
-	#code;
+	code;
 	#x;
 	#z;
 	#y;
@@ -30,7 +30,7 @@ export default class ArtWork extends Hexaedro {
 		catch (err) {
 			return (err);
 		}
-		this.#code =			""+code;
+		this.code =			""+code;
 		this.#x =				+x;
 		this.#z =				+z;
 		this.#y =				+y;
@@ -48,7 +48,7 @@ export default class ArtWork extends Hexaedro {
 			z += item[2] * 2;
 			y += item[2] * 2;
 		});
-		return({ code: this.#code, x, z, y });
+		return({ code: this.code, x, z, y });
 	};
 
 	/**
@@ -115,7 +115,7 @@ export default class ArtWork extends Hexaedro {
 	* @field - returns the artworks info as an Array.
 	*/
 	get arr() {
-		return ([this.#code, this.#x, this.#z, this.#y]);
+		return ([this.code, this.#x, this.#z, this.#y]);
 	};
 
 	/**
@@ -142,7 +142,7 @@ export default class ArtWork extends Hexaedro {
 		x =	CMVALUES[0];
 		z =	CMVALUES[1];
 		y =	CMVALUES[2];
-		return([this.#code, x, z, y]);
+		return([this.code, x, z, y]);
 	};
 
 	/**
@@ -150,7 +150,7 @@ export default class ArtWork extends Hexaedro {
 	*/
 	get data() {
 		return ({
-			code : this.#code,
+			code : this.code,
 			x : this.#x,
 			z : this.#z,
 			y : this.#y,
@@ -190,10 +190,9 @@ export default class ArtWork extends Hexaedro {
 	};
 
 	/**
-	*  @typedef { Array:number } Coordinate
-	*  @param { Coordinate } values
+	*  @param { Object } values
 	*/
-	set coordinates(values) {
+	set defCoordinate(values) {
 		this.coordinates = values;
 	};
 };

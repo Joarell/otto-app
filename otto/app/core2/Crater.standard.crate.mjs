@@ -2,24 +2,28 @@
  * @class Class to comping the Crater class as a method towards solve canvas with different sizes.
 */
 export default class CraterStandard {
+	#rawList;
 	#list;
 	#maxLayers;
 	#backUp;
+	#coordinates;
 
 	/**
 	* @param {Array} canvas - The list to be solved.
 	* @param {Array} backUp - The backUp from the first solved tried.
 	* @param {Number} maxLayer - The max number of layers to the crate.
+	* @param {Boolean} recheck - The option reset crates sizes.
 	*/
 	constructor(canvas, backUp, maxLayer, recheck) {
 		if(!canvas || canvas.length === 0)
 			return({ standard: false});
 
-		this.#list =		canvas;
+		this.#rawList =		canvas;
+		this.#list =		canvas.map(work => work.arr);
 		this.#maxLayers =	maxLayer ?? 4;
 		this.#backUp =		backUp;
 		return(this.#startCrate([], recheck));
-	}
+	};
 
 	#startCrate(ARTS1, recheck) {
 		switch(recheck) {
@@ -64,10 +68,9 @@ export default class CraterStandard {
 		let pax2 =		0;
 		let cargo1 =	0;
 		let cargo2 =	0;
-		let pax;
-		let cargo;
 		let bestArrange =	2;
 
+		console.log('OPTS CRATES', list1, list2);
 		list1.map(crate => crate[0] <= MAXx && crate[2] <= MAXy ? pax1++ : cargo1++);
 		list2.map(crate => crate[0] <= MAXx && crate[2] <= MAXy ? pax2++ : cargo2++);
 		if (cargo1 === cargo2)
@@ -142,7 +145,8 @@ export default class CraterStandard {
 				tmp =	0;
 			});
 		};
-		return([X, z, Y]);
+		this.#coordinates.artLocation = this.#rawList;
+		return([X, z, Y, structuredClone(this.#coordinates)]);
 	};
 
 	//						x1
@@ -557,7 +561,6 @@ export default class CraterStandard {
 			gapX2 = base[1].y2 === 0 && y2 <= 1 ? size[0] - (allX + possible.gapX1):
 				base[1].y2 < 1 ? AXIOS.valX : 0;
 			gapY2 = checkY2 && x2 <= 1 ? possible.gapX1: 0;
-				// size[2] - (size[2] * layer[0].y2);
 		}
 		else {
 			if (gapX1 > 0 && base[1].y2 < 1)
@@ -712,15 +715,138 @@ export default class CraterStandard {
 		return(layer);
 	};
 
+
+	#updateLayerAvailableCoordinates(pos, local, { x, y, flip }) {
+		const { emptyArea } =	this.#coordinates;
+		const X =				emptyArea[0][2];
+		const Y =				emptyArea[0][3];
+
+		if(X === x && Y === y || X === y && Y === x) {
+			return ;
+		};
+		if (emptyArea.length > 1) {
+			const axisXorY = emptyArea[0][0] === local[0];
+			axisXorY && !flip ? emptyArea[0][0] += x : emptyArea[0][1] += y;
+
+			const checkX =	emptyArea[0][0];
+			const checkY =	emptyArea[0][1];
+			const pointX =	checkX + x === X ? X : 0;
+			const pointY =	checkY + y === Y ? Y : 0;
+			const emptyX =	axisXorY ? [ x + checkX, pointY, X, Y ]: [ checkX, pointY, X, Y ];
+			const emptyY =	axisXorY ? [ pointX, y + checkY, X, Y ]: [ pointX, checkY, X, Y ];
+
+			emptyArea.splice(pos, 1);
+			axisXorY && emptyX[0] < X ? emptyArea.push(emptyX) : 0;
+			!axisXorY && emptyY[1] < Y ? emptyArea.push(emptyY) : 0;
+			return ;
+		};
+		const fullX = x === X;
+		const fullY = y === Y;
+		const firstX = !fullX ? [x, 0, X, Y]: false
+		const firstY = !fullY ? [0, y, X, Y]: false;
+
+		firstX ? emptyArea.push(firstX): 0;
+		firstY ? emptyArea.push(firstY): 0;
+		// console.log('AUX', emptyArea[0], x, 'and', y, emptyArea);
+	};
+
+	#workFeatnessLayer(art, coordinate) {
+		const space = coordinate[0] === coordinate[2]
+			&& coordinate[1] === coordinate[3];
+		const X = coordinate[2];
+		const Y = coordinate[3];
+		const x1 = art[1] + coordinate[0] <= X && coordinate[0] < X;
+		const y1 = art[3] + coordinate[1] <= Y && coordinate[1] < Y;
+		const x2 = art[3] + coordinate[0] <= X && coordinate[0] < X;
+		const y2 = art[1] + coordinate[1] <= Y && coordinate[1] < Y;
+		const check01 = !space ? x1 && y1: false;
+		const check02 = !space ? x2 && y2: false;
+
+		return({ check01, check02 });
+	};
+
+	#featRecursionLayer({ emptyArea, found, art, ind, pos }) {
+		emptyArea.length > 1 && pos === 0 ? pos++ : 0;
+		const coordinates = emptyArea[pos];
+		const filled = emptyArea[0][0] === emptyArea[0][2] &&
+			emptyArea[0][1] === emptyArea[0][3];
+
+		if(found || !coordinates || filled)
+			return(found);
+		const ICON =		`<i class="nf nf-oct-sync"></i>`;
+		const { check01, check02 } = this.#workFeatnessLayer(art, coordinates);
+		const X =			emptyArea[0][2];
+		const Y =			emptyArea[0][3];
+		const perfect = 	art[1] === X && art[3] === Y || art[3] === X && art[1] === Y;
+		let flip = false;
+		let x;
+		let y;
+
+		if(check01) {
+			found = true;
+			x = art[1];
+			y = art[3];
+
+			this.#rawList[ind].defCoordinate = {
+				x: emptyArea[pos][0],
+				z: art[2],
+				y: emptyArea[pos][1]
+			};
+			if(pos === 0) {
+				emptyArea[0][0] = (x || y > 0) && !perfect ? x : X;
+				emptyArea[0][1] = (x > 0 || y) && !perfect ? y : Y;
+			}
+		}
+		else if(check02) {
+			found = true;
+			x = art[3];
+			y = art[1];
+
+			art.push(ICON);
+			flip = true;
+			this.#rawList[ind].defCoordinate = {
+				x: emptyArea[pos][1],
+				z: art[2],
+				y: emptyArea[pos][0]
+			};
+			if(pos === 0) {
+				emptyArea[0][1] = (x || y > 0) && !perfect ? emptyArea[0][2] - art[3] : Y;
+				emptyArea[0][0] = (x > 0 || y) && !perfect ? emptyArea[0][3] - art[1] : X;
+			}
+		};
+		found ? this.#updateLayerAvailableCoordinates(pos, coordinates, { x, y, flip }): pos++;
+		return(this.#featRecursionLayer({emptyArea, found, art, ind, pos}));
+	};
+
+	#fillCrateRecursion(info, list, len) {
+		const check =	info.emptyArea[0] === undefined && info.emptyArea[1] === undefined;
+		const filledX = info.emptyArea[0][0] === info.emptyArea[0][2];
+		const filledY = info.emptyArea[0][1] === info.emptyArea[0][3];
+		if(check || !list[len] || filledX && filledY)
+			return(info);
+
+		let tmp;
+		const { emptyArea, feat } = info;
+		const art =		list[len];
+		const ind =		this.#rawList.findIndex(data => data.code === art[0]);
+		const data =	{ emptyArea, found: false, art, ind, pos: 0 };
+		const result =	this.#featRecursionLayer(data);
+
+		if(result) {
+			tmp = list.splice(len, 1).flat();
+			feat.push({ work: tmp, list: len, raw: ind });
+		};
+		return(this.#fillCrateRecursion(info, list, len - 1));
+	};
+
 	#matchCanvasInLayer(matched, layer, len, list) {
 		const { x1, y1, x2, y2 } = layer[0];
 		const emptyLayer = (x1 === 1 && y1 === 1 && x2 === 1 && y2 === 1);
 
 		if(emptyLayer || len < 0) {
 			layer.splice(0, 1);
-			//layer.map((work, i) => i > 0 ? matched.push(work) : 0, 0);
 			return(matched.push(layer));
-		}
+		};
 		this.#metchCloseWorkOnLayer(list[len], layer);
 		return (this.#matchCanvasInLayer(matched, layer, len - 1, list));
 	};
@@ -752,67 +878,32 @@ export default class CraterStandard {
 		return ((x !== size[0] || y !== size[2]) && aux && average ? [x, z, y] : false);
 	}
 
-	#hugeCanvasFirst(emptyCrate, layer, list) {
-		let i =				0;
-		let sized =			this.#defineNewCrateSize(layer, list);
-		//let sized =			this.#large ? this.#defineNewCrateSize(layer, list) : 0;
-		const GETCANVAS =	[];
-		const FLIP =		`<i class="nf nf-oct-sync"></i>`;
-		const HUGE =		list.at(-1);
-		const LIST =		[...list];
-		let check1 =		HUGE[1] === layer[0] && HUGE[3] === layer[2];
-		let check2 = 		HUGE[1] === layer[2] && HUGE[3] === layer[0];
-		const crate =		[];
-		//const status =		{
-		//	size: layer,
-		//	x1: 1,
-		//	x2: 1,
-		//	y1: 1,
-		//	y2: 1,
-		//};
-
-		if (sized) {
-			check1 = HUGE[1] === sized[0] && HUGE[3] === sized[2];
-			check2 = HUGE[1] === sized[2] && HUGE[3] === sized[0];
-		}
-		if (!sized && check1 || check2) {
-			i++;
-			HUGE[1] < HUGE[3] ? HUGE.push(FLIP) : 0;
-			this.#setLayer.call(i, emptyCrate, [HUGE]);
-			list.splice(list.indexOf(HUGE), 1)
-		}
-		else {
-			LIST.reverse().map(art => {
-				art[1] === sized[0] && art[3] === sized[2] ?
-					GETCANVAS.push(art) : false;
-			});
-			GETCANVAS.length > 0 ? GETCANVAS.map(canvas => {
-				i++;
-				//this.#setLayer.call(i, crate, [canvas], status);
-				this.#setLayer.call(i, crate, [canvas]);
-				list.splice(list.indexOf(canvas), 1);
-			}): false;
-		};
-		return({ i, sized, emptyCrate, list });
-	};
-
 	#setLayer(crate, works) {
-	//#setLayer(crate, works) {
 		switch(this) {
 			case 1:
-				crate.unshift({ layer1 : works});
+				Array.isArray(works[0]) ?
+					crate.push({ layer1 : works}) :
+					crate.push({ layer1 : [works]});
 				break ;
 			case 2:
-				crate.push({ layer2 : works.flat() });
+				Array.isArray(works[0]) ?
+					crate.push({ layer2 : works}) :
+					crate.push({ layer2 : [works]});
 				break ;
 			case 3:
-				crate.push({ layer3 : works.flat() });
+				Array.isArray(works[0]) ?
+					crate.push({ layer3 : works}) :
+					crate.push({ layer3 : [works]});
 				break ;
 			case 4:
-				crate.push({ layer4 : works.flat() });
+				Array.isArray(works[0]) ?
+					crate.push({ layer4 : works}) :
+					crate.push({ layer4 : [works]});
 				break ;
 			case 5:
-				crate.push({ layer5 : works.flat() });
+				Array.isArray(works[0]) ?
+					crate.push({ layer5 : works}) :
+					crate.push({ layer5 : [works]});
 				break ;
 			default:
 				return ;
@@ -832,34 +923,123 @@ export default class CraterStandard {
 		return(CRATEAREA >= sum && crateFit === undefined);
 	}
 
-	#fillCrate(measure, works) {
-		const GC =			new WeakSet();
-		let crate =			[]
-		let greb =			[];
-		let { i, sized, emptyCrate, list } =	this.#hugeCanvasFirst(crate, measure, works);
-		let len;
-		let innerCrate;
-		let checkLen =		list.length > 0;
+	#hugeCanvasFirst(emptyCrate, layer, list) {
+		let i =				0;
+		let sized =			this.#defineNewCrateSize(layer, list);
+		const GETCANVAS =	[];
+		const FLIP =		`<i class="nf nf-oct-sync"></i>`;
+		const HUGE =		list.at(-1);
+		const LIST =		[...list];
+		let check1 =		HUGE[1] === layer[0] && HUGE[3] === layer[2];
+		let check2 = 		HUGE[1] === layer[2] && HUGE[3] === layer[0];
+		const crate =		[];
 
-		emptyCrate.length > 0 ? crate = emptyCrate : false;
-		Array.isArray(sized) ? measure = sized : false;
-		if (checkLen) {
-			while (i++ < this.#maxLayers || checkLen && list.length) {
-				innerCrate = { size : measure, x1 : 0, y1 : 0, x2 : 0, y2 : 0 };
-				len = list.length - 1;
-				this.#matchCanvasInLayer(greb, [innerCrate], len, list);
-				if (greb.length > 0) {
-					greb[0].map(art => list.splice(list.indexOf(art[0]), 1));
-					this.#setLayer.call(i, crate, greb.flat());
-					GC.add(innerCrate);
-					greb =	null;
-					greb =	[];
+		if (sized) {
+			check1 = HUGE[1] === sized[0] && HUGE[3] === sized[2];
+			check2 = HUGE[1] === sized[2] && HUGE[3] === sized[0];
+		}
+		if (!sized && check1 || check2) {
+			HUGE[1] < HUGE[3] ? HUGE.push(FLIP) : 0;
+			this.#setLayer(i, emptyCrate, [HUGE]);
+			list.splice(list.indexOf(HUGE), 1)
+		}
+		else {
+			LIST.reverse().map(art => {
+				art[1] === sized[0] && art[3] === sized[2] ?
+					GETCANVAS.push(art) : false;
+			});
+			GETCANVAS.length > 0 ? GETCANVAS.map(canvas => {
+				this.#setLayer(i, crate, [canvas]);
+				list.splice(list.indexOf(canvas), 1);
+			}): false;
+		};
+		return({ i, sized, emptyCrate, list });
+	};
+
+	#setNewCrate(sizes) {
+		this.#coordinates = {
+			emptyArea: [],
+			layer1: { vacuum: [], works: [] },
+			layer2: { vacuum: [], works: [] },
+			layer3: { vacuum: [], works: [] },
+			layer4: { vacuum: [], works: [] },
+			layer5: { vacuum: [], works: [] },
+			artLocation: [],
+			baseSize: [],
+			layer: 0,
+			get reset() {
+				this.emptyArea = [[0, 0, this.baseSize[0], this.baseSize[2]]];
+			},
+			set innerSize(sizes) {
+				this.baseSize = sizes;
+				this.reset;
+			},
+			set defineLayer(num) {
+				this.layer = num;
+			},
+			set fillLayer(data) {
+				switch(this.layer) {
+					case 1:
+						this.layer1.vacuum = this.emptyArea;
+						this.layer1.works = data;
+						break;
+					case 2:
+						this.layer2.vacuum = this.emptyArea;
+						this.layer2.works = data;
+						break;
+					case 3:
+						this.layer3.vacuum = this.emptyArea;
+						this.layer3.works = data;
+						break;
+					case 4:
+						this.layer4.vacuum = this.emptyArea;
+						this.layer4.works = data;
+						break;
+					case 5:
+						this.layer5.vacuum = this.emptyArea;
+						this.layer5.works = data;
 				};
-				i === this.#maxLayers ?
-					checkLen = this.#checkFifthLayerArea(measure, list) : 0;
-				i = list.length > 0 ? i : this.#maxLayers;
+				this.reset;
+			},
+		};
+		this.#coordinates.innerSize = structuredClone(sizes);
+		return(this.#coordinates);
+	};
+
+	#cleanLayers() {
+		!this.#coordinates.layer2.works.length ? delete this.#coordinates.layer2 : 0;
+		!this.#coordinates.layer3.works.length ? delete this.#coordinates.layer3 : 0;
+		!this.#coordinates.layer4.works.length ? delete this.#coordinates.layer4 : 0;
+		!this.#coordinates.layer5.works.length ? delete this.#coordinates.layer5 : 0;
+	};
+
+	#fillCrate(measure, list) {
+		this.#setNewCrate(measure);
+		const crate =			[];
+		let greb =			[];
+		let getter;
+		let i =				0;
+
+		try {
+			while (i++ < this.#maxLayers || list.length) {
+				const { emptyArea } = this.#coordinates;
+				getter = this.#fillCrateRecursion({ emptyArea, feat: [] }, list, list.length - 1);
+				Array.isArray(getter.feat) ? list.filter((art, i) => {
+					return(getter.feat[i] && getter.feat[i].list !== i);
+				}, 0): 0;
+				greb = getter.feat.map(info => info.work);
+				this.#setLayer.call(i, crate, greb);
+				this.#coordinates.defineLayer = i;
+				this.#coordinates.fillLayer = getter.feat;
+				i = list.length === 0 ? this.#maxLayers + 1: i;
+				greb = null;
+				greb = [];
 			};
 		}
+		catch(e) {
+			console.error(e);
+		};
+		this.#cleanLayers();
 		return({ crate, measure, list });
 	};
 
@@ -876,36 +1056,26 @@ export default class CraterStandard {
 			crate.x < crate.y ? [crate.x, crate.y] = [crate.y, crate.x]: 0;
 			return (crate);
 		}
-		const THRESHOLDX = 180;
-		const THRESHOLDY = 132;
+		const THRESHOLDX =	180;
+		const THRESHOLDY =	132;
+		const sum =			list.length > 5;
 
 		crate.x = crate.x < list[len][1] ? list[len][1] : crate.x;
-		crate.x = crate.x >= list[len][1] && crate.x + list[len][1] <= THRESHOLDX ?
+		crate.x = sum && crate.x >= list[len][1] && crate.x + list[len][1] <= THRESHOLDX ?
 			crate.x + list[len][1]: crate.x;
 
 		crate.z = list[len][2] > crate.z ? list[len][2] : crate.z;
 
 		crate.y = list[len][3] > crate.y ? list[len][3] : crate.y;
-		crate.y = crate.y >= list[len][3] && crate.y + list[len][3] <= THRESHOLDY ?
+		crate.y = sum && crate.y >= list[len][3] && crate.y + list[len][3] <= THRESHOLDY ?
 			crate.y + list[len][3]: crate.y;
 		return(this.#composeCrateSizes(crate, list, len - 1));
 	}
 
-	#defineSizeBaseCrate(list, large) {
-		const CRATE1 =		this.#checkOneCrate([...list]);
-		const SELECTED =	list.at(-1);
+	#defineSizeBaseCrate(list) {
 		const SIZES =		{ x: 0, z: 0, y: 0 };
-		const MAXLAYERS =	5;
 		const crate =		this.#composeCrateSizes(SIZES, list, list.length - 1);
-		const sum =			list.reduce((sum, val) => sum + val[4], 0);
-		const crateArea =	((SELECTED[1] * SELECTED[2] * SELECTED[3]) / 1_000_000) * MAXLAYERS ;
 
-		if (CRATE1 && crateArea > sum && !large) {
-			return(SELECTED[1] < SELECTED[3] ?
-				[SELECTED[3], SELECTED[2], SELECTED[1]]:
-				[SELECTED[1], SELECTED[2], SELECTED[3]]
-			);
-		}
 		return([crate.x, crate.z, crate.y]);
 	};
 
@@ -921,15 +1091,18 @@ export default class CraterStandard {
 		return(list);
 	};
 
+	/**
+	* @method - start solver procedures.
+	*/
 	#provideCrate(crates, setup, works) {
 		if (!works.length)
 			return(crates);
 		works = this.#addXandYtimes(works);
-		const size =	this.#defineSizeBaseCrate(works, setup);
-		const { crate, measure, list } =	this.#fillCrate(size, works);
+		const size = this.#defineSizeBaseCrate(works);
+		const { crate, measure, list } = this.#fillCrate(size, works);
 
 		crates.push(this.#defineFinalSize(measure, crate));
 		crates.push({ works: crate })
 		return(this.#provideCrate(crates, setup, list));
 	};
-};
+}

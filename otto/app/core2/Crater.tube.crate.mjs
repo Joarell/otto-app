@@ -1,4 +1,3 @@
-
 export default class CraterTube {
 	#tubes;
 	#DIAMETER
@@ -7,7 +6,7 @@ export default class CraterTube {
 		if(!list || list.length === 0)
 			return({ tube : false });
 
-		this.#tubes =		list;
+		this.#tubes =		list.map(art => art.arr);
 		this.#DIAMETER =	35;
 		const checker =		this.#tubes.filter(item => {
 			return(item[2] < this.#DIAMETER ? item : false);
