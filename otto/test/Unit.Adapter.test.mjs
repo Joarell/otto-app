@@ -159,7 +159,6 @@ describe("Testing the Unit Adapter class:", () => {
 			[ 79.921, 17.913, 50.394, 12.024 ],
 		];
 
-		console.log(result)
 		assert.deepStrictEqual(current, expected);
 	});
 });
