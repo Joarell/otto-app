@@ -10,6 +10,7 @@
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "^0.5.2",
+		"@google/gemini-cli": "^0.1.5",
 		"typescript": "^5.5.2",
 		"vitest": "2.0.5",
 		"wrangler": "4",
