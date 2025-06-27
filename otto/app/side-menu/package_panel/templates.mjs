@@ -53,6 +53,7 @@ newOption.innerHTML = `
 		<option>Pinewood</option>
 		<option>Plywood</option>
 		<option>Tape</option>
+		<option>Foam Sheet</option>
 	</select>
 </div>
 `;

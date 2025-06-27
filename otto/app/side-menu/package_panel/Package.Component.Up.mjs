@@ -95,6 +95,10 @@ export class PackageInfoUp extends HTMLElement {
 			}), true);
 	};
 
+	/**
+	* @method - calls the second panel to show the package info for each work.
+	* @param { String } work the work ID to display the info.
+	*/
 	async #toggleReportDownPanel(work) {
 		const { shadowRoot } =	document.querySelector('.update-materials');
 		const list =			shadowRoot.querySelectorAll('table');
@@ -114,6 +118,9 @@ export class PackageInfoUp extends HTMLElement {
 		});
 	};
 
+	/**
+	* @method - gets the work ID to sow all package information.
+	*/
 	#packedReportToggle() {
 		const { shadowRoot } =	document.querySelector('.materials');
 		const packed =			shadowRoot.getElementById('first-pane')

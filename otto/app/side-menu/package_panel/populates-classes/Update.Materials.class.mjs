@@ -62,50 +62,21 @@ export default class AddPackingMaterials {
 		this.#materials.types.map((pack, i) => {
 			const material =	document.createElement('div');
 			let select =		document.createElement('select');
+			const opts =		[
+				'Sheet', 'Roll', 'Plywood', 'Pinewood', 'Pinewood', 'Tape', 'Foam Sheet'
+			];
+			const target = opts.findIndex(item => item === pack[5]);
+
+			select.innerHTML = `
+			<option>Sheet</option>
+			<option>Roll</option>
+			<option>Plywood</option>
+			<option>Pinewood</option>
+			<option>Tape</option>
+			<option>Foam Sheet</option>`;
 
 			material.className = "material-info";
-			switch(pack[5]) {
-				case 'Sheet':
-					select.innerHTML = `
-						<option selected>Sheet</option>
-						<option>Roll</option>
-						<option>Plywood</option>
-						<option>Pinewood</option>
-						<option>Tape</option>`;
-					break;
-				case 'Roll':
-					select.innerHTML = `
-						<option>Sheet</option>
-						<option selected>Roll</option>
-						<option>Plywood</option>
-						<option>Pinewood</option>
-						<option>Tape</option>`;
-					break;
-				case 'Plywood':
-					select.innerHTML = `
-						<option>Sheet</option>
-						<option>Roll</option>
-						<option selected>Plywood</option>
-						<option>Pinewood</option>
-						<option>Tape</option>`;
-					break;
-				case 'Pinewood':
-					select.innerHTML = `
-						<option>Sheet</option>
-						<option>Roll</option>
-						<option>Plywood</option>
-						<option selected>Pinewood</option>
-						<option>Tape</option>`;
-					break;
-				case 'Tape':
-					select.innerHTML = `
-						<option>Sheet</option>
-						<option>Roll</option>
-						<option>Plywood</option>
-						<option>Pinewood</option>
-						<option selected>Tape</option>`;
-					break;
-			};
+			select.children.item(target).selected = true;
 			material.innerHTML = `
 				<div class="check-material">
 					<input type="checkbox" id="material-${i}" name="${pack[0]}"></input>
@@ -127,6 +98,19 @@ export default class AddPackingMaterials {
 	};
 
 	/**
+	* @method - save all materials data in browser localStorage.
+	*/
+	#browserStorege() {
+		const LS =					localStorage;
+		const { materials } = LS;
+
+		if(materials)
+			this.#materials.types.unshift(JSON.parse(materials));
+
+		LS.setItem('materials', JSON.stringify(this.#materials.types));
+	};
+
+	/**
 	* @method - save all materials in IDB.
 	*/
 	async #storeNewMaterials() {
@@ -143,9 +127,9 @@ export default class AddPackingMaterials {
 			for(pack of values)
 				i % 2 === 0 ? checkMaterials.types.push(pack[i]) : i++;
 		};
-		localStorage.setItem('materials', JSON.stringify(this.#materials.types));
 		checkMaterials ? this.#COMMANDWORKER.postMessage(checkMaterials):
 		this.#COMMANDWORKER.postMessage(this.#materials);
+		this.#browserStorege();
 		const message = await new Promise((resolve) => {
 			this.#COMMANDWORKER.onmessage = (res) => {
 				resolve(res.data);
@@ -189,7 +173,10 @@ export default class AddPackingMaterials {
 			<select>
 				<option selected>Sheet</option>
 				<option>Roll</option>
-				<option>Wood</option>
+				<option>Pinewood</option>
+				<option>Plywood</option>
+				<option>Type</option>
+				<option>Foam Sheet</option>
 			</select>
 		`;
 		return (newOption);

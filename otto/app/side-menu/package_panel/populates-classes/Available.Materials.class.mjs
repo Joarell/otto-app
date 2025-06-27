@@ -52,7 +52,7 @@ export default class AvailableMaterials {
 	*/
 	async #addsTheInfo() {
 		const materials =	await this.#grabMaterialsIDB();
-		const woods =		['Pinewood', 'Plywood'];
+		const woods =		['Pinewood', 'Plywood', 'Foam Sheet'];
 		const woodOpts =	[];
 
 		if(!materials)
