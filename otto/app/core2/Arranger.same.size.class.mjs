@@ -1,6 +1,3 @@
-
-
-
 export default class ArrangerSameSize {
 	#list;
 
@@ -12,11 +9,11 @@ export default class ArrangerSameSize {
 	#trailOne() {
 		const MAXDEPTH =	10;
 		const getter =		[];
-		const checker =		(a, b) => a[4] === b[4] && a[0] !== b[0];
+		const checker =		(a, b) => a.cubed === b.cubed && a.code !== b.code;
 		this.map(work => {
 			let i =	0;
 
-			if (work[2] <= MAXDEPTH)
+			if (work.z <= MAXDEPTH)
 				for(i in this)
 					if (!getter.includes(this[i]) && checker(this[i], work))
 						getter.push(this[i])
@@ -25,18 +22,18 @@ export default class ArrangerSameSize {
 	};
 
 	#checker(art, work) {
-		const x =	work[1];
-		const y =	work[3];
-		const cub =	work[4];
+		const x =	work.x;
+		const y =	work.y;
+		const cub =	work.cubed;
 
-		return (art[1] === x && art[3] === y && art[4] === cub);
+		return (art.x === x && art.y === y && art.cubed === cub);
 	};
 
 	#trailTwo(list) {
-		const sameSize = [];
+		const sameSize =	[];
 		list.map(work => {
 			let getter =	[];
-			let i =		0;
+			let i =			0;
 
 			for(i in list) {
 				if (this.#checker(list[i], work) && !sameSize.includes(list[i]))
@@ -48,11 +45,10 @@ export default class ArrangerSameSize {
 				});
 			getter = null;
 		});
-
 		return(sameSize);
 	};
 
-	#sameSizeTrail () {
+	#sameSizeTrail() {
 		const pathOne = this.#trailOne.call(this.#list);
 		const pathTwo = this.#trailTwo(pathOne);
 

@@ -7,6 +7,7 @@ export default class CraterStandard {
 	#maxLayers;
 	#backUp;
 	#coordinates;
+	#thresholdX;
 
 	/**
 	* @param {Array} canvas - The list to be solved.
@@ -45,8 +46,8 @@ export default class CraterStandard {
 		let check2;
 		let check3;
 		let check4;
-		let opt1 =		0;
-		let opt2 =		0;
+		let opt1 = 0;
+		let opt2 = 0;
 		let pos;
 
 		for (pos in list1) {
@@ -70,7 +71,6 @@ export default class CraterStandard {
 		let cargo2 =	0;
 		let bestArrange =	2;
 
-		console.log('OPTS CRATES', list1, list2);
 		list1.map(crate => crate[0] <= MAXx && crate[2] <= MAXy ? pax1++ : cargo1++);
 		list2.map(crate => crate[0] <= MAXx && crate[2] <= MAXy ? pax2++ : cargo2++);
 		if (cargo1 === cargo2)
@@ -126,7 +126,7 @@ export default class CraterStandard {
 
 	#defineFinalSize(innerSize, works) {
 		const DEFAULTPAD =	23;
-		const HIGHPAD =		28;
+		const HIGHPAD =		20;
 		const LAYERPAD =	2.5 + innerSize[1];
 		const X =			innerSize[0] + DEFAULTPAD;
 		const Y =			innerSize[2] + HIGHPAD;
@@ -715,7 +715,6 @@ export default class CraterStandard {
 		return(layer);
 	};
 
-
 	#updateLayerAvailableCoordinates(pos, local, { x, y, flip }) {
 		const { emptyArea } =	this.#coordinates;
 		const X =				emptyArea[0][2];
@@ -747,7 +746,6 @@ export default class CraterStandard {
 
 		firstX ? emptyArea.push(firstX): 0;
 		firstY ? emptyArea.push(firstY): 0;
-		// console.log('AUX', emptyArea[0], x, 'and', y, emptyArea);
 	};
 
 	#workFeatnessLayer(art, coordinate) {
@@ -1015,13 +1013,13 @@ export default class CraterStandard {
 
 	#fillCrate(measure, list) {
 		this.#setNewCrate(measure);
-		const crate =			[];
-		let greb =			[];
+		const crate =	[];
+		let greb =		[];
 		let getter;
-		let i =				0;
+		let i =			0;
 
 		try {
-			while (i++ < this.#maxLayers || list.length) {
+			while (i++ < this.#maxLayers && list.length) {
 				const { emptyArea } = this.#coordinates;
 				getter = this.#fillCrateRecursion({ emptyArea, feat: [] }, list, list.length - 1);
 				Array.isArray(getter.feat) ? list.filter((art, i) => {
@@ -1031,7 +1029,6 @@ export default class CraterStandard {
 				this.#setLayer.call(i, crate, greb);
 				this.#coordinates.defineLayer = i;
 				this.#coordinates.fillLayer = getter.feat;
-				i = list.length === 0 ? this.#maxLayers + 1: i;
 				greb = null;
 				greb = [];
 			};
@@ -1051,17 +1048,17 @@ export default class CraterStandard {
 		return (!(AVG / list.length > BIGGEST[4]));
 	};
 
+	// NOTE: have to improve the best sizes.
 	#composeCrateSizes(crate, list, len) {
 		if (len < 0) {
 			crate.x < crate.y ? [crate.x, crate.y] = [crate.y, crate.x]: 0;
 			return (crate);
-		}
-		const THRESHOLDX =	180;
-		const THRESHOLDY =	132;
+		};
+		const THRESHOLDY =	140;
 		const sum =			list.length > 5;
 
 		crate.x = crate.x < list[len][1] ? list[len][1] : crate.x;
-		crate.x = sum && crate.x >= list[len][1] && crate.x + list[len][1] <= THRESHOLDX ?
+		crate.x = sum && crate.x >= list[len][1] && crate.x + list[len][1] <= this.#thresholdX ?
 			crate.x + list[len][1]: crate.x;
 
 		crate.z = list[len][2] > crate.z ? list[len][2] : crate.z;
@@ -1097,6 +1094,7 @@ export default class CraterStandard {
 	#provideCrate(crates, setup, works) {
 		if (!works.length)
 			return(crates);
+		!setup ? this.#thresholdX = 180 : this.#thresholdX = 250;
 		works = this.#addXandYtimes(works);
 		const size = this.#defineSizeBaseCrate(works);
 		const { crate, measure, list } = this.#fillCrate(size, works);

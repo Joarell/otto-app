@@ -40,15 +40,22 @@ export default class CraterPythagoras {
 			z < work[2] ? z = work[2] : false;
 			y < work[3] ? y = work[3] : false;
 		});
-		crate = this.#setPadding([x, z, y], canvas.length);
+		console.log(x, z, y);
+		crate = x >= y ?
+			this.#setPadding([x, z, y], canvas.length):
+			this.#setPadding([y, z, x], canvas.length);
 		return(crate);
 	};
 
 	#crateInterface(works) {
 		let crate;
 		let pitagorasCrates;
+		const FLIP =	`<i class="nf nf-oct-sync"></i>`;
 
-		crate =				this.#defineCrate(works);
+		crate =			this.#defineCrate(works);
+		works.map(art => {
+			art[1] <= crate[2] && art[3] > crate[2] ? art.push(FLIP) : 0;
+		});
 		pitagorasCrates =	this.#pitagorasTheorem(crate);
 		return(pitagorasCrates);
 	};

@@ -40,7 +40,6 @@ export default class ArrangerStarter {
 			this.#list.find(art => work[0] === art.code ? sorted.push(art): 0)
 		} );
 
-		console.log('sort',sorted)
 		return({ sorted });
 	};
 };

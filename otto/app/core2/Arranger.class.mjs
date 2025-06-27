@@ -15,7 +15,6 @@ export default class Arranger {
 		if(dataChecker && dataChecker.constructor.name === 'TypeError')
 			return (dataChecker);
 		this.#solver();
-		console.log(this.#works)
 		return(Object.assign(Arranger, { list: this.#works }));
 	};
 
