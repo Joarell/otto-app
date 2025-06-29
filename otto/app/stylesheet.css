@@ -321,7 +321,7 @@ input, input[type='checkbox'] {
 }
 
 
-select {
+select, summary {
 	display: block;
 	text-align: center;
 	font-size: clamp(.87ch, .87vw, .55rem);
@@ -1191,8 +1191,6 @@ tbody:nth-child(even) {
 		& select {
 			border: .1rem solid var(--pressed);
 			border-radius: .2rem;
-			height: 1.2rem;
-			background-color: transparent;
 			color: var(--pressed);
 			text-align: center;
 			& option {
@@ -1347,7 +1345,6 @@ tbody:nth-child(even) {
 	& select {
 		border: .1rem solid var(--pressed);
 		border-radius: .2rem;
-		background-color: transparent;
 		color: var(--pressed);
 		& option {
 			border: .1rem solid var(--pressed);
