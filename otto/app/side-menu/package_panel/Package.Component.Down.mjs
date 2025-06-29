@@ -99,8 +99,8 @@ export class PackageInfoDown extends HTMLElement {
 					updated.push(aux);
 			};
 		};
-		updated.length === 0 && !checked ?
-			alert('Please, select some material to update.') : 0;
+		if (updated.length === 0 && !checked)
+			return(alert('Please, select some material to update.'));
 		return(await this.#updateMaterialsInfo(updated, content));
 	};
 

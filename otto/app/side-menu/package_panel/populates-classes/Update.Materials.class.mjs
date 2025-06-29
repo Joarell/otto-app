@@ -63,7 +63,7 @@ export default class AddPackingMaterials {
 			const material =	document.createElement('div');
 			let select =		document.createElement('select');
 			const opts =		[
-				'Sheet', 'Roll', 'Plywood', 'Pinewood', 'Pinewood', 'Tape', 'Foam Sheet'
+				'Sheet', 'Roll', 'Pinewood', 'Plywood', 'Tape', 'Foam Sheet'
 			];
 			const target = opts.findIndex(item => item === pack[5]);
 
@@ -101,12 +101,11 @@ export default class AddPackingMaterials {
 	* @method - save all materials data in browser localStorage.
 	*/
 	#browserStorege() {
-		const LS =					localStorage;
-		const { materials } = LS;
+		const LS =				localStorage;
+		const { materials } =	LS;
 
 		if(materials)
 			this.#materials.types.unshift(JSON.parse(materials));
-
 		LS.setItem('materials', JSON.stringify(this.#materials.types));
 	};
 
@@ -115,7 +114,17 @@ export default class AddPackingMaterials {
 	*/
 	async #storeNewMaterials() {
 		const checkMaterials =	await this.#grabNewMaterials();
+		const woods =			['Pinewood', 'Plywood', 'Foam Sheet'];
+		const wrap =			['Sheet', 'Roll', 'Tape'];
+		const checkWrap1 =		this.#materials.types.some(item => wrap.includes(item[5]));
+		const checkWrap2 =		checkMaterials && checkMaterials.types.some(item => wrap.includes(item[5]));
+		const crateMaterial1 =	this.#materials.types.some(item => wrap.includes(item[5]));
+		const crateMaterial2 =	checkMaterials && checkMaterials.types.some(item => woods.includes(item[5]));
 
+		if(!checkWrap1 && !checkWrap2)
+			return('wrap');
+		if(!crateMaterial1 && !crateMaterial2)
+			return('wood');
 		if(checkMaterials) {
 			const stored =	new Set(checkMaterials.types);
 			const added =	new Set(this.#materials.types);
@@ -179,7 +188,7 @@ export default class AddPackingMaterials {
 				<option>Foam Sheet</option>
 			</select>
 		`;
-		return (newOption);
+		return(newOption);
 	};
 
 	get secondPanelPopulate() {

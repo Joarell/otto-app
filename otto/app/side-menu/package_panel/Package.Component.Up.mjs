@@ -8,9 +8,9 @@ import { templateMaterials } from "./templates.mjs";
 * @class - Otto's side menu double panels.
 */
 export class PackageInfoUp extends HTMLElement {
+	static observedAttributes = [ "name", "content" ];
 	#type = [];
 	#shadowRoot = new WeakMap();
-	static observedAttributes = [ "name", "content" ];
 	#reg = new RegExp("^[A-Za-z\ 0-9\s]+$");
 	#link;
 
@@ -26,8 +26,30 @@ export class PackageInfoUp extends HTMLElement {
 	};
 
 	/**
+	* @method - finds the first blank file to be filled.
+	* @param { HTMLElement } shadow the shadow div with all inputs.
+	*/
+	#findBlankField(shadow) {
+		let found = false;
+		let node =	2;
+		let i;
+		let aux;
+
+		for(node; node < shadow.children.length && !found; node++) {
+			aux = shadow.children.item(node);
+			i = 0;
+			for(i in aux.children) {
+				if (!aux.children.item(i).value) {
+					aux.children.item(i).select();
+					found = true;
+					break;
+				};
+			};
+		};
+	};
+
+	/**
 	* @method - save the materials in IDB and server.
-	* @typedef { Object } Material;
 	* @property { [ Array: number | string ] } types - the material list data.
 	*/
 	async #saveMaterials() {
@@ -35,11 +57,12 @@ export class PackageInfoUp extends HTMLElement {
 		const { shadowRoot } = materials;
 		const entry =		shadowRoot.getElementById('new-material');
 		const saver =		new AddPackingMaterials(entry);
-		/** @type { Material } */
 		const addedMaterials = { materials: 'packing', types: [] };
+		const cleaner =			[];
 		let i = 2;
 		let j = 0;
 		let next = true;
+		let saveResult;
 
 		for(i; entry.children.length > i && next; ++i) {
 			const aux = [];
@@ -47,6 +70,7 @@ export class PackageInfoUp extends HTMLElement {
 				const value = entry.children.item(i).children[j].value;
 				if (value === '') {
 					alert('Please, check if all fields is properly filled!');
+					this.#findBlankField(entry);
 					next = false;
 					break;
 				};
@@ -56,15 +80,25 @@ export class PackageInfoUp extends HTMLElement {
 					break;
 				};
 				aux.push(value);
-				entry.children.item(i).children[j++].value = "";
+				cleaner.push(entry.children.item(i).children[j++]);
 			};
 			addedMaterials.types.push(aux);
 			j = 0;
 		};
 		if (next) {
 			saver.saveMaterials = addedMaterials;
-			await saver.saveinfo;
-			return(materials.setAttribute('name', 'select-materials'));
+			saveResult = await saver.saveinfo;
+			switch(saveResult){
+				case 'wrap' :
+					alert('Please, add some wood material for wrapping the artworks.');
+					return(this.#addNewField());
+				case 'wood' :
+					alert('Please, add some wood material for crating.');
+					return(this.#addNewField());
+				default :
+					cleaner.map(field => field.value = "");
+					return(materials.setAttribute('name', 'select-materials'));
+			};
 		};
 	};
 
@@ -205,18 +239,24 @@ export class PackageInfoUp extends HTMLElement {
 	#loadPageSelection() {
 		const { shadowRoot } =	document.querySelector(".materials");
 		const list =			shadowRoot.querySelector('.select-materials');
-		const materials =		JSON.parse(localStorage.getItem('packing'));
+		const pack =		JSON.parse(localStorage.getItem('packing'));
+		const crate =		JSON.parse(localStorage.getItem('crating'));
+		let crates;
 		let temp;
 		let i;
 
-		if(!materials)
+		if(!pack || !crate)
 			return ;
-		for(i in list.children)
+		for(i in list.children) {
+			!crates && list.children.item(i).className ? crates = true: 0;
 			if (list.children.item(i).id === 'populate-materials') {
 				temp = list.children.item(i).children.item(0).name;
-				materials.includes(temp) ?
-				list.children.item(i).children.item(0).checked = true : 0;
+				pack.includes(temp) && !crates ?
+					list.children.item(i).children.item(0).checked = true : 0;
+				crate.includes(temp) && crates ?
+					list.children.item(i).children.item(0).checked = true : 0;
 			};
+		};
 	};
 
 	/**
@@ -225,14 +265,35 @@ export class PackageInfoUp extends HTMLElement {
 	#localStoreSelectedMaterials() {
 		const { shadowRoot } =	document.querySelector(".materials");
 		const list =			shadowRoot.querySelector('.select-materials');
-		const materials =		[];
+		const wrap =			['Sheet', 'Roll', 'Tape' ];
+		const packing =			[];
+		const crating =			[];
+		let { materials } =		localStorage;
+		let crates =			false;
+		let pack =				false;
+		let crate =				false;
 		let i;
+		let aux;
+		let opts;
 
-		for(i in list.children)
-			if (list.children.item(i).id === 'populate-materials')
-				list.children.item(i).children.item(0).checked ?
-					materials.push(list.children.item(i).children.item(0).name): 0;
-		return(localStorage.setItem('packing', JSON.stringify(materials)));
+		materials = JSON.parse(materials);
+		for(i in list.children) {
+			!crates && list.children.item(i).className ? crates = true: 0;
+			if (list.children.item(i).id === 'populate-materials') {
+				if(list.children.item(i).children.item(0).checked) {
+					aux = list.children.item(i).children.item(0).name;
+					opts = materials.filter(item => item[0] === aux).flat();
+					pack = !crates && opts[5] === 'Foam Sheet';
+					crate = crates && opts[5] === 'Foam Sheet';
+					crates && !wrap.includes(opts[5]) || crate ? crating.push(aux): 0;
+					!crates && wrap.includes(opts[5]) || pack ? packing.push(aux): 0;
+				};
+				pack = false;
+				crate = false;
+			};
+		};
+		localStorage.setItem('packing', JSON.stringify(packing));
+		localStorage.setItem('crating', JSON.stringify(crating));
 	};
 
 	/**
@@ -308,25 +369,24 @@ export class PackageInfoUp extends HTMLElement {
 		const { className } =	newMaterials ? newMaterials.lastElementChild: 0;
 		const removeMaterial =	document.querySelector('.update-materials');
 
-		return(
-			className && className === 'material-sizes' ? newMaterials
-				.removeChild(newMaterials.lastElementChild): removeMaterial
-					.setAttribute('name', 'remove-material')
-		);
+		className && className === 'material-sizes' ? newMaterials
+			.removeChild(newMaterials.lastElementChild): removeMaterial
+			.setAttribute('name', 'remove-material')
+		return(this.#findBlankField(newMaterials));
 	};
 
 	/**
 	* @adds new fields to fill with new pack materials;
 	*/
 	async #addNewField() {
-		const shadowRoot =	this.#shadowRoot.get(this);
-		const adder =		new AddNewMaterial();
-		const entry =		shadowRoot.getElementById('new-material');
-		const fragment =	new DocumentFragment();
+		const { shadowRoot } =	document.querySelector('.materials');
+		const adder =			new AddNewMaterial();
+		const entry =			shadowRoot.getElementById('new-material');
+		const fragment =		new DocumentFragment();
 
 		fragment.append(await adder.addNewMaterialOpts);
 		entry.appendChild(fragment);
-		return(shadowRoot.querySelector(".material-name").select());
+		return(this.#findBlankField(entry));
 	};
 
 	/**

@@ -32,7 +32,8 @@ export default class AvailableMaterials {
 	async #woodOptions(woods) {
 		const woodMenu = document.createElement('div');
 
-		woodMenu.innerHTML = `<h4>Select the woods for crating.</h4>`;
+		woodMenu.innerHTML = `<h4>Select the woods and paddings for crating.</h4>`;
+		woodMenu.className = 'woods';
 		this.#entry.appendChild(woodMenu);
 		woods.map((opts, i) => {
 			const material = document.createElement('div');
@@ -52,7 +53,7 @@ export default class AvailableMaterials {
 	*/
 	async #addsTheInfo() {
 		const materials =	await this.#grabMaterialsIDB();
-		const woods =		['Pinewood', 'Plywood', 'Foam Sheet'];
+		const woods =		['Pinewood', 'Plywood' ];
 		const woodOpts =	[];
 
 		if(!materials)
@@ -62,6 +63,7 @@ export default class AvailableMaterials {
 
 			if(woods.includes(pack[5]))
 				return(woodOpts.push(pack))
+			pack[5] === 'Foam Sheet' ? woodOpts.push(pack) : 0;
 			material.id = 'populate-materials';
 			material.innerHTML = `
 				<input type="checkbox" name="${pack[0]}" id="material-${i}"></input>

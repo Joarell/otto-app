@@ -50,8 +50,8 @@ async function getIDBDataBrowser(ref) {
 function layerInterface(layer, num, unit) {
 	if (!Array.isArray(layer))
 		return;
-	const theEnd = layer.length > 5 ?
-		`<td>${layer[4]}</td><td>${unit}</td></tr></tbody>`:
+	const theEnd = layer.length > 4 ?
+		`<td>${unit}</td><td>${layer[4]}</td></tr></tbody>`:
 		`<td>${unit}</td><td>N/A</td></tr></tbody>`;
 
 	const content = layer.map((info, i) => {
@@ -61,8 +61,7 @@ function layerInterface(layer, num, unit) {
 			case 1:
 				return `<td>${info}</td>`;
 			case 2:
-				return layer[i + 1] === undefined ?
-					`<td>${info}</td></tr></tbody>`:`<td>${info}</td>`;
+				return `<td>${info}</td>`;
 			case 3:
 				return layer[i + 1] === undefined ?
 					`<td>${info}</td><td>${unit}</td><td>N/A</td></tr></tbody>`

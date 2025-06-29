@@ -8,6 +8,7 @@ export default class CraterStandard {
 	#backUp;
 	#coordinates;
 	#thresholdX;
+	#layers = 0;
 
 	/**
 	* @param {Array} canvas - The list to be solved.
@@ -20,7 +21,7 @@ export default class CraterStandard {
 			return({ standard: false});
 
 		this.#rawList =		canvas;
-		this.#list =		canvas.map(work => work.arr);
+		this.#list =		canvas.map(work => work.packedSized);
 		this.#maxLayers =	maxLayer ?? 4;
 		this.#backUp =		backUp;
 		return(this.#startCrate([], recheck));
@@ -124,29 +125,74 @@ export default class CraterStandard {
 		return(this.#quickSort(left, pos).concat(pivot, this.#quickSort(right, pos)));
 	};
 
+	#stablishCrateSizes(materials) {
+		const woods =		materials.filter(wood => wood[5] !== "Foam Sheet");
+		const separator =	materials.filter(wood => wood[5] === "Foam Sheet");
+		const DIVISION =	2.5;
+		let x =				0;
+		let z =				0;
+		let y =				0;
+
+		woods.map(item => {
+			x += +item[2];
+			z += +item[2];
+			y += +item[2];
+		});
+		separator && separator.length ? separator.map(foam => {
+			if(this.#layers > 1 && foam[2] <= DIVISION)
+				return(z += +foam[2]);
+			x += +foam[2];
+			z += +foam[2];
+			y += +foam[2];
+		}): 0;
+		x *= 2;
+		z *= 2;
+		y *= 2;
+		return({ x, z, y });
+	};
+
+	#crateMaterialsDefined() {
+		let { materials, crating } =	localStorage;
+		const crateMaterials =			[]
+
+		materials =	JSON.parse(materials);
+		crating =	JSON.parse(crating);
+
+		crating.map(item => {
+			crateMaterials.push(materials.find(opts => opts[0] === item).flat());
+		});
+		if(!crateMaterials.length)
+			return({ x: 0, z: 0, y: 0 });
+
+		return(this.#stablishCrateSizes(crateMaterials));
+	};
+
 	#defineFinalSize(innerSize, works) {
-		const DEFAULTPAD =	23;
-		const HIGHPAD =		20;
-		const LAYERPAD =	2.5 + innerSize[1];
-		const X =			innerSize[0] + DEFAULTPAD;
-		const Y =			innerSize[2] + HIGHPAD;
-		let z =				works.length * LAYERPAD + DEFAULTPAD;
+		const FORKFEET =	8;
+		let z =				0;
 		let i =				0;
 		let tmp =			0;
+		const crate =		this.#crateMaterialsDefined();
 
-		for (i in works) {
-			Object.entries(works[i]).map(canvas => {
-				if (canvas.includes("status"))
-					return ;
-				canvas[1].map(art => {
-					art[2] > tmp ? tmp = art[2] : art;
+		if(this.#layers > 1)
+			for (i in works) {
+				Object.entries(works[i]).map(canvas => {
+					if (canvas.includes("status"))
+						return ;
+					canvas[1].map(art => {
+						art[2] > tmp ? tmp = art[2] : art;
+					});
+					z +=	tmp;
+					tmp =	0;
 				});
-				z +=	tmp;
-				tmp =	0;
-			});
-		};
+			};
+		crate.x += innerSize[0];
+		crate.z += innerSize[1];
+		crate.z += z;
+		crate.y += innerSize[2];
+		crate.y += FORKFEET;
 		this.#coordinates.artLocation = this.#rawList;
-		return([X, z, Y, structuredClone(this.#coordinates)]);
+		return([crate.x, crate.z, crate.y, structuredClone(this.#coordinates)]);
 	};
 
 	//						x1
@@ -1015,17 +1061,25 @@ export default class CraterStandard {
 		this.#setNewCrate(measure);
 		const crate =	[];
 		let greb =		[];
-		let getter;
 		let i =			0;
+		let getter;
+		let copy;
 
 		try {
 			while (i++ < this.#maxLayers && list.length) {
 				const { emptyArea } = this.#coordinates;
 				getter = this.#fillCrateRecursion({ emptyArea, feat: [] }, list, list.length - 1);
-				Array.isArray(getter.feat) ? list.filter((art, i) => {
-					return(getter.feat[i] && getter.feat[i].list !== i);
-				}, 0): 0;
-				greb = getter.feat.map(info => info.work);
+				copy = structuredClone(getter);
+				greb = copy.feat.map(info => {
+					const piece = this.#rawList.find(item => item.code === info.work[0]);
+					const art =		piece.arr;
+					const work =	structuredClone(info.work);
+
+					work[1] = art[1];
+					work[2] = art[2];
+					work[3] = art[3];
+					return(work);
+				});
 				this.#setLayer.call(i, crate, greb);
 				this.#coordinates.defineLayer = i;
 				this.#coordinates.fillLayer = getter.feat;
@@ -1037,15 +1091,8 @@ export default class CraterStandard {
 			console.error(e);
 		};
 		this.#cleanLayers();
+		this.#layers = i - 1;
 		return({ crate, measure, list });
-	};
-
-	#checkOneCrate(list) {
-		let AVG =		0;
-		const BIGGEST =	list.at(-1);
-		list.map(art => AVG += art[4]);
-
-		return (!(AVG / list.length > BIGGEST[4]));
 	};
 
 	// NOTE: have to improve the best sizes.
@@ -1070,10 +1117,10 @@ export default class CraterStandard {
 	}
 
 	#defineSizeBaseCrate(list) {
-		const SIZES =		{ x: 0, z: 0, y: 0 };
-		const crate =		this.#composeCrateSizes(SIZES, list, list.length - 1);
+		const SIZES =			{ x: 0, z: 0, y: 0 };
+		const { x, z, y } =		this.#composeCrateSizes(SIZES, list, list.length - 1);
 
-		return([crate.x, crate.z, crate.y]);
+		return([x, z, y]);
 	};
 
 	#addXandYtimes(list) {

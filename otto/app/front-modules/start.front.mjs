@@ -15,14 +15,14 @@ import * as mod from './functions.front.end.mjs'
 
 
 function definedPackingMaterials() {
-	const packs =		JSON.parse(globalThis.localStorage.getItem('packing'));
-	const materials =	JSON.parse(globalThis.localStorage.getItem('materials'));
+	const packs =		JSON.parse(localStorage.getItem('packing'));
+	const materials =	JSON.parse(localStorage.getItem('materials'));
 	const filtered =	[];
 
 	if(!packs || packs.length === 0)
 		return(false);
 	packs.filter(type => {
-		return(materials.map(opts => opts[0] === type ? filtered.push(opts) : 0));
+		filtered.push(materials.find(opts => opts[0] === type).flat());
 	});
 	return(filtered);
 };
@@ -99,6 +99,23 @@ export function regValid(sizes_parsed) {
 };
 
 
+function selectEmptyinput() {
+	const IDS = [
+		'input_estimate', 'input_code', 'input_length', 'input_depth', 'input_height'
+	];
+	let aux = false;
+
+	IDS.find(field => {
+		const input = document.getElementById(field);
+		console.log(input.value)
+		if(!input.value && !aux) {
+			aux = true;
+			return(input.select());
+		};
+	});
+};
+
+
 //╭───────────────────────────────────────────────────────────────────────────╮
 //│   This function start the verification of the inputs in the first step.   │
 //│Secondly, calls the other functions from the modules when all verifications│
@@ -117,7 +134,8 @@ export async function catchWork() {
 	switch (cod && length && depth && height) {
 		case "":
 			alert(`Oops! Do not forget to fill each field. Please, try again!`);
-			return (mod.cleanInputs());
+			return(selectEmptyinput());
+			// return (mod.cleanInputs());
 	}
 	tmp = checkWork([cod, length, depth, height]);
 	if (tmp) {

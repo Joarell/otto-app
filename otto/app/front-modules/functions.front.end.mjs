@@ -194,7 +194,7 @@ async function parseArtWork() {
 		"FETCHED",
 		"materials",
 		"packing",
-		"woods",
+		"crating",
 	];
 	// const packs = JSON.parse(globalThis.localStorage.getItem('packing'));
 	//

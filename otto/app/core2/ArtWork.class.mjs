@@ -42,13 +42,19 @@ export default class ArtWork extends Hexaedro {
 	* @method - returns the artworks plus the packing materials
 	*/
 	#packedWorkSizes() {
-		let { x, z, y } =	this;
-		this.packMaterials.map(item => {
-			x += item[2] * 2;
-			z += item[2] * 2;
-			y += item[2] * 2;
-		});
-		return({ code: this.code, x, z, y });
+		const dimensions = {
+			x: structuredClone(this.#x),
+			z: structuredClone(this.#z),
+			y: structuredClone(this.#y),
+		}
+
+		if(this.packMaterials && this.packMaterials.length)
+			this.packMaterials.map(item => {
+				dimensions.x += item[2] * 2;
+				dimensions.z += item[2] * 2;
+				dimensions.y += item[2] * 2;
+			});
+		return([this.code, dimensions.x, dimensions.z, dimensions.y]);
 	};
 
 	/**
