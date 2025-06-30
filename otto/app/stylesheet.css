@@ -236,10 +236,12 @@ iframe, .addedStatus {
 
 
 details, summary {
-	font-size: var(--fonts);
+	text-align:initial;
+	font-size: calc(var(--fonts) - .2ch);
 	font-family: 'Mitr', sans-serif;
 	font-weight: 500;
 	color: var(--pressed);
+	padding: .3ch;
 }
 
 
@@ -1027,7 +1029,7 @@ tbody:nth-child(even) {
 			}
 			&::before {
 				content: url("./images/Otto-SVGs/right-arrow.svg");
-				inset: 15% 0 0 -5%;
+				inset: 0;
 				position: absolute;
 			}
 		}
