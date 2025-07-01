@@ -9,14 +9,18 @@ export default class ArrangerSameSize {
 	#trailOne() {
 		const MAXDEPTH =	10;
 		const getter =		[];
-		const checker =		(a, b) => a.cubed === b.cubed && a.code !== b.code;
+		const checker =		(a, b) => a.cubed <= b.cubed && a.code !== b.code;
+
 		this.map(work => {
 			let i =	0;
+			let checked;
 
 			if (work.z <= MAXDEPTH)
-				for(i in this)
-					if (!getter.includes(this[i]) && checker(this[i], work))
+				for(i in this) {
+					checked = checker(this[i], work);
+					if (!getter.includes(this[i]) && checked)
 						getter.push(this[i])
+				};
 		});
 		return(getter);
 	};
@@ -26,7 +30,7 @@ export default class ArrangerSameSize {
 		const y =	work.y;
 		const cub =	work.cubed;
 
-		return (art.x === x && art.y === y && art.cubed === cub);
+		return (art.x === x && art.y === y && art.cubed <= cub);
 	};
 
 	#trailTwo(list) {
@@ -55,7 +59,6 @@ export default class ArrangerSameSize {
 		pathTwo.map(art => {
 			this.#list.splice(this.#list.indexOf(art), 1);
 		});
-
 		return({sorted: this.#list, sameSize: pathTwo});
 	};
 };

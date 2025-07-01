@@ -6,6 +6,7 @@ import Arranger from '../app/core2/Arranger.class.mjs';
 import ArtWork from '../app/core2/ArtWork.class.mjs';
 
 describe("The are test to Standard Crate solver.", () => {
+
 	function artParser(list) {
 		const material = [['Cardboard', 160, 0.02, 120, 3.50, 'Sheet']];
 		const newList = list.map(work => {
@@ -37,7 +38,7 @@ describe("The are test to Standard Crate solver.", () => {
 
 		assert.deepStrictEqual(current, expected);
 	});
-	//
+
 	it("TEST-04: returns 1 crates as result an array with length of 2.", () => {
 		const list =		artParser(mock.standard3);
 		const current =		new CraterStandard(list, true, 4, false).crates.length / 2;

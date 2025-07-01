@@ -1,10 +1,19 @@
+import CrateMaker from "./Crate.maker.mjs";
+import WorksCoordinates from "./Crater.coordinates.mjs";
+
 export default class CraterNotCanvas {
 	#peces;
+	#rawList;
+	#coordinates;
+	#list;
 
 	constructor (list) {
 		if(!list || list.length === 0)
 			return({ noCanvas: false});
-		this.#peces = list.map(art => art.arr);
+
+		this.#rawList =	list;
+		this.#peces = 	list.map(art => art.arr);
+		this.#list =	list.map(art => art.arr);
 		return (this.#noCanvasTrail());
 	};
 
@@ -22,14 +31,28 @@ export default class CraterNotCanvas {
 		return(this.#quickSort(left, pos).concat(pivot, this.#quickSort(right, pos)));
 	};
 
-	#setPadding(innerCrate) {
-		const PAD =		20;
-		const HIGHPAD =	28;
-		const X =		innerCrate[0] + PAD;
-		const Z =		innerCrate[1] + PAD;
-		const Y =		innerCrate[2] + HIGHPAD;
+	#setWorksCoordinates(base) {
+		const coordinates =		new WorksCoordinates(base);
+		this.#coordinates =		coordinates.bluePrintCoordinates;
+		const { emptyArea } =	this.#coordinates;
+		const info = 			{ emptyArea, feat: [] };
+		const len =				this.#list.length - 1;
+		let result;
 
-		return ([X, Z, Y]);
+		coordinates.fillPreparing = { info, list: this.#list, len, raw: this.#rawList };
+		result = coordinates.fillLayer;
+		this.#coordinates.defineLayer = [ 1, result.feat ];
+		this.#coordinates.artLocation = this.#rawList;
+	};
+
+	#setPadding(innerCrate) {
+		const crate =	new CrateMaker(this.#peces).outSizes;
+		const X =		innerCrate[0] + crate.x;
+		const Z =		innerCrate[1] + crate.z;
+		const Y =		innerCrate[2] + crate.y;
+
+		this.#setWorksCoordinates([X, X, Y]);
+		return ([X, Z, Y, this.#coordinates]);
 	};
 
 	#splitCrate(works) {

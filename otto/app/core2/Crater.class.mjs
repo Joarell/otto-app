@@ -123,7 +123,7 @@ export default class Crater {
 				const cubCrate =	new CubCalc(X, Z, Y).cubCalcAir;
 				const data = 		sizes.length === 4 ?
 					sizes.splice(3, 1, cubCrate) : sizes.push(cubCrate);
-				!Array.isArray(data[0]) ? sizes.push(data) : 0;
+				Array.isArray(data) ? sizes.push(data) : 0;
 			};
 		};
 

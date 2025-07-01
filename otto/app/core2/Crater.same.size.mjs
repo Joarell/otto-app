@@ -1,23 +1,65 @@
+import CrateMaker from "./Crate.maker.mjs";
+import WorksCoordinates from "./Crater.coordinates.mjs";
+
 export default class CraterSameSize {
 	#peces;
+	#packageSize;
+	#rawList;
+	#coordinates;
 
 	constructor(list) {
 		if(!list || list.length === 0)
 			return({ sameSize: false});
 
-		this.#peces = list.map(art => art.arr);
+		this.#rawList =		structuredClone(list);
+		this.#peces =		list.map(art => art.arr);
+		this.#packageSize =	list[0].packedSized;
 		return (this.#startCrateTrail());
 	};
 
-	#setPad(innerCrate) {
-		const PAD =			23;
-		const HIGHPAD =		28;
-		const LAYERPAD =	2.5;
-		const X =			innerCrate[0] + PAD;
-		const Z =			innerCrate[1] + LAYERPAD;
-		const Y =			innerCrate[2] + HIGHPAD;
+	#worksInPlace(list, arranger, i = 1) {
+		if(!list.length)
+			return(this.#coordinates);
+		const { emptyArea } = this.#coordinates;
+		const info = { emptyArea, feat: [] };
+		const len =		list.length - 1;
+		let result;
 
-		return([X, Z, Y]);
+		arranger.fillPreparing = { info, list, len, raw: this.#rawList };
+		result = arranger.fillLayer;
+		this.#coordinates.defineLayer = [ i, result.feat ];
+		return(this.#worksInPlace(list, arranger, i + 1));
+	}
+
+	#setWorksCoordinates(base, stack) {
+		const materials =	JSON.parse(localStorage.getItem('materials'));
+		const crate =		JSON.parse(localStorage.getItem('crating'));
+		const check =		(a, b) => a === b[0] && b[2] < 5 && b[5] === 'Foam Sheet';
+		let padLayer;
+
+		crate.map(item => {
+			const padding = materials.filter(opt => check(item, opt));
+			padding.length ? padLayer = padding.flat() : 0;
+		});
+		stack ? base[2] = +padLayer[2] : 0;
+
+		const coordinates =	new WorksCoordinates(base);
+		this.#coordinates = coordinates.bluePrintCoordinates;
+		const list =		structuredClone(this.#peces);
+
+		this.#worksInPlace(list, coordinates);
+		this.#coordinates.artLocation = this.#rawList;
+		return(base);
+	};
+
+	#setPad(innerCrate, layersUp) {
+		const crater =		new CrateMaker(this.#peces.length, layersUp).outSizes;
+		const X =			innerCrate[0] + crater.x;
+		const Z =			innerCrate[1] + crater.z;
+		const Y =			innerCrate[2] + crater.y;
+
+		this.#setWorksCoordinates([X, Z, Y], layersUp);
+		return([X, Z, Y, this.#rawList]);
 	};
 
 	#checkComp(getter, test, baseLayer) {
@@ -37,13 +79,12 @@ export default class CraterSameSize {
 	};
 
 	#composeLayer(baseSize, list) {
-		const PACKAGECM =	10;
 		let getter =		[];
 		const compLayer =	list.map(size => {
 			const X =		size[0] === baseSize[0][0];
 			const Y =		size[2] === baseSize[0][2];
-			const secondX = size[0] === (baseSize[0][0] - PACKAGECM);
-			const secondY = size[2] === (baseSize[0][2] - PACKAGECM);
+			const secondX = size[0] === (baseSize[0][0] - this.#packageSize[1]);
+			const secondY = size[2] === (baseSize[0][2] - this.#packageSize[3]);
 
 			if (X && Y || secondX && secondY)
 				return(size);
@@ -54,13 +95,12 @@ export default class CraterSameSize {
 			else
 				getter.push(size);
 		});
-		return (compLayer[0] !== undefined);
+		return(compLayer[0] !== undefined);
 	};
 
 	#orderSizes(base, art) {
-		const STACK =		base.shift();
-		const PACKAGECM =	5;
-		const LEN =			art.length === 1 ? art[0].length : art.length;
+		const STACK =	base.shift();
+		const LEN =		Array.isArray(art[0]) ? art[0].length : art.length;
 		let DEPTH;
 		let x;
 		let z;
@@ -69,26 +109,21 @@ export default class CraterSameSize {
 		if (STACK) {
 			DEPTH =	(LEN % 2) + (LEN / 2);
 			x =		base[0];
-			z =		DEPTH * PACKAGECM;
+			z =		DEPTH * this.#packageSize[2];
 			y =		base[2];
 		}
 		else {
 			DEPTH =	(LEN % 2) + LEN;
 			x =		base[0];
-			z =		DEPTH * PACKAGECM;
+			z =		DEPTH * this.#packageSize[2];
 			y =		base[2];
 		};
-		return (this.#setPad([x, z, y], STACK));
+		return(this.#setPad([x, z, y], STACK));
 	};
 
 	#sizeStacking(base, newBase) {
 		const extraSizes =	newBase.length > 3 ?
-			[
-				newBase[0][1],
-				newBase[0][2],
-				newBase[0][3],
-			]:
-			newBase;
+			[ newBase[0][1], newBase[0][2], newBase[0][3], ]: newBase;
 		const LIMIT =	132;
 		let x =			base[0];
 		let z =			base[1];
@@ -101,7 +136,7 @@ export default class CraterSameSize {
 		}
 		else if (y > base[2])
 			stack =		true;
-		return ([stack, [x, z, y]]);
+		return([stack, [x, z, y]]);
 	};
 
 	#solveList(list) {
@@ -109,6 +144,7 @@ export default class CraterSameSize {
 		let comp;
 		let baseCrate =	list.splice(0, 1).flat();
 		let works =		list.splice(0, 1).flat();
+		let crate;
 
 		list.length > 0 ? comp = this.#composeLayer(baseCrate, list): false;
 		if(comp) {
@@ -123,19 +159,20 @@ export default class CraterSameSize {
 				baseCrate.unshift(false);
 		};
 		Array.isArray(works[0][0]) ? works = works.flat() : false;
-		return ({ crate: this.#orderSizes(baseCrate.flat(), works), works });
+		crate = this.#orderSizes(baseCrate.flat(), works);
+		return({ crate, works });
 	};
 
 	#compCrate(list) {
 		const crate = [];
 		let solver;
 
-		while (list.length) {
+		while(list.length) {
 			solver = this.#solveList(list);
 			crate.push(solver.crate);
 			crate.push({ works: solver.works });
 		};
-		return (crate);
+		return(crate);
 	};
 
 	#countWorks () {
@@ -168,7 +205,6 @@ export default class CraterSameSize {
 		if (countDiffSizes === null)
 			return(null);
 		const crateDone =		this.#compCrate(countDiffSizes);
-
 		countDiffSizes =		null;
 		return ({ crates : crateDone, backUp : structuredClone(crateDone) });
 	};

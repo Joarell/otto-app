@@ -1,22 +1,52 @@
+import CrateMaker from "./Crate.maker.mjs";
+import WorksCoordinates from "./Crater.coordinates.mjs";
+
 export default class CraterPythagoras {
+	#list;
 	#largest;
+	#rawList;
+	#coordinates;
 
 	constructor (canvas) {
 		if(!canvas || canvas.length === 0)
 			return({ largest: false });
+
+		this.#rawList = canvas;
 		this.#largest = canvas.map(art => art.arr);
+		this.#list =	structuredClone(this.#largest);
 		return(this.#pitagorasCrater());
 	};
 
-	#setPadding(innerCrate, layers) {
-		const PAD =		23;
-		const HIGHPAD =	28;
-		const LAYER =	2.5;
-		const X =		innerCrate[0] + PAD;
-		const Z =		(innerCrate[1] + PAD) + (LAYER * layers);
-		const Y =		innerCrate[2] + HIGHPAD;
+	#worksInPlace(list, arranger, layers, i = 1) {
+		if(!list.length && !layers)
+			return(this.#coordinates);
+		const { emptyArea } = this.#coordinates;
+		const info = 			{ emptyArea, feat: [] };
+		const len =				list.length - 1;
+		let result;
 
-		return ([X, Z, Y]);
+		arranger.fillPreparing = { info, list, len, raw: this.#rawList };
+		result = arranger.fillLayer;
+		this.#coordinates.defineLayer = [ i, result.feat ];
+		return(this.#worksInPlace(list, arranger, layers - 1, i + 1));
+	}
+
+	#setWorksCoordinates(base, layers) {
+		const coordinates =		new WorksCoordinates(base);
+		this.#coordinates =		coordinates.bluePrintCoordinates;
+
+		this.#worksInPlace(this.#list, coordinates, layers);
+		this.#coordinates.artLocation = this.#rawList;
+	};
+
+	#setPadding(innerCrate, layers) {
+		const crate =	new CrateMaker(layers).outSizes;
+		const X =		innerCrate[0] + crate.x;
+		const Z =		innerCrate[1] + crate.z;
+		const Y =		innerCrate[2] + crate.y;
+
+		this.#setWorksCoordinates([ X, Z, Y ], layers);
+		return ([ X, Z, Y ]);
 	};
 
 	#pitagorasTheorem(crate) {
@@ -40,7 +70,6 @@ export default class CraterPythagoras {
 			z < work[2] ? z = work[2] : false;
 			y < work[3] ? y = work[3] : false;
 		});
-		console.log(x, z, y);
 		crate = x >= y ?
 			this.#setPadding([x, z, y], canvas.length):
 			this.#setPadding([y, z, x], canvas.length);
@@ -70,6 +99,7 @@ export default class CraterPythagoras {
 			crates.push(this.#crateInterface(canvas))
 			crates.push({ works: canvas });
 		};
+		crates[0].push(this.#coordinates);
 		return(crates);
 	};
 

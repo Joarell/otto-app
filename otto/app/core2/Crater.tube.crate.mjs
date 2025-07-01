@@ -1,11 +1,18 @@
+import CrateMaker from "./Crate.maker.mjs";
+import WorksCoordinates from "./Crater.coordinates.mjs";
+
 export default class CraterTube {
 	#tubes;
 	#DIAMETER
+	#coordinates;
+	#rawList;
 
 	constructor(list) {
 		if(!list || list.length === 0)
 			return({ tube : false });
 
+
+		this.#rawList =		list;
 		this.#tubes =		list.map(art => art.arr);
 		this.#DIAMETER =	35;
 		const checker =		this.#tubes.filter(item => {
@@ -20,15 +27,29 @@ export default class CraterTube {
 
 	#crateMaker() {
 		this.#possibleCrates();
-		return (this.#tubes);
+		return(this.#tubes);
 	};
 
-	#sizeComposer(){
-		let x = this[0][1];
-		let z = this[0][2];
+	#setWokdCoordinates(innerSize, list) {
+		const coordinates =		new WorksCoordinates(innerSize);
+		this.#coordinates =		coordinates.bluePrintCoordinates;
+		const { emptyArea } =	this.#coordinates;
+		let info =				{ emptyArea, feat: [] };
+		let len =				Array.isArray(list[0]) ? list.length - 1 : 0;
+		let result;
+
+		coordinates.fillPreparing = { info, list, len, raw: this.#rawList };
+		result = coordinates.fillLayer;
+		this.#coordinates.defineLayer = [1, result.feat];
+		this.#coordinates.artLocation = this.#rawList;
+	};
+
+	#sizeComposer(list){
+		let x = list[0][1];
+		let z = list[0][2];
 		let y = 0;
 
-		this.map(tube => {
+		list.map(tube => {
 			x = tube[1] > x ? tube[1]: x;
 			z = tube[2] > z ? tube[2]: z;
 			y += tube[3];
@@ -36,36 +57,25 @@ export default class CraterTube {
 		return([x, z, y]);
 	}
 
-	#setPaddings(pad, highPad) {
-		const X = this[0] + pad;
-		const Z = this[1] + pad;
-		const Y = this[2] + highPad;
+	#setPaddings() {
+		const crate = new CrateMaker(1);
+		const X = this[0] + crate.x;
+		const Z = this[1] + crate.z;
+		const Y = this[2] + crate.y;
 
+		this.#setWokdCoordinates([X, Z, Y], structuredClone(list));
 		return([X, Z, Y]);
 	};
 
-	#oneTubeCrate() {
-		const DEFAULTPAD =	18;
-		const HEIGHTPAD =	25;
-		const X =			this[0][1] + DEFAULTPAD;
-		const Z =			this[0][2] + DEFAULTPAD;
-		const Y =			this[0][3] + HEIGHTPAD;
-
-		return ([X, Z, Y]);
-	};
-
 	#tubeCrate(works) {
-		const DEFAULTPAD =	18;
-		const HEIGHTPAD =	25;
-		const baseSize =	this.#sizeComposer.call(works);
-
-		return (this.#setPaddings.call(baseSize, DEFAULTPAD, HEIGHTPAD));
+		const baseSize =	this.#sizeComposer(works);
+		return (this.#setPaddings(baseSize, works));
 	};
 
 	#interfaceCrates(list) {
 		switch(list.length) {
 			case 1:
-				return(this.#oneTubeCrate.call(list));
+				return(this.#tubeCrate(list));
 			case 2:
 				return(this.#tubeCrate(list));
 			case 3:
@@ -85,7 +95,7 @@ export default class CraterTube {
 			result.push(this.#interfaceCrates(getter.length, getter));
 			result.push({ works: getter });
 		};
-		return (result);
+		return(result);
 	};
 
 	#checkHugeTubes() {
@@ -97,7 +107,7 @@ export default class CraterTube {
 		getter.map(roll => {
 			this.#tubes.splice(this.#tubes.indexOf(roll), 1);
 		});
-		return (getter);
+		return(getter);
 	};
 
 	#possibleCrates() {

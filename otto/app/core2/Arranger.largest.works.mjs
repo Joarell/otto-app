@@ -7,23 +7,24 @@ export default class ArrangerLargestCanvas {
 	};
 
 	#finder () {
-		const list =			this.map(work => work.arr)
 		const MAXHEIGHT =		213;
 		const largestCanvas =	this.filter(work => {
-			return(work.x >= MAXHEIGHT || work.y >=MAXHEIGHT ? work : 0);
+			const check = work.x >= MAXHEIGHT && work.y >= MAXHEIGHT;
+			return(check ? work : 0);
 		});
 
-		return(largestCanvas);
+		return(largestCanvas.length ? largestCanvas: false);
 	};
 
 	#largest() {
 		const { sorted } =	this.#list;
 		const finder =		this.#finder.call(sorted);
 
-		finder.map(canvas => {
-			this.#list.sorted.splice(this.#list.sorted.indexOf(canvas), 1);
-		});
-		this.#list.largest = finder;
+		finder ? finder.map(canvas => {
+			canvas ?
+				this.#list.sorted.splice(this.#list.sorted.indexOf(canvas), 1): 0;
+		}): 0;
+		finder ? this.#list.largest = finder: 0;
 		return (this.#list);
 	};
 };

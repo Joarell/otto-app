@@ -235,11 +235,13 @@ iframe, .addedStatus {
 }
 
 
-details, summary {
-	font-size: var(--fonts);
+details summary {
+	text-align:initial;
+	font-size: calc(var(--fonts-input) - .2ch);
 	font-family: 'Mitr', sans-serif;
 	font-weight: 500;
 	color: var(--pressed);
+	padding: .3ch;
 }
 
 
@@ -289,7 +291,7 @@ label {
 }
 
 
-input, input[type='checkbox'] {
+input {
 	background-color: var(--input-bg);
 	border-radius: .3rem;
 	outline: none;
@@ -1027,7 +1029,7 @@ tbody:nth-child(even) {
 			}
 			&::before {
 				content: url("./images/Otto-SVGs/right-arrow.svg");
-				inset: 15% 0 0 -5%;
+				inset: 0;
 				position: absolute;
 			}
 		}
@@ -1060,7 +1062,6 @@ tbody:nth-child(even) {
 					& a {
 						border-radius: .15rem;
 						text-decoration: none;
-						/* padding: .15rem; */
 						z-index: 50;
 						font-style: italic;
 						font-weight: 600;
@@ -1191,8 +1192,6 @@ tbody:nth-child(even) {
 		& select {
 			border: .1rem solid var(--pressed);
 			border-radius: .2rem;
-			height: 1.2rem;
-			background-color: transparent;
 			color: var(--pressed);
 			text-align: center;
 			& option {
@@ -1347,7 +1346,6 @@ tbody:nth-child(even) {
 	& select {
 		border: .1rem solid var(--pressed);
 		border-radius: .2rem;
-		background-color: transparent;
 		color: var(--pressed);
 		& option {
 			border: .1rem solid var(--pressed);
