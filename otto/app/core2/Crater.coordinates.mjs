@@ -14,8 +14,10 @@ export default class WorksCoordinates {
 	#crateTemplate() {
 		const template = {
 			emptyArea: [],
-			artLocation: [],
+			artLocation: new Map(),
 			baseSize: this.#sizes,
+			plotter3D: new Map(),
+			innerSize: [],
 			get reset() {
 				this.emptyArea = [[0, 0, this.baseSize[0], this.baseSize[2]]];
 			},
@@ -32,6 +34,11 @@ export default class WorksCoordinates {
 		return(template);
 	};
 
+	/**
+	* @method - update the available coordinates possible to feat the work
+	* @param { Number } pos the array index to be removed from the possibilities.
+	* @param { Array } local the position with the coordinates to place the work.
+	*/
 	#updateLayerAvailableCoordinates(pos, local, { x, y, flip }) {
 		const { emptyArea } =	this.#coordinates;
 		const X =				emptyArea[0][2];
@@ -65,6 +72,11 @@ export default class WorksCoordinates {
 		firstY ? emptyArea.push(firstY): 0;
 	};
 
+	/**
+	* @method - find the feasible position to the work into the crate.
+	* @param { Array } art the artwork dimensions and ID.
+	* @param { Array } coordinate the empty possibilities to feat the work in.
+	*/
 	#workFeatnessLayer(art, coordinate) {
 		const space = coordinate[0] === coordinate[2]
 			&& coordinate[1] === coordinate[3];
@@ -80,6 +92,14 @@ export default class WorksCoordinates {
 		return({ check01, check02 });
 	};
 
+	/**
+	* @method - analyses all empty and available positions/coordinates to each work.
+	* @param { Array } param0.emptyArea - available empty coordinates.
+	* @param { boolean } param0.found - changes when a space is matched to the work.
+	* @param { Array } param0.art - the work sizes and code.
+	* @param { Number param0.ind - the rawList location to the work.
+	* @param { Number } param0.pos the @emptyArea index.
+	*/
 	#featRecursionLayer({ emptyArea, found, art, ind, pos }) {
 		emptyArea.length > 1 && pos === 0 ? pos++ : 0;
 		const coordinates = emptyArea[pos];
@@ -133,6 +153,12 @@ export default class WorksCoordinates {
 		return(this.#featRecursionLayer({emptyArea, found, art, ind, pos}));
 	};
 
+	/**
+	* @method - the recursion caller to find a match empty space into the crate.
+	* @param { Number } len - the list index.
+	* @param { Object } info - the crate base size and saver to crate layers arrangement.
+	* @param { Array } list - the artworks relation.
+	*/
 	#fillCrateRecursion(info, list, len) {
 		const check =	info.emptyArea[0] === undefined && info.emptyArea[1] === undefined;
 		const filledX = info.emptyArea[0][0] === info.emptyArea[0][2];
@@ -154,15 +180,21 @@ export default class WorksCoordinates {
 		return(this.#fillCrateRecursion(info, list, len - 1));
 	};
 
+	/**
+	* @field - returns the crate template to be fulfilled
+	*/
 	get bluePrintCoordinates() {
 		return(this.#coordinates);
 	};
 
+	/**
+	* @field - Call the fulfillment of the crate.
+	*/
 	get fillLayer() {
 		const { info, list, len, raw } = this.#info;
 
 		this.#rawList = raw;
-		return(this.#fillCrateRecursion(info, list, len));
+		return(this.#info ? this.#fillCrateRecursion(info, list, len): false);
 	};
 
 	/** @param { Object } data  */

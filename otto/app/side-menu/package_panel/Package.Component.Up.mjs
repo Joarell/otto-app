@@ -11,8 +11,9 @@ export class PackageInfoUp extends HTMLElement {
 	static observedAttributes = [ "name", "content" ];
 	#type = [];
 	#shadowRoot = new WeakMap();
-	#reg = new RegExp("^[A-Za-z\ 0-9\s]+$");
+	#reg = new RegExp("^[A-Za-z][A-Za-z0-9]*$");
 	#link;
+	#listeners;
 
 	constructor() {
 		super();
@@ -23,6 +24,7 @@ export class PackageInfoUp extends HTMLElement {
 		this.#link.type =		'text/css';
 		this.#link.href =		'./stylesheet.css';
 		this.#shadowRoot.set(this, shadow);
+		this.#listeners =		new Map;
 	};
 
 	/**
@@ -35,6 +37,8 @@ export class PackageInfoUp extends HTMLElement {
 		let i;
 		let aux;
 
+		if(!shadow)
+			return;
 		for(node; node < shadow.children.length && !found; node++) {
 			aux = shadow.children.item(node);
 			i = 0;
@@ -46,6 +50,7 @@ export class PackageInfoUp extends HTMLElement {
 				};
 			};
 		};
+		return(found);
 	};
 
 	/**
@@ -85,7 +90,7 @@ export class PackageInfoUp extends HTMLElement {
 			addedMaterials.types.push(aux);
 			j = 0;
 		};
-		if (next) {
+		if(next) {
 			saver.saveMaterials = addedMaterials;
 			saveResult = await saver.saveinfo;
 			switch(saveResult){
@@ -97,7 +102,7 @@ export class PackageInfoUp extends HTMLElement {
 					return(this.#addNewField());
 				default :
 					cleaner.map(field => field.value = "");
-					return(materials.setAttribute('name', 'select-materials'));
+					return(this.#hiddenContent());
 			};
 		};
 	};
@@ -105,10 +110,17 @@ export class PackageInfoUp extends HTMLElement {
 	/**
 	* @adds new fields to fill with new pack materials;
 	*/
-	async #updateMaterials() {
-		const content = document.querySelector(".update-materials");
-		content.setAttribute("content", "update");
+	async #updateMaterials(shadow) {
+		shadow.querySelector('.packing-materials')
+			.addEventListener('input', (e) => {
+				const { id } = e.target;
+				e.stopImmediatePropagation();
+				id ? result = true: 0;
+		});
+		shadow.querySelector('.packing-materials')
+			.removeEventListener('input');
 	};
+
 
 	/**
 	* @method - adds the input listener to select artwork packing materials.
@@ -118,7 +130,7 @@ export class PackageInfoUp extends HTMLElement {
 			.addEventListener("input", (async element => {
 				const { className } =	element.target;
 				const value =			element.target.getAttribute('content');
-				const customElement =	element .target .shadowRoot
+				const customElement =	element.target.shadowRoot
 										.querySelector(".select-materials");
 
 				if (value !== 0 && className === "packing-materials")
@@ -183,54 +195,31 @@ export class PackageInfoUp extends HTMLElement {
 	};
 
 	/**
-	* @method - check the options to active the confirm button.
+	* @method - check if the user wants to save the materials.
+	* @param { ShadowRoot } shadow - listener element.
 	*/
-	#checkSPressButton() {
-		const shadowRoot = this.#shadowRoot.get(this);
+	#checkingSaveNewMaterials(shadow) {
+		let result = false;
+		const checker = (event) => {
+			const { id } = event.target;
+			const check = this.#findBlankField(shadow);
 
-		globalThis.document.querySelector(".package-crates")
-		.addEventListener("click", (async element => {
-			const { className } =	shadowRoot.lastElementChild;
-			const { id } =			element.target;
-
+			event.stopImmediatePropagation();
 			switch(id) {
-				case 'settings-content':
-					return(className !== 'new-material' ? this.#cleanPanel(id, className): 0);
-				case 'packages':
-					this.#inputListener();
-					return(className !== 'select-materials' ? this.#cleanPanel(id, className) : 0);
-				case 'select-materials':
-					this.#inputListener();
-					return(className !== 'select-materials' ? this.#cleanPanel(id, className) : 0);
-				case 'materials':
-					this.#inputListener();
-					return(className !== 'select-materials' ? this.#cleanPanel(id, className) : 0);
-				case 'pack-opts':
-					return(className !== 'upPane' ? await this.#populatePackedWorksInCrates(): 0);
-				case 'works-packed':
-					return(className !== 'upPane' ? await this.#populatePackedWorksInCrates(): 0);
-				case 'reset-sizes':
-					return(this.#toggleMaterialsReportAndUpdate());
-				case 'reset-szs':
-					return(this.#toggleMaterialsReportAndUpdate());
-				case 'adding-material':
-					return(this.#addNewField());
-				case 'add__new__field':
-					return(this.#addNewField());
-				case 'cancel-remove':
-					return(this.#removeField());
-				case 'confirm-ok':
-					this.#inputListener();
-					return(this.#saveMaterials());
-				case 'confirm-save':
-					this.#inputListener();
-					return(this.#saveMaterials());
-				case 'contents2':
-					return(this.#updateMaterials());
-				default :
-					return(this.#packedReportToggle());
+				case 'new-material':
+					!check ? this.#inputListener(): 0;
+					!check ? this.#saveMaterials(): 0;
+					result = true;
+					return(result)
+				default:
+					return;
 			};
-		}), true);
+		};
+		if(!this.#listeners.has('add')) {
+			shadow.lastElementChild.addEventListener('click', checker, true);
+			this.#listeners.set('add', shadow);
+		};
+		result ? shadow.lastElementChild.removeEventListener('click', checker, true): 0;
 	};
 
 	/**
@@ -239,8 +228,8 @@ export class PackageInfoUp extends HTMLElement {
 	#loadPageSelection() {
 		const { shadowRoot } =	document.querySelector(".materials");
 		const list =			shadowRoot.querySelector('.select-materials');
-		const pack =		JSON.parse(localStorage.getItem('packing'));
-		const crate =		JSON.parse(localStorage.getItem('crating'));
+		const pack =			JSON.parse(localStorage.getItem('packing'));
+		const crate =			JSON.parse(localStorage.getItem('crating'));
 		let crates;
 		let temp;
 		let i;
@@ -342,7 +331,6 @@ export class PackageInfoUp extends HTMLElement {
 			return(true);
 		this.#hiddenContent();
 		document.getElementById('add__new__field').disabled = true;
-		document.getElementById('confirm-save').disabled = true;
 		const shadowRoot =		this.#shadowRoot.get(this);
 		const clone =			templateMaterials.content.cloneNode(true);
 		const node =			document.importNode(clone, true);
@@ -396,7 +384,6 @@ export class PackageInfoUp extends HTMLElement {
 		const { shadowRoot } = document.querySelector(".materials");
 		while(shadowRoot.firstChild)
 			shadowRoot.removeChild(shadowRoot.firstChild);
-		return(shadowRoot.append(this.#link));
 	};
 
 	/**
@@ -439,7 +426,8 @@ export class PackageInfoUp extends HTMLElement {
 	* @param { string } newVal - new attribute name;
 	*/
 	async attributeChangedCallback(attName, oldVal, newVal) {
-		!oldVal ? this.#checkSPressButton() : 0;
+		const shadow =		this.#shadowRoot.get(this);
+		const shadowClass =	shadow.lastElementChild?.className;
 
 		this.#type.push(newVal);
 		switch(newVal) {
@@ -455,6 +443,37 @@ export class PackageInfoUp extends HTMLElement {
 				return(await this.#populateAddMaterials());
 			case 'packed-works':
 				return(await this.#populatePackedWorksInCrates());
+			case 'settings-content':
+				return(className !== 'update-materials' && shadowClass !== 'new-material' ? this.#cleanPanel(id, shadowClass): 0);
+			case 'packages':
+				this.#inputListener();
+				return(className !== 'update-materials' && shadowClass !== 'select-materials' ? this.#cleanPanel(id, shadowClass) : 0);
+			case 'select-materials':
+				this.#inputListener();
+				return(className !== 'update-materials'&& shadowClass !== 'select-materials' ? this.#cleanPanel(id, shadowClass) : 0);
+			case 'materials':
+				this.#inputListener();
+				return(className !== 'update-materials' && shadowClass !== 'select-materials' ? this.#cleanPanel(id, shadowClass) : 0);
+			case 'pack-opts':
+				return(shadowClass !== 'upPane' ? await this.#populatePackedWorksInCrates(): 0);
+			case 'works-packed':
+				return(shadowClass !== 'upPane' ? await this.#populatePackedWorksInCrates(): 0);
+			case 'reset-sizes':
+				return(this.#toggleMaterialsReportAndUpdate());
+			case 'reset-szs':
+				return(this.#toggleMaterialsReportAndUpdate());
+			case 'adding-material':
+				return(this.#addNewField());
+			case 'add__new__field':
+				return(this.#addNewField());
+			case 'cancel-remove':
+				return(this.#removeField());
+			case 'new-material':
+				return(this.#checkingSaveNewMaterials(shadow));
+			case 'confirm-save':
+				return(this.#checkingSaveNewMaterials(shadow));
+			default :
+				return(this.#packedReportToggle());
 		};
 	};
 };

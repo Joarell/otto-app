@@ -13,7 +13,7 @@ templateMaterials.innerHTML = `
 */
 export const availableMaterials = document.createElement('template');
 availableMaterials.innerHTML = `
-<div class="packing-materials" aria-hidden="false" role="none" content="0">
+<div class="packing-materials" id="" aria-hidden="false" role="none" content="0">
 	<h3>Packing materials for updating in ${globalThis.localStorage.getItem('metrica').split('-')[1]}:</h3>
 	<p>Press this pane to save your updates.</p>
 </div>
@@ -30,18 +30,19 @@ newMaterials.innerHTML = `
 			<p>
 				Please, press the "<i class="nf nf-fa-circle_plus"></i>", button below for adding new materials in
 				${globalThis.localStorage.getItem('metrica').split('-')[1]}, or click in "<i class="nf nf-oct-x_circle_fill"></i>" for removing it".
-				Then, hit the "<i class="nf nf-fa-check_circle"></i>", to save.
+				Then, press this pane to save all materials.
 			</p>
 		</div>
 	</div>
 `;
+// Then, hit the "<i class="nf nf-fa-check_circle"></i>", to save.
 
 /**
 * @typedef { HTMLElement } newOption
 */
 export const newOption = document.createElement('template');
 newOption.innerHTML = `
-<div class='material-sizes'>
+<div class='material-sizes' id="new-field">
 	<input class="material-name" type="text" pattern="^[A-Za-z0-9\s]+$" inputmode="text" placeholder="Type" required></input>
 	<input class="IO__add--form" type="number" inputmode="numeric" id="input_length" pattern="^[0-9]+(?:\\.[0-9]+)?$" placeholder="L" name="length" maxlength="7" required>
 	<input  class="IO__add--form" type="number" inputmode="numeric" id="input_depth" pattern="^[0-9]+(?:\\.[0-9]+)?$" name="depth" placeholder="D" maxlength="7" required>

@@ -48,17 +48,19 @@ export default class CraterSameSize {
 		const list =		structuredClone(this.#peces);
 
 		this.#worksInPlace(list, coordinates);
-		this.#coordinates.artLocation = this.#rawList;
+		this.#rawList.map(work => this.#coordinates.artLocation.set(work.code, work));
 		return(base);
 	};
 
 	#setPad(innerCrate, layersUp) {
 		const crater =		new CrateMaker(this.#peces.length, layersUp).outSizes;
-		const X =			innerCrate[0] + crater.x;
-		const Z =			innerCrate[1] + crater.z;
-		const Y =			innerCrate[2] + crater.y;
+		const X = 			(innerCrate[0] + crater.x).toFixed(3);
+		const Z = 			(innerCrate[1] + crater.z).toFixed(3);
+		const Y = 			(innerCrate[2] + crater.y).toFixed(3);
+		const div =			innerCrate[1] + (crate.div * this.#peces.length);
 
 		this.#setWorksCoordinates([X, Z, Y], layersUp);
+		this.#coordinates.innerSize = [innerCrate[0], div, innerCrate[2]];
 		return([X, Z, Y, this.#rawList]);
 	};
 

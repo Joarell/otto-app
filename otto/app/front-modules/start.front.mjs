@@ -39,7 +39,7 @@ export function checkWork(work) {
 
 	if(!materials) {
 		alert('Please, select some packing material to apply to the artwork.');
-		return(false);
+		return('material');
 	};
 	if (regex.test(work[0]) || regex.test(estimate)) {
 		alert(`Found special character NOT allowed on "Work code",\
@@ -138,7 +138,7 @@ export async function catchWork() {
 			// return (mod.cleanInputs());
 	}
 	tmp = checkWork([cod, length, depth, height]);
-	if (tmp) {
+	if (tmp && tmp !== 'material') {
 		await orderWorks(tmp.data);
 		localStorage.setItem(tmp.data.code, JSON.stringify(tmp.data));
 		localStorage.setItem("storage", "art-work");
@@ -147,7 +147,7 @@ export async function catchWork() {
 		mod.displayCub();
 		mod.cleanInputs();
 	}
-	return (mod.cleanInputs());
+	return(!tmp || tmp === 'material' ? 0 : mod.cleanInputs());
 };
 
 

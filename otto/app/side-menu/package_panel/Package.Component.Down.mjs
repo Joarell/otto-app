@@ -21,6 +21,9 @@ export class PackageInfoDown extends HTMLElement {
 		this.#shadowRoot.set(this, shadow);
 	};
 
+	#listening() {
+	};
+
 	/**
 	* @method - check if there is some materials available to select.
 	*/
@@ -28,7 +31,7 @@ export class PackageInfoDown extends HTMLElement {
 		if(await new AvailableMaterials().allMaterials)
 			return(true);
 		const shadowRoot =		this.#shadowRoot.get(this);
-		const entry =			document.querySelector(".packing-materials");
+		const entry =			document.querySelector(".data-update");
 		const defaultPanel =	new AddPackingMaterials(entry);
 		const fragment =		new DocumentFragment();
 
@@ -46,22 +49,18 @@ export class PackageInfoDown extends HTMLElement {
 	async #updateMaterialsInfo(newInfo, content) {
 		const list =	JSON.parse(globalThis.localStorage.getItem('materials'));
 		const saver =	new AddPackingMaterials(content);
-		const updated = { materials: 'packing', types: list };
+		const updated = { materials: 'packing', types: [] };
 		let pack;
 
 		for(pack of list) {
 			newInfo.map(material => {
-				if(material[0] === pack[0]) {
-					material[1] && material[1] !== pack[1] ? pack[1] = material[1] : false;
-					material[2] && material[2] !== pack[2] ? pack[2] = material[2] : false;
-					material[3] && material[3] !== pack[3] ? pack[3] = material[3] : false;
-					material[4] && material[4] !== pack[4] ? pack[4] = material[4] : false;
-					material[5] && material[5] !== pack[5] ? pack[5] = material[5] : false;
-				};
+				if(material[0] === pack[0])
+					material.map((info, i) => info && info !== pack[i] ? pack[i] = info: 0, 0);
 			});
 		};
+		updated.types = list;
 		saver.saveMaterials = updated;
-		return(await saver.saveinfo);
+		return(newInfo.length ? await saver.saveinfo: 0);
 	};
 
 	/**
@@ -69,16 +68,16 @@ export class PackageInfoDown extends HTMLElement {
 	*/
 	async #updateMaterials() {
 		const { shadowRoot } =	document.querySelector(".update-materials");
-		const content =			shadowRoot.querySelector(".packing-materials");
+		const content =			shadowRoot.querySelector(".data-update");
 		const { children } =	content;
 		const updated =			[];
 		let i = 				1;
 		let aux;
 		let checked =			false;
 
-		for (i; children.length > i; ++i) {
+		for(i; children.length > i; ++i) {
 			aux = [];
-			if(children.item(i).children.item(0).children[0].checked) {
+			if(children.item(i).children.item(0)?.children[0].checked) {
 				aux.push(children.item(i).children.item(0).children[0].name);
 				aux.push(children.item(i).children.item(1).children[0].value);
 				aux.push(children.item(i).children.item(1).children[1].value);
@@ -90,7 +89,7 @@ export class PackageInfoDown extends HTMLElement {
 					aux.push(children.item(i).children.item(3).children.item(1).value);
 				if(children.item(i).children.item(3).children.item(2).selected)
 					aux.push(children.item(i).children.item(3).children.item(2).value);
-				if(aux.includes("")) {
+				if(aux.includes("") && !checked) {
 					confirm('Blank field found! Would you like to procedd anyway?') ?
 						updated.push(aux) : 0;
 					checked = true;
@@ -104,9 +103,12 @@ export class PackageInfoDown extends HTMLElement {
 		return(await this.#updateMaterialsInfo(updated, content));
 	};
 
+	/**
+	* @method - remove and update the available materials.
+	*/
 	async #removeMaterials() {
 		const { shadowRoot } =	document.querySelector(".update-materials");
-		const content =			shadowRoot.querySelector(".packing-materials");
+		const content =			shadowRoot.querySelector(".data-update");
 		const { children } =	content;
 		const list =			[];
 		let aux;
@@ -196,6 +198,7 @@ export class PackageInfoDown extends HTMLElement {
 			case 'update-materials':
 				return(await this.#populateUpdateMaterials());
 			case 'save-updated':
+				this.#listening();
 				return(this.#updateMaterials());
 			case 'update':
 				return(this.#updateMaterials());

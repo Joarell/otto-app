@@ -8,7 +8,6 @@ export default class AddPackingMaterials {
 		{ type: "module" },
 	);
 	#entry;
-	/** typedef { Array } */
 	#materials;
 
 	/**
@@ -52,11 +51,13 @@ export default class AddPackingMaterials {
 	*/
 	async #updateDownPanel() {
 		const { shadowRoot } =	document.querySelector(".update-materials");
-		const content =			shadowRoot.querySelector(".packing-materials");
+		const content =			shadowRoot.querySelector(".data-update") || shadowRoot.querySelector(".packing-materials");
 		const fragment =		new DocumentFragment();
 		const clone =			availableMaterials.content.cloneNode(true);
 		const node =			document.importNode(clone, true);
 
+		content.className = 'data-update';
+		content.id =		'update-info';
 		fragment.append(node);
 		!this.#materials ? this.#materials = await this.#grabNewMaterials() : 0;
 		this.#materials.types.map((pack, i) => {
@@ -70,8 +71,8 @@ export default class AddPackingMaterials {
 			select.innerHTML = `
 			<option>Sheet</option>
 			<option>Roll</option>
-			<option>Plywood</option>
 			<option>Pinewood</option>
+			<option>Plywood</option>
 			<option>Tape</option>
 			<option>Foam Sheet</option>`;
 
@@ -92,21 +93,52 @@ export default class AddPackingMaterials {
 			material.appendChild(select);
 			fragment.appendChild(material);
 		}, 0);
-		while(content && content.firstChild)
+		while(content?.firstChild)
 			content.removeChild(content.firstChild);
 		return(content.appendChild(fragment));
 	};
 
 	/**
+	* @method - analyse and return the materials updated.
+	* @param { Array } list the existent list to compare with.
+	*/
+	#diffUpdateList(list, opt) {
+		if(!list.length)
+			return(list);
+		const stored =	new Set(list);
+		const updated =	new Set(this.#materials.types);
+		const diff =	!opt ? updated.difference(stored): stored.difference(updated);
+		const entries =	diff.entries();
+		const result =	[];
+		let item;
+
+		for(item of entries)
+			!Array.isArray(item[0][0]) ? result.push(item[0]) :0
+		if(list.length >= result.length) {
+			result.map(item => {
+				list.map(data => {
+					if(data[0] === item[0]) {
+						for(let i = 0; i in data; i++)
+							item[i] && data[i] !== item[i] ? data[i] = item[i] : 0;
+					};
+					return(data);
+				});
+			});
+		};
+		return(opt ? this.#materials.types.concat(result): list);
+	};
+
+	/**
 	* @method - save all materials data in browser localStorage.
 	*/
-	#browserStorege() {
-		const LS =				localStorage;
-		const { materials } =	LS;
+	#browserStorege(opt) {
+		const LS =			localStorage;
+		const materials =	JSON.parse(LS.getItem('materials'));
 
-		if(materials)
-			this.#materials.types.unshift(JSON.parse(materials));
-		LS.setItem('materials', JSON.stringify(this.#materials.types));
+		materials ?
+			LS.setItem('materials', JSON.stringify(this.#diffUpdateList(materials), opt)):
+			LS.setItem('materials', JSON.stringify(this.#materials.types));
+		document.querySelector('.materials').setAttribute('name', 'update');
 	};
 
 	/**
@@ -118,34 +150,27 @@ export default class AddPackingMaterials {
 		const wrap =			['Sheet', 'Roll', 'Tape'];
 		const checkWrap1 =		this.#materials.types.some(item => wrap.includes(item[5]));
 		const checkWrap2 =		checkMaterials && checkMaterials.types.some(item => wrap.includes(item[5]));
-		const crateMaterial1 =	this.#materials.types.some(item => wrap.includes(item[5]));
+		const crateMaterial1 =	this.#materials.types.some(item => woods.includes(item[5]));
 		const crateMaterial2 =	checkMaterials && checkMaterials.types.some(item => woods.includes(item[5]));
+		const check =			checkMaterials && checkMaterials.types.length >= this.#materials.types.length ? 0: 1;
 
 		if(!checkWrap1 && !checkWrap2)
 			return('wrap');
 		if(!crateMaterial1 && !crateMaterial2)
 			return('wood');
-		if(checkMaterials) {
-			const stored =	new Set(checkMaterials.types);
-			const added =	new Set(this.#materials.types);
-			const diff =	added.difference(stored);
-			const values =	diff.entries();
-			let i =			0;
-			let pack;
-
-			for(pack of values)
-				i % 2 === 0 ? checkMaterials.types.push(pack[i]) : i++;
-		};
-		checkMaterials ? this.#COMMANDWORKER.postMessage(checkMaterials):
-		this.#COMMANDWORKER.postMessage(this.#materials);
-		this.#browserStorege();
+		if(checkMaterials)
+			checkMaterials.types = this.#diffUpdateList(checkMaterials.types, check);
+		checkMaterials && checkMaterials.types.length ?
+			this.#COMMANDWORKER.postMessage(checkMaterials):
+			this.#COMMANDWORKER.postMessage(this.#materials);
+		check ? this.#browserStorege(1): 0;
 		const message = await new Promise((resolve) => {
 			this.#COMMANDWORKER.onmessage = (res) => {
 				resolve(res.data);
 			};
 		});
 		checkMaterials ? this.#materials = checkMaterials: 0;
-		return (message === "Saved" ? this.#updateDownPanel(): 0);
+		return(message === "Saved" ? this.#updateDownPanel(): 0);
 	};
 
 	/**
@@ -155,14 +180,14 @@ export default class AddPackingMaterials {
 		const { shadowRoot } =	document.querySelector(".materials");
 		const content =			shadowRoot.querySelector(".select-materials");
 		const materials =		await this.#grabNewMaterials();
+		const updated =			materials.types.filter(pack => !this.#materials.includes(pack[0]));
 
-		materials.types.map((pack, i) => this.#materials.includes(pack[0]) ?
-			materials.types.splice(i, 1): 0, 0);
 		while(content && content.children.length > 1)
 			content.removeChild(content.lastElementChild)
-		this.#materials = materials;
+		this.#materials = { materials: 'packing', types: updated };
 		this.#COMMANDWORKER.postMessage(this.#materials);
-		await this.#updateDownPanel();
+		this.#updateDownPanel();
+		this.#browserStorege(0);
 		return(this.#entry.setAttribute('name', 'update'));
 	};
 
@@ -216,4 +241,4 @@ export default class AddPackingMaterials {
 	set saveMaterials(materials) {
 		return(this.#materials = materials);
 	};
-};
+}

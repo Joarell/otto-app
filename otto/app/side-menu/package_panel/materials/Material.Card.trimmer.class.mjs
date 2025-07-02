@@ -1,0 +1,143 @@
+export default class SheetTrimmer {
+	#worksMaterials;
+	#woodMaterials;
+	#plannedWorks;
+	#materialBank;
+	#rawList;
+	#sorted;
+
+	constructor(list, prisms, raw) {
+		if(list && prisms && raw) {
+			this.#rawList =			raw;
+			this.#sorted =			list;
+			this.#plannedWorks =	prisms;
+			this.#materialBank =	{ works: new Map() };
+		};
+	};
+
+	#trimMaterial(material, art) {
+		let x =		material[0] - art.length;
+		const y =	material[1] - art.height;
+
+		y ? x = x - y: 0;
+		material[0] = x;
+		return(material);
+	};
+
+	#defineAvailableCoordinates(work, material, opts, counter) {
+		let trimming;
+
+		const pack = this.#worksMaterials.find(item => item[1] === material[0]);
+		if(pack) {
+			const coordinates = +pack[2] >= +pack[4] ?
+				[[+pack[2] * counter, +pack[4]]] : [[+pack[4] * counter, +pack[2]]];
+			trimming =	this.#trimMaterial(coordinates[0], work);
+		};
+	};
+
+	#feedMaterialOnBanck(retang, found, optimized, feat, count) {
+		if(!found && !optimized[1] || !feat) {
+			const { works } =	this.#materialBank;
+			const positions =	this.#defineAvailableCoordinates(retang, optimized, count);
+
+			return(works.set(optimized[0], [[retang.code, positions]]));
+		};
+	};
+
+	#updateMaterialBank(retang, infoWork, feat, material) {
+		const { types, quantity, reuse } = infoWork[1];
+		const optimol =	reuse.filter(kind => kind[0] === material[2]).flat();
+
+		if(!material) {
+			types.map(item => {
+				const onBank =	this.#materialBank.works.has(item[0]);
+				const optimol =	reuse.filter(kind => kind[0] === item[2]).flat();
+				const unit =	quantity.find(type => type[0] === optimol[0]).flat();
+
+				this.#feedMaterialOnBanck(retang, onBank, optimol, feat, unit[1]);
+			});
+			return;
+		};
+		if (feat) {
+			const { works } =	this.#materialBank;
+			const onBank =		works.get(material[2]);
+
+			onBank[1] = this.#trimMaterial(onBank[0][1], retang);
+			return(works.set(onBank[0], onBank[0]));
+		}
+		else if(feat) {
+			const { crates } =	this.#materialBank;
+			const onBank =		crates.get(material[2]);
+
+			onBank[1] = this.#trimMaterial(onBank[1], retang);
+			return(crates.set(onBank[0], [onBank[1]]));
+		};
+		return(this.#feedMaterialOnBanck(retang, false, optimol, feat));
+	};
+
+	#enoughMaterial(item, work) {
+		const available =	this.#materialBank.works.get(item[2]);
+		let area =			Array.isArray(available[0][1]) ?
+			available.find(opt => opt[1][0] && opt[1][1]): false;
+
+		if(area) {
+			const i = work[1].residual.findIndex(data => data[0] === item[2]);
+
+			work[1].residual[i][1] =	0;
+			work[1].quantity[i][1] =	0;
+			work[1].reuse[i][1] =		false;
+			work[1].reuse[i].push(structuredClone(area[0]));
+			area = area[1][0] * area[1][1] / 100;
+		};
+		return(area);
+	};
+
+	/**
+	 * @method iterates on each work in order to revise the needed material.
+	*/
+	async #cutMaterial(packedInfo, list, i = 1) {
+		if(!list[i])
+			return(packedInfo);
+		const art =	list[i];
+		const { reuse, types } = packedInfo[1];
+		const sheets =		types.filter(item => item[0] === 'Sheet');
+		const materials =	sheets.filter((kind, j) => {
+			if(kind[2] === reuse[j][0] && reuse[j][1])
+				return(kind);
+		}, 0);
+
+		if(materials.length) {
+			materials.map(item => {
+				const area =		this.#enoughMaterial(item, packedInfo);
+				if(area) {
+					const compact =	area >= art.demand;
+					this.#updateMaterialBank(art, packedInfo, compact, item);
+				};
+			});
+		};
+		return(this.#cutMaterial(packedInfo, list, i + 1));
+	};
+
+	/**
+	* @field - Call the fulfillment of the crate.
+	*/
+	get cardBoardcutter() {
+		this.#sorted.reverse().map(async (check, i) => {
+			if(i)
+				return(await this.#cutMaterial(check, this.#plannedWorks));
+			const firstCheck = this.#plannedWorks.find(work => work.code === check[0]);
+			this.#updateMaterialBank(firstCheck, check, false, false);
+		}, 0);
+		return(this.#sorted);
+	};
+
+	/** @param { Object } data  */
+	set setWorksPacking(data) {
+		this.#worksMaterials = data;
+	};
+
+	/** @param { Object } data  */
+	set setCratesMaterial(data) {
+		this.#woodMaterials = data;
+	};
+};

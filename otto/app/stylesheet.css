@@ -345,15 +345,44 @@ select {
 	border: solid 1px var(--pressed);
 }
 
-
-
-
-tr:nth-child(even) > * {
-	text-align: center;
-	background: none;
-	border: solid 1px var(--pressed);
+.materialReusable {
+	position: relative;
+	border-color: var(--color06);
+	&:hover::before {
+		content: attr(data-name , 'Material usaed from other');
+		position: absolute;
+		inset: 0, 0;
+		left: 0%;
+		bottom: 3.5rem;
+		background-color: var(--table-bg);
+		border-radius: .3rem;
+		padding: .3rem;
+		white-space: nowrap;
+		transition: all 3ms ease-in-out;
+		animation-name: fill-pane 2s ease-in-out;
+		animation-fill-mode: both;
+		animation-delay: 2ms;
+	}
+	&:hover::after {
+		content: '';
+		position: absolute;
+		top: -2.2rem;
+		left: 50%;
+		right: 30%;
+		margin-left: -5px;
+		border-width: 7px;
+		border-style: solid;
+		border-color: var(--table-bg) transparent transparent transparent;
+	}
 }
 
+tr {
+	&:nth-child(even) > * {
+		text-align: center;
+		background: none;
+		border: solid 1px var(--pressed);
+	}
+}
 
 tbody:nth-child(even) {
 	text-align: center;
@@ -395,12 +424,12 @@ tbody:nth-child(even) {
 	}
 }
 
-
 .app {
 	container-name: main-area;
 	container-type: inline-size;
 	display: grid;
 	/* grid-template-columns: repeat(auto-fit, minmax(mian(25rem, 10cqw), 1fr)); */
+	/* grid-template-columns: repeat(auto-fit, minmax(min(100%,[base-width], 1fr))); */
 	grid-template-columns: repeat(8, 1fr);
 	grid-template-rows: 2% 48% 49%;
 	column-gap: 1rem;
@@ -419,7 +448,7 @@ tbody:nth-child(even) {
 			grid-template-columns: repeat(4, 1fr);
 			grid-template-rows: 1fr;
 			& .container__insert {
-				grid-area: 1 / 1 / 1 / 5;
+				grid-area: 1 / 1 / 1 / 6;
 				display: grid;
 				grid-template-columns: 1fr .9fr .5fr;
 				grid-template-rows: .5fr 1fr;
@@ -454,7 +483,6 @@ tbody:nth-child(even) {
 					& .single-input {
 						display: flex;
 						justify-content: center;
-						flex-basis: 1;
 						padding: .2rem;
 						border-radius: .5rem;
 						border: solid .1rem var(--lines);
@@ -469,10 +497,10 @@ tbody:nth-child(even) {
 						justify-items: space-between;
 						& span {
 							position: relative;
-							padding: .3rem;
+							padding: .2rem;
 							& > input {
 								width: 100%;
-								border-radius: .3rem;
+								border-radius: .4rem;
 							}
 							&::before {
 								content: "";
@@ -688,7 +716,6 @@ tbody:nth-child(even) {
 								position: relative;
 								margin: 0;
 								padding: 0;
-								height: 1.5rem;
 								width: auto;
 								&::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
 									-webkit-appearance: none;
@@ -780,6 +807,7 @@ tbody:nth-child(even) {
 			padding: .5rem;
 			max-height: 42dvh;
 			& > * {
+				height: 100%;
 				animation-name: fill-pane 1s linear;
 				animation-fill-mode: forwards;
 				transition: all .3s linear;
@@ -822,7 +850,8 @@ tbody:nth-child(even) {
 					background-color: var(--result-col);
 				}
 				& .materials, #package-material {
-					z-index: -100;
+					isolation: isolate;
+					z-index: 0;
 				}
 			}
 			& .works-packed {
@@ -894,6 +923,7 @@ tbody:nth-child(even) {
 		grid-template-rows: .2fr 1fr;
 		row-gap: 1rem;
 		height: 100%;
+		padding: 2.5rem;
 		& .id__user {
 			grid-area: 1 / 1 / 1 / 2;
 			align-self: center;
@@ -937,7 +967,7 @@ tbody:nth-child(even) {
 		display: grid;
 		grid-template-columns: 1fr;
 		grid-template-rows: repeat(2, 1fr);
-		padding: 1rem;
+		padding-top: 1rem;
 		height: 100%;
 		& .logout {
 			grid-area: 1 / 1 / 1 / 2;
@@ -1157,11 +1187,11 @@ tbody:nth-child(even) {
 	}
 }
 
-.packing-materials:is([aria-hidden="true"]) {
+.data-update:is([aria-hidden="true"]) {
 	display: none;
 }
 
-.packing-materials:is([aria-hidden="false"]) {
+.packing-materials {
 	& h3 {
 		color: var(--p__color--mode);
 		position: relative;
@@ -1181,6 +1211,16 @@ tbody:nth-child(even) {
 		text-align: start;
 		margin: 0 0 .5rem 0;
 		width: 100%;
+	}
+}
+
+.data-update:is([aria-hidden="false"]) {
+	height: 100%;
+	z-index: 50;
+	overflow-y: clip;
+	&:hover {
+		cursor: pointer;
+		overflow-y: scroll;
 	}
 	& .material-info {
 		display: grid;
@@ -1264,11 +1304,14 @@ tbody:nth-child(even) {
 		transition: all .3s linear;
 	}
 }
+
 .new-material:is([aria-hidden="false"]) {
 	transition: all 1s ease-in-out;
 	overflow-y: clip;
 	overflow-x: clip;
 	height: 100%;
+	isolation: isolate;
+	z-index: -20;
 	& > * {
 		animation-name: fill-pane 1s linear;
 		animation-fill-mode: forwards;
@@ -1318,7 +1361,8 @@ tbody:nth-child(even) {
 			height: 1.8ch;
 			border-radius: .2rem;
 			border: solid .1rem var(--lines);
-			&::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
+			&::-webkit-outer-spin-button,
+			&::-webkit-inner-spin-button {
 				-webkit-appearance: none;
 				margin: 0;
 			}
@@ -1361,7 +1405,7 @@ tbody:nth-child(even) {
 
 .update-materials {
 	width: 100%;
-	height: auto;
+	height: 100%;
 	& > * {
 		animation-name: fill-pane 1s linear;
 		animation-fill-mode: forwards;
@@ -1371,8 +1415,12 @@ tbody:nth-child(even) {
 
 .downPane {
 	position: relative;
+	height: 100%;
 	& > * {
 		transition: all 1s ease-in-out;
+	}
+	&:hover {
+		overflow-y: scroll;
 	}
 	& table:is([aria-hidden="true"]) {
 		display: none;
@@ -1421,14 +1469,14 @@ tbody:nth-child(even) {
 }
 
 .arrows-right, .arrows-right-dark, .arrows-down {
-	height: 1rem;
-	width: 1rem;
+height: 1rem;
+width: 1rem;
 }
 
 .svg__logo--eye {
-	-webkit-animation: 800ms ease-in-out infinite alternate eye-blink;
-	animation: 800ms ease-in-out infinite alternate eye-blink;
-	transition-timing-function: animation 300ms cubic-bezier(0.6, 0.04, 0.98, 0.335);
+-webkit-animation: 800ms ease-in-out infinite alternate eye-blink;
+animation: 800ms ease-in-out infinite alternate eye-blink;
+transition-timing-function: animation 300ms cubic-bezier(0.6, 0.04, 0.98, 0.335);
 }
 
 @keyframes eye-blink {
@@ -2007,7 +2055,7 @@ tbody:nth-child(even) {
 		border: solid .1rem var(--lines);
 		width: 100%;
 		height: 100%;
-		border-radius: .3rem;
+		border-radius: .5rem;
 	}
 }
 

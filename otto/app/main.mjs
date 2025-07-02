@@ -26,9 +26,23 @@ globalThis.onkeydown = (push) => {
 
 globalThis.document.getElementById('main-app')
 	.addEventListener("click", (element => {
+	const up =				document.querySelector('.materials');
+	const down =	document.querySelector('.update-materials');
+	const { shadowRoot } =	down;
+	const shadow =			shadowRoot.querySelector('.data-update');
+	let { id, className } = element.target;
 
-	// console.log(element.target.id);
-	switch (element.target.id) {
+	shadow?.addEventListener('click', (e) => {
+		const { id, className } = e.target;
+		const composeEvent = new CustomEvent('update-materials-info', {
+			bubbles: true,
+			composed: true,
+			detail: { id, className },
+		});
+		shadow.dispatchEvent(composeEvent);
+		e.stopImmediatePropagation();
+	});
+	switch (!id ? id = className: id) {
 		case "body-app" :
 			accordionController(element);
 			break;
@@ -117,7 +131,45 @@ globalThis.document.getElementById('main-app')
 		case "layer-next":
 			skipLayer(element);
 			break;
-	}
+		case 'settings-content':
+			className !== 'update-materials' && className !== 'new-material' ? up.setAttribute('content', 'settings-content'): 0
+			break;
+		case 'packages':
+			className !== 'update-materials' && className !== 'select-materials' ? up.setAttribute('content', 'packages'): 0;
+			break;
+		case 'select-materials':
+			className !== 'update-materials'&& className !== 'select-materials' ? up.setAttribute('content', 'select-materials'): 0;
+			break;
+		case 'materials':
+			className !== 'update-materials' && className !== 'select-materials' ? up.setAttribute('content', 'confirm-save'): 0;
+			break;
+		case 'pack-opts':
+			shadowClass !== 'upPane' ? up.setAttribute('name', 'pack-opts'): 0;
+			break;
+		case 'works-packed':
+			shadowClass !== 'upPane' ? up.setAttribute('name', 'works-packed'): 0;
+			break;
+		case 'reset-sizes':
+			up.setAttribute('name', 'reset-sizes');
+			break;
+		case 'reset-szs':
+			up.setAttribute('name', 'reset-szs');
+			break;
+		case 'adding-material':
+			up.setAttribute('name', 'adding-material');
+			break;
+		case 'add__new__field':
+			up.setAttribute('name', 'add__new__field');
+			break;
+		case 'cancel-remove':
+			up.setAttribute('name', 'cancel-remove');
+			break;
+		case 'new-material':
+			up.setAttribute('name', 'new-material');
+			break;
+		case 'confirm-save':
+			up.setAttribute('name', 'confirm-save');
+	};
 }), true);
 
 
@@ -165,9 +217,9 @@ globalThis.document.getElementById('main-app')
 
 globalThis.document.getElementById('main-app')
 	.addEventListener("input", (element => {
+	let { id, className } = element.target;
 
-	// console.log('Inputs', element);
-	switch (element.target.id) {
+	switch (!id ? id = className: id) {
 		case "coin1-input":
 			accordion.getInputOne();
 			break;
@@ -189,6 +241,14 @@ globalThis.onsubmit = (event) => {
 	event.preventDefault();
 };
 
+globalThis.document.getElementById('main-app')
+	.addEventListener('update-materials-info', (e) => {
+	const { id } =	e.detail;
+	const down =		document.querySelector('.update-materials');
+
+	e.stopImmediatePropagation();
+	id === 'update-info' ? down.setAttribute('name', 'update'): 0;
+});
 
 globalThis.document.getElementById('estimate_getter')
 	.addEventListener('keypress', (event) => {

@@ -42,16 +42,19 @@ export default class CraterNotCanvas {
 		coordinates.fillPreparing = { info, list: this.#list, len, raw: this.#rawList };
 		result = coordinates.fillLayer;
 		this.#coordinates.defineLayer = [ 1, result.feat ];
-		this.#coordinates.artLocation = this.#rawList;
+		this.#rawList.map(work => this.#coordinates.artLocation.set(work.code, work));
 	};
 
 	#setPadding(innerCrate) {
 		const crate =	new CrateMaker(this.#peces).outSizes;
-		const X =		innerCrate[0] + crate.x;
-		const Z =		innerCrate[1] + crate.z;
-		const Y =		innerCrate[2] + crate.y;
+		const X = 		(innerCrate[0] + crate.x).toFixed(3);
+		const Z = 		(innerCrate[1] + crate.z).toFixed(3);
+		const Y = 		(innerCrate[2] + crate.y).toFixed(3);
+		const div =		crate.div ?
+			innerCrate[1] + (crate.div * this.#peces.length): innerCrate[1];
 
 		this.#setWorksCoordinates([X, X, Y]);
+		this.#coordinates.innerSize = [innerCrate[0], div, innerCrate[2]];
 		return ([X, Z, Y, this.#coordinates]);
 	};
 

@@ -31,21 +31,24 @@ export default class CraterPythagoras {
 		return(this.#worksInPlace(list, arranger, layers - 1, i + 1));
 	}
 
-	#setWorksCoordinates(base, layers) {
+	#setWorksCoordinates(base, layers, div) {
 		const coordinates =		new WorksCoordinates(base);
 		this.#coordinates =		coordinates.bluePrintCoordinates;
 
 		this.#worksInPlace(this.#list, coordinates, layers);
-		this.#coordinates.artLocation = this.#rawList;
+		this.#rawList.map(work => this.#coordinates.artLocation.set(work.code, work));
+		this.#coordinates.innerSize = [base[0], div, base[2]];
 	};
 
 	#setPadding(innerCrate, layers) {
 		const crate =	new CrateMaker(layers).outSizes;
-		const X =		innerCrate[0] + crate.x;
-		const Z =		innerCrate[1] + crate.z;
-		const Y =		innerCrate[2] + crate.y;
+		const X = 		+(innerCrate[0] + crate.x).toFixed(3);
+		const Z = 		+(innerCrate[1] + crate.z).toFixed(3);
+		const Y = 		+(innerCrate[2] + crate.y).toFixed(3);
+		const div =		crate.dev && layers.length > 1 ?
+			innerCrate[1] + (crate.div * (layers - 1)): innerCrate[1];
 
-		this.#setWorksCoordinates([ X, Z, Y ], layers);
+		this.#setWorksCoordinates([ X, Z, Y ], layers, div);
 		return ([ X, Z, Y ]);
 	};
 

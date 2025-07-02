@@ -41,7 +41,8 @@ export default class CraterTube {
 		coordinates.fillPreparing = { info, list, len, raw: this.#rawList };
 		result = coordinates.fillLayer;
 		this.#coordinates.defineLayer = [1, result.feat];
-		this.#coordinates.artLocation = this.#rawList;
+		this.#coordinates.innerSize = [innerSize[0], innerSize[1], innerSize[2]];
+		this.#rawList.map(work => this.#coordinates.artLocation.set(work.code, work));
 	};
 
 	#sizeComposer(list){
@@ -59,9 +60,9 @@ export default class CraterTube {
 
 	#setPaddings() {
 		const crate = new CrateMaker(1);
-		const X = this[0] + crate.x;
-		const Z = this[1] + crate.z;
-		const Y = this[2] + crate.y;
+		const X = (this[0] + crate.x).toFixed(3);
+		const Z = (this[1] + crate.z).toFixed(3);
+		const Y = (this[2] + crate.y).toFixed(3);
 
 		this.#setWokdCoordinates([X, Z, Y], structuredClone(list));
 		return([X, Z, Y]);

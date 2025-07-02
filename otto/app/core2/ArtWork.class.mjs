@@ -107,10 +107,10 @@ export default class ArtWork extends Hexaedro {
 		const reuse =		packArea.map((data, i) => [percent[i][0], data > demand], 0);
 		const residual =	this.#residualPacking(percent);
 		const prices =		this.packMaterials.map(values => values[4]);
-		const types =		this.packMaterials.map(kind => [kind[5], packArea[0]]);
+		const types =		this.packMaterials.map(kind => [kind[5], packArea[0], kind[0]]);
 		const cost =		prices.map((val, i) => {
 			const value = +((percent[i][1] / 100) * val).toFixed(2);
-			return([percent[i][0], value]);
+			return([percent[i][0], value, +val]);
 		}, 0);
 		const quantity =	this.#materialQuantityApplied(percent, residual);
 

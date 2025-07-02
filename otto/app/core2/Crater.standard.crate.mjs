@@ -147,26 +147,31 @@ export default class CraterStandard {
 					tmp =	0;
 				});
 			};
-		crate.x += innerSize[0];
+		tmp = crate.div * (this.#layers - 1) + z;
+		this.#coordinates.innerSize = [innerSize[0], tmp, innerSize[2]];
 		crate.z += innerSize[1];
 		crate.z += z;
 		crate.y += innerSize[2];
 		crate.y += FORKFEET;
-		this.#coordinates.artLocation = this.#rawList;
-		return([crate.x, crate.z, crate.y, structuredClone(this.#coordinates)]);
+		this.#rawList.map(work => this.#coordinates.artLocation.set(work.code, work));
+		return([
+			(crate.x).toFixed(3),
+			(crate.z).toFixed(3),
+			(crate.y).toFixed(3),
+			structuredClone(this.#coordinates)
+		]);
 	};
 
-	//						x1
 	//		   ╭──────────────────────────╮
 	//		   │                          │
 	//		   │                          │
 	//		   │                          │
-	//		y1 │                          │ y2
+	//		 y │                          │
 	//		   │                          │
 	//		   │                          │
 	//		   │                          │
 	//		   ╰──────────────────────────╯
-	//						x2
+	//			0		x
 
 	#setLayer(crate, works) {
 		switch(this) {
@@ -242,6 +247,8 @@ export default class CraterStandard {
 			console.error(e);
 		};
 		this.#layers = i - 1;
+		delete this.#coordinates.defineLayer;
+		delete this.#coordinates.reset;
 		return({ crate, measure, list });
 	};
 
