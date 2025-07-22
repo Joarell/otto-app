@@ -125,6 +125,7 @@ export async function crate(fetched = false) {
 		// addPanelInfoData();
 		material.setAttribute('name', 'materials-used');
 		upPanel.setAttribute('name', 'packed-works');
+		upPanel.setAttribute('content', 'crates');
 		grant === 'FULL' || grant === 'PLOTTER' || !grant ?
 			document.getElementById('crate-layers').disabled = false : 0;
 		root.style.setProperty("--layer-state", "block");

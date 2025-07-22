@@ -26,22 +26,40 @@ globalThis.onkeydown = (push) => {
 
 globalThis.document.getElementById('main-app')
 	.addEventListener("click", (element => {
-	const up =				document.querySelector('.materials');
+	const up =		document.querySelector('.materials');
 	const down =	document.querySelector('.update-materials');
-	const { shadowRoot } =	down;
-	const shadow =			shadowRoot.querySelector('.data-update');
-	let { id, className } = element.target;
+	let { id, className, tagName, attributes } = element.target;
 
-	shadow?.addEventListener('click', (e) => {
-		const { id, className } = e.target;
-		const composeEvent = new CustomEvent('update-materials-info', {
-			bubbles: true,
-			composed: true,
-			detail: { id, className },
+	{
+		const { shadowRoot } =	up;
+		const shadow =			shadowRoot.querySelector('.upPane');
+		shadow?.addEventListener('click', (e) => {
+			const { id, className, tagName } = e.target;
+			const composeEvent = new CustomEvent('open-crate', {
+				bubbles: true,
+				composed: true,
+				detail: { id, className, tagName },
+			});
+			shadow.dispatchEvent(composeEvent);
+			e.stopImmediatePropagation();
 		});
-		shadow.dispatchEvent(composeEvent);
-		e.stopImmediatePropagation();
-	});
+	}
+	{
+		const { shadowRoot } =	down;
+		const shadow =			shadowRoot.querySelector('.data-update');
+		shadow?.addEventListener('click', (e) => {
+			const { id, className } = e.target;
+			const composeEvent = new CustomEvent('update-materials-info', {
+				bubbles: true,
+				composed: true,
+				detail: { id, className },
+			});
+			shadow.dispatchEvent(composeEvent);
+			e.stopImmediatePropagation();
+		});
+
+	}
+	attributes.content === 'crates' ? className = 'crates': 0;
 	switch (!id ? id = className: id) {
 		case "body-app" :
 			accordionController(element);
@@ -169,6 +187,9 @@ globalThis.document.getElementById('main-app')
 			break;
 		case 'confirm-save':
 			up.setAttribute('name', 'confirm-save');
+			break;
+		case 'crates':
+			up.setAttribute('content', element.target.id);
 	};
 }), true);
 
@@ -242,13 +263,22 @@ globalThis.onsubmit = (event) => {
 };
 
 globalThis.document.getElementById('main-app')
+	.addEventListener('open-crate', (e) => {
+	const { id, className, tagName } =	e.detail;
+	const up =	document.querySelector('.materials');
+
+	e.stopImmediatePropagation();
+	tagName === 'A' ? up.setAttribute('content', id): 0;
+}, true);
+
+globalThis.document.getElementById('main-app')
 	.addEventListener('update-materials-info', (e) => {
 	const { id } =	e.detail;
 	const down =		document.querySelector('.update-materials');
 
 	e.stopImmediatePropagation();
 	id === 'update-info' ? down.setAttribute('name', 'update'): 0;
-});
+}, true);
 
 globalThis.document.getElementById('estimate_getter')
 	.addEventListener('keypress', (event) => {

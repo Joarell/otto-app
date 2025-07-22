@@ -1,8 +1,8 @@
 export default class WorksCoordinates {
-	#sizes;
-	#coordinates;
-	#rawList;
 	#info;
+	#sizes;
+	#rawList;
+	#coordinates;
 
 	constructor(size = false) {
 		if (size) {
@@ -18,15 +18,53 @@ export default class WorksCoordinates {
 			baseSize: this.#sizes,
 			plotter3D: new Map(),
 			innerSize: [],
+			layers: [],
 			get reset() {
 				this.emptyArea = [[0, 0, this.baseSize[0], this.baseSize[2]]];
+			},
+			get fillGaps() {
+				const data =	[];
+				const highZ = ({ work }, z = 0) => {
+					work.map(art => art[2] > z || z === 0 ? z = art[2]: 0);
+					return(z);
+				};
+				let x1 =		0;
+				let y1 =		0;
+				let total =		0;
+				const calc =	(gaps) => gaps.map(coordinates => {
+					const check1 = coordinates[0] <= x1 || coordinates[1] <= y1;
+					const check2 = coordinates[0] === coordinates[2] &&
+						coordinates[1] === coordinates[3];
+					if(check1 || check2)
+						return ;
+					x1 = coordinates[0];
+					y1 = coordinates[0];
+					const area =	coordinates[2] * coordinates[3];
+					let gapX = 		coordinates[2] - coordinates[0];
+					let gapY =		coordinates[3] - coordinates[1];
+
+					total += +( area - (gapX * gapY)).toFixed(3);
+				});
+
+				this.layers.map(info => {
+					const { vacuum, works } =	info;
+					const Z =					highZ(works[0]);
+
+					calc(vacuum, Z);
+					data.push({
+						highestZ: structuredClone(Z),
+						total: structuredClone(total),
+					});
+					total = 0;
+				});
+				return(data);
 			},
 			/** @param { Array } info */
 			set defineLayer(info) {
 				const vacuum =	structuredClone(this.emptyArea);
 				const works =	structuredClone(info[1]);
 
-				this[`layer${info[0]}`] = { vacuum, works };
+				this.layers.push({ vacuum, works });
 				this.reset;
 			},
 		};

@@ -174,8 +174,7 @@ export class PackageInfoUp extends HTMLElement {
 		if(!packed)
 			return ;
 		packed.addEventListener('click', (async event => {
-			const { tagName } =	event.target;
-			const { id } =		event.target;
+			const { id, tagName } =	event.target;
 
 			event.stopImmediatePropagation();
 			tagName === "A" ? await this.#toggleReportDownPanel(id): 0;
@@ -426,6 +425,7 @@ export class PackageInfoUp extends HTMLElement {
 	* @param { string } newVal - new attribute name;
 	*/
 	async attributeChangedCallback(attName, oldVal, newVal) {
+		!oldVal && attName === 'content' ? this.#packedReportToggle() : 0;
 		const shadow =		this.#shadowRoot.get(this);
 		const shadowClass =	shadow.lastElementChild?.className;
 
@@ -441,6 +441,8 @@ export class PackageInfoUp extends HTMLElement {
 				return(await this.#populateMaterialsUpPanel());
 			case 'settings-content':
 				return(await this.#populateAddMaterials());
+			case 'crates':
+				return(await this.#populatePackedWorksInCrates());
 			case 'packed-works':
 				return(await this.#populatePackedWorksInCrates());
 			case 'settings-content':
@@ -472,8 +474,8 @@ export class PackageInfoUp extends HTMLElement {
 				return(this.#checkingSaveNewMaterials(shadow));
 			case 'confirm-save':
 				return(this.#checkingSaveNewMaterials(shadow));
-			default :
-				return(this.#packedReportToggle());
+			default:
+				return(this.#toggleReportDownPanel(newVal));
 		};
 	};
 };

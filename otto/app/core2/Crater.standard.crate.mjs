@@ -149,7 +149,7 @@ export default class CraterStandard {
 			};
 		tmp = crate.div * (this.#layers - 1) + z;
 		this.#coordinates.innerSize = [innerSize[0], tmp, innerSize[2]];
-		crate.z += innerSize[1];
+		crate.x += innerSize[0];
 		crate.z += z;
 		crate.y += innerSize[2];
 		crate.y += FORKFEET;
