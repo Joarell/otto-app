@@ -67,12 +67,12 @@ export default class CraterStandard {
 	};
 
 	#checkBestAirportOptions(list1, list2) {
-		const MAXx =	300;
-		const MAXy =	160;
-		let pax1 =		0;
-		let pax2 =		0;
-		let cargo1 =	0;
-		let cargo2 =	0;
+		const MAXx =		300;
+		const MAXy =		160;
+		let pax1 =			0;
+		let pax2 =			0;
+		let cargo1 =		0;
+		let cargo2 =		0;
 		let bestArrange =	2;
 
 		list1.map(crate => crate[0] <= MAXx && crate[2] <= MAXy ? pax1++ : cargo1++);
@@ -153,13 +153,10 @@ export default class CraterStandard {
 		crate.z += z;
 		crate.y += innerSize[2];
 		crate.y += FORKFEET;
+		const finished = [ (crate.x).toFixed(0), (crate.z).toFixed(0), (crate.y).toFixed(0) ];
 		this.#rawList.map(work => this.#coordinates.artLocation.set(work.code, work));
-		return([
-			(crate.x).toFixed(3),
-			(crate.z).toFixed(3),
-			(crate.y).toFixed(3),
-			structuredClone(this.#coordinates)
-		]);
+		this.#coordinates.finalSize = finished;
+		return([ ...finished, structuredClone(this.#coordinates) ]);
 	};
 
 	//		   ╭──────────────────────────╮

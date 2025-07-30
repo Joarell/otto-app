@@ -92,7 +92,7 @@ export default class ArtWork extends Hexaedro {
 	#residualPacking(percent) {
 		const residual = percent.map(percent => {
 			const magnitude =	+(percent[1] / 100).toFixed(3);
-			return([percent[0], ~~((Math.ceil(magnitude) - magnitude) * 100)]);
+			return(1 - magnitude % 1);
 		});
 		return(residual);
 	};

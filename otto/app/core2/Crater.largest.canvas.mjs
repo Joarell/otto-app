@@ -59,7 +59,8 @@ export default class CraterPythagoras {
 		const c =			a > b ? a - b : b - a;
 		const z =			(~~(Math.sqrt(c) * 100)) / 100;
 
-		return ([crate[0], z, MAXHEIGHT]);
+		this.#coordinates.finalSize = [crate[0], z, MAXHEIGHT];
+		return ([...this.#coordinates.finalSize]);
 	};
 
 	#defineCrate(canvas) {
@@ -81,15 +82,13 @@ export default class CraterPythagoras {
 
 	#crateInterface(works) {
 		let crate;
-		let pitagorasCrates;
 		const FLIP =	`<i class="nf nf-oct-sync"></i>`;
 
 		crate =			this.#defineCrate(works);
 		works.map(art => {
 			art[1] <= crate[2] && art[3] > crate[2] ? art.push(FLIP) : 0;
 		});
-		pitagorasCrates =	this.#pitagorasTheorem(crate);
-		return(pitagorasCrates);
+		return(this.#pitagorasTheorem(crate));
 	};
 
 	#largestCrateTrail () {

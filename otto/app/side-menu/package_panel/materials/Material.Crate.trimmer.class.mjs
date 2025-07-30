@@ -1,8 +1,9 @@
 export default class CrateTrimmer {
 	#crateMaterials;
 	#materialBank;
-	#raw;
+	#largestData;
 	#crates;
+	#raw;
 
 	constructor(crates, rawList) {
 		if(crates) {
@@ -13,6 +14,7 @@ export default class CrateTrimmer {
 			this.#crateMaterials =	data.filter(item => apply.includes(item[0]));
 			this.#crates =			crates;
 			this.#materialBank =	new Map();
+			this.#largestData =		new Map();
 		};
 	};
 
@@ -102,13 +104,54 @@ export default class CrateTrimmer {
 		return(available);
 	};
 
+	#largeCrateStructure(crate, pine, bank) {
+		const { finalSize } =	crate[0];
+		const ply =				this.#crateMaterials.find(item => item[5] === 'Plywood');
+		const plyArea =			ply[1] * ply[3];
+		const area =			finalSize[0] * finalSize[1];
+		const base =			(area / plyArea) * 2;
+		const div =				Math.ceil(finalSize[0] / 100);
+		const baseEnforce =		finalSize[1] * div;
+		const highEnforce =		finalSize[2] * div;
+		let allPine =			+((baseEnforce + highEnforce) / pine[1]).toFixed(3);
+		const bottom =			{
+			counter: Math.ceil((base) * 2),
+			size: [finalSize[0], finalSize[1]],
+			area: finalSize[0] * finalSize[1],
+			name: ply[0],
+			type: ply[5]
+		};
+		const leanner =			{
+			counter: div,
+			size: +finalSize[1],
+			area: highEnforce,
+			name: pine[0],
+			type: pine[5]
+		};
+		const enforcer =		{
+			counter: div,
+			size: +finalSize[2],
+			area: baseEnforce,
+			name: pine[0],
+			type: pine[5]
+		};
+
+		this.#largestData.set('pine', allPine);
+		this.#largestData.set('ply', base);
+		crate[2].set('structure', { bottom, leanner, enforcer  });
+		return(crate);
+	};
+
 	#trimmingFrameCrateMaterial(pine, crate) {
-		const { innerSize } =	crate[0];
-		const update =			crate[2].get(pine[0]);
 		const onBank =			this.#materialBank.get(pine[0]);
+		const { innerSize } =	crate[0];
+		const ply =				this.#crateMaterials.find(item => item[5] === 'Plywood');
+		const join =			innerSize[0] / ply[1];
+		const update =			crate[2].get(pine[0]);
 		const x = 				+(+innerSize[0] * 8).toFixed(3);
 		const z = 				+(+innerSize[1] * 10).toFixed(3);
-		const y = 				+(+innerSize[2] * 8).toFixed(3);
+		const y = 				join > 1 ? +(+innerSize[2] * ((join - 1) * 2) + 8):
+			+(+innerSize[2] * 8).toFixed(3);
 		const yTrimmedLoss =	+(+pine[3] * 4).toFixed(3);
 		const totalMaterial =	+(x + y + z - yTrimmedLoss).toFixed(3);
 		const frontBack =		{ x: innerSize[0], y: innerSize[2] - pine[3] };
@@ -117,25 +160,40 @@ export default class CrateTrimmer {
 		let pinewood =			totalMaterial > +pine[1] ?
 			Math.ceil(totalMaterial / +pine[1]) * +pine[1] : +pine[1];
 
-		crate[2].set('Frame', { frontBack, sides, upDown });
+		crate[2].set('Frame', { frontBack, sides, upDown, name: pine[0] });
+		crate[1] === 'largestCrate' ? this.#largeCrateStructure(crate, pine): 0;
+		const structure =	this.#largestData.get('pine');
 		if(!onBank) {
-			const residual =	+(pinewood - totalMaterial).toFixed(3);
+			const residual =	+((pinewood - totalMaterial)).toFixed(3);
 
 			update.area = 		totalMaterial;
-			update.counter =	Math.ceil(totalMaterial / +pine[1]);
-			update.residual =	Math.floor(residual);
+			update.counter =	structure ?
+				Math.ceil((totalMaterial + structure)  / +pine[1]):
+				Math.ceil(totalMaterial / +pine[1]);
+			update.residual =	residual;
+			if(structure) {
+				update.area +=		structure;
+				update.residual +=	+(1 - structure % 1);
+			};
 			crate[2].set(pine[0], update);
 			residual > 20 ? this.#materialBank.set(pine[0], [crate, residual]): 0;
 			return(crate);
 		};
 		pinewood += onBank[1];
-		const data = onBank[0][4].get(pine[0]);
-		data.residual = 0;
+		const data = onBank[0][4]?.get(pine[0]);
+		data ? data.residual = 0: 0;
 		const residual =	+(pinewood - totalMaterial).toFixed(3);
 
 		update.area = 		totalMaterial;
-		update.counter =	Math.ceil(totalMaterial / +pine[1]);
-		update.residual =	[Math.floor(residual), onBank[3]];
+		update.counter =	structure ?
+			Math.ceil((totalMaterial + structure)  / +pine[1]):
+			Math.ceil(totalMaterial / +pine[1]);
+		update.residual =	+[+(residual).toFixed(4), +onBank[1]]
+			.reduce((val, sum) => val + sum, 0).toFixed(4);
+		if(structure) {
+			update.area +=	structure;
+			update.residual += +(1 - structure % 1).toFixed(3);
+		};
 		crate[2].set(pine[0], update);
 		this.#materialBank.set(pine[0], [crate, residual]);
 		return(crate);
@@ -188,15 +246,16 @@ export default class CrateTrimmer {
 			return(this.#trimmingMainCrateMaterial(foam, crate));
 		};
 
-		const onBank =		this.#materialBank.has(foam[0]);
-		const lowDepth =	this.#materialBank.has('2');
+		const onBank =		this.#materialBank.get(foam[0]);
+		const lowDepth =	this.#materialBank.get('2');
 		const { innerSize, layers } = crate[0];
 		const len =			layers.length;
 
 		if(!len)
 			return(crate)
 		const layerArea =	+(innerSize[0] * innerSize[2]).toFixed(3) * (len - 1);
-		const areaBank =	onBank ? onBank[1].reduce((val, sum) => sum += val[0] * val[1], 0): 0;
+		let areaBank =		0;
+		onBank ? onBank.map(val => areaBank += val[0][0] * val[0][1]): 0;
 		const foamArea =	+(+foam[1] * +foam[3] - areaBank).toFixed(3);
 		const count =		Math.ceil(layerArea / foamArea);
 		let needed;
@@ -217,7 +276,7 @@ export default class CrateTrimmer {
 	};
 
 	#trimmingMainCrateMaterial(item, crate) {
-		const onBank =	this.#materialBank.has(item[0]);
+		const onBank =		this.#materialBank.get(item[0]);
 		const { innerSize } = crate[0];
 		const frontBack =	{ x: innerSize[0], y: innerSize[2] };
 		const sides =		{ z: innerSize[1], y: innerSize[2] };
@@ -228,7 +287,7 @@ export default class CrateTrimmer {
 		let count;
 		let needed;
 
-		crate[2].set(item[5], { frontBack, sides, upDown });
+		crate[2].set(item[5], { frontBack, sides, upDown, name: item[0] });
 		const totalArea =	+(area(innerSize)).toFixed(3);
 		if(!onBank) {
 			materialArea =	+item[1] * +item[3];

@@ -55,7 +55,8 @@ export default class CraterNotCanvas {
 
 		this.#setWorksCoordinates([X, X, Y]);
 		this.#coordinates.innerSize = [innerCrate[0], div, innerCrate[2]];
-		return ([X, Z, Y, this.#coordinates]);
+		this.#coordinates.finalSize = [X, Z, Y];
+		return ([...this.#coordinates.finalSize, this.#coordinates]);
 	};
 
 	#splitCrate(works) {

@@ -18,6 +18,7 @@ export default class WorksCoordinates {
 			baseSize: this.#sizes,
 			plotter3D: new Map(),
 			innerSize: [],
+			finalSize: [],
 			layers: [],
 			get reset() {
 				this.emptyArea = [[0, 0, this.baseSize[0], this.baseSize[2]]];

@@ -148,19 +148,29 @@ export class PackageInfoUp extends HTMLElement {
 	async #toggleReportDownPanel(work) {
 		const { shadowRoot } =	document.querySelector('.update-materials');
 		const list =			shadowRoot.querySelectorAll('table');
+		const onCrate =			new Map(
+			Object.entries(
+				JSON.parse(globalThis.sessionStorage.getItem('onCrate'))
+			)
+		);
+		const toggle = (val, node) => {
+			const check = val && (node[1].ariaHidden === 'true');
+
+			!val ? node[1].ariaHidden = 'true' : 0;
+			check ? node[1].ariaHidden = 'false': node[1].ariaHidden = 'true';
+		};
 
 		Object.entries(list).map(node => {
 			const { id } =	node[1];
 			if(!node[1].id && node[1].tagName !== 'TABLE')
 				return ;
-			const compare =	id === work;
 
-			if(!compare)
-				node[1].ariaHidden = 'true';
-			else if(compare && (node[1].ariaHidden === 'true'))
-				node[1].ariaHidden = 'false';
-			else if(compare && (node[1].ariaHidden === 'false'))
-				node[1].ariaHidden = 'true';
+			const compare =		id === work;
+			const works =		onCrate.get(id);
+			const location =	works ? works.some(art => art === work): 0;
+
+			node[1].ariaHidden = 'true';
+			!location ? toggle(compare, node): toggle(location, node);
 		});
 	};
 
@@ -441,8 +451,6 @@ export class PackageInfoUp extends HTMLElement {
 				return(await this.#populateMaterialsUpPanel());
 			case 'settings-content':
 				return(await this.#populateAddMaterials());
-			case 'crates':
-				return(await this.#populatePackedWorksInCrates());
 			case 'packed-works':
 				return(await this.#populatePackedWorksInCrates());
 			case 'settings-content':

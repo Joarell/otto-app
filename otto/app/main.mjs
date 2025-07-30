@@ -1,6 +1,4 @@
-import * as main from './front-modules/start.front.mjs';
-import * as accordion from './side-menu/menu.currency.conversion.mjs';
-import * as unit from './side-menu/menu.units.mjs';
+import * as main from './front-modules/start.front.mjs'; import * as accordion from './side-menu/menu.currency.conversion.mjs'; import * as unit from './side-menu/menu.units.mjs';
 import { crate, clearAll, setUnit } from './front-modules/checkout.mjs';
 import { copyButton1, copyButton2 } from './panels/clip.board.caller.mjs';
 import { createIDB } from './front-modules/link.storage.mjs';
@@ -34,6 +32,7 @@ globalThis.document.getElementById('main-app')
 		const { shadowRoot } =	up;
 		const shadow =			shadowRoot.querySelector('.upPane');
 		shadow?.addEventListener('click', (e) => {
+			console.log(e.target)
 			const { id, className, tagName } = e.target;
 			const composeEvent = new CustomEvent('open-crate', {
 				bubbles: true,
@@ -41,8 +40,7 @@ globalThis.document.getElementById('main-app')
 				detail: { id, className, tagName },
 			});
 			shadow.dispatchEvent(composeEvent);
-			e.stopImmediatePropagation();
-		});
+		}, true);
 	}
 	{
 		const { shadowRoot } =	down;
@@ -161,11 +159,17 @@ globalThis.document.getElementById('main-app')
 		case 'materials':
 			className !== 'update-materials' && className !== 'select-materials' ? up.setAttribute('content', 'confirm-save'): 0;
 			break;
+		case 'report':
+			up.setAttribute('name', 'packages');
+			break;
+		case 'report':
+			up.setAttribute('name', 'packages');
+			break;
 		case 'pack-opts':
-			shadowClass !== 'upPane' ? up.setAttribute('name', 'pack-opts'): 0;
+			up.setAttribute('name', 'works-packed');
 			break;
 		case 'works-packed':
-			shadowClass !== 'upPane' ? up.setAttribute('name', 'works-packed'): 0;
+			up.setAttribute('name', 'works-packed');
 			break;
 		case 'reset-sizes':
 			up.setAttribute('name', 'reset-sizes');
@@ -267,14 +271,13 @@ globalThis.document.getElementById('main-app')
 	const { id, className, tagName } =	e.detail;
 	const up =	document.querySelector('.materials');
 
-	e.stopImmediatePropagation();
 	tagName === 'A' ? up.setAttribute('content', id): 0;
 }, true);
 
 globalThis.document.getElementById('main-app')
 	.addEventListener('update-materials-info', (e) => {
 	const { id } =	e.detail;
-	const down =		document.querySelector('.update-materials');
+	const down =	document.querySelector('.update-materials');
 
 	e.stopImmediatePropagation();
 	id === 'update-info' ? down.setAttribute('name', 'update'): 0;

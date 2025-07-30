@@ -1028,6 +1028,7 @@ tbody:nth-child(even) {
 .upPane {
 	overflow: hidden;
 	height: 100%;
+	z-index: 100;
 	&:hover {
 		overflow-y: scroll;
 	}

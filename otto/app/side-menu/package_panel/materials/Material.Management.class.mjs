@@ -18,7 +18,6 @@ export default class MaterialManagement {
 		this.#crates =			crates;
 		this.#materials =		JSON.parse(localStorage.getItem('materials'));
 		this.#data = {
-			totalNeeded: [],
 			worksReport: {
 				finalReport: [],
 				materialManagement: [],
@@ -28,8 +27,6 @@ export default class MaterialManagement {
 				materialManagement: [],
 			},
 		};
-		this.#startReport();
-		return(this.#data);
 	};
 
 	/**
@@ -62,9 +59,10 @@ export default class MaterialManagement {
 				}, 0);
 			};
 		});
-		const preCrate = await this.#cratesMaterialSummarazed(crateSizes);
-		const trimmerCrate = new CrateTrimmer(preCrate, this.#crates);
+		const preCrate =		await this.#cratesMaterialSummarazed(crateSizes);
+		const trimmerCrate =	new CrateTrimmer(preCrate, this.#crates);
 		this.#data.cratesReport.materialManagement = await trimmerCrate.crateCutter;
+		return(this.#data);
 	};
 
 	/**
@@ -78,12 +76,13 @@ export default class MaterialManagement {
 		const y = crate[2];
 		const crateArea = 2 * (x * z) + 2 * (x * y) + 2 * (z * y); // NOTE: Prism area formula.
 
+		const type =		material[0];
 		const area =		+material[1] * +material[3];
 		const quantity =	+(crateArea / area).toFixed(3);
 		const counter =		Math.ceil(quantity);
 		const residual =	+(quantity - Math.floor(quantity)).toFixed(3);
 		const totalCost =	material[4] * counter;
-		return({ area, quantity, counter, residual, totalCost });
+		return({ area, quantity, counter, residual, type, totalCost });
 	};
 
 	/**
@@ -121,7 +120,8 @@ export default class MaterialManagement {
 					Pinewood.counter += counter;
 					Pinewood.residual += residual;
 					Pinewood.totalCost += totalCost;
-					crate.at(-1).set(item[0], { area, counter, residual, totalCost, });
+					Pinewood.type = item[0];
+					crate.at(-1).set(item[0], { type: item[0], counter, residual, area, totalCost, });
 					return(item);
 				};
 				const plywood = this.#commumMaterialcalc(innerSize, item);
@@ -131,6 +131,7 @@ export default class MaterialManagement {
 				Plywood.counter += plywood.counter;
 				Plywood.residual += plywood.residual;
 				Plywood.totalCost += plywood.totalCost;
+				Plywood.type = item[0];
 			});
 			return(crate);
 		});
@@ -167,12 +168,13 @@ export default class MaterialManagement {
 					residual =		+(quantity - Math.floor(quantity)).toFixed(3);
 					totalCost =		item[4] * counter;
 
-					crate.at(-1).set(item[0], { counter, residual, area, totalCost, });
+					crate.at(-1).set(item[0], { type: item[0], counter, residual, area, totalCost, });
 					Foam.area += area;
 					Foam.quantity += quantity;
 					Foam.counter += counter;
 					Foam.residual += residual;
 					Foam.totalCost += totalCost;
+					Foam.type = item[0];
 					return(item);
 				};
 				const padding = this.#commumMaterialcalc(innerSize, item);
@@ -182,6 +184,7 @@ export default class MaterialManagement {
 				Padding.counter += padding.counter;
 				Padding.residual += padding.residual;
 				Padding.totalCost += padding.totalCost;
+				Padding.type = item[0];
 			});
 			return(crate);
 		});
@@ -288,5 +291,9 @@ export default class MaterialManagement {
 		this.#data.worksReport.finalReport.push([item, {
 			totalCost, residual, counter, type, area
 		}]);
+	};
+
+	get start() {
+		return(this.#startReport());
 	};
 };

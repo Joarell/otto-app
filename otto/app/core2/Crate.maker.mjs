@@ -27,7 +27,7 @@ export default class CrateMaker {
 		woods.map(item => {
 			x += +item[2];
 			z += +item[2];
-			y += +item[2];
+			// y += +item[2];
 		});
 		separator && separator.length ? separator.map(foam => {
 			if(this.#layers > 1 && foam[2] <= DIVISION) {

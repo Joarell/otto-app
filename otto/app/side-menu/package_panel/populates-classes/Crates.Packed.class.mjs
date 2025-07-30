@@ -59,26 +59,28 @@ export default class PackedWorks {
 	* @method - sets the detail html element to be populated
 	* @param {Object} works - the crate object content layers.
 	*/
-	#layersStructureElements({ works }) {
-		const levels =	document.createElement('details');
-
+	#layersStructureElements({ works }, element) {
 		Object.entries(works).map(info => {
+			const levels = document.createElement('details');
+
 			if(Array.isArray(info[1])) {
 				const summaryLayer = document.createElement('summary');
 
 				summaryLayer.innerHTML = `<i class="nf nf-fae-layers"></i>`
 				levels.appendChild(summaryLayer);
-				return(levels.appendChild(this.#setWorksUpList(info)));
-			};
-			Object.entries(info[1]).map(info => {
-				const summaryLayer = document.createElement('summary');
+				levels.appendChild(this.#setWorksUpList(info));
+			}
+			else
+				Object.entries(info[1]).map(data => {
+					const summaryLayer = document.createElement('summary');
 
-				summaryLayer.innerText = `${info[0]}`
-				levels.appendChild(summaryLayer);
-				levels.appendChild(this.#setWorksUpList(info[1]));
-			});
+					summaryLayer.innerText = `${data[0]}`
+					levels.appendChild(summaryLayer);
+					levels.appendChild(this.#setWorksUpList(data[1]));
+				});
+			return(element.appendChild(levels));
 		});
-		return(levels);
+		return(element);
 	};
 
 	/**
@@ -97,7 +99,7 @@ export default class PackedWorks {
 		crateSum.innerText = `crate ${this.#countCrates} - ${crates[0][0]} x ${crates[0][1]} x ${crates[0][2]} - ${metric}`;
 		this.#countCrates++;
 		report.appendChild(crateSum);
-		report.appendChild(this.#layersStructureElements(crates[1]));
+		this.#layersStructureElements(crates[1], report);
 		fragment.append(report);
 		return(fragment);
 	};
