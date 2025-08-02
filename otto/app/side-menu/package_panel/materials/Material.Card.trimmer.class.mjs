@@ -1,20 +1,22 @@
 export default class SheetTrimmer {
 	#worksMaterials;
-	#woodMaterials;
 	#plannedWorks;
 	#materialBank;
-	#rawList;
 	#sorted;
 
-	constructor(list, prisms, raw) {
-		if(list && prisms && raw) {
-			this.#rawList =			raw;
+	constructor(list, prisms) {
+		if(list && prisms) {
 			this.#sorted =			list;
 			this.#plannedWorks =	prisms;
 			this.#materialBank =	{ works: new Map() };
 		};
 	};
 
+	/**
+	* @method - executes the cut material based on art sizes.
+	* @param { Object } art sizes
+	* @param { Array } material sizes.
+	*/
 	#trimMaterial(material, art) {
 		let x =		material[0] - art.length;
 		const y =	material[1] - art.height;
@@ -24,7 +26,14 @@ export default class SheetTrimmer {
 		return(material);
 	};
 
-	#defineAvailableCoordinates(work, material, opts, counter) {
+	/**
+	* @method - returns the available trimmed materials.
+	* @param { Object } work data.
+	* @param { number } counter needed units of the materials to apply.
+	* @param { Array } feat the position of the work over the material.
+	* @param { Array } material sizes.
+	*/
+	#defineAvailableCoordinates(work, material, counter) {
 		let trimming;
 
 		const pack = this.#worksMaterials.find(item => item[1] === material[0]);
@@ -35,6 +44,13 @@ export default class SheetTrimmer {
 		};
 	};
 
+	/**
+	* @method - adds the rest of the materials to the possible reuse bank.
+	* @param { number } count
+	* @param {  } found
+	* @param { Array } retang the planned work sizes.
+	* @param {  } optimized
+	*/
 	#feedMaterialOnBanck(retang, found, optimized, feat, count) {
 		if(!found && !optimized[1] || !feat) {
 			const { works } =	this.#materialBank;
@@ -44,6 +60,13 @@ export default class SheetTrimmer {
 		};
 	};
 
+	/**
+	* @method - updates the used materials available on the bank.
+	* @param { Array } retang the works sizes planned.
+	* @param { Array } feat the position of the work over the material.
+	* @param { Array } material sizes.
+	* @param { Object } infoWork data.
+	*/
 	#updateMaterialBank(retang, infoWork, feat, material) {
 		const { types, quantity, reuse } = infoWork[1];
 		const optimol =	reuse.filter(kind => kind[0] === material[2]).flat();
@@ -75,6 +98,11 @@ export default class SheetTrimmer {
 		return(this.#feedMaterialOnBanck(retang, false, optimol, feat));
 	};
 
+	/**
+	* @method - provide all material needed to apply on the work.
+	* @param { Array } item the materials data.
+	* @param { Array } work data.
+	*/
 	#enoughMaterial(item, work) {
 		const available =	this.#materialBank.works.get(item[2]);
 		let area =			Array.isArray(available[0][1]) ?
@@ -94,6 +122,9 @@ export default class SheetTrimmer {
 
 	/**
 	 * @method iterates on each work in order to revise the needed material.
+	 * @param { Array } list all works planned to pack.
+	 * @param { Array } packedInfo the works data.
+	 * @param {number} [i=1]
 	*/
 	async #cutMaterial(packedInfo, list, i = 1) {
 		if(!list[i])
@@ -134,10 +165,5 @@ export default class SheetTrimmer {
 	/** @param { Object } data  */
 	set setWorksPacking(data) {
 		this.#worksMaterials = data;
-	};
-
-	/** @param { Object } data  */
-	set setCratesMaterial(data) {
-		this.#woodMaterials = data;
 	};
 };

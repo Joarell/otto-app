@@ -110,6 +110,7 @@ export default class AddPackingMaterials {
 		const diff =	!opt ? updated.difference(stored): stored.difference(updated);
 		const entries =	diff.entries();
 		const result =	[];
+		let check;
 		let item;
 
 		for(item of entries)
@@ -125,7 +126,9 @@ export default class AddPackingMaterials {
 				});
 			});
 		};
-		return(opt ? this.#materials.types.concat(result): list);
+		check = list.some(material => material[0] === result[0]);
+		!check ? list.push(...result): 0;
+		return(opt && check ? this.#materials.types.concat(result): list);
 	};
 
 	/**
@@ -160,10 +163,12 @@ export default class AddPackingMaterials {
 			return('wood');
 		if(checkMaterials)
 			checkMaterials.types = this.#diffUpdateList(checkMaterials.types, check);
+		else
+			this.#browserStorege(1);
 		checkMaterials && checkMaterials.types.length ?
 			this.#COMMANDWORKER.postMessage(checkMaterials):
 			this.#COMMANDWORKER.postMessage(this.#materials);
-		check ? this.#browserStorege(1): 0;
+		check ? this.#browserStorege(0): 0;
 		const message = await new Promise((resolve) => {
 			this.#COMMANDWORKER.onmessage = (res) => {
 				resolve(res.data);

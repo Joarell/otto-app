@@ -241,7 +241,7 @@ export default class MaterialManagement {
 		const packedList =		this.#works.map(art => [art.code, art.packInfo]);
 		const prism =			this.#worksPlanification();
 		const sorted =			this.#quickSort(structuredClone(packedList));
-		const trimmerCard =		new SheetTrimmer(sorted, prism, this.#works);
+		const trimmerCard =		new SheetTrimmer(sorted, prism);
 		const sheets =			this.#materials.filter(item => item[5] === 'Sheet');
 		const materialData =	sheets.map(material => {
 			material.unshift(material[1] * material[3] / 100);
@@ -275,6 +275,11 @@ export default class MaterialManagement {
 		};
 	};
 
+	/**
+	* @method - resume the materials applied data.
+	* @param { Array } item the material info.
+	* @param { number } pos index of the material on the list.
+	*/
 	#summarazedMaterialReport(item, pos) {
 		const {
 			totalUsed, residualTotal, counterMaterials
@@ -293,6 +298,9 @@ export default class MaterialManagement {
 		}]);
 	};
 
+	/**
+	* @field - init the cutting material report.
+	*/
 	get start() {
 		return(this.#startReport());
 	};

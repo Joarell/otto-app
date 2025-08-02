@@ -167,16 +167,18 @@ export default class UsedMaterialsTable {
 			cost,
 		} = artWork[1];
 		const checkLength = reuse.findIndex(data => data.length === 3);
+		const span =		document.createElement('h6');
 
 		percent.map((info, i) => {
 			const content = document.createElement('tr');
 
+			console.log(reuse)
 			checkLength === i ? content.innerHTML = `
 				<td>${ info[0] }</td>
 				<td>${ demand} m²</td>
 				<td>${ info[1]}%</td>
 				<td>${ reuse[i][1] ? "Yes": "No" }</td>
-				<td cliass="materialReusable" data-name='Reused from work: ${reuse[i][2]}'>${residual[i][1]}%</td>
+				<td class="materialReusable" data-name='Reused from work: ${reuse[i][2]}'>${residual[i][1]}%</td>
 				<td>${ types[i][0] }</td>
 				<td>$ ${cost[i][1] }</td>`:
 				content.innerHTML = `
@@ -190,9 +192,15 @@ export default class UsedMaterialsTable {
 			table.appendChild(content);
 		}, 0);
 		table.appendChild(this.#addSubtotalMaterialAppliedResult(cost));
+		table.appendChild(span);
 		return(table);
 	};
 
+	/**
+	* @method - prepare the crate faces size data.
+	* @param { Object } info all crate faces sizes.
+	* @param { number } layers number for each crate.
+	*/
 	#correctCutMaterials(info, layers) {
 		const { frontBack, sides, upDown, name} = info;
 		const material =	this.#materials.find(item => item[0] === name);
@@ -211,6 +219,11 @@ export default class UsedMaterialsTable {
 		return({ frontBack, sides, upDown, name });
 	};
 
+	/**
+	* @method - fill all data for the structure largest crates.
+	* @param { Array } crate all crates data content.
+	* @param { HTMLElement } table.
+	*/
 	#largestCrateTable(crate, table) {
 		const metric =		localStorage.getItem('metrica').split('-')[0];
 		const columns =		document.createElement('tr');
@@ -219,7 +232,7 @@ export default class UsedMaterialsTable {
 		const { bottom, leanner, enforcer } = structure;
 		const frag =		new DocumentFragment();
 
-		header.innerText = 'The crate structure for lean on support:';
+		header.innerHTML = `The crate structure for lean on support: <i class="nf nf-fa-ruler_combined"></i>`;
 		columns.innerHTML =`
 			<th>Material</th>
 			<th>Area</th>
@@ -246,6 +259,11 @@ export default class UsedMaterialsTable {
 		return(table);
 	};
 
+	/**
+	* @method - fill all data from largest crates structure.
+	* @param { Array } crate all crates data content.
+	* @param { HTMLElement } table
+	*/
 	#crateMaterialCut(crate, table) {
 		const metric =		localStorage.getItem('metrica').split('-')[0];
 		const content =		document.createElement('tr');
@@ -257,18 +275,15 @@ export default class UsedMaterialsTable {
 		const frag =		new DocumentFragment();
 		const layers =		crate[0].layers.length - 1;
 
-		cuts.innerText = `Crate Cut materials - Front/Back - Sides - Up/Down`;
+		cuts.innerText = `Crate Cut materials: - Front/Back - Sides - Up/Down`;
 		disclaimer.innerText = `Obs: Each measure must be cut twice in order to build all crates sides.`
 		table.appendChild(cuts);
 		table.appendChild(disclaimer);
 		content.innerHTML =`
 			<th>Material</th>
-			<th>Length</th>
-			<th>Height</th>
-			<th>Depth</th>
-			<th>Height</th>
-			<th>Length</th>
-			<th>Depth</th>`;
+			<th>Each face</th>
+			<th>Each Side</th>
+			<th>Each top/bottom</th>`;
 
 		table.appendChild(content);
 		[ padding, faces, frame ].map(data => {
@@ -277,12 +292,9 @@ export default class UsedMaterialsTable {
 
 			row.innerHTML = `
 				<td>${ name }</td>
-				<td>${ frontBack.x } - ${ metric } </td>
-				<td>${ frontBack.y }  - ${ metric }</td>
-				<td>${ sides.z } - ${ metric }</td>
-				<td>${ sides.y } - ${ metric }</td>
-				<td>${ upDown.x } - ${ metric }</td>
-				<td>${ upDown.z } - ${ metric }</td>`;
+				<td>${ frontBack.x } x ${ frontBack.y } - ${ metric } </td>
+				<td>${ sides.z } x ${ sides.y } - ${ metric }</td>
+				<td>${ upDown.x } x ${ upDown.z } - ${ metric }</td>`;
 			frag.appendChild(row);
 		});
 		table.appendChild(frag);
@@ -290,6 +302,11 @@ export default class UsedMaterialsTable {
 		// return(table);
 	};
 
+	/**
+	* @method - fill all data to the table.
+	* @param { Array } crate all crates data content.
+	* @param { HTMLElement } table
+	*/
 	#cratesOnTable(crate, table) {
 		const material =	JSON.parse(localStorage.getItem('crating'));
 		const cost =		[];
@@ -297,7 +314,7 @@ export default class UsedMaterialsTable {
 			const values = data.map(val => val[0] * val[1]);
 			const total = 	values.reduce((val, sum) => val + sum, 0);
 
-			return(+(total).toFixed(3));
+			return(+(total / 100).toFixed(3));
 		});
 
 		material.map(info => {
@@ -311,7 +328,7 @@ export default class UsedMaterialsTable {
 				<td>${ area } m²</td>
 				<td>${ residual > 100 ? 'Yes': 'No' }</td>
 				<td>${ Array.isArray(residual) ?
-					sumResidual(residual): residual } m²</td>
+					sumResidual(residual): (residual / 100).toFixed(3) } m²</td>
 				<td>${ counter }</td>
 				<td>$ ${ totalCost }</td>`;
 			table.appendChild(content);
@@ -320,6 +337,11 @@ export default class UsedMaterialsTable {
 		return(this.#crateMaterialCut(crate, table));
 	};
 
+	/**
+	* @method - defines the table header.
+	* @param { HTMLElement } node table.
+	* @param { Array } crates all works data to show up.
+	*/
 	#worksTable(node, works) {
 		const { materialManagement } = works;
 
@@ -349,6 +371,10 @@ export default class UsedMaterialsTable {
 		return(node);
 	};
 
+	/**
+	* @method - define icons based on each crate type.
+	* @param { string } kind - crates type.
+	*/
 	#setStatusCrateType(kind) {
 		switch (kind) {
 			case "tubeCrate":
@@ -364,6 +390,11 @@ export default class UsedMaterialsTable {
 		};
 	};
 
+	/**
+	* @method - defines the table header.
+	* @param { HTMLElement } node table.
+	* @param { Array } crates all crates data to show up.
+	*/
 	#cratesTable(node, crates) {
 		const { materialManagement } = crates;
 
@@ -386,6 +417,7 @@ export default class UsedMaterialsTable {
 				<th>Total $</th>`;
 			table.appendChild(content);
 			table.id = i;
+			table.className = 'crate';
 			table.ariaHidden = 'true';
 			table.role = 'none';
 			await this.#cratesOnTable(crate, table);

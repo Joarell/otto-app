@@ -102,7 +102,8 @@ export class PackageInfoUp extends HTMLElement {
 					return(this.#addNewField());
 				default :
 					cleaner.map(field => field.value = "");
-					return(this.#hiddenContent());
+					this.#hiddenContent();
+					return(this.#populateMaterialsUpPanel());
 			};
 		};
 	};
@@ -120,7 +121,6 @@ export class PackageInfoUp extends HTMLElement {
 		shadow.querySelector('.packing-materials')
 			.removeEventListener('input');
 	};
-
 
 	/**
 	* @method - adds the input listener to select artwork packing materials.
@@ -209,26 +209,21 @@ export class PackageInfoUp extends HTMLElement {
 	*/
 	#checkingSaveNewMaterials(shadow) {
 		let result = false;
+
 		const checker = (event) => {
 			const { id } = event.target;
 			const check = this.#findBlankField(shadow);
 
 			event.stopImmediatePropagation();
-			switch(id) {
-				case 'new-material':
-					!check ? this.#inputListener(): 0;
-					!check ? this.#saveMaterials(): 0;
-					result = true;
-					return(result)
-				default:
-					return;
+			if(id === 'new-material') {
+				!check ? this.#inputListener(): 0;
+				!check ? this.#saveMaterials(): 0;
+				result = true;
+				return(result)
 			};
 		};
-		if(!this.#listeners.has('add')) {
-			shadow.lastElementChild.addEventListener('click', checker, true);
-			this.#listeners.set('add', shadow);
-		};
-		result ? shadow.lastElementChild.removeEventListener('click', checker, true): 0;
+		shadow.lastElementChild.addEventListener('click', checker, true);
+		return(this.#listeners.set('add', shadow));
 	};
 
 	/**
@@ -440,6 +435,7 @@ export class PackageInfoUp extends HTMLElement {
 		const shadowClass =	shadow.lastElementChild?.className;
 
 		this.#type.push(newVal);
+		console.log(newVal)
 		switch(newVal) {
 			case 'update':
 				return(await this.#populateMaterialsUpPanel());

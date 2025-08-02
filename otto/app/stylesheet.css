@@ -216,6 +216,18 @@ h2, h3, h4, h5 {
 }
 
 
+h6 {
+	padding: .3ch 0;
+	position: relative;
+	&::before {
+		content: "";
+		inset: 0;
+		position: absolute;
+		border-bottom: solid 1px var(--lines);
+	}
+}
+
+
 iframe, .addedStatus {
 	text-align: center;
 	border: .05rem solid var(--iframes-bg);
@@ -277,7 +289,6 @@ li {
 	font-family: Mitr, sans-serif;
 	font-size: var(--fonts);
 	font-weight: 400;
-	color: var(--pressed);
 	line-height: 2rem;
 }
 
@@ -1061,6 +1072,7 @@ tbody:nth-child(even) {
 			&::before {
 				content: url("./images/Otto-SVGs/right-arrow.svg");
 				inset: 0;
+				inset: 15% 0 0 -5%;
 				position: absolute;
 			}
 		}
@@ -1071,20 +1083,19 @@ tbody:nth-child(even) {
 			& ol {
 				margin: 0;
 				margin-left: .5rem;
-				& li {
+				& > li {
 					list-style: none;
 					width: auto;
 					position: relative;
-					&::before {
-						content: url("./images/Otto-SVGs/right-arrow.svg");
+					&:hover::after {
+						content: url("./images/Otto-SVGs/material-arrow.svg");
 						inset: 15% 0 0 -5%;
 						position: absolute;
 						cursor: pointer;
-						margin: 0;
-						padding: 0;
+						z-index: 5;
 					}
-					&:hover::after {
-						content: url("./images/Otto-SVGs/material-arrow.svg");
+					&::before {
+						content: url("./images/Otto-SVGs/right-arrow.svg");
 						inset: 15% 0 0 -5%;
 						position: absolute;
 						cursor: pointer;
@@ -1102,19 +1113,19 @@ tbody:nth-child(even) {
 						padding: 0;
 						position: relative;
 						margin-left: 1ch;
-						&:link:hover .5rem;
-							color: var(--work-link);
-							opacity: .5;
-						}
 						&:link {
 							color: var(--work-link);
 							opacity: .7;
+						}
+						&:link:hover {
+							color: var(--work-link);
+							opacity: .5;
 						}
 						&:active {
 							color: var(--color03);
 						}
 						&:visited {
-							color: var(--pressed);
+							color: var(--work-link);
 							text-decoration: line-through;
 							background-color: none;
 							opacity: .5;
@@ -1148,6 +1159,7 @@ tbody:nth-child(even) {
 		}
 	}
 }
+
 
 .select-materials:is([aria-hidden="true"]) {
 	display: none;
@@ -1470,8 +1482,8 @@ tbody:nth-child(even) {
 }
 
 .arrows-right, .arrows-right-dark, .arrows-down {
-height: 1rem;
-width: 1rem;
+	height: 1rem;
+	width: 1rem;
 }
 
 .svg__logo--eye {
@@ -1987,9 +1999,132 @@ transition-timing-function: animation 300ms cubic-bezier(0.6, 0.04, 0.98, 0.335)
 }
 
 
-.accordion-panel:nth-child(1) {
-	--__icon-color: var(--light-blue1);
+@media (max-width: 768px) {
+	:root {
+		--font-title: 1.2rem;
+		--fonts: .7rem;
+		--colg: 1rem;
+		--rowg: 1rem;
+	}
+
+	.app {
+		grid-template-columns: 1fr;
+		grid-template-rows: auto;
+		column-gap: var(--colg-mobile);
+		row-gap: var(--rowg-mobile);
+		height: auto;
+
+		& .left-section {
+			grid-area: unset;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-around;
+			align-items: center;
+			height: auto;
+			padding: 1rem;
+
+			& .id__user {
+				grid-area: unset;
+				& div {
+					& .avatar {
+						height: 3rem;
+						width: 3rem;
+						& > svg {
+							height: 2rem;
+							width: 2rem;
+						}
+					}
+				}
+			}
+			& .side-menu {
+				grid-area: unset;
+			}
+		}
+
+		& .right-section {
+			grid-area: unset;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-around;
+			align-items: center;
+			height: auto;
+			padding: 1rem;
+
+			& .logout {
+				grid-area: unset;
+			}
+			& .logo {
+				grid-area: unset;
+				& .logo-otto {
+					width: 50%;
+					height: 50%;
+				}
+				& .spinner {
+					width: 50%;
+					height: 50%;
+				}
+			}
+		}
+
+		& .otto__interface {
+			grid-area: unset;
+			grid-column: 1 / -1;
+			grid-row: auto;
+			margin: 0 var(--colg-mobile);
+			& .container__insert {
+				grid-template-columns: 1fr;
+				grid-template-rows: auto;
+				column-gap: var(--colg-mobile);
+				row-gap: var(--rowg-mobile);
+				& .searcher {
+					grid-area: unset;
+				}
+				& .menu-shifts {
+					grid-area: unset;
+					align-items: center;
+				}
+				& .IO__sizes__code {
+					grid-area: unset;
+				}
+				& .IO__press {
+					grid-area: unset;
+					align-items: center;
+				}
+				& .IO__press__crate {
+					grid-area: unset;
+					justify-content: center;
+				}
+				& .container__status__pane__frame {
+					grid-area: unset;
+				}
+			}
+		}
+
+		& .package-crates {
+			grid-area: unset;
+			grid-column: 1 / -1;
+			grid-row: auto;
+			margin: 0 var(--colg-mobile);
+		}
+
+		& .container-bottom {
+			grid-area: unset;
+			grid-column: 1 / -1;
+			grid-template-columns: 1fr;
+			grid-template-rows: auto;
+			margin: 0 var(--colg-mobile);
+			& .container__results {
+				& .copy-pane1:is([aria-hidden="false"]) {
+					grid-area: unset;
+				}
+				& .copy-pane2:is([aria-hidden="false"]) {
+					grid-area: unset;
+				}
+			}
+		}
+	}
 }
+
 
 
 .accordion-panel:nth-child(2) {

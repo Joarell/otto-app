@@ -18,6 +18,10 @@ export default class CrateTrimmer {
 		};
 	};
 
+	/**
+	* @method - sort;
+	* @param { Array } list of crates
+	*/
 	#quickSort(list) {
 		if(list.length <= 1)
 			return(list);
@@ -30,6 +34,11 @@ export default class CrateTrimmer {
 		return(this.#quickSort(left).concat(pivot, this.#quickSort(right)));
 	};
 
+	/**
+	* @method - returns how many materials are needed to the crate.
+	* @param { number } count quantity.
+	* @param { Array } sizes works dimensions.
+	*/
 	#provideMaterial(count, sizes) {
 		const provision = [];
 		while(count > provision.length)
@@ -37,6 +46,11 @@ export default class CrateTrimmer {
 		return(provision);
 	};
 
+	/**
+	* @method - check if the rest of the material can be reused.
+	* @param { Array } sizes crates dimensions.
+	* @param { Array } data material sizes.
+	*/
 	#reuseMaterialRecursion(data, sizes, i = 0) {
 		const material =	data[i];
 		const checker =		data[1];
@@ -90,6 +104,11 @@ export default class CrateTrimmer {
 		return(this.#reuseMaterialRecursion([material, checker], sizes, i + 1));
 	};
 
+	/**
+	* @method - try to apply the material to the work.
+	* @param { Array } crate sizes;
+	* @param { Array } available all materials sizes.
+	*/
 	#cutterManager(available, crate) {
 		const faceAB = { a: false, b: false };
 		const sideRL = { a: false, b: false };
@@ -104,6 +123,12 @@ export default class CrateTrimmer {
 		return(available);
 	};
 
+	/**
+	* @method - define the largest crate material for the structure.
+	* @param { Array } crate sizes.
+	* @param { Array } pine the frame material to apply.
+	* @param { Array } bank of used materials.
+	*/
 	#largeCrateStructure(crate, pine, bank) {
 		const { finalSize } =	crate[0];
 		const ply =				this.#crateMaterials.find(item => item[5] === 'Plywood');
@@ -142,6 +167,11 @@ export default class CrateTrimmer {
 		return(crate);
 	};
 
+	/**
+	* @method - cuts the crate frame.
+	* @param { Array } pine - material data.
+	* @param { Object } crate - crate data.
+	*/
 	#trimmingFrameCrateMaterial(pine, crate) {
 		const onBank =			this.#materialBank.get(pine[0]);
 		const { innerSize } =	crate[0];
@@ -199,6 +229,11 @@ export default class CrateTrimmer {
 		return(crate);
 	};
 
+	/**
+	* @method - returns the foam needed to feat between each layer.
+	* @param { Array } size inner crate dimensions.
+	* @param { Array } foam the material data.
+	*/
 	#foamDivisorLayers(size, foam) {
 		const trimmed = [];
 		foam.map(pad => {
@@ -215,9 +250,15 @@ export default class CrateTrimmer {
 		return(trimmed);
 	};
 
+	/**
+	* @method - returns the needed material to fill the gaps in side the crate.
+	* @param { Object } crate data.
+	*/
 	async #fillEmptySpaceOnLayers(crate) {
-		let foam2 =			await Promise.resolve(this.#materialBank.get('2'));
-		let foam5 =			await Promise.resolve(this.#materialBank.get('5'));
+		let foam2 =	await Promise.resolve(this.#materialBank.get('2'));
+		let foam5 =	await Promise.resolve(this.#materialBank.get('5'));
+
+
 		!foam2 ? foam2 = this.#crateMaterials.find(item => {
 			if(item[5] === 'Foam Sheet' && item[2] <= 2.5)
 				return(item);
@@ -236,6 +277,11 @@ export default class CrateTrimmer {
 		return(crate);
 	};
 
+	/**
+	* @method - returns the foam needed to pad the crates sides.
+	* @param { Object } crate data.
+	* @param { Array } foam sizes.
+	*/
 	async #trimmingPaddingLayersMaterials(foam, crate) {
 		if(+foam[2] > 2.5) {
 			const highDepth = this.#materialBank.get('thickness5');
@@ -275,6 +321,11 @@ export default class CrateTrimmer {
 		return(await this.#fillEmptySpaceOnLayers(crate, layers));
 	};
 
+	/**
+	* @method - returns the sizes for the sheet materials.
+	* @param { Object } crate data.
+	* @param { Array } item the material to apply.
+	*/
 	#trimmingMainCrateMaterial(item, crate) {
 		const onBank =		this.#materialBank.get(item[0]);
 		const { innerSize } = crate[0];
@@ -310,6 +361,11 @@ export default class CrateTrimmer {
 		return(crate);
 	};
 
+	/**
+	* @method - calls the trimming methods to apply the materials to the crate.
+	* @param { Array } item the materials info.
+	* @param { Object } crate data.
+	*/
 	#enoughMaterial(item, crate) {
 		if(item[5] === 'Pinewood')
 			return(this.#trimmingFrameCrateMaterial(item, crate))
@@ -320,6 +376,9 @@ export default class CrateTrimmer {
 
 	/**
 	 * @method iterates on each work in order to revise the needed material.
+	 * @param { Object } crate data.
+	 * @param { Map } mapCrates all crates on the list.
+	 * @param {number} [i=0].
 	*/
 	async #cutMaterial(crate, mapCrates, i = 0) {
 		if(!crate[i])
@@ -330,6 +389,9 @@ export default class CrateTrimmer {
 		return(this.#cutMaterial(crate, mapCrates, i + 1));
 	};
 
+	/**
+	* @method - returns the Map for all crates on the list.
+	*/
 	#mapCrateTypes() {
 		const opts = [
 			'tubeCrate',

@@ -32,7 +32,6 @@ globalThis.document.getElementById('main-app')
 		const { shadowRoot } =	up;
 		const shadow =			shadowRoot.querySelector('.upPane');
 		shadow?.addEventListener('click', (e) => {
-			console.log(e.target)
 			const { id, className, tagName } = e.target;
 			const composeEvent = new CustomEvent('open-crate', {
 				bubbles: true,
@@ -41,7 +40,7 @@ globalThis.document.getElementById('main-app')
 			});
 			shadow.dispatchEvent(composeEvent);
 		}, true);
-	}
+	};
 	{
 		const { shadowRoot } =	down;
 		const shadow =			shadowRoot.querySelector('.data-update');
@@ -56,7 +55,7 @@ globalThis.document.getElementById('main-app')
 			e.stopImmediatePropagation();
 		});
 
-	}
+	};
 	attributes.content === 'crates' ? className = 'crates': 0;
 	switch (!id ? id = className: id) {
 		case "body-app" :
