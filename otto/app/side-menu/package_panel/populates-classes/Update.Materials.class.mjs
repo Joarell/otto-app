@@ -127,7 +127,7 @@ export default class AddPackingMaterials {
 			});
 		};
 		check = list.some(material => material[0] === result[0]);
-		!check ? list.push(...result): 0;
+		!check && list.length !== result.length ? list.push(...result): 0;
 		return(opt && check ? this.#materials.types.concat(result): list);
 	};
 
@@ -168,7 +168,10 @@ export default class AddPackingMaterials {
 		checkMaterials && checkMaterials.types.length ?
 			this.#COMMANDWORKER.postMessage(checkMaterials):
 			this.#COMMANDWORKER.postMessage(this.#materials);
-		check ? this.#browserStorege(0): 0;
+		checkMaterials ?
+			localStorage.setItem('materials', JSON.stringify(checkMaterials.types)):
+			localStorage.setItem('materials', JSON.stringify(this.#materials.types));
+		// check  ? this.#browserStorege(0): 0;
 		const message = await new Promise((resolve) => {
 			this.#COMMANDWORKER.onmessage = (res) => {
 				resolve(res.data);

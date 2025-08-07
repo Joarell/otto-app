@@ -43,17 +43,17 @@ newMaterials.innerHTML = `
 export const newOption = document.createElement('template');
 newOption.innerHTML = `
 <div class='material-sizes' id="new-field">
-	<input class="material-name" type="text" pattern="^[A-Za-z0-9\s]+$" inputmode="text" placeholder="Type" required></input>
-	<input class="IO__add--form" type="number" inputmode="numeric" id="input_length" pattern="^[0-9]+(?:\\.[0-9]+)?$" placeholder="L" name="length" maxlength="7" required>
-	<input  class="IO__add--form" type="number" inputmode="numeric" id="input_depth" pattern="^[0-9]+(?:\\.[0-9]+)?$" name="depth" placeholder="D" maxlength="7" required>
-	<input class="IO__add--form" type="number" inputmode="numeric" id="input_height" pattern="^[0-9]+(?:\\.[0-9]+)?$" placeholder="H" name="height" maxlength="7" required>
+	<input class="material-name" type="text" pattern="^[a-zA-Z0-9 ]*$" inputmode="text" placeholder="Type" required></input>
+	<input class="IO__add--form" type="number" inputmode="numeric" id="input_length" pattern="^[0-9]+(?:\\.\d]+)?$" placeholder="L" name="length" maxlength="7" required>
+	<input  class="IO__add--form" type="number" inputmode="numeric" id="input_depth" pattern="^[0-9]+(?:\\.\d]+)?$" name="depth" placeholder="D" maxlength="7" required>
+	<input class="IO__add--form" type="number" inputmode="numeric" id="input_height" pattern="^[0-9]+(?:\\.\d]+)?$" placeholder="H" name="height" maxlength="7" required>
 	<input class="material-price" type="number" inputmode="numeric" placeholder="Price" pattern="\d+(\.\d{1,2})?" required></input>
 	<select>
 		<option selected>Sheet</option>
 		<option>Roll</option>
 		<option>Pinewood</option>
 		<option>Plywood</option>
-		<option>Tape</option>
+		<!-- <option>Tape</option> -->
 		<option>Foam Sheet</option>
 	</select>
 </div>

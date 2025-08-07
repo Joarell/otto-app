@@ -1,4 +1,4 @@
-export default class SheetTrimmer {
+export default class PackingTrimmer {
 	#worksMaterials;
 	#plannedWorks;
 	#materialBank;
@@ -17,8 +17,7 @@ export default class SheetTrimmer {
 	* @param { Object } art sizes
 	* @param { Array } material sizes.
 	*/
-	#trimMaterial(material, art) {
-		let x =		material[0] - art.length;
+	#trimMaterial(material, art) { let x =		material[0] - art.length;
 		const y =	material[1] - art.height;
 
 		y ? x = x - y: 0;
@@ -130,8 +129,9 @@ export default class SheetTrimmer {
 		if(!list[i])
 			return(packedInfo);
 		const art =	list[i];
+		const packing =	['Sheet', 'Roll', 'Tape'];
 		const { reuse, types } = packedInfo[1];
-		const sheets =		types.filter(item => item[0] === 'Sheet');
+		const sheets =		types.filter(item => packing.includes(item[0]));
 		const materials =	sheets.filter((kind, j) => {
 			if(kind[2] === reuse[j][0] && reuse[j][1])
 				return(kind);
@@ -139,7 +139,7 @@ export default class SheetTrimmer {
 
 		if(materials.length) {
 			materials.map(item => {
-				const area =		this.#enoughMaterial(item, packedInfo);
+				const area = this.#enoughMaterial(item, packedInfo);
 				if(area) {
 					const compact =	area >= art.demand;
 					this.#updateMaterialBank(art, packedInfo, compact, item);

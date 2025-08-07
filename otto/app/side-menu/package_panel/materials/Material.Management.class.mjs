@@ -1,4 +1,4 @@
-import SheetTrimmer from "./Material.Card.trimmer.class.mjs";
+import PackingTrimmer from "./Material.Card.trimmer.class.mjs";
 import CrateTrimmer from "./Material.Crate.trimmer.class.mjs";
 
 export default class MaterialManagement {
@@ -241,7 +241,7 @@ export default class MaterialManagement {
 		const packedList =		this.#works.map(art => [art.code, art.packInfo]);
 		const prism =			this.#worksPlanification();
 		const sorted =			this.#quickSort(structuredClone(packedList));
-		const trimmerCard =		new SheetTrimmer(sorted, prism);
+		const trimmerCard =		new PackingTrimmer(sorted, prism);
 		const sheets =			this.#materials.filter(item => item[5] === 'Sheet');
 		const materialData =	sheets.map(material => {
 			material.unshift(material[1] * material[3] / 100);

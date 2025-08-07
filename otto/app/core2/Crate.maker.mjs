@@ -59,7 +59,8 @@ export default class CrateMaker {
 		crating =	JSON.parse(crating);
 
 		crating.map(item => {
-			crateMaterials.push(materials.find(opts => opts[0] === item).flat());
+			const material = materials.find(opts => opts[0] === item);
+			material ? crateMaterials.push(material): 0;
 		});
 		if(!crateMaterials.length)
 			return({ x: 0, z: 0, y: 0 });

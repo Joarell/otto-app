@@ -23,8 +23,12 @@ export default class Crater {
 
 	#startCrateList () {
 		let key =		0;
-		const CRATES = [ 'tubeCrate', 'largestCrate', 'sameSizeCrate',
-			'noCanvasCrate', 'standardCrate'
+		const CRATES = [
+			'tubeCrate',
+			'largestCrate',
+			'sameSizeCrate',
+			'noCanvasCrate',
+			'standardCrate'
 		];
 
 		this.#tubeCrate();

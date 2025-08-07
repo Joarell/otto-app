@@ -129,6 +129,7 @@ export async function crate(fetched = false) {
 		grant === 'FULL' || grant === 'PLOTTER' || !grant ?
 			document.getElementById('crate-layers').disabled = false : 0;
 		root.style.setProperty("--layer-state", "block");
+		sessionStorage.removeItem('crate');
 	};
 	weak.add(estimate);
 	return ('Crated');

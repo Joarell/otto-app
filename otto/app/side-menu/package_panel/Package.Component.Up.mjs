@@ -11,7 +11,7 @@ export class PackageInfoUp extends HTMLElement {
 	static observedAttributes = [ "name", "content" ];
 	#type = [];
 	#shadowRoot = new WeakMap();
-	#reg = new RegExp("^[A-Za-z][A-Za-z0-9]*$");
+	#reg = new RegExp("^[A-Za-z0-9 ][0-9]+(?:\.\d+)?$");
 	#link;
 	#listeners;
 
@@ -54,6 +54,33 @@ export class PackageInfoUp extends HTMLElement {
 	};
 
 	/**
+	* @method - checks the material data before add it.
+	* @param { string } value data
+	*/
+	#validationNewMaterial(value) {
+		let next = true;
+		let check = false;
+		const materials = JSON.parse(localStorage.getItem('materials'));
+
+		if (value === '') {
+			alert('Please, check if all fields is properly filled!');
+			this.#findBlankField(entry);
+			next = false;
+		};
+		if(!this.#reg.test(value) && Number.isNaN(value)) {
+			alert('Invalid character found!');
+			next = false;
+		};
+		if(materials) {
+			check = materials.some(item => item[0] === value);
+			check ? alert('Material already added! Please, recheck the name.'): 0;
+			check ? next = false : 0;
+		};
+
+		return(next ? value : next);
+	};
+
+	/**
 	* @method - save the materials in IDB and server.
 	* @property { [ Array: number | string ] } types - the material list data.
 	*/
@@ -71,21 +98,16 @@ export class PackageInfoUp extends HTMLElement {
 
 		for(i; entry.children.length > i && next; ++i) {
 			const aux = [];
-			while(j < entry.children.item(i).children.length) {
+			while(j < entry.children.item(i).children.length && next) {
 				const value = entry.children.item(i).children[j].value;
-				if (value === '') {
-					alert('Please, check if all fields is properly filled!');
-					this.#findBlankField(entry);
+				if (!this.#validationNewMaterial(value)) {
 					next = false;
 					break;
+				}
+				else {
+					aux.push(value);
+					cleaner.push(entry.children.item(i).children[j++]);
 				};
-				if(!this.#reg.test(value) && j === 0) {
-					alert('Invalid character found!');
-					next = false;
-					break;
-				};
-				aux.push(value);
-				cleaner.push(entry.children.item(i).children[j++]);
 			};
 			addedMaterials.types.push(aux);
 			j = 0;
@@ -153,25 +175,22 @@ export class PackageInfoUp extends HTMLElement {
 				JSON.parse(globalThis.sessionStorage.getItem('onCrate'))
 			)
 		);
-		const toggle = (val, node) => {
-			const check = val && (node[1].ariaHidden === 'true');
 
-			!val ? node[1].ariaHidden = 'true' : 0;
-			check ? node[1].ariaHidden = 'false': node[1].ariaHidden = 'true';
-		};
-
-		Object.entries(list).map(node => {
+		Object.entries(list).map((node, i) => {
 			const { id } =	node[1];
-			if(!node[1].id && node[1].tagName !== 'TABLE')
-				return ;
-
-			const compare =		id === work;
-			const works =		onCrate.get(id);
-			const location =	works ? works.some(art => art === work): 0;
+			if(i > list.length - 1 || id === '')
+				return;
+			const layer =	onCrate.get(work);
+			const crate =	sessionStorage.getItem('crate');
+			const art =		id === work;
 
 			node[1].ariaHidden = 'true';
-			!location ? toggle(compare, node): toggle(location, node);
-		});
+			if(art) {
+				node[1].ariaHidden = 'false'
+				sessionStorage.setItem('crate', layer);
+			};
+			id === crate ? node[1].ariaHidden = 'false': 0;
+		}, 0);
 	};
 
 	/**
@@ -236,18 +255,18 @@ export class PackageInfoUp extends HTMLElement {
 		const crate =			JSON.parse(localStorage.getItem('crating'));
 		let crates;
 		let temp;
-		let i;
+		let node;
 
 		if(!pack || !crate)
 			return ;
-		for(i in list.children) {
-			!crates && list.children.item(i).className ? crates = true: 0;
-			if (list.children.item(i).id === 'populate-materials') {
-				temp = list.children.item(i).children.item(0).name;
+		for(node of list.children) {
+			!crates && node.className ? crates = true: 0;
+			if (node.id === 'populate-materials') {
+				temp = node.children.item(0).name;
 				pack.includes(temp) && !crates ?
-					list.children.item(i).children.item(0).checked = true : 0;
+					node.children.item(0).checked = true : 0;
 				crate.includes(temp) && crates ?
-					list.children.item(i).children.item(0).checked = true : 0;
+					node.children.item(0).checked = true : 0;
 			};
 		};
 	};
@@ -265,16 +284,16 @@ export class PackageInfoUp extends HTMLElement {
 		let crates =			false;
 		let pack =				false;
 		let crate =				false;
-		let i;
+		let node;
 		let aux;
 		let opts;
 
 		materials = JSON.parse(materials);
-		for(i in list.children) {
-			!crates && list.children.item(i).className ? crates = true: 0;
-			if (list.children.item(i).id === 'populate-materials') {
-				if(list.children.item(i).children.item(0).checked) {
-					aux = list.children.item(i).children.item(0).name;
+		for(node of list.children) {
+			!crates && node.className ? crates = true: 0;
+			if (node.id === 'populate-materials') {
+				if(node.children.item(0).checked) {
+					aux = node.children.item(0).name;
 					opts = materials.filter(item => item[0] === aux).flat();
 					pack = !crates && opts[5] === 'Foam Sheet';
 					crate = crates && opts[5] === 'Foam Sheet';
@@ -301,6 +320,7 @@ export class PackageInfoUp extends HTMLElement {
 
 		while(element && element.firstChild)
 			element.removeChild(element.firstChild);
+		this.#toggleMaterialsReportAndUpdate();
 		return(tag.setAttribute('name', id));
 	};
 
@@ -435,7 +455,6 @@ export class PackageInfoUp extends HTMLElement {
 		const shadowClass =	shadow.lastElementChild?.className;
 
 		this.#type.push(newVal);
-		console.log(newVal)
 		switch(newVal) {
 			case 'update':
 				return(await this.#populateMaterialsUpPanel());

@@ -41,14 +41,16 @@ export default class UsedMaterialsTable {
 	* @method - returns the IDB solved results.
 	*/
 	async #pickCrateUpList() {
-		const { list, crates } = await this.#grabArtWorksOnIDB();
-		const artWorkParser =	(info) => {
+		const estimate =				await this.#grabArtWorksOnIDB();
+
+		if(!estimate)
+			return(false) ;
+		const { list, crates } =	estimate;
+		const artWorkParser =		(info) => {
 			const { code, x, z, y, packing } = info;
 			return(new ArtWork(code, x, z, y, packing));
 		};
 
-		if(!list)
-			return ;
 		const works =	list.map(artWorkParser);
 		const report =	new MaterialManagement({ works, crates });
 		const data =	await report.start;
@@ -105,6 +107,8 @@ export default class UsedMaterialsTable {
 				type,
 			} = item[1];
 
+			if(!type)
+				return;
 			content.innerHTML = `
 				<td>Crate</td>
 				<td>${type}</td>
@@ -172,7 +176,6 @@ export default class UsedMaterialsTable {
 		percent.map((info, i) => {
 			const content = document.createElement('tr');
 
-			console.log(reuse)
 			checkLength === i ? content.innerHTML = `
 				<td>${ info[0] }</td>
 				<td>${ demand} m²</td>
@@ -202,6 +205,8 @@ export default class UsedMaterialsTable {
 	* @param { number } layers number for each crate.
 	*/
 	#correctCutMaterials(info, layers) {
+		if(!info)
+			return;
 		const { frontBack, sides, upDown, name} = info;
 		const material =	this.#materials.find(item => item[0] === name);
 		const div =			this.#materials.find(item => item[2] <= 2.5 && item[5] === 'Foam Sheet');
@@ -288,18 +293,21 @@ export default class UsedMaterialsTable {
 		table.appendChild(content);
 		[ padding, faces, frame ].map(data => {
 			const row =	document.createElement('tr');
-			const { frontBack, sides, upDown, name} = this.#correctCutMaterials(data, layers);
+			const info = this.#correctCutMaterials(data, layers);
+
+			if(!info)
+				return;
+			const { frontBack, sides, upDown, name} = info;
 
 			row.innerHTML = `
 				<td>${ name }</td>
-				<td>${ frontBack.x } x ${ frontBack.y } - ${ metric } </td>
-				<td>${ sides.z } x ${ sides.y } - ${ metric }</td>
-				<td>${ upDown.x } x ${ upDown.z } - ${ metric }</td>`;
+				<td>${ Math.ceil(frontBack.x) } x ${ Math.ceil(frontBack.y) } - ${ metric } </td>
+				<td>${ Math.ceil(sides.z) } x ${ Math.ceil(sides.y) } - ${ metric }</td>
+				<td>${ Math.ceil(upDown.x) } x ${ Math.ceil(upDown.z) } - ${ metric }</td>`;
 			frag.appendChild(row);
 		});
 		table.appendChild(frag);
 		return(crate[1] === 'largestCrate' ? this.#largestCrateTable(crate, table): table);
-		// return(table);
 	};
 
 	/**
@@ -320,6 +328,9 @@ export default class UsedMaterialsTable {
 		material.map(info => {
 			const content =		document.createElement('tr');
 			const data =		crate[2].get(info);
+
+			if(!data)
+				return;
 			const { type, counter, residual, area, totalCost } = data;
 
 			cost.push(totalCost);
@@ -427,43 +438,37 @@ export default class UsedMaterialsTable {
 	};
 
 	/**
+	* @method - sets the works on each crate -> layer.
+	*/
+	#worksCrateLocation(data) {
+		const onCrate =	new Map();
+		let strObject;
+
+		data.map((info, i) => {
+			const { layers } =	info[0];
+
+			layers.map(content => {
+				const { works } = content;
+				works.map(art => onCrate.set(art.work[0], i));
+			});
+		}, 0);
+		strObject = Object.fromEntries(onCrate);
+		globalThis.sessionStorage.setItem('onCrate', JSON.stringify(strObject));
+	};
+
+	/**
 	* @method - sets the header table
 	* @param { HTMLElement } node TABLE
 	*/
 	async #setsTableElements(node) {
-		const tableFilled = await Promise.resolve(this.#pickCrateUpList())
-		.then(data => {
-			const { worksReport } = data;
-			const result = this.#worksTable(node, worksReport);
+		const { worksReport } = this.#materialReport;
+		this.#worksTable(node, worksReport);
+		const { cratesReport } = this.#materialReport;
+		this.#cratesTable(node, cratesReport);
+		const { materialManagement } =	this.#materialReport.cratesReport;
 
-			return({ data, result });
-		}).then(info => {
-			const { data, result } = info;
-			const { cratesReport } = data;
-			const table = this.#cratesTable(result, cratesReport);
-
-			return({ data, table });
-		}).then(result => {
-			const { data, table } =			result;
-			const { materialManagement } =	data.cratesReport;
-			const onCrate =					new Map();
-			let strObject;
-
-			materialManagement.map((info, i) => {
-				const { layers } =	info[0];
-				const collector =	[];
-
-				layers.map(content => {
-					const { works } = content;
-					collector.push(works[0].work[0]);
-				});
-				onCrate.set(i, collector);
-			}, 0);
-			strObject = Object.fromEntries(onCrate);
-			globalThis.sessionStorage.setItem('onCrate', JSON.stringify(strObject));
-			return(table);
-		}).catch(e => console.error(e));
-		return(tableFilled);
+		this.#worksCrateLocation(materialManagement);
+		return(node);
 	};
 
 	/**
@@ -474,7 +479,10 @@ export default class UsedMaterialsTable {
 		const node =		document.importNode(content, true)
 		const table =		node.getElementById('second-pane');
 		const fragment =	new DocumentFragment();
+		const info =		await this.#pickCrateUpList().catch(e => e);
 
+		if(!info)
+			return(false);
 		await this.#setsTableElements(table);
 		await table.appendChild(this.#imutableTableSetup());
 		fragment.append(node);

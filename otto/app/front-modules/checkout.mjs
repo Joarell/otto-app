@@ -17,6 +17,7 @@ globalThis.onload = async () => {
 	const statusFrame = document.getElementById("status-frame");
 	const list =		document.getElementById('statusList');
 
+	sessionStorage.removeItem('crate');
 	list ? list.setAttribute('content', 'reload'):
 		statusFrame.append(addPanelInfo());
 	browserStoragePrepare();
@@ -149,18 +150,6 @@ export const clearAll = () => {
 			.lastElementChild.setAttribute('name', 'close') : false;
 		document.querySelector(".materials").setAttribute('name', 'select-materials');
 	};
-};
-
-
-function loadingPage() {
-	const animation =	document.querySelector(".loading");
-	const pageApp =		document.querySelector(".app");
-	const footer =		document.querySelector(".footer-content");
-
-	animation.style.display = "none";
-	animation.setAttribute("aria-hidden", true);
-	pageApp.setAttribute("aria-hidden", false);
-	footer.setAttribute("aria-hidden", false);
 };
 
 

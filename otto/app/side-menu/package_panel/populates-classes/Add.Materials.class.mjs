@@ -3,16 +3,12 @@ import AddPackingMaterials from "./Update.Materials.class.mjs";
 
 export default class AddNewMaterial {
 
-	constructor() {
-	};
-
 	/**
 	* @method - set the panel information.
 	*/
 	async #showPanelInfo() {
 		const entryPoint =	document.getElementById('content1');
 		const settingsBtn =	document.getElementById('settings-content');
-		// const addBtn =		document.getElementById('confirm-save');
 		const cancel =		document.getElementById('cancel-remove');
 		const populated =	new AddPackingMaterials(entryPoint);
 
@@ -20,7 +16,6 @@ export default class AddNewMaterial {
 		settingsBtn.style.backgroundColor = "var(--yellow-select)";
 		settingsBtn.style.opacity = "1";
 		cancel.disabled = false;
-		// addBtn.disabled = false;
 		return(await populated.populatePanels(1));
 	};
 
