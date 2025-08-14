@@ -71,9 +71,9 @@
 	--font-title: 1.5rem;
 	--fonts-input: clamp(1.4ch, 1.4vw, .8rem);
 	--fonts: clamp(1.5ch, 1.5vw, .8rem);
-	--color1: #03e9f4;
+	--color1: oklch(0.8496 0.2442 200.9);
 	--color2: #162789;
-	--color3: #FC007A;
+	--color3: oklch(0.6383 0.2569 3.87);
 	--color03: #FC007A50;
 	--color4: #FFF;
 	--color5: #333;
@@ -86,10 +86,11 @@
 	--color11: #B8005670;
 	--color12: #FC007A80;
 	--box: #57420C;
-	--light-blue1: #CCDBDC;
-	--light-blue2: #9AD1D4;
-	--light-blue02: #9AD1D480;
-	--light-blue3: #80CED7;
+	--light-blue1: oklch(0.8804 0.0162 201.68);
+	--light-blue2: oklch(0.8804 0.0662 201.68);
+	--light-blue02: oklch(0.8804 0.0662 201.68 / 80%);
+	--light-blue3: oklch(0.7804 0.0662 201.68);
+	--light-blue4: oklch(0.6804 0.0662 201.68);
 	--dark-blue: #00547A;
 	--dark-blue1: #003852;
 	--dark-blue2: #002A3D;
@@ -99,11 +100,12 @@
 	--colg-mobile: 1rem;
 	--rowg: 2rem;
 	--rowg-mobile: 1rem;
-	--bord: .3rem;
-	--mob-col: #12111385;
+	--bord: .3rem; --mob-col: #12111385;
 	--gradient: linear-gradient(270deg, var(--bg-col), var(--dark-blue2));
 	--gradient1: linear-gradient(90deg, var(--bg-col), var(--dark-blue1));
 	--sides: #88898E;
+	--info: oklch(0.7162 0.226 276.09);
+	--info-data: oklch(0.755 0.226 296.09);
 	--shadow1: .3rem .3rem .6rem var(--iframes-bg),
 		-.2rem -.2rem .5rem var(--color4);
 	--inner-shadow1: inset .2rem .2rem .5rem var(--pressed),
@@ -133,7 +135,7 @@
 	--result-col: #BF5E30;
 	--dark: #121113;
 	--back-gray: #222725;
-	--menu-col: #00C2DD;
+	--menu-col: oklch(0.6496 0.2442 190.9);
 	--pressed: #77797E;
 	scroll-behavior: smooth;
 	--layer-state: block;
@@ -358,14 +360,14 @@ select {
 
 .materialReusable {
 	position: relative;
-	border-color: var(--color06);
+	border: 1.9px solid var(--color4) !important;
 	&:hover::before {
 		content: attr(data-name , 'Material usaed from other');
 		position: absolute;
 		inset: 0, 0;
 		left: 0%;
-		bottom: 3.5rem;
-		background-color: var(--table-bg);
+		bottom: 1.5rem;
+		background-color: var(--light-blue4);
 		border-radius: .3rem;
 		padding: .3rem;
 		white-space: nowrap;
@@ -373,19 +375,34 @@ select {
 		animation-name: fill-pane 2s ease-in-out;
 		animation-fill-mode: both;
 		animation-delay: 2ms;
+		color: var(--color4);
+		font-weight: 500;
+		font-style: italic;
 	}
 	&:hover::after {
 		content: '';
 		position: absolute;
-		top: -2.2rem;
+		top: -.2rem;
 		left: 50%;
 		right: 30%;
 		margin-left: -5px;
 		border-width: 7px;
 		border-style: solid;
-		border-color: var(--table-bg) transparent transparent transparent;
+		border-color: var(--light-blue4) transparent transparent transparent;
 	}
 }
+
+
+th {
+	font-weight: 700;
+	text-decoration: underline;
+}
+
+
+td:nth-child(1) {
+	font-weight: 700;
+}
+
 
 tr {
 	&:nth-child(even) > * {

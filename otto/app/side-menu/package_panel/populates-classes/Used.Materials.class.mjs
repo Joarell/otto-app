@@ -134,24 +134,24 @@ export default class UsedMaterialsTable {
 		const cost =		type === 'works' ?
 			values.reduce((val, sum) => val + sum, 0):
 			prices.reduce((val, sum) => val + sum, 0);
-		const finalCost =	Math.ceil(cost).toFixed(2);
+		const finalCost =	(cost).toFixed(2);
 
 		if (type === 'works')
 			subTotal.innerHTML = `
 				<td>Subtotal:</td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
+				<td>-</td>
+				<td>-</td>
+				<td>-</td>
+				<td>-</td>
+				<td>-</td>
 				<td>$ ${finalCost}</td>`;
 		else
 			subTotal.innerHTML = `
 				<td>Subtotal:</td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
+				<td>-</td>
+				<td>-</td>
+				<td>-</td>
+				<td>-</td>
 				<td>$ ${finalCost}</td>`;
 		return(subTotal);
 	};
@@ -162,6 +162,8 @@ export default class UsedMaterialsTable {
 	* @param { HTMLElement } table
 	*/
 	async #materialsOnTable(artWork, table) {
+		if(!Array.isArray(artWork))
+			return(table);
 		const {
 			demand,
 			percent,
@@ -175,21 +177,17 @@ export default class UsedMaterialsTable {
 
 		percent.map((info, i) => {
 			const content = document.createElement('tr');
+			const usage = checkLength === i ?
+				`<td class="materialReusable" data-name='Reused from work: ${reuse[i][2]}'>${residual[i]}%</td>`:
+				`<td>${ (residual[0] * 100).toFixed(0) }%</td>`;
 
-			checkLength === i ? content.innerHTML = `
+			content.innerHTML
+				= `
 				<td>${ info[0] }</td>
 				<td>${ demand} m²</td>
 				<td>${ info[1]}%</td>
 				<td>${ reuse[i][1] ? "Yes": "No" }</td>
-				<td class="materialReusable" data-name='Reused from work: ${reuse[i][2]}'>${residual[i][1]}%</td>
-				<td>${ types[i][0] }</td>
-				<td>$ ${cost[i][1] }</td>`:
-				content.innerHTML = `
-				<td>${ info[0] }</td>
-				<td>${ demand} m²</td>
-				<td>${ info[1] }%</td>
-				<td>${ reuse[i][1] ? "Yes": "No"}</td>
-				<td>${ (residual[0]).toFixed(3) }%</td>
+				${ usage }
 				<td>${ types[i][0] }</td>
 				<td>$ ${cost[i][1] }</td>`;
 			table.appendChild(content);
@@ -280,7 +278,7 @@ export default class UsedMaterialsTable {
 		const frag =		new DocumentFragment();
 		const layers =		crate[0].layers.length - 1;
 
-		cuts.innerText = `Crate Cut materials: - Front/Back - Sides - Up/Down`;
+		cuts.innerText = `Crate Cut materials:`;
 		disclaimer.innerText = `Obs: Each measure must be cut twice in order to build all crates sides.`
 		table.appendChild(cuts);
 		table.appendChild(disclaimer);
@@ -334,12 +332,15 @@ export default class UsedMaterialsTable {
 			const { type, counter, residual, area, totalCost } = data;
 
 			cost.push(totalCost);
+			const usage = typeof residual === 'number' ?
+				`<td>${ (+residual / 100).toFixed(3) } m²</td>`:
+				`<td class="materialReusable" data-name='${residual}'> 0 m²</td>`;
+
 			content.innerHTML = `
 				<td>${ type }</td>
 				<td>${ area } m²</td>
 				<td>${ residual > 100 ? 'Yes': 'No' }</td>
-				<td>${ Array.isArray(residual) ?
-					sumResidual(residual): (residual / 100).toFixed(3) } m²</td>
+				${ usage }
 				<td>${ counter }</td>
 				<td>$ ${ totalCost }</td>`;
 			table.appendChild(content);
@@ -357,13 +358,14 @@ export default class UsedMaterialsTable {
 		const { materialManagement } = works;
 
 		materialManagement.map(async work => {
+			if(!work)
+				return;
 			const code =		work[0];
 			const table =		document.createElement('table');
 			const content =		document.createElement('tr');
 			const headerWork =	document.createElement('th');
 
 			headerWork.innerHTML = `<h5>${code}</h5>`;
-			table.append(headerWork);
 			content.innerHTML =`
 				<th>Type</th>
 				<th>Demand</th>
@@ -372,6 +374,7 @@ export default class UsedMaterialsTable {
 				<th>Residual</th>
 				<th>Material unit</th>
 				<th>Total $</th>`;
+			table.append(headerWork);
 			table.appendChild(content);
 			table.id = code;
 			table.ariaHidden = 'true';
@@ -409,7 +412,7 @@ export default class UsedMaterialsTable {
 	#cratesTable(node, crates) {
 		const { materialManagement } = crates;
 
-		materialManagement.reverse().map(async (crate, i) => {
+		materialManagement.map(async (crate, i) => {
 			const table =			document.createElement('table');
 			const content =			document.createElement('tr');
 			const headerCrate =		document.createElement('th');

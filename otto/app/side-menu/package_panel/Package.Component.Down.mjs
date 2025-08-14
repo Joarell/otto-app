@@ -33,11 +33,9 @@ export class PackageInfoDown extends HTMLElement {
 		const shadowRoot =		this.#shadowRoot.get(this);
 		const entry =			document.querySelector(".data-update");
 		const defaultPanel =	new AddPackingMaterials(entry);
-		const fragment =		new DocumentFragment();
 
-		fragment.append(await defaultPanel.populatePanels(2));
 		shadowRoot.append(this.#link);
-		shadowRoot.appendChild(fragment);
+		shadowRoot.appendChild(await defaultPanel.populatePanels(2));
 		return(false);
 	};
 

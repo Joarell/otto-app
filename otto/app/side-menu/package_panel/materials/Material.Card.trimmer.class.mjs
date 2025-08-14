@@ -8,7 +8,7 @@ export default class PackingTrimmer {
 		if(list && prisms) {
 			this.#sorted =			list;
 			this.#plannedWorks =	prisms;
-			this.#materialBank =	{ works: new Map() };
+			this.#materialBank =	new Map();
 		};
 	};
 
@@ -40,22 +40,22 @@ export default class PackingTrimmer {
 			const coordinates = +pack[2] >= +pack[4] ?
 				[[+pack[2] * counter, +pack[4]]] : [[+pack[4] * counter, +pack[2]]];
 			trimming =	this.#trimMaterial(coordinates[0], work);
+			return(trimming);
 		};
 	};
 
 	/**
 	* @method - adds the rest of the materials to the possible reuse bank.
 	* @param { number } count
-	* @param {  } found
+	* @param { boolean } found
 	* @param { Array } retang the planned work sizes.
-	* @param {  } optimized
+	* @param { Array } optimized the position valid for reuse the material.
 	*/
 	#feedMaterialOnBanck(retang, found, optimized, feat, count) {
 		if(!found && !optimized[1] || !feat) {
-			const { works } =	this.#materialBank;
 			const positions =	this.#defineAvailableCoordinates(retang, optimized, count);
 
-			return(works.set(optimized[0], [[retang.code, positions]]));
+			return(this.#materialBank.set(optimized[0], [[retang.code, positions]]));
 		};
 	};
 
@@ -72,7 +72,7 @@ export default class PackingTrimmer {
 
 		if(!material) {
 			types.map(item => {
-				const onBank =	this.#materialBank.works.has(item[0]);
+				const onBank =	this.#materialBank.has(item[0]);
 				const optimol =	reuse.filter(kind => kind[0] === item[2]).flat();
 				const unit =	quantity.find(type => type[0] === optimol[0]).flat();
 
@@ -80,20 +80,10 @@ export default class PackingTrimmer {
 			});
 			return;
 		};
-		if (feat) {
-			const { works } =	this.#materialBank;
-			const onBank =		works.get(material[2]);
+		const onBank =		this.#materialBank.get(material[2]);
 
-			onBank[1] = this.#trimMaterial(onBank[0][1], retang);
-			return(works.set(onBank[0], onBank[0]));
-		}
-		else if(feat) {
-			const { crates } =	this.#materialBank;
-			const onBank =		crates.get(material[2]);
-
-			onBank[1] = this.#trimMaterial(onBank[1], retang);
-			return(crates.set(onBank[0], [onBank[1]]));
-		};
+		onBank[1] = this.#trimMaterial(onBank[0][1], retang);
+		this.#materialBank.set(onBank[0], onBank[0]);
 		return(this.#feedMaterialOnBanck(retang, false, optimol, feat));
 	};
 
@@ -103,14 +93,14 @@ export default class PackingTrimmer {
 	* @param { Array } work data.
 	*/
 	#enoughMaterial(item, work) {
-		const available =	this.#materialBank.works.get(item[2]);
-		let area =			Array.isArray(available[0][1]) ?
+		const available =	this.#materialBank.get(item[2]);
+		let area =			available && Array.isArray(available[0][1]) ?
 			available.find(opt => opt[1][0] && opt[1][1]): false;
 
 		if(area) {
-			const i = work[1].residual.findIndex(data => data[0] === item[2]);
+			const i = work[1].reuse.findIndex(data => data[0] === item[2]);
 
-			work[1].residual[i][1] =	0;
+			work[1].residual[i] =		0;
 			work[1].quantity[i][1] =	0;
 			work[1].reuse[i][1] =		false;
 			work[1].reuse[i].push(structuredClone(area[0]));
@@ -126,33 +116,38 @@ export default class PackingTrimmer {
 	 * @param {number} [i=1]
 	*/
 	async #cutMaterial(packedInfo, list, i = 1) {
-		if(!list[i])
-			return(packedInfo);
-		const art =	list[i];
-		const packing =	['Sheet', 'Roll', 'Tape'];
-		const { reuse, types } = packedInfo[1];
-		const sheets =		types.filter(item => packing.includes(item[0]));
-		const materials =	sheets.filter((kind, j) => {
-			if(kind[2] === reuse[j][0] && reuse[j][1])
-				return(kind);
-		}, 0);
+		try {
+			if(!list[i])
+				return(this.#plannedWorks);
+			const art =	list[i];
+			const packing =	['Sheet', 'Roll', 'Tape'];
+			const { reuse, types } = packedInfo[1];
+			const sheets =		types.filter(item => packing.includes(item[0]));
+			const materials =	sheets.filter((kind, j) => {
+				if(kind[2] === reuse[j][0] && reuse[j][1])
+					return(kind);
+			}, 0);
 
-		if(materials.length) {
-			materials.map(item => {
-				const area = this.#enoughMaterial(item, packedInfo);
-				if(area) {
-					const compact =	area >= art.demand;
-					this.#updateMaterialBank(art, packedInfo, compact, item);
-				};
-			});
+			if(materials.length) {
+				materials.map(item => {
+					const area = this.#enoughMaterial(item, packedInfo);
+					if(area) {
+						const compact =	area >= art.demand;
+						this.#updateMaterialBank(art, packedInfo, compact, item);
+					};
+				});
+			};
+			return(this.#cutMaterial(packedInfo, list, i + 1));
+		}
+		catch(e) {
+			console.error(e);
 		};
-		return(this.#cutMaterial(packedInfo, list, i + 1));
 	};
 
 	/**
 	* @field - Call the fulfillment of the crate.
 	*/
-	get cardBoardcutter() {
+	get cardBoardCutter() {
 		this.#sorted.reverse().map(async (check, i) => {
 			if(i)
 				return(await this.#cutMaterial(check, this.#plannedWorks));

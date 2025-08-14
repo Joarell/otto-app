@@ -42,9 +42,12 @@ export default class CraterPythagoras {
 
 	#setPadding(innerCrate, layers) {
 		const crate =	new CrateMaker(layers).outSizes;
-		const X = 		+(innerCrate[0] + crate.x).toFixed(3);
-		const Z = 		+(innerCrate[1] + crate.z).toFixed(3);
-		const Y = 		+(innerCrate[2] + crate.y).toFixed(3);
+		const x = 		+(innerCrate[0] + crate.x).toFixed(3);
+		const z = 		+(innerCrate[1] + crate.z).toFixed(3);
+		const y = 		+(innerCrate[2] + crate.y).toFixed(3);
+		const X = 		x % 1 > 0 ? x: (x).toFixed(0);
+		const Z = 		z % 1 > 0 ? z: (z).toFixed(0);
+		const Y = 		y % 1 > 0 ? y: (y).toFixed(0);
 		const div =		crate.dev && layers.length > 1 ?
 			innerCrate[1] + (crate.div * (layers - 1)): innerCrate[1];
 

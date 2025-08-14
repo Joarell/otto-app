@@ -60,9 +60,12 @@ export default class CraterTube {
 
 	#setPaddings() {
 		const crate = new CrateMaker(1);
-		const X = (this[0] + crate.x).toFixed(3);
-		const Z = (this[1] + crate.z).toFixed(3);
-		const Y = (this[2] + crate.y).toFixed(3);
+		const x = +(this[0] + crate.x).toFixed(3);
+		const z = +(this[1] + crate.z).toFixed(3);
+		const y = +(this[2] + crate.y).toFixed(3);
+		const X = x % 1 > 0 ? x: (x).toFixed(0);
+		const Z = z % 1 > 0 ? z: (z).toFixed(0);
+		const Y = y % 1 > 0 ? y: (y).toFixed(0);
 
 		this.#setWokdCoordinates([X, Z, Y], structuredClone(list));
 		this.#coordinates.finalSize = [X, Z, Y];

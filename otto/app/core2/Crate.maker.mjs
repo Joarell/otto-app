@@ -22,7 +22,7 @@ export default class CrateMaker {
 		let x =				0;
 		let z =				0;
 		let y =				0;
-		let div;
+		let div =			0;
 
 		woods.map(item => {
 			x += +item[2];

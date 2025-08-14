@@ -14,9 +14,10 @@ export default class MaterialManagement {
 		if(!works && !crates)
 			return(false);
 
-		this.#works =			works;
-		this.#crates =			crates;
-		this.#materials =		JSON.parse(localStorage.getItem('materials'));
+		this.#worksSum =	[];
+		this.#works =		works;
+		this.#crates =		crates;
+		this.#materials =	JSON.parse(localStorage.getItem('materials'));
 		this.#data = {
 			worksReport: {
 				finalReport: [],
@@ -43,12 +44,10 @@ export default class MaterialManagement {
 		const crateSizes = [];
 
 		this.#works.map(work => this.#worksMaterialSum(work));
-		this.#worksSum.usedTypes.map((item,i) => {
-			this.#summarazedMaterialReport(item, i);
-		});
+		await this.#summarazedMaterialReport();
 		this.#works.length > 1 ? this.#residualAndReuseCalcMaterials():
 			this.#data.worksReport.materialManagement = [
-				this.#works[0], this.#works[0].packInfo
+				[ this.#works[0].code, this.#works[0].packInfo ]
 			];
 		Object.entries(this.#crates).map(data => {
 			if(CRATES.includes(data[0])) {
@@ -104,10 +103,10 @@ export default class MaterialManagement {
 				let totalCost =	0;
 
 				if(item[5] === 'Pinewood') {
-					const length =	innerSize[0] * (4 * 2); 					// NOTE: Each face has 2 pieces to compose the crate frame.
+					const length =	innerSize[0] * (4 * 2); 						// NOTE: Each face has 2 pieces to compose the crate frame.
 					const depth =	(innerSize[1] * (4 * 2)) + (innerSize[1] * 4);	// NOTE: Each face has 2 pieces to compose the crate frame plus 2 the handler and 2 for the feed.
-					const height =	innerSize[2] * (4 * 2);						// NOTE: Each face has 2 pieces to compose the crate frame.
-					const joins =	+item[3] * (4 * 6);						// NOTE: Each face has 4 joins than 6 times to each face.
+					const height =	innerSize[2] * (4 * 2);							// NOTE: Each face has 2 pieces to compose the crate frame.
+					const joins =	+item[3] * (4 * 6);								// NOTE: Each face has 4 joins than 6 times to each face.
 
 					area =			length + depth + height - joins;
 					quantity =		area / +item[1];
@@ -242,14 +241,15 @@ export default class MaterialManagement {
 		const prism =			this.#worksPlanification();
 		const sorted =			this.#quickSort(structuredClone(packedList));
 		const trimmerCard =		new PackingTrimmer(sorted, prism);
-		const sheets =			this.#materials.filter(item => item[5] === 'Sheet');
-		const materialData =	sheets.map(material => {
+		const available =		[ 'Sheet', 'Roll' ];
+		const packing =			this.#materials.filter(item => available.includes(item[5]));
+		const materialData =	packing.map(material => {
 			material.unshift(material[1] * material[3] / 100);
 			return(material);
 		});
 
 		trimmerCard.setWorksPacking = materialData;
-		this.#data.worksReport.materialManagement = trimmerCard.cardBoardcutter;
+		this.#data.worksReport.materialManagement = trimmerCard.cardBoardCutter;
 	};
 
 	/**
@@ -270,9 +270,9 @@ export default class MaterialManagement {
 			!usedTypes.includes(type[0]) ? usedTypes.push(type[0]): 0;
 			counterMaterials.push(type);
 		});
-		this.#worksSum = {
+		this.#worksSum.push({
 			usedTypes, residualTotal, totalUsed, quantity, counterMaterials
-		};
+		});
 	};
 
 	/**
@@ -280,22 +280,40 @@ export default class MaterialManagement {
 	* @param { Array } item the material info.
 	* @param { number } pos index of the material on the list.
 	*/
-	#summarazedMaterialReport(item, pos) {
+	async #summarazedMaterialReport(materials = new Map(), data = [], pos = 0) {
+		if(!this.#worksSum[pos])
+			return(
+				data.map(info => {
+					this.#data.worksReport.finalReport.push([info, materials.get(info)]);
+				})
+			);
+		const item = this.#worksSum[pos];
 		const {
 			totalUsed, residualTotal, counterMaterials
-		} = this.#worksSum;
-		const type =	this.#appliedMaterials[pos][0];
-		const area =	this.#appliedMaterials[pos][1];
-		let totalCost =		0;
-		let residual =	0;
-		let counter =	0;
+		} = item;
 
-		totalUsed.map(info => info[0] === item ? totalCost += info[1]: 0);
-		residualTotal.map(info => info[0] === item ? residual += info[1]: 0);
-		counterMaterials.map(info => info[0] === item ? counter += info[1]: 0);
-		this.#data.worksReport.finalReport.push([item, {
-			totalCost, residual, counter, type, area
-		}]);
+		item.usedTypes.map((pack, i) => {
+			const type = this.#appliedMaterials[pos + i][0];
+			const area = this.#appliedMaterials[pos + i][1];
+			let totalCost =	0;
+			let residual =	0;
+			let counter =	0;
+
+			if(data.includes(pack)) {
+				let { totalCost, residual, counter } = materials.get(pack);
+
+				totalUsed.map(info => info[0] === pack ? totalCost += info[1]: 0);
+				residualTotal.map(info => info[0] === pack ? residual += info[1]: 0);
+				counterMaterials.map(info => info[0] === pack ? counter += info[1]: 0);
+				return(materials.set(pack, { totalCost, residual, counter, type, area }));
+			};
+			totalUsed.map(info => info[0] === pack ? totalCost += info[1]: 0);
+			residualTotal.map(info => info[0] === pack ? residual += info[1]: 0);
+			counterMaterials.map(info => info[0] === pack ? counter += info[1]: 0);
+			data.push(pack);
+			materials.set(pack, { totalCost, residual, counter, type, area });
+		}, 0);
+		return(this.#summarazedMaterialReport(materials, data, pos + 1));
 	};
 
 	/**

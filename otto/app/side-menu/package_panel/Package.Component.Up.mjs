@@ -320,7 +320,6 @@ export class PackageInfoUp extends HTMLElement {
 
 		while(element && element.firstChild)
 			element.removeChild(element.firstChild);
-		this.#toggleMaterialsReportAndUpdate();
 		return(tag.setAttribute('name', id));
 	};
 
@@ -465,11 +464,10 @@ export class PackageInfoUp extends HTMLElement {
 			case 'packages':
 				return(await this.#populateMaterialsUpPanel());
 			case 'settings-content':
+				this.#toggleMaterialsReportAndUpdate();
 				return(await this.#populateAddMaterials());
 			case 'packed-works':
 				return(await this.#populatePackedWorksInCrates());
-			case 'settings-content':
-				return(className !== 'update-materials' && shadowClass !== 'new-material' ? this.#cleanPanel(id, shadowClass): 0);
 			case 'packages':
 				this.#inputListener();
 				return(className !== 'update-materials' && shadowClass !== 'select-materials' ? this.#cleanPanel(id, shadowClass) : 0);

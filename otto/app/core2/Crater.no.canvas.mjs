@@ -47,15 +47,18 @@ export default class CraterNotCanvas {
 
 	#setPadding(innerCrate) {
 		const crate =	new CrateMaker(this.#peces).outSizes;
-		const X = 		(innerCrate[0] + crate.x).toFixed(3);
-		const Z = 		(innerCrate[1] + crate.z).toFixed(3);
-		const Y = 		(innerCrate[2] + crate.y).toFixed(3);
+		const x = 		+(innerCrate[0] + crate.x).toFixed(3);
+		const z = 		+(innerCrate[1] + crate.z).toFixed(3);
+		const y = 		+(innerCrate[2] + crate.y).toFixed(3);
+		const X = 		x % 1 > 0 ? x: (x).toFixed(0);
+		const Z = 		z % 1 > 0 ? z: (z).toFixed(0);
+		const Y = 		y % 1 > 0 ? y: (y).toFixed(0);
 		const div =		crate.div ?
 			innerCrate[1] + (crate.div * this.#peces.length): innerCrate[1];
 
-		this.#setWorksCoordinates([X, X, Y]);
-		this.#coordinates.innerSize = [innerCrate[0], div, innerCrate[2]];
-		this.#coordinates.finalSize = [X, Z, Y];
+		this.#setWorksCoordinates([ X, X, Y ]);
+		this.#coordinates.innerSize = [ innerCrate[0], div, innerCrate[2] ];
+		this.#coordinates.finalSize = [ X, Z, Y ];
 		return ([...this.#coordinates.finalSize, this.#coordinates]);
 	};
 

@@ -153,10 +153,12 @@ export default class CraterStandard {
 		crate.z += z;
 		crate.y += innerSize[2];
 		crate.y += FORKFEET;
-		const finished = [ (crate.x).toFixed(0), (crate.z).toFixed(0), (crate.y).toFixed(0) ];
+		const X = crate.x % 1 > 0 ? (crate.x).toFixed(3): (crate.x).toFixed(0);
+		const Z = crate.z % 1 > 0 ? (crate.z).toFixed(3): (crate.z).toFixed(0);
+		const Y = crate.y % 1 > 0 ? (crate.y).toFixed(3): (crate.y).toFixed(0);
 		this.#rawList.map(work => this.#coordinates.artLocation.set(work.code, work));
-		this.#coordinates.finalSize = finished;
-		return([ ...finished, structuredClone(this.#coordinates) ]);
+		this.#coordinates.finalSize = [ X, Z, Y ];
+		return([ X, Z, Y, structuredClone(this.#coordinates) ]);
 	};
 
 	//		   ╭──────────────────────────╮

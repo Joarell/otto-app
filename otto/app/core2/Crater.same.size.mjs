@@ -53,15 +53,18 @@ export default class CraterSameSize {
 	};
 
 	#setPad(innerCrate, layersUp) {
-		const crater =		new CrateMaker(this.#peces.length, layersUp).outSizes;
-		const X = 			(innerCrate[0] + crater.x).toFixed(3);
-		const Z = 			(innerCrate[1] + crater.z).toFixed(3);
-		const Y = 			(innerCrate[2] + crater.y).toFixed(3);
-		const div =			innerCrate[1] + (crater.div * this.#peces.length);
+		const crater =	new CrateMaker(this.#peces.length, layersUp).outSizes;
+		const x = 		+(innerCrate[0] + crater.x).toFixed(3);
+		const z = 		+(innerCrate[1] + crater.z).toFixed(3);
+		const y = 		+(innerCrate[2] + crater.y).toFixed(3);
+		const X = 		x % 1 > 0 ? x: (x).toFixed(0);
+		const Z = 		z % 1 > 0 ? z: (z).toFixed(0);
+		const Y = 		y % 1 > 0 ? y: (y).toFixed(0);
+		const div =		innerCrate[1] + (crater.div * this.#peces.length);
 
-		this.#setWorksCoordinates([X, Z, Y], layersUp);
-		this.#coordinates.innerSize = [innerCrate[0], div, innerCrate[2]];
-		this.#coordinates.finalSize = [X, Z, Y];
+		this.#setWorksCoordinates([ X, Z, Y ], layersUp);
+		this.#coordinates.innerSize = [ innerCrate[0], div, innerCrate[2] ];
+		this.#coordinates.finalSize = [ X, Z, Y ];
 		return([...this.#coordinates.finalSize, this.#rawList]);
 	};
 
