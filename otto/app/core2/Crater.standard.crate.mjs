@@ -148,7 +148,9 @@ export default class CraterStandard {
 				});
 			};
 		tmp = crate.div * (this.#layers - 1) + z;
-		this.#coordinates.innerSize = [innerSize[0], tmp, innerSize[2]];
+		this.#coordinates.innerSize = [
+			innerSize[0] + crate.pad, tmp + crate.pad, innerSize[2] + crate.pad
+		];
 		crate.x += innerSize[0];
 		crate.z += z;
 		crate.y += innerSize[2];
@@ -157,8 +159,8 @@ export default class CraterStandard {
 		const Z = crate.z % 1 > 0 ? (crate.z).toFixed(3): (crate.z).toFixed(0);
 		const Y = crate.y % 1 > 0 ? (crate.y).toFixed(3): (crate.y).toFixed(0);
 		this.#rawList.map(work => this.#coordinates.artLocation.set(work.code, work));
-		this.#coordinates.finalSize = [ X, Z, Y ];
-		return([ X, Z, Y, structuredClone(this.#coordinates) ]);
+		this.#coordinates.finalSize = [ +X, +Z, +Y ];
+		return([ +X, +Z, +Y, structuredClone(this.#coordinates) ]);
 	};
 
 	//		   ╭──────────────────────────╮

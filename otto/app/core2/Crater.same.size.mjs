@@ -62,9 +62,11 @@ export default class CraterSameSize {
 		const Y = 		y % 1 > 0 ? y: (y).toFixed(0);
 		const div =		innerCrate[1] + (crater.div * this.#peces.length);
 
-		this.#setWorksCoordinates([ X, Z, Y ], layersUp);
-		this.#coordinates.innerSize = [ innerCrate[0], div, innerCrate[2] ];
-		this.#coordinates.finalSize = [ X, Z, Y ];
+		this.#setWorksCoordinates([ +X, +Z, +Y ], layersUp);
+		this.#coordinates.innerSize = [
+			innerCrate[0] + crate.pad, div + crate.pad, innerCrate[2] + crate.pad
+		];
+		this.#coordinates.finalSize = [ +X, +Z, +Y ];
 		return([...this.#coordinates.finalSize, this.#rawList]);
 	};
 

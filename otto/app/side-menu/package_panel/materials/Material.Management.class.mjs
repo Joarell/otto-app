@@ -148,7 +148,7 @@ export default class MaterialManagement {
 		const Foam = { area: 0, quantity: 0, counter: 0, residual: 0, totalCost: 0 };
 		const Padding = { area: 0, quantity: 0, counter: 0, residual: 0, totalCost: 0 };
 		crates.map(crate => {
-			const { innerSize } = crate[0];
+			const { innerSize, layers } = crate[0];
 			materials.map(item => {
 				let area =		0;
 				let quantity =	0;
@@ -157,6 +157,12 @@ export default class MaterialManagement {
 				let totalCost =	0;
 
 				if(item[2] <= 2.5) {
+					if(layers.length === 1) {
+						crate[2].set(item[0], {
+							type: item[0], counter, residual, area, totalCost
+						});
+						return(crate)
+					};
 					const crateFaceArea = +innerSize[0] * +innerSize[2];
 
 					area =			+item[1] * +item[3];
@@ -167,7 +173,9 @@ export default class MaterialManagement {
 					residual =		+(quantity - Math.floor(quantity)).toFixed(3);
 					totalCost =		item[4] * counter;
 
-					crate.at(-1).set(item[0], { type: item[0], counter, residual, area, totalCost, });
+					crate[2].set(item[0], {
+						type: item[0], counter, residual, area, totalCost,
+					});
 					Foam.area += area;
 					Foam.quantity += quantity;
 					Foam.counter += counter;

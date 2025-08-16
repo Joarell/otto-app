@@ -165,7 +165,8 @@ export class PackageInfoDown extends HTMLElement {
 		const { shadowRoot } = panel;
 		const table = new UsedMaterialsTable(shadowRoot);
 
-		table.setupTable;
+		if(!table.setupTable)
+			return(this.#populateUpdateMaterials());
 		return(shadowRoot.appendChild(this.#link));
 	};
 

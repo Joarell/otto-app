@@ -119,7 +119,7 @@
 	   │ 	main setup    │
 	   ╰────────────────╯
 	*/
-	--work-link: #8C3F51;
+	--work-link: oklch(0.4745 0.106 7.35);
 	--state: running;
 	--gold: goldenrod;
 	--yellow-select: #EFECBBBE;

@@ -53,12 +53,39 @@ export default class CrateTrimmer {
 	* @method - returns how many materials are needed to the crate.
 	* @param { number } count quantity.
 	* @param { Array } sizes works dimensions.
+	* @param { Array } crate size;
 	*/
-	#provideMaterial(count, sizes) {
-		const provision = [];
+	#provideMaterial(count, sizes, crate) {
+		const provision =	[];
+		const extraX =		crate[0] > sizes[0] ? crate[0] - sizes[0]: 0;
+		const extraY =		crate[2] > sizes[1] ? crate[2] - sizes[1]: 0;
+		const materialArea = sizes[0] * sizes[1];
+
+		if(extraX && extraY) {
+			const faces =	((sizes[0] * extraY) + (extraY * extraX)) * 2;
+			const sides =	((crate[1] * sizes[1]) + (extraY * crate[1])) * 2;
+			const upDown =	((crate[1] * sizes[0]) + (crate[1] * extraX)) * 2;
+			const extra =	Math.ceil((faces + sides + upDown) / materialArea);
+
+			count -= extra;
+		}
+		else if(extraX && !extraY) {
+			const faces =	((extraX * crate[2]) + (crate[0] * crate[2])) * 2;
+			const upDown =	((extraX * crate[1]) + (crate[0] * crate[1])) * 2;
+			const extra =	Math.ceil((faces + upDown) / materialArea);
+
+			count -= extra;
+		}
+		else if(!extraX && extraY) {
+			const faces =	((crate[0] * extraY) + (crate[0] * sizes[1])) * 2;
+			const sides =	((crate[1] * extraY) + (crate[1] * sizes[1])) * 2;
+			const extra =	Math.ceil((faces + sides) / materialArea);
+
+			count -= extra;
+		};
 		while(count > provision.length)
-			provision.push([sizes[0], sizes[1]])
-		return(provision);
+			provision.push([sizes[0] + extraX, sizes[1] + extraY]);
+		return({ provision, extraX, extraY });
 	};
 
 	/**
@@ -67,55 +94,45 @@ export default class CrateTrimmer {
 	* @param { Array } data material sizes.
 	*/
 	#reuseMaterialRecursion(data, sizes, i = 0) {
-		const material =	data[i];
+		const material =	data[0];
 		const checker =		data[1];
-		if(!data[0][i] || !Array.isArray(material) || checker.a && checker.b)
+		if(!data[0][0] || i === 2 || checker.a && checker.b)
 			return(data[0]);
 
 		if(material[0] >= sizes[0] && material[1] >= sizes[1]) {
-			let x = material[0] - sizes[0];
-			let y = material[1] - sizes[1];
+			const x = structuredClone(material[0]);
+			const y = structuredClone(material[1]);
+			let diff;
 
-			material[0] = +(material[0] - sizes[0]).toFixed(3);
-			!y ? material[1] -= sizes[1]: 0
-			x && material[0] === 0 && sizes[1] > material[1] ? x = sizes[0]: sizes[0];
-			y && material[0] === 0 && sizes[1] > material[1] ? y = sizes[1]: sizes[0];
-
-			if (material[0] >= sizes[0]) {
-				material[0] = +(material[0] - sizes[0]).toFixed(3);
-				!y ? material[1] -= sizes[1]: 0
-				x && material[0] === 0 && sizes[1] > material[1] ? x += sizes[0]: sizes[0];
-				y && material[0] === 0 && sizes[1] > material[1] ? y += sizes[1]: sizes[0];
-				checker.a = true;
-				checker.b = true;
-			}
-			else {
-				checker.a && !checker.b ? checker.b = true: 0;
-				!checker.a ? checker.a = true: 0;
-			}
-			x && y ? data[i] = [x, y]: 0;
-		}
-		else if(material[1] >= sizes[0] && material[0] >= sizes[1]) {
-			let x = material[0] - sizes[1];
-			let y = material[1] - sizes[0];
-
-			material[1] = +(material[1] - sizes[0]).toFixed(3);
-			!y ? material[0] -= sizes[0]: 0
-			x && material[0] === 0 && sizes[0] > material[0] ? x = sizes[1]: sizes[1];
-			y && material[0] === 0 && sizes[0] > material[0] ? y = sizes[0]: sizes[1];
-
-			if(material[1] >= sizes[0]) {
-				material[1] = +(material[1] - sizes[0]).toFixed(3);
-				!y ? material[0] -= sizes[0]: 0
-				x && material[0] === 0 && sizes[0] > material[0] ? x = sizes[1]: sizes[1];
-				y && material[0] === 0 && sizes[0] > material[0] ? y = sizes[0]: sizes[1];
-			}
-			else {
-				checker.a && !checker.b ? checker.b = true: 0;
-				!checker.a ? checker.a = true: 0;
+			material[0] = material[0] === sizes[0] ? 0: +(material[0] - sizes[0]).toFixed(3);
+			!material[0] && material[1] === sizes[1] ? material[1] = +(material[1] - sizes[1]).toFixed(3): 0;
+			if(!material[0] && material[1]) {
+				if(material[1] > sizes[1]) {
+					material[0] = x;
+					material[1] = +(material[1] - sizes[1]).toFixed(3);
+				}
+				else
+					material[0] = +(material[0] - sizes[0]).toFixed(3);
 			};
-			x && y ? data[i] = [x, y]: 0;
-		};
+			diff = material[0] !== x || material[1] !== y;
+			diff && !checker.a ? checker.a = true: checker.b = true;
+			if(!checker.b && material[0] >= sizes[0] && material[1] >= sizes[1]){
+				material[0] = material[0] === sizes[0] ? 0: +(material[0] - sizes[0]).toFixed(3);
+				!material[0] && material[1] === sizes[1] ? material[1] = +(material[1] - sizes[1]).toFixed(3): 0;
+
+				if(!material[0] && material[1]) {
+					if(material[1] > sizes[1]) {
+						material[0] = x;
+						material[1] = +(material[1] - sizes[1]).toFixed(3);
+					}
+					else
+						material[0] = +(material[0] - sizes[0]).toFixed(3);
+				};
+				material[0] !== x && !checker.a ? checker.a = true: checker.b = true;
+			};
+		}
+		[ material[0], material[1] ] = [ material[1], material[0] ];
+		data[0] = material;
 		return(this.#reuseMaterialRecursion(data, sizes, i + 1));
 	};
 
@@ -160,7 +177,7 @@ export default class CrateTrimmer {
 	* @param { Array } type of material.
 	* @param { Array } crate data.
 	*/
-	#allSidesCrate(size, crate, item, type) {
+	#allSidesCrate(size, crate, item, type, { extraX, extraY }) {
 		let frontBack;
 		let sides;
 		let upDown;
@@ -169,13 +186,17 @@ export default class CrateTrimmer {
 			frontBack =	{ x: size[0], y: size[2] - type[3] };
 			sides =		{ z: size[1], y: size[2] - type[3] };
 			upDown =	{ x: size[0] - type[3], z: size[1] };
-			crate[2].set('Frame', { frontBack, sides, upDown, name: type[0] });
+			crate[2].set('Frame', {
+				frontBack, sides, upDown, name: type[0],
+			});
 		}
 		else {
-			frontBack =	{ x: size[0], y: size[2] };
-			sides =		{ z: size[1], y: size[2] };
-			upDown =	{ x: size[0], z: size[1] };
-			crate[2].set(type[5], { frontBack, sides, upDown, name: type[0] });
+			frontBack =	{ x: size[0], y: size[2], extraX, extraY };
+			sides =		{ z: size[1], y: size[2], extraY };
+			upDown =	{ x: size[0], z: size[1], extraX };
+			crate[2].set(type[5], {
+				frontBack, sides, upDown, name: type[0]
+			});
 		};
 		return(crate);
 	};
@@ -186,7 +207,7 @@ export default class CrateTrimmer {
 	* @param { Array } pine the frame material to apply.
 	* @param { Array } bank of used materials.
 	*/
-	#largeCrateStructure(crate, pine, bank) {
+	#largeCrateStructure(crate, pine) {
 		const { finalSize } =	crate[0];
 		const ply =				this.#crateMaterials.find(item => item[5] === 'Plywood');
 		const plyArea =			ply[1] * ply[3];
@@ -254,9 +275,9 @@ export default class CrateTrimmer {
 		let pinewood =			totalMaterial > +pine[1] ?
 			Math.ceil(totalMaterial / +pine[1]) * +pine[1] : +pine[1];
 
-		this.#allSidesCrate(innerSize, crate, 'Frame', pine);
+		this.#allSidesCrate(innerSize, crate, 'Frame', pine, { extraX: 0, extraY: 0 });
 		crate[1] === 'largestCrate' ? this.#largeCrateStructure(crate, pine): 0;
-		const structure =	this.#largestData.get('pine');
+		const structure =		this.#largestData.get('pine');
 		if(!onBank) {
 			const residual =	+((pinewood - totalMaterial)).toFixed(3);
 
@@ -286,8 +307,8 @@ export default class CrateTrimmer {
 			update.residual += +(1 - structure % 1).toFixed(3);
 		};
 		crate[2].set(pine[0], update);
-		this.#updateCratesMaterialUsage(pine, onBank[0]);
-		this.#materialBank.delete(pine[0]);
+		crate[1] !== 'largestData' ?
+			this.#updateCratesMaterialUsage(pine, onBank[0]): 0;
 		this.#materialBank.set(pine[0], [ index, residual ]);
 		return(crate);
 	};
@@ -318,24 +339,23 @@ export default class CrateTrimmer {
 	* @param { Object } crate data.
 	*/
 	async #fillEmptySpaceOnLayers(crate) {
-		let foam2 =	await Promise.resolve(this.#materialBank.get('2'));
-		let foam5 =	await Promise.resolve(this.#materialBank.get('5'));
-
-		!foam2 ? foam2 = this.#crateMaterials.find(item => {
+		let foam2 =	this.#materialBank.get('2') ?? this.#crateMaterials.find(item => {
 			if(item[5] === 'Foam Sheet' && item[2] <= 2.5)
 				return(item);
-		}): 0;
-		!foam5 ? foam5 = this.#crateMaterials.find(item => {
+		});
+		let foam5 =	this.#materialBank.get('5') ?? this.#crateMaterials.find(item => {
 			if(item[5] === 'Foam Sheet' && item[2] > 2.5)
 				return(item);
-		}): 0;
+		});
+		foam2 = Array.isArray(foam2[0]) ? foam2[0]: foam2;
+		foam5 = Array.isArray(foam5[0]) ? foam5[0]: foam5;
 		const calcLayer = crate[0].fillGaps;
 		const results = calcLayer.map(info => {
 			const { highestZ, total } = info;
-			return(highestZ > 2.5 ? [foam5, total]: [foam2, total]);
-		})
+			return(highestZ[1] >= +foam5[2] ? [foam5, total]: [foam2, total]);
+		}).flat().filter(data => Array.isArray(data));
 
-		crate[2].set('gaps', results);
+		crate[2].set('gaps', { results, calcLayer });
 		return(crate);
 	};
 
@@ -366,21 +386,20 @@ export default class CrateTrimmer {
 		onBank ? onBank.map(val => areaBank += val[0] * val[1]): 0;
 		const foamArea =	+(+foam[1] * +foam[3] - areaBank).toFixed(3);
 		const count =		Math.ceil(layerArea / foamArea);
-		let needed;
+		const { provision, extraX, extraY } = this.#provideMaterial(count, [+foam[1], +foam[3]], innerSize);
 		let residual;
 
 		if(!onBank) {
-			needed =	!count ? 0 : this.#provideMaterial(count, [+foam[1], +foam[3]]);
-			residual =	!needed ? 0 : this.#foamDivisorLayers(innerSize, needed);
+			residual =	!provision ? 0 : this.#foamDivisorLayers(innerSize, provision);
 		};
 
-		needed =	!needed ? this.#provideMaterial(count, [+foam[1], +foam[3]]): needed;
-		residual =	!residual ? this.#foamDivisorLayers(innerSize, needed): residual;
+		residual =	!residual && count ?
+			this.#foamDivisorLayers(innerSize, provision): residual;
 		this.#materialBank.set(foam[0], [ residual ]);
 		lowDepth && Array.isArray(lowDepth) ?
-			this.#materialBank.set('2', lowDepth.push(foam)):
+			this.#materialBank.set('2', lowDepth):
 			this.#materialBank.set('2', [foam]);
-		return(await this.#fillEmptySpaceOnLayers(crate, layers));
+		return(await this.#fillEmptySpaceOnLayers(crate));
 	};
 
 	/**
@@ -393,28 +412,20 @@ export default class CrateTrimmer {
 		const { innerSize } = crate[0];
 		const area = size => 2 * (size[0] * size[1]) + 2 * (size[0] * size[2]) + 2 * (size[1] * size[2]);
 		const material =	crate[2].get(item[0]);
-		let materialArea;
-		let count;
-		let needed;
-
-		this.#allSidesCrate(innerSize, crate, item[5], item);
 		const totalArea =	+(area(innerSize)).toFixed(3);
-		if(!onBank) {
-			materialArea =	+item[1] * +item[3];
-			count =			Math.ceil(totalArea / materialArea);
-			needed =		this.#provideMaterial(count, [+item[1], +item[3]]);
-		};
 		const areaBank =	onBank ?
 			Number.parseFloat(onBank[1].reduce((val, sum) => sum += +val[0] * +val[1], 0)): 0;
-		materialArea =		!materialArea ? ((+item[1] * +item[3]) - +areaBank): materialArea;
-		count =				!count ? Math.ceil(totalArea / materialArea): count;
-		needed =			!needed ? this.#provideMaterial(count, [+item[1], +item[3]]): needed;
+		const materialArea = areaBank ? ((+item[1] * +item[3]) - +areaBank): +item[1] * +item[3];
+		const count =		Math.ceil(totalArea / materialArea);
+		const { provision, extraX, extraY } = this.#provideMaterial(count, [+item[1], +item[3]], innerSize);
 		const { provided, bank, stored } =	onBank ?
-			this.#cutterManager(needed, onBank[1], innerSize):
-			this.#cutterManager(needed, false, innerSize);
+			this.#cutterManager(provision, onBank[1], innerSize):
+			this.#cutterManager(provision, false, innerSize);
 		const residual =	onBank ? `Reused from crate: ${onBank[0] + 1}`: provided;
 		const useful =		Array.isArray(residual) && !stored ?
-			residual.filter(rest => rest[0] >= 50 && rest[1] >= 50): 0;
+			residual.filter(val => val[0] > 0)
+			.map(rest => +(rest[0] * rest[1]).toFixed(3))
+			.reduce((sum, val) => sum + val, 0): 0;
 
 		material.counter = count;
 		if(!stored){
@@ -425,10 +436,11 @@ export default class CrateTrimmer {
 			this.#materialBank.set(item[0], [ onBank[1], bank ]);
 
 		onBank && !stored ? this.#updateCratesMaterialUsage(item, onBank[0]): 0;
-		Array.isArray(useful) && useful.length ?
-			material.residual = useful: material.residual = residual;
-		item[5] === 'Plywood' ?
-			crate[2].set(item[0], material): crate[2].set(item[0], material);
+		// Array.isArray(useful) && useful.length ?
+		// 	material.residual = useful: material.residual = residual;
+		material.residual = useful;
+		crate[2].set(item[0], material);
+		this.#allSidesCrate(innerSize, crate, item[5], item, { extraX, extraY });
 		return(crate);
 	};
 

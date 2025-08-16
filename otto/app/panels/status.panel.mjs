@@ -71,6 +71,7 @@ export function statusTablePopulate(data) {
 	const doc =		JSON.parse(data);
 	const mode =	localStorage.getItem("mode");
 	const { reference, list } = doc;
+	const { materials } = localStorage;
 
 	localStorage.getItem("metrica") === "in - inches"
 		? (metric = "in - inches")
@@ -85,6 +86,7 @@ export function statusTablePopulate(data) {
 	localStorage.setItem("refNumb", reference);
 	localStorage.setItem("metrica", metric);
 	localStorage.setItem("mode", mode);
+	localStorage.setItem('materials', materials);
 };
 
 // ╭────────────────────────────────────────────────────╮

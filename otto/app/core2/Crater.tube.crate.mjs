@@ -67,8 +67,10 @@ export default class CraterTube {
 		const Z = z % 1 > 0 ? z: (z).toFixed(0);
 		const Y = y % 1 > 0 ? y: (y).toFixed(0);
 
-		this.#setWokdCoordinates([X, Z, Y], structuredClone(list));
-		this.#coordinates.finalSize = [X, Z, Y];
+		this.#setWokdCoordinates([
+			this[0] + crate.pad, this[1] + crate.pad, this[2] + crate.pad
+		], structuredClone(list));
+		this.#coordinates.finalSize = [+X,+Z, +Y];
 		return([...this.#coordinates.finalSize]);
 	};
 

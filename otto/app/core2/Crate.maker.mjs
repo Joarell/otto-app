@@ -23,6 +23,7 @@ export default class CrateMaker {
 		let z =				0;
 		let y =				0;
 		let div =			0;
+		let pad =			0;
 
 		woods.map(item => {
 			x += +item[2];
@@ -41,11 +42,12 @@ export default class CrateMaker {
 			x += +foam[2];
 			z += +foam[2];
 			y += +foam[2];
+			foam[2] > 2.5 ? pad = 2 * foam[2]: 0;
 		}): 0;
 		x *= 2;
 		z *= 2;
 		y *= 2;
-		return({ x, z, y, div });
+		return({ x, z, y, div, pad });
 	};
 
 	/**

@@ -25,38 +25,34 @@ export default class WorksCoordinates {
 			},
 			get fillGaps() {
 				const data =	[];
-				const highZ = ({ work }, z = 0) => {
-					work.map(art => art[2] > z || z === 0 ? z = art[2]: 0);
-					return(z);
+				const highZ = (works, thick = 0) => {
+					works.map(art => !thick || art.work[2] > thick[1]? thick = [art.work[0], art.work[2]]: 0);
+					return(thick);
 				};
-				let x1 =		0;
-				let y1 =		0;
-				let total =		0;
-				const calc =	(gaps) => gaps.map(coordinates => {
-					const check1 = coordinates[0] <= x1 || coordinates[1] <= y1;
-					const check2 = coordinates[0] === coordinates[2] &&
-						coordinates[1] === coordinates[3];
-					if(check1 || check2)
-						return ;
-					x1 = coordinates[0];
-					y1 = coordinates[0];
-					const area =	coordinates[2] * coordinates[3];
-					let gapX = 		coordinates[2] - coordinates[0];
-					let gapY =		coordinates[3] - coordinates[1];
+				const calc =	(gaps, total = 0, sizes = []) => {
+					gaps.map(pos => {
+						if(pos[0] === pos[2] && pos[1] === pos[3])
+							return;
+						let gapX = 	pos[2] - pos[0];
+						let gapY =	pos[3] - pos[1];
 
-					total += +( area - (gapX * gapY)).toFixed(3);
-				});
-
+						!gapX && gapY ? gapX = pos[0]: 0;
+						gapX && !gapY ? gapY = pos[1]: 0;
+						sizes.push([+(gapX).toFixed(2), +(gapY).toFixed(2)]);
+						total += +(gapX * gapY).toFixed(3);
+					});
+					return({ total, sizes });
+				};
 				this.layers.map(info => {
 					const { vacuum, works } =	info;
-					const Z =					highZ(works[0]);
+					const Z =					highZ(works);
+					const { total, sizes } =	calc(vacuum);
 
-					calc(vacuum, Z);
 					data.push({
-						highestZ: structuredClone(Z),
-						total: structuredClone(total),
+						highestZ: Z,
+						total,
+						sizes,
 					});
-					total = 0;
 				});
 				return(data);
 			},

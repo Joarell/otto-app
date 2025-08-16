@@ -56,9 +56,11 @@ export default class CraterNotCanvas {
 		const div =		crate.div ?
 			innerCrate[1] + (crate.div * this.#peces.length): innerCrate[1];
 
-		this.#setWorksCoordinates([ X, X, Y ]);
-		this.#coordinates.innerSize = [ innerCrate[0], div, innerCrate[2] ];
-		this.#coordinates.finalSize = [ X, Z, Y ];
+		this.#setWorksCoordinates([ +X, +Z, +Y ]);
+		this.#coordinates.innerSize = [
+			innerCrate[0] + crate.pad, div + crate.pad, innerCrate[2] + crate.pad
+		];
+		this.#coordinates.finalSize = [ +X, +Z, +Y ];
 		return ([...this.#coordinates.finalSize, this.#coordinates]);
 	};
 

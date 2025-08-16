@@ -124,7 +124,6 @@ export class PackageInfoUp extends HTMLElement {
 					return(this.#addNewField());
 				default :
 					cleaner.map(field => field.value = "");
-					this.#hiddenContent();
 					return(this.#populateMaterialsUpPanel());
 			};
 		};
@@ -216,7 +215,10 @@ export class PackageInfoUp extends HTMLElement {
 	#toggleMaterialsReportAndUpdate() {
 		const downPane =	document.querySelector(".update-materials");
 		const name =		downPane.getAttribute('name');
+		const { onCrate } = globalThis.sessionStorage;
 
+		if(!onCrate)
+			return;
 		name === "materials-used" ?
 			downPane.setAttribute('name', 'update-materials'):
 			downPane.setAttribute('name', 'materials-used')
@@ -359,14 +361,13 @@ export class PackageInfoUp extends HTMLElement {
 		const node =			document.importNode(clone, true);
 		const materialsInfo =	new AvailableMaterials(node.lastElementChild);
 		const types =			await materialsInfo.allMaterials;
-		const fragment =		new DocumentFragment();
 		const settingsBtn =		document.getElementById('settings-content');
 
 		settingsBtn.style.backgroundColor = "transparent";
 		if(types) {
+			this.#hiddenContent();
 			shadowRoot.appendChild(this.#link);
-			fragment.append(await materialsInfo.populate)
-			shadowRoot.appendChild(fragment);
+			shadowRoot.appendChild(await materialsInfo.populate);
 			return(this.#loadPageSelection());
 		};
 	};
@@ -455,6 +456,8 @@ export class PackageInfoUp extends HTMLElement {
 
 		this.#type.push(newVal);
 		switch(newVal) {
+			case 'crates':
+				return;
 			case 'update':
 				return(await this.#populateMaterialsUpPanel());
 			case 'select-materials':

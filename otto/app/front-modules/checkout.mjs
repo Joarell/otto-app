@@ -17,7 +17,7 @@ globalThis.onload = async () => {
 	const statusFrame = document.getElementById("status-frame");
 	const list =		document.getElementById('statusList');
 
-	sessionStorage.removeItem('crate');
+	sessionStorage.removeItem('onCrate');
 	list ? list.setAttribute('content', 'reload'):
 		statusFrame.append(addPanelInfo());
 	browserStoragePrepare();
@@ -25,7 +25,6 @@ globalThis.onload = async () => {
 	setCheckRadio();
 	setModeColor();
 	populateRightPanels();
-	// setTimeout(loadingPage, 1500);
 };
 
 

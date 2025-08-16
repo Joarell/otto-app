@@ -1,4 +1,3 @@
-
 /**
 * @class - defines the materials set up prices, sizes and types.
 */

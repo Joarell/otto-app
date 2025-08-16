@@ -191,8 +191,6 @@ globalThis.document.getElementById('main-app')
 		case 'confirm-save':
 			up.setAttribute('name', 'confirm-save');
 			break;
-		case 'crates':
-			up.setAttribute('content', element.target.id);
 	};
 }), true);
 
