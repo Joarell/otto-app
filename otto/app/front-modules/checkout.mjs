@@ -28,7 +28,7 @@ globalThis.onload = async () => {
 };
 
 
-export function populateRightPanels() {
+export async function populateRightPanels() {
 	const fragment1 =	 new DocumentFragment();
 	const fragment2 =	 new DocumentFragment();
 	const materials =	document.createElement('pack-up');

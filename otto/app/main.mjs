@@ -26,7 +26,7 @@ globalThis.document.getElementById('main-app')
 	.addEventListener("click", (element => {
 	const up =		document.querySelector('.materials');
 	const down =	document.querySelector('.update-materials');
-	let { id, className, tagName, attributes } = element.target;
+	let { id, className, attributes } = element.target;
 
 	{
 		const { shadowRoot } =	up;
@@ -268,7 +268,7 @@ globalThis.document.getElementById('main-app')
 	const { id, className, tagName } =	e.detail;
 	const up =	document.querySelector('.materials');
 
-	tagName === 'A' ? up.setAttribute('content', id): 0;
+	tagName === 'A' ? up.setAttribute('content', `${id}-${className}`): 0;
 }, true);
 
 globalThis.document.getElementById('main-app')

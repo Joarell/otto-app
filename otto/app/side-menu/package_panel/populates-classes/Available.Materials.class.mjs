@@ -40,8 +40,8 @@ export default class AvailableMaterials {
 
 			material.id = 'populate-materials';
 			material.innerHTML = `
-				<input type="checkbox" name="${opts[0]}" id="material-${i}"></input>
-				<label for="material-${i}" name="material-${i}">${opts[0]}</label>
+				<input type="checkbox" name="${opts[0]}" id="wood-material-${i}"></input>
+				<label for="wood-material-${i}" name="material-${i}">${opts[0]}</label>
 			`;
 			this.#entry.appendChild(material);
 		}, 0);
@@ -66,8 +66,8 @@ export default class AvailableMaterials {
 			pack[5] === 'Foam Sheet' ? woodOpts.push(pack) : 0;
 			material.id = 'populate-materials';
 			material.innerHTML = `
-				<input type="checkbox" name="${pack[0]}" id="material-${i}"></input>
-				<label for="material-${i}" name="material-${i}">${pack[0]}</label>
+				<input type="checkbox" name="${pack[0]}" id="packing-material-${i}"></input>
+				<label for="packing-material-${i}" name="material-${i}">${pack[0]}</label>
 			`;
 			this.#entry.appendChild(material);
 		}, 0);

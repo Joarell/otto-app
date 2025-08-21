@@ -36,11 +36,10 @@ export default class PackedWorks {
 	* @method - populate the list and anchor html element.
 	* @param { Array:HTMLElement } list - the layer array with all works inside.
 	*/
-	#setWorksUpList(list) {
+	#setWorksUpList(list, layer, numCrate) {
 		const worksListed = document.createElement('ol');
 
 		list.map(work => {
-
 			if(!Array.isArray(work))
 				return ;
 			const info = document.createElement('li');
@@ -48,6 +47,7 @@ export default class PackedWorks {
 
 			anchor.setAttribute('href', `#${work[0]}`);
 			anchor.id = work[0];
+			anchor.className = numCrate + "-" + layer;
 			anchor.innerText = `${work[0]} - ${work[1]} x ${work[2]} x ${work[3]} - ${this.#metric}`;
 			info.append(anchor);
 			worksListed.appendChild(info);
@@ -59,7 +59,7 @@ export default class PackedWorks {
 	* @method - sets the detail html element to be populated
 	* @param {Object} works - the crate object content layers.
 	*/
-	#layersStructureElements({ works }, element) {
+	#layersStructureElements({ works }, element, numCrate) {
 		Object.entries(works).map(info => {
 			const levels = document.createElement('details');
 
@@ -76,7 +76,7 @@ export default class PackedWorks {
 
 					summaryLayer.innerText = `${data[0]}`
 					levels.appendChild(summaryLayer);
-					levels.appendChild(this.#setWorksUpList(data[1]));
+					levels.appendChild(this.#setWorksUpList(data[1], data[0], numCrate));
 				});
 			return(element.appendChild(levels));
 		});
@@ -87,7 +87,7 @@ export default class PackedWorks {
 	* @method - starts the html element population calls.
 	* @param {Object} crates - the result object to feed them.
 	*/
-	#resultReportElements({ crates }) {
+	#resultReportElements({ crates }, numCrate) {
 		const report =		document.createElement('details');
 		const crateSum =	document.createElement('summary');
 		const metric =		localStorage.getItem('metrica').split('-')[0];
@@ -99,7 +99,7 @@ export default class PackedWorks {
 		crateSum.innerText = `crate ${this.#countCrates} - ${crates[0][0]} x ${crates[0][1]} x ${crates[0][2]} - ${metric}`;
 		this.#countCrates++;
 		report.appendChild(crateSum);
-		this.#layersStructureElements(crates[1], report);
+		this.#layersStructureElements(crates[1], report, numCrate);
 		fragment.append(report);
 		return(fragment);
 	};
@@ -120,12 +120,12 @@ export default class PackedWorks {
 		];
 		const fragment =	new DocumentFragment();
 
-		Object.entries(crates).map(crate => {
+		Object.entries(crates).map((crate, i) => {
 			if(Array.isArray(crate[1].crates) && crate[1].crates.length === 0)
 				return ;
 			if(crateTypes.includes(crate[0]))
-				fragment.appendChild(this.#resultReportElements(crate[1]));
-		});
+				fragment.appendChild(this.#resultReportElements(crate[1], i));
+		}, 0);
 		return(fragment);
 	};
 

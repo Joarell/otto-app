@@ -479,7 +479,7 @@ export default class UsedMaterialsTable {
 			const headerCrate =		document.createElement('th');
 			const type =			this.#setStatusCrateType(crate[1]);
 
-			headerCrate.innerHTML = `<h5>Crate ${ i } - ${ type }</h5>`
+			headerCrate.innerHTML = `<h5>Crate ${ i + 1 } - ${ type }</h5>`
 			table.append(headerCrate);
 			content.innerHTML =`
 				<th>Material</th>
@@ -495,7 +495,7 @@ export default class UsedMaterialsTable {
 			table.role = 'table';
 			await this.#cratesOnTable(crate, table);
 			node.appendChild(table);
-		}, 1);
+		}, 0);
 		return(node);
 	};
 
@@ -556,6 +556,7 @@ export default class UsedMaterialsTable {
 				<th>Material Unit</th>`;
 			table.append(content);
 			table.id = crateNumb;
+			table.className = `layer${i + 1}`;
 			table.ariaHidden = 'true';
 			table.role = 'none';
 			Array.isArray(info.sizes[0]) ?
@@ -598,7 +599,7 @@ export default class UsedMaterialsTable {
 
 		await this.#worksTable(node, worksReport);
 		await this.#cratesTable(node, cratesReport);
-		materialManagement.map((data, i) => this.#layerTable(node, data, i), 0);
+		materialManagement.map((data, i) => this.#layerTable(node, data, i + 1), 0);
 		this.#worksCrateLocation(materialManagement);
 		return(node);
 	};

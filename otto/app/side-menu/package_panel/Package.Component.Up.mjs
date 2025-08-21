@@ -130,20 +130,6 @@ export class PackageInfoUp extends HTMLElement {
 	};
 
 	/**
-	* @adds new fields to fill with new pack materials;
-	*/
-	async #updateMaterials(shadow) {
-		shadow.querySelector('.packing-materials')
-			.addEventListener('input', (e) => {
-				const { id } = e.target;
-				e.stopImmediatePropagation();
-				id ? result = true: 0;
-		});
-		shadow.querySelector('.packing-materials')
-			.removeEventListener('input');
-	};
-
-	/**
 	* @method - adds the input listener to select artwork packing materials.
 	*/
 	#inputListener() {
@@ -174,14 +160,17 @@ export class PackageInfoUp extends HTMLElement {
 				JSON.parse(globalThis.sessionStorage.getItem('onCrate'))
 			)
 		);
+		const code =		work.split('-')[0];
+		const openCrate =	work.split('-')[1];
+		const openLayer =	work.split('-')[2];
 
 		Object.entries(list).map((node, i) => {
-			const { id } =	node[1];
+			const { id, className } =	node[1];
 			if(i > list.length - 1 || id === '')
 				return;
-			const layer =	onCrate.get(work);
+			const layer =	onCrate.get(code);
 			const crate =	sessionStorage.getItem('crate');
-			const art =		id === work;
+			const art =		id === code;
 
 			node[1].ariaHidden = 'true';
 			if(art) {
@@ -189,6 +178,8 @@ export class PackageInfoUp extends HTMLElement {
 				sessionStorage.setItem('crate', layer);
 			};
 			id === crate ? node[1].ariaHidden = 'false': 0;
+			openCrate === crate && className === openLayer ?
+				node[1].ariaHidden = 'false': 0;
 		}, 0);
 	};
 
@@ -202,7 +193,7 @@ export class PackageInfoUp extends HTMLElement {
 		if(!packed)
 			return ;
 		packed.addEventListener('click', (async event => {
-			const { id, tagName } =	event.target;
+			const { id, tagName, className } =	event.target;
 
 			event.stopImmediatePropagation();
 			tagName === "A" ? await this.#toggleReportDownPanel(id): 0;
