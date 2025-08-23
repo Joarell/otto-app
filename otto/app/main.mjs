@@ -19,6 +19,23 @@ globalThis.onkeydown = (push) => {
 	task1 ? crate() : false;
 	//task2 ? openDisplay() : false;
 	task3 ? closeMenu() : false;
+	push.stopImmediatePropagation();
+};
+
+
+globalThis.onafterprint = () => {
+	const { shadowRoot } =	document.querySelector('.update-materials');
+	const area =		 	shadowRoot.querySelectorAll('[aria-hidden]');
+
+	[...area].map(node => node.ariaHidden = 'false');
+};
+
+
+globalThis.onbeforeprint = () => {
+	const { shadowRoot } =	document.querySelector('.update-materials');
+	const area =		 	shadowRoot.querySelectorAll('[aria-hidden]');
+
+	[...area].map(node => node.ariaHidden = 'false');
 };
 
 
@@ -190,6 +207,18 @@ globalThis.document.getElementById('main-app')
 			break;
 		case 'confirm-save':
 			up.setAttribute('name', 'confirm-save');
+			break;
+		case 'printer-icon':
+			globalThis.print();
+			break;
+		case 'printer-btn':
+			globalThis.print();
+			break;
+		case 'printer-svg':
+			globalThis.print();
+			break;
+		case 'printer':
+			globalThis.print();
 			break;
 	};
 }), true);

@@ -67,30 +67,8 @@ export const cratesPacked = document.createElement('template');
 cratesPacked.innerHTML = `
 <div class="upPane" id="first-pane" aria-hidden="false">
 	<h3 class="material-report">Crates and artworks packing list:</h3>
-</div>
+</div>`;
 
-`;
-	// <details>
-	// 	<summary>
-	// 		crate 01 - 123 x 32x 128 - cm
-	// 	</summary>
-	// 	<details>
-	// 		<summary>layer1</summary>
-	// 		<ol>
-	// 			<li><a href="#estimate_getter">work01 - 100 x 10 x 100 - cm</a></li>
-	// 			<li><a href="#">work02 - 100 x 10 x 100 - cm</a></li>
-	// 			<li><a href="#">work03 - 100 x 10 x 100 - cm</a></li>
-	// 			<li><a href="#">work04 - 100 x 10 x 100 - cm</a></li>
-	// 		</ol>
-	// 	</details>
-	// 	<details>
-	// 		<summary>layer2</summary></details>
-	// 	<details>
-	// 		<summary>layer3</summary></details>
-	// 	<details>
-	// 		<summary>layer4</summary></details>
-	// </details>
-	//
 
 /**
 * @typedef { HTMLElement } materialsTable
@@ -99,69 +77,4 @@ export const materialsTable = document.createElement('template');
 materialsTable.innerHTML = `
 <div class="downPane" id="second-pane">
 	<h3 class="material-report">Used material applied to the list:</h3>
-</div>
-</div>
-`;
-
-	// <table class="work1" id="work1" aria-hidden="false" role="none">
-	// 	<tr>
-	// 		<th><h5>Work2</h5></th>
-	// 	</tr>
-	// 	<tr>
-	// 		<th>Type</th>
-	// 		<th>Demand</th>
-	// 		<th>Prop/Area</th>
-	// 		<th>Reuse</th>
-	// 		<th>Residual</th>
-	// 		<th>Material unit</th>
-	// 		<th>Total cost $</th>
-	// 	</tr>
-	// 	<tr>
-	// 		<td>Glassine</td>
-	// 		<td>22 m²</td>
-	// 		<td>40%</td>
-	// 		<td>Yes</td>
-	// 		<td>60%</td>
-	// 		<td>roll</td>
-	// 		<td>$ 2.50</td>
-	// 	</tr>
-	// 	<tr>
-	// 		<td>Card board</td>
-	// 		<td>22 m²</td>
-	// 		<td>40%</td>
-	// 		<td>No</td>
-	// 		<td>60%</td>
-	// 		<td>sheet</td>
-	// 		<td>$ 10.00</td>
-	// 	</tr>
-	// 	<tr>
-	// 		<td>Subtotal:</td>
-	// 		<td></td>
-	// 		<td></td>
-	// 		<td></td>
-	// 		<td></td>
-	// 		<td></td>
-	// 		<td>$ 15.00</td>
-	// 	</tr>
-	// 	<tr></tr>
-	// </table>
-	// <table>
-	// 	<h4 class="material-report">Whole used material to the list:</h4>
-	// 	<tr>
-	// 		<th>Type</th>
-	// 		<th>Used total</th>
-	// 		<th>Residual total</th>
-	// 	</tr>
-	// 	<tr>
-	// 		<td>Glassine</td>
-	// 		<td>44 m²</td>
-	// 		<td>120 m²</td>
-	// 	</tr>
-	// 	<tr>
-	// 		<td>Card boards</td>
-	// 		<td>2</td>
-	// 		<td>110 m²</td>
-	// 	</tr>
-	// </table>
-
-// 0 : Array(6) 0 : "Glassine" 1 : "90" 2 : "0.5" 3 : "150" 4 : "40" 5 : "Roll" length : 6 1 : Array(6) 0 : "Cardboard" 1 : "100" 2 : "0.3" 3 : "120" 4 : "1" 5 : "Sheet" length : 6 2 : Array(6) 0 : "Tyvek" 1 : "7.5" 2 : "0.01" 3 : "300" 4 : "50" 5 : "Roll" length : 6 3 : Array(6) 0 : "Bubble Plastic" 1 : "120" 2 : "0.05" 3 : "100" 4 : "20" 5 : "Sheet" length : 6 length : 4
+</div>`

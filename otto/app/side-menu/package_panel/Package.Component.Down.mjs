@@ -21,9 +21,6 @@ export class PackageInfoDown extends HTMLElement {
 		this.#shadowRoot.set(this, shadow);
 	};
 
-	#listening() {
-	};
-
 	/**
 	* @method - check if there is some materials available to select.
 	*/
@@ -193,11 +190,10 @@ export class PackageInfoDown extends HTMLElement {
 		const check = oldVal === 'update-materials' && newVal === 'materials-used';
 
 		check || oldVal === 'materials-used' ? this.#hiddenContent(oldVal) : 0;
-		switch(newVal) {
+		switch(newVal !== oldVal ? newVal: false) {
 			case 'update-materials':
 				return(await this.#populateUpdateMaterials());
 			case 'save-updated':
-				this.#listening();
 				return(this.#updateMaterials());
 			case 'update':
 				return(this.#updateMaterials());
