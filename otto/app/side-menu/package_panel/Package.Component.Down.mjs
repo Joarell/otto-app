@@ -190,7 +190,7 @@ export class PackageInfoDown extends HTMLElement {
 		const check = oldVal === 'update-materials' && newVal === 'materials-used';
 
 		check || oldVal === 'materials-used' ? this.#hiddenContent(oldVal) : 0;
-		switch(newVal !== oldVal ? newVal: false) {
+		switch(newVal) {
 			case 'update-materials':
 				return(await this.#populateUpdateMaterials());
 			case 'save-updated':
