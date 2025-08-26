@@ -102,7 +102,8 @@
 	--colg-mobile: 1rem;
 	--rowg: 2rem;
 	--rowg-mobile: 1rem;
-	--bord: .3rem; --mob-col: #12111385;
+	--bord: .3rem;
+	--mob-col: #12111385;
 	--gradient: linear-gradient(270deg, var(--bg-col), var(--dark-blue2));
 	--gradient1: linear-gradient(90deg, var(--bg-col), var(--dark-blue1));
 	--sides: #88898E;
@@ -224,6 +225,8 @@ h2, h3, h4, h5 {
 h6 {
 	padding: .3ch 0;
 	position: relative;
+	width: 100%;
+	/* margin: 3ch 0; */
 	&::before {
 		content: "";
 		inset: 0;
@@ -476,12 +479,11 @@ tbody {
 	& .otto__interface {
 		grid-area: 2 / 2 / 3 / 6;
 		border-radius: var(--lines);
-		background-color: var(--panel-backcolor);
 		& {
 			display: grid;
 			grid-template-columns: repeat(4, 1fr);
 			grid-template-rows: 1fr;
-			& .container__insert {
+			& .container__insert:is([aria-hidden="false"]) {
 				grid-area: 1 / 1 / 1 / 6;
 				display: grid;
 				grid-template-columns: 1fr .9fr .5fr;
@@ -491,6 +493,7 @@ tbody {
 				border: solid .1rem var(--lines);
 				border-radius: .5rem;
 				padding: .5rem;
+				background-color: var(--panel-backcolor);
 				& .searcher {
 					grid-area: 2 / 2 / 1 / 2;
 				}
@@ -660,7 +663,7 @@ tbody {
 			}
 		}
 	}
-	& .container-bottom {
+	& .container-bottom:is([aria-hidden="false"]) {
 		grid-area: 3 / 2 / 4 / 6;
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
@@ -1035,10 +1038,24 @@ tbody {
 	& .left-section, .right-section {
 		background-color: var(--sides);
 	}
-	& .plotter {
-		grid-area: 2 / 2 / 4 / 6;
+}
+
+
+.toggle__plotter:is([aria-hidden="true"]) * {
+	display: none;
+}
+
+.colorbar {
+	display: none;
+}
+
+#scene {
+	& canvas {
+		width: 100%;
+		height: 100%;
 	}
 }
+
 
 .select-materials {
 	overflow: hidden;
@@ -1240,6 +1257,7 @@ tbody {
 			inset: 0;
 			position: absolute;
 			border-bottom: solid 1px var(--lines);
+			width: auto;
 		}
 	}
 	& p {
@@ -1477,11 +1495,13 @@ tbody {
 	& h3 {
 		color: var(--p__color--mode);
 		position: relative;
+		width: 100%;
 		&::before {
 			content: "";
 			inset: 0;
 			position: absolute;
 			border-bottom: solid 1px var(--lines);
+			width: 100%;
 		}
 	}
 	& h4 {
@@ -1549,19 +1569,6 @@ tbody {
 			white-space: nowrap;
 		}
 	}
-	.header-content *,
-	.hidden,
-	.board-icon,
-	.footer-content,
-	.container__footer *,
-	header,
-	footer {
-		display: none !important;
-		margin: 0;
-		padding: 0;
-		border: none;
-		border-radius: unset;
-	}
 	.app {
 		margin: 0;
 		padding: 0;
@@ -1569,25 +1576,7 @@ tbody {
 		border-radius: unset;
 		visibility: hidden;
 		display: unset;
-		& .left-section *,
-		& .container__results *,
-		& .IO__press *,
-		& .IO__sizes__measure *,
-		& .IO__crate *,
-		& .searcher *,
-		& .container__status__counter *,
-		& .container__status__pane__frame *,
-		& .menu-shifts *,
-		& .menu__input *,
-		& .IO__sizes__units *,
-		& .IO__sizes__code *,
-		& .info *,
-		& .mode *,
-		& .searcher *,
-		& .contents,
-		& .svg-container *,
-		& .mob-menu *,
-		& .container__insert * {
+		.hidden {
 			display: none !important;
 			margin: 0;
 			padding: 0;
@@ -1626,7 +1615,7 @@ tbody {
 		left: 0;
 		top: 0;
 		padding-top: 0;
-		margin-top: -5rem;
+		/* margin-top: -1rem; */
 		position: absolute;
 		display: flex;
 		flex-direction: column;
@@ -1659,28 +1648,11 @@ tbody {
 			font-size: 9pt;
 			page-break-inside: auto;
 			border-radius: .3rem;
-			& h3 {
-				color: var(--pressed);
-				position: relative;
-				border: none;
-				text-align: left;
-			}
 			& thead {
 				display: table-header-group;
 			}
 			& tr, th, tr {
 				page-break-inside: avoid;
-			}
-		}
-		& h3 {
-			color: var(--p__color--mode);
-			position: relative;
-			text-align: left;
-			&::before {
-				content: "";
-				inset: 0;
-				position: absolute;
-				border-bottom: solid 1px var(--lines);
 			}
 		}
 		& h4 {
@@ -3322,13 +3294,12 @@ tbody {
 	*/
 	.plotter__menu:is([aria-hidden="true"]),
 	.plotter:is([aria-hidden="true"]) {
-		animation: fade-close 500ms ease-out;
-		animation-fill-mode: forwards;
-		transition: all 1000ms ease-in-out;
+		display: none;
 		transition-timing-function: cubic-bezier(0.86, 0, 0.07, 1);
 	}
 
 	.plotter:is([aria-hidden="false"]) {
+		grid-area: 2 / 2 / 4 / 6;
 		display: grid;
 		grid-template-rows: 3rem 1fr 3rem;
 		gap: 1rem;
@@ -3370,11 +3341,6 @@ tbody {
 				align-self: center;
 				align-self: center;
 				justify-self: center;
-				& .main-svg {
-					& .info-layer {
-						display: none;
-					}
-				}
 			}
 		}
 		.layer-button {
@@ -3464,7 +3430,7 @@ tbody {
 	.plotter__menu:is([aria-hidden="false"]) {
 		display: flex;
 		justify-content: center;
-		transition: all 1s ease-in;
+		transition: all 300ms ease-in;
 		& {
 			animation: emerge 3s ease-in;
 			animation-fill-mode: forwards;

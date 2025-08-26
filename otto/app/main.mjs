@@ -13,11 +13,11 @@ import { installer } from './installation.handler.mjs';
 
 globalThis.onkeydown = (push) => {
 	const task1 = ((push.key === "Enter") && (push.ctrlKey === true));
-	//const task2 = ((push.ctrlKey === true) && (push.key === "V"));
+	const task2 = ((push.ctrlKey === true) && (push.key === "V"));
 	const task3 = push.key === "Escape";
 
 	task1 ? crate() : false;
-	//task2 ? openDisplay() : false;
+	task2 ? openDisplay() : false;
 	task3 ? closeMenu() : false;
 	push.stopImmediatePropagation();
 };
@@ -292,6 +292,7 @@ globalThis.onsubmit = (event) => {
 	event.preventDefault();
 };
 
+
 globalThis.document.getElementById('main-app')
 	.addEventListener('open-crate', (e) => {
 	const { id, className, tagName } =	e.detail;
@@ -299,6 +300,7 @@ globalThis.document.getElementById('main-app')
 
 	tagName === 'A' ? up.setAttribute('content', `${id}-${className}`): 0;
 }, true);
+
 
 globalThis.document.getElementById('main-app')
 	.addEventListener('update-materials-info', (e) => {
@@ -308,6 +310,7 @@ globalThis.document.getElementById('main-app')
 	e.stopImmediatePropagation();
 	id === 'update-info' ? down.setAttribute('name', 'update'): 0;
 }, true);
+
 
 globalThis.document.getElementById('estimate_getter')
 	.addEventListener('keypress', (event) => {

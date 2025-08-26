@@ -70,7 +70,7 @@ export default class ArtWork extends Hexaedro {
 			return(result);
 		}, 0);
 		return(percent);
-	}
+	};
 
 	/**
 	* @method - returns the packing material units needed to wrap the artwork.

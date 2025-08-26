@@ -18,6 +18,7 @@ globalThis.onload = async () => {
 	const list =		document.getElementById('statusList');
 
 	sessionStorage.removeItem('onCrate');
+	sessionStorage.removeItem('plotter');
 	list ? list.setAttribute('content', 'reload'):
 		statusFrame.append(addPanelInfo());
 	browserStoragePrepare();

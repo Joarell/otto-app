@@ -1,5 +1,5 @@
+import GraphicCrates from "./Plotly.Renderer.Crates.mjs";
 import { displayClean, populateOptions } from "./select.menu.mjs";
-const { Plotly } = globalThis;
 
 export function openCloseDisplay (element, template) {
 	element.map(plotter => {
@@ -21,31 +21,32 @@ function closeDisplay(element, display) {
 };
 
 
-export async function openDisplay() {
-	const RENDER =		document.getElementById("show-layer");
-	const template =	document.getElementById("Render");
-	const clone =		template.content.cloneNode(true);
-	const estimate =	document.getElementById("input_estimate").value;
-	const display =		clone.childNodes[1];
-	const menu =		clone.childNodes[1].children[0].children[1];
+function togglePlotter() {
+	const design =		new GraphicCrates();
+	const layout =		document.querySelectorAll(".toggle__plotter");
+	const plotter = 	document.getElementById('layers');
+	const graphic =		sessionStorage.getItem('plotter') ?? false;
+	let node;
 
-	if(!estimate)
-		return(alert("Please, add some works and press the 'Crate' button."));
-	switch (RENDER.hasChildNodes()) {
-		case false :
-			RENDER.appendChild(clone);
-			openCloseDisplay([display, menu]);
-			break;
-		default :
-			closeDisplay([display, menu], RENDER);
+	for(node of layout) {
+		if(node.ariaHidden === 'true') {
+			node.ariaHidden = 'false';
+			plotter.ariaHidden = 'true'
+		}
+		else if(node.ariaHidden === 'false') {
+			node.ariaHidden = 'true';
+			plotter.ariaHidden = 'false'
+			if(!graphic) {
+				design.show;
+				sessionStorage.setItem('plotter', 'true');
+	0		};
+		};
 	};
-	if (display && display.ariaHidden === 'false') {
-		await populateOptions();
-		renderLayer();
-		setTimeout(
-			() => globalThis.scroll({ top: 1000, behavior: "smooth" }), 1000
-		);
-	};
+};
+
+
+export async function openDisplay() {
+	togglePlotter();
 };
 
 // ╭─────────────────────────────────────────╮
@@ -90,25 +91,3 @@ export function changeCrateDisplay() {
 	return(renderLayer(+crateNum.split(' ')[1]));
 };
 
-// const data = [{
-//     type: 'volume',
-//     x: [10, 10, 10, 10, 50, 50, 50, 50],
-//     y: [10, 50, 10, 50, 10, 50, 10, 50],
-//     z: [50, 50, 10, 10, 50, 50, 10, 10],
-// 	value: [1,2,3,4,5,6,7,8],
-//     opacity: 0.5,
-// }];
-//
-// const layout = {
-//     scene: {
-//         // xaxis: {range: [-0.2, 1.2]},
-//         // yaxis: {range: [-0.2, 1.2]},
-//         // zaxis: {range: [-0.2, 1.2]},
-//         xaxis: {range: [-10, 100]},
-//         yaxis: {range: [-10, 100]},
-//         zaxis: {range: [-10, 100]},
-//         aspectratio: {x: 200, y: 200, z: 200}
-//     }
-// };
-//
-// Plotly.newPlot('plotter-display', data, layout, {showSendToCloud: true});

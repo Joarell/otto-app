@@ -12,11 +12,11 @@
 		<link rel="apple-touch-icon" sizes="180x180" href="./images/apple-touch-icon.png">
 		<link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
-		<script async type="module" src="./main.min.mjs"></script>
 		<script async type="module" src="./front-modules/shadowElements/dialog.padding.update.mjs"></script>
 		<script async type="module" src="./side-menu/package_panel/Package.Component.Up.mjs"></script>
 		<script async type="module" src="./side-menu/package_panel/Package.Component.Down.mjs"></script>
-		<!-- <script src="https://cdn.plot.ly/plotly-3.0.1.min.js" charset="utf-8"></script> -->
+		<script src="https://cdn.plot.ly/plotly-3.1.0.min.js" charset="utf-8"></script>
+		<script async type="module" src="./main.min.mjs"></script>
 		<link rel="stylesheet" href="./stylesheet.css" type="text/css" />
 		<link rel="manifest" href="./manifest.json" crossorigin="use-credentials">
 		<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,7 +28,7 @@
 				</div>
 			</header>
 			<main class="app" id="main-app">
-				<div class="left-section">
+				<div class="hidden left-section">
 					<div class="id__user">
 						<div>
 							<span class="avatar">
@@ -50,7 +50,7 @@
 						</div>
 					</section>
 				</div>
-				<div class="right-section">
+				<div class="hidden right-section">
 					<div class="section__menu--btn logout">
 						<a aria-label="logout button" role="button" class="logout-btn" data-popup="Logout" id="logout-btn">
 							<svg aria-hidden="true" class="logout-icon" id="logout" preserveAspectRatio="none">
@@ -70,40 +70,38 @@
 						</div>
 					</div>
 				</div>
-				<template id="Render">
-					<div class="plotter" id="layers" aria-hidden="false" aria-controls="crate-layers" aria-expanded="true">
-						<div class="plotter__header">
-							<h2>⊂ Internal Layers</h2>
-							<div class="plotter__menu" aria-hidden="true" aria-controls="crate-layers" aria-expanded="false">
-								<div class="plotter__menu__crates" id="display-crates">
-									<div class="plotter__crate__list" id="crate-list">
-										<select class="crates-done" id="selected-crate"></select>
-									</div>
+				<div class="plotter" id="layers" aria-hidden="true" aria-controls="crate-layers" aria-expanded="true">
+					<div class="plotter__header">
+						<h2>⊂ Internal Layers</h2>
+						<div class="plotter__menu" aria-hidden="true" aria-controls="crate-layers" aria-expanded="false">
+							<div class="plotter__menu__crates" id="display-crates">
+								<div class="plotter__crate__list" id="crate-list">
+									<select class="crates-done" id="selected-crate"></select>
 								</div>
 							</div>
-							<p id="layer-count">Current layer: 0 / 0 </p>
 						</div>
-						<div class="plotter__display" id="plotter-display">
-							<!-- <svg class="crate-layer"></svg> -->
-						</div>
-						<div class="layer-button">
-							<button name="Previous" class="IO__press--layer " id="layer-prev">
-								<svg id="previous" preserveAspectRatio="none">
-									<use xlink:href="#arrow-left-layer" id="previous"></use>
-								</svg>
-							</button>
-							<button name="Next" class="IO__press--layer" id="layer-next">
-								<svg id="next" preserveAspectRatio="none">
-									<use xlink:href="#arrow-right-layer" id="next"></use>
-								</svg>
-							</button>
-						</div>
+						<p id="layer-count">Current layer: 0 / 0 </p>
 					</div>
-				</template>
-				<div class="otto__interface container__status__pane" id="body-app">
-					<div class="container__insert">
+					<div class="plotter__display" id="plotter-display">
+						<!-- <svg class="crate-layer"></svg> -->
+					</div>
+					<div class="hidden layer-button">
+						<button name="Previous" class="IO__press--layer " id="layer-prev">
+							<svg id="previous" preserveAspectRatio="none">
+								<use xlink:href="#arrow-left-layer" id="previous"></use>
+							</svg>
+						</button>
+						<button name="Next" class="IO__press--layer" id="layer-next">
+							<svg id="next" preserveAspectRatio="none">
+								<use xlink:href="#arrow-right-layer" id="next"></use>
+							</svg>
+						</button>
+					</div>
+				</div>
+				<div class="otto__interface container__status__pane" id="body-app" aria-hidden="false">
+					<div class="hidden container__insert toggle__plotter" aria-hidden="false">
 						<div class="container__status__counter">
-							<p id="count">Count works: 0 </p>
+							<p id="count">Count works: 0</p>
 							<p id="cub-meter">Cub: 0</p>
 							<p id="cub-air">Air-Cub: 0</p>
 						</div>
@@ -150,7 +148,7 @@
 									<span class="mode--color"></span>
 								</form>
 							</div>
-							<div class="IO__sizes__measure">
+							<div class="hidden IO__sizes__measure">
 								<div class="IO__sizes__units info">
 									<form class="IO__sizes__units" id="unit-seg">
 									<input type="radio" name="units" value="cm - centimeters" class="cm" id="cm">
@@ -176,8 +174,8 @@
 						</div>
 					</div>
 				</div>
-				<div class="container-bottom" aria-labelledby="results panel">
-					<div class="container__results">
+				<div class="hidden container-bottom toggle__plotter" aria-labelledby="results panel" aria-hidden="false">
+					<div class="hidden container__results">
 						<button class="copy copy-pane1" id="copy-pane1" aria-hidden="false">
 							<div loading="lazy" class="container__results--open" id="first_pane" title="Works set"></div>
 							<svg class="copy-message" preserveAspectRatio="none"> <use href="#copy-content-icon"></use> </svg>
@@ -249,11 +247,11 @@
 								<svg class="report" id="report" preserveAspectRatio="none"><use id="report" href="#package-material"></use></svg>
 							</button>
 						</div>
-						<div>
-							<button type="" class="works-packed" id="works-packed">
-								<svg id="pack-opts" preserveAspectRatio="none"><use id="pack-opts" href="#check-sizes"></use></svg>
-							</button>
-						</div>
+						<!-- <div> -->
+						<!-- 	<button type="" class="works-packed" id="works-packed"> -->
+						<!-- 		<svg id="pack-opts" preserveAspectRatio="none"><use id="pack-opts" href="#check-sizes"></use></svg> -->
+						<!-- 	</button> -->
+						<!-- </div> -->
 						<div>
 							<button type="" class="reset-sizes" id="reset-sizes" disabled="true">
 								<svg id="reset-szs" preserveAspectRatio="none"><use id="reset-szs" href="#regua-material"></use></svg>
@@ -476,7 +474,7 @@
 					</symbol>
 				</svg>
 			</main>
-			<footer class="footer-content" aria-hidden="true">
+			<footer class="hidden footer-content" aria-hidden="true">
 				<!-- Made by Nawsome - from: https://uiverse.io/Nawsome/sour-fly-72 -->
 				<div class="svg-frame">
 					<!-- <svg style="--i:0;--j:0;"> -->
@@ -610,7 +608,7 @@
 					</svg>
 				</div>
 				<div>
-					<h3 class="container__footer">ottO</h3>
+					<h3 class="hidden container__footer">ottO</h3>
 				</div>
 			</footer>
 		</body>

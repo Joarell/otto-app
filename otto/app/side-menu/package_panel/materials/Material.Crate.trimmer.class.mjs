@@ -339,11 +339,11 @@ export default class CrateTrimmer {
 	* @param { Object } crate data.
 	*/
 	async #fillEmptySpaceOnLayers(crate) {
-		let foam2 =	this.#materialBank.get('2') ?? this.#crateMaterials.find(item => {
+		let foam2 =	this.#materialBank.get('2') || this.#crateMaterials.find(item => {
 			if(item[5] === 'Foam Sheet' && item[2] <= 2.5)
 				return(item);
 		});
-		let foam5 =	this.#materialBank.get('5') ?? this.#crateMaterials.find(item => {
+		let foam5 =	this.#materialBank.get('5') || this.#crateMaterials.find(item => {
 			if(item[5] === 'Foam Sheet' && item[2] > 2.5)
 				return(item);
 		});
@@ -352,7 +352,7 @@ export default class CrateTrimmer {
 		const calcLayer = crate[0].fillGaps;
 		const results = calcLayer.map(info => {
 			const { highestZ, total } = info;
-			return(highestZ[1] >= +foam5[2] ? [foam5, total]: [foam2, total]);
+			return(foam5 && highestZ[1] >= +foam5[2] ? [foam5, total]: [foam2, total]);
 		}).flat().filter(data => Array.isArray(data));
 
 		crate[2].set('gaps', { results, calcLayer });

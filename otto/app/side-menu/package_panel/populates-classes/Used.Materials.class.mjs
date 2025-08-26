@@ -324,7 +324,7 @@ export default class UsedMaterialsTable {
 			second = rightLeft.length ?
 				`<td>${ (sides.z).toFixed(2)} x ${ (sides.y).toFixed(2) } - ${ metric }</td>`: 0;
 			third = topBottom.length ? `<td>${ (upDown.x).toFixed(2)} x ${ (upDown.z).toFixed(2) } - ${ metric }</td>`: 0;
-			if(!first && !second && !third)
+			if(!first || !second || !third)
 				return;
 			!extra ? extra = true: 0;
 			row.innerHTML = `
