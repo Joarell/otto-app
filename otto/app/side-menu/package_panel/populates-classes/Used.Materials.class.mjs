@@ -179,7 +179,7 @@ export default class UsedMaterialsTable {
 			const content = document.createElement('tr');
 			const usage = checkLength === i ?
 				`<td class="materialReusable" data-name='Reused from work: ${reuse[i][2]}'>${residual[i]}%</td>`:
-				`<td>${ (residual[0] * 100).toFixed(0) }%</td>`;
+				`<td>${ residual[0] < 1 ? (residual[0] * 100).toFixed(0): 0 }%</td>`;
 
 			content.innerHTML
 				= `

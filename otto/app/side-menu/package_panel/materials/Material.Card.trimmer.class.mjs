@@ -122,8 +122,8 @@ export default class PackingTrimmer {
 			const art =	list[i];
 			const packing =	['Sheet', 'Roll', 'Tape'];
 			const { reuse, types } = packedInfo[1];
-			const sheets =		types.filter(item => packing.includes(item[0]));
-			const materials =	sheets.filter((kind, j) => {
+			const pack =		types.filter(item => packing.includes(item[0]));
+			const materials =	pack.filter((kind, j) => {
 				if(kind[2] === reuse[j][0] && reuse[j][1])
 					return(kind);
 			}, 0);

@@ -226,7 +226,6 @@ h6 {
 	padding: .3ch 0;
 	position: relative;
 	width: 100%;
-	/* margin: 3ch 0; */
 	&::before {
 		content: "";
 		inset: 0;
@@ -1241,10 +1240,6 @@ tbody {
 	}
 }
 
-.data-update:is([aria-hidden="true"]) {
-	display: none;
-}
-
 .packing-materials {
 	& h3 {
 		color: var(--p__color--mode);
@@ -1269,6 +1264,10 @@ tbody {
 	}
 }
 
+.data-update:is([aria-hidden="true"]) {
+	display: none;
+}
+
 .data-update:is([aria-hidden="false"]) {
 	height: 100%;
 	z-index: 50;
@@ -1284,6 +1283,11 @@ tbody {
 		justify-self: start;
 		column-gap: .2rem;
 		row-gap: .2rem;
+		& input {
+			&::placeholder {
+				font-size: 1.3ch;
+			}
+		}
 		& select {
 			border: .1rem solid var(--pressed);
 			border-radius: .2rem;
@@ -1373,10 +1377,8 @@ tbody {
 		transition: all .3s linear;
 	}
 	&:hover {
-		/* padding: .5rem; */
 		overflow-y: scroll;
 		border: transparent;
-		/* box-shadow: var(--shadow1); */
 		transition: 300ms ease-in-out;
 	}
 	& h3 {
@@ -1507,6 +1509,7 @@ tbody {
 	& h4 {
 		color: var(--p__color--mode);
 		position: relative;
+		width: 100%;
 		&::before {
 			content: "";
 			inset: 0;
@@ -1615,12 +1618,16 @@ tbody {
 		left: 0;
 		top: 0;
 		padding-top: 0;
-		/* margin-top: -1rem; */
 		position: absolute;
 		display: flex;
 		flex-direction: column;
+		flex-wrap: nowrap;
+		flex-basis: 1;
+		flex-grow: 1;
+		flex-shrink: none;
 		align-items: start;
 		justify-content: start;
+		margin-top: -1vh;
 		& * {
 			visibility: visible;
 			overflow-y: visible;
@@ -1658,6 +1665,7 @@ tbody {
 		& h4 {
 			color: var(--p__color--mode);
 			position: relative;
+			width: 100%;
 			&::before {
 				content: "";
 				inset: 0;
@@ -2316,11 +2324,6 @@ tbody {
 
 
 .menu__input {
-	/* border-radius: var(--input-menu-radius, 0); */
-	/* margin: var(--input-menu-margin, 0); */
-	/* border: var(--input-menu-border, 0); */
-	/* padding: var(--input-menu-paddin-units, 0); */
-	/* transition: padding 2s ease-in-out, transform 1s ease; */
 	& {
 		width: 100%;
 		height: 100%;
@@ -2339,6 +2342,7 @@ tbody {
 	transition: all 2s ease-in-out, transform 2s ease;
 	position: relative;
 	padding: .3rem;
+	isolation: isolate;
 	& input {
 		width: 100%;
 	}
@@ -2361,6 +2365,7 @@ tbody {
 		width: 100%;
 		height: 100%;
 		border-radius: .5rem;
+		z-index: -10;
 	}
 }
 

@@ -8,7 +8,7 @@ export default class MaterialManagement {
 	#worksSum;
 	#materials;
 	#layers = [];
-	#appliedMaterials = [];
+	#appliedMaterials = new Map();
 
 	constructor({ works , crates }) {
 		if(!works && !crates)
@@ -73,7 +73,7 @@ export default class MaterialManagement {
 		const x = crate[0];
 		const z = crate[1];
 		const y = crate[2];
-		const crateArea = 2 * (x * z) + 2 * (x * y) + 2 * (z * y); // NOTE: Prism area formula.
+		const crateArea = 2 * ((x * z) + (x * y) + (z * y)); // NOTE: Prism area formula.
 
 		const type =		material[0];
 		const area =		+material[1] * +material[3];
@@ -271,8 +271,8 @@ export default class MaterialManagement {
 		const usedTypes =			[];
 		const counterMaterials =	[];
 
-		types.map(item => this.#appliedMaterials.push(item));
-		residual.map(resid => residualTotal.push(resid));
+		types.map(item => this.#appliedMaterials.set(item[2], item));
+		residual.map((resid, i) => residualTotal.push([types[i][2], resid]), 0);
 		cost.map(value => totalUsed.push(value));
 		quantity.map(type => {
 			!usedTypes.includes(type[0]) ? usedTypes.push(type[0]): 0;
@@ -300,9 +300,10 @@ export default class MaterialManagement {
 			totalUsed, residualTotal, counterMaterials
 		} = item;
 
-		item.usedTypes.map((pack, i) => {
-			const type = this.#appliedMaterials[pos + i][0];
-			const area = this.#appliedMaterials[pos + i][1];
+		item.usedTypes.map(pack => {
+			const stored =	this.#appliedMaterials.get(pack);
+			const type =	stored[0]
+			const area =	stored[1];
 			let totalCost =	0;
 			let residual =	0;
 			let counter =	0;
@@ -320,7 +321,7 @@ export default class MaterialManagement {
 			counterMaterials.map(info => info[0] === pack ? counter += info[1]: 0);
 			data.push(pack);
 			materials.set(pack, { totalCost, residual, counter, type, area });
-		}, 0);
+		});
 		return(this.#summarazedMaterialReport(materials, data, pos + 1));
 	};
 

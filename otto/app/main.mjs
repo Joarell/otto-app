@@ -1,19 +1,22 @@
-import * as main from './front-modules/start.front.mjs'; import * as accordion from './side-menu/menu.currency.conversion.mjs'; import * as unit from './side-menu/menu.units.mjs';
+import * as main from './front-modules/start.front.mjs';
+import * as accordion from './side-menu/menu.currency.conversion.mjs';
+import * as unit from './side-menu/menu.units.mjs';
 import { crate, clearAll, setUnit } from './front-modules/checkout.mjs';
 import { copyButton1, copyButton2 } from './panels/clip.board.caller.mjs';
 import { createIDB } from './front-modules/link.storage.mjs';
 import { switchMode } from './front-modules/mode.color.mjs';
 import { accordionController, closeMenu } from './side-menu/interactive.menu.mjs';
 import { searchEstimate } from './side-menu/search.menu.mjs';
-import { changeCrateDisplay, openDisplay } from './plotter/layer.controller.mjs';
-import { layersNumber, skipLayer } from './plotter/select.menu.mjs';
+import { openDisplay } from './plotter/layer.controller.mjs';
+import { skipLayer } from './plotter/select.menu.mjs';
 import { logout } from './front-modules/logout.mjs';
 import { installer } from './installation.handler.mjs';
+import GraphicCrates from './plotter/Plotly.Renderer.Crates.mjs';
 
 
 globalThis.onkeydown = (push) => {
 	const task1 = ((push.key === "Enter") && (push.ctrlKey === true));
-	const task2 = ((push.ctrlKey === true) && (push.key === "V"));
+	const task2 = ((push.ctrlKey === true) && (push.altKey === true) && (push.key === "c"));
 	const task3 = push.key === "Escape";
 
 	task1 ? crate() : false;
@@ -41,8 +44,13 @@ globalThis.onbeforeprint = () => {
 
 globalThis.document.getElementById('main-app')
 	.addEventListener("click", (element => {
-	const up =		document.querySelector('.materials');
-	const down =	document.querySelector('.update-materials');
+	const up =			document.querySelector('.materials');
+	const down =		document.querySelector('.update-materials');
+	const crates =		sessionStorage.getItem('crate');
+	let cratesNum =		crates ? +crates.split('/')[0]: 0;
+	const cratesTotal =	crates ? +crates.split('/')[1]: 0;
+	const plotter =		new GraphicCrates();
+	const crateDisplay = document.getElementById('layer-count');
 	let { id, className, attributes } = element.target;
 
 	{
@@ -152,16 +160,36 @@ globalThis.document.getElementById('main-app')
 			openDisplay();
 			break;
 		case "previous":
-			skipLayer(element);
+			if(cratesNum > 1) {
+				cratesNum -= 1;
+				sessionStorage.setItem('crate', `${cratesNum}/${cratesTotal}`);
+				crateDisplay.innerText = `Current crate: ${cratesNum} / ${ cratesTotal }`;
+				plotter.show;
+			};
 			break;
 		case "layer-prev":
-			skipLayer(element);
+			if(cratesNum > 1) {
+				cratesNum -= 1;
+				sessionStorage.setItem('crate', `${cratesNum}/${cratesTotal}`);
+				crateDisplay.innerText = `Current crate: ${cratesNum} / ${ cratesTotal }`;
+				plotter.show;
+			};
 			break;
 		case "next":
-			skipLayer(element);
+			if(cratesNum < cratesTotal) {
+				cratesNum += 1;
+				sessionStorage.setItem('crate', `${cratesNum}/${cratesTotal}`);
+				crateDisplay.innerText = `Current crate: ${cratesNum} / ${ cratesTotal }`;
+				plotter.show;
+			};
 			break;
 		case "layer-next":
-			skipLayer(element);
+			if(cratesNum < cratesTotal) {
+				cratesNum += 1;
+				sessionStorage.setItem('crate', `${cratesNum}/${cratesTotal}`);
+				crateDisplay.innerText = `Current crate: ${cratesNum} / ${ cratesTotal }`;
+				plotter.show;
+			};
 			break;
 		case 'settings-content':
 			className !== 'update-materials' && className !== 'new-material' ? up.setAttribute('content', 'settings-content'): 0
@@ -258,8 +286,7 @@ globalThis.document.getElementById('main-app')
 			unit.setUnitTwo();
 			break;
 		case "selected-crate":
-			layersNumber();
-			changeCrateDisplay();
+			openDisplay();
 			break;
 		default:
 	};

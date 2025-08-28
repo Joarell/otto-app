@@ -10,7 +10,7 @@
 
 import * as mod from './functions.front.end.mjs'
 import { createIDBMaterials, createIDB, createOffLineIDB } from './link.storage.mjs';
-import { openCloseDisplay } from '../plotter/layer.controller.mjs'
+import { openDisplay } from '../plotter/layer.controller.mjs'
 
 globalThis.onload = async () => {
 	const color =		localStorage.getItem("mode");
@@ -19,6 +19,8 @@ globalThis.onload = async () => {
 
 	sessionStorage.removeItem('onCrate');
 	sessionStorage.removeItem('plotter');
+	sessionStorage.removeItem('graphics');
+	sessionStorage.removeItem('crate');
 	list ? list.setAttribute('content', 'reload'):
 		statusFrame.append(addPanelInfo());
 	browserStoragePrepare();
@@ -102,7 +104,7 @@ export const crate = () => {
 	const element = document.querySelector(".result");
 
 	if (sessionStorage.getItem('codes')) {
-		element && element.ariaHidden === 'true' ? openCloseDisplay([element]) : false;
+		element && element.ariaHidden === 'true' ? openDisplay() : false;
 		setTimeout(
 			() => globalThis.scroll({ top: 300, behavior: "smooth" }), 1000
 		);
@@ -149,6 +151,9 @@ export const clearAll = () => {
 			document.querySelector(".side-menu")
 			.lastElementChild.setAttribute('name', 'close') : false;
 		document.querySelector(".materials").setAttribute('name', 'select-materials');
+		sessionStorage.removeItem('plotter');
+		sessionStorage.removeItem('graphics');
+		sessionStorage.removeItem('crate');
 	};
 };
 

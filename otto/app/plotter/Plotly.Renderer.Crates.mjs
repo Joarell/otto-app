@@ -1,128 +1,148 @@
+import largestCrateRender from "./Largest.Canvas.Render.class.mjs";
+import notCanvasCrateRender from "./Not.Canvas.Render.class.mjs";
+import { layout } from "./plotly.layout.mjs";
+import TraceMaker from "./Plotly.trace.class.mjs";
+import DesignWalls from "./Plotly.walls.class.mjs";
+import sameSizeCrateRender from "./Same.Size.Render.class.mjs";
+import standardCrateRender from "./Standard.Render.class.mjs";
+import tubeCrateRender from "./Tube.Render.class.mjs";
 
 export default class GraphicCrates {
-	#edges;
-	#layout;
 	#plotly;
-	#solvedData;
+	#edges;
+	#crates;
 
-	constructor(data) {
+	constructor() {
 		const { Plotly } = globalThis;
-
-		this.#plotly = Plotly;
-		this.#solvedData = data;
+		this.#crates = [
+			'tubeCrate',
+			'largestCrate',
+			'sameSizeCrate',
+			'noCanvasCrate',
+			'standardCrate'
+		];
 		this.#edges = [
 			[0, 1], [1, 2], [2, 3], [3, 0], // Bottom face
 			[4, 5], [5, 6], [6, 7], [7, 4], // Top face
 			[0, 4], [1, 5], [2, 6], [3, 7]  // Vertical edges
 		];
-		this.#layout = {
-			title: {
-				font: {
-					family: 'Saira, sans-serif',
-					sizes: 24,
-					weight: 900,
-					style: "italic",
-					color: '#FFFFFFAA'
-				},
-				x: 0.5,
-				xref: 'paper',
-				automargin: true,
-			},
-			legend: {
-				title: {
-					text: 'Open Layers:',
-					font: {
-						family: 'Mitr, sans-serif',
-						size: 14,
-					}
-				},
-				font: {
-					family: 'Mitr, sans-serif',
-					sizes: 14,
-					color: '#FFFFFFAA'
-				},
-				x: 0.1,
-				y:0.9,
-				orientation: 'h'
-			},
-			margin: { t: 0, l: 0, b: 0, r: 0, pad: 10 },
-			scene: {
-				xaxis: {
-					title: {
-						text: 'Length - (cm)'
-					},
-				},
-				yaxis: {
-					title: {
-						text: 'Depth - (cm)'
-					},
-				},
-				zaxis: {
-					title: {
-						text: 'Height - (cm)'
-					},
-				},
-				camera: {
-					eye: { x: 0.00, y: 2.5, z: 1.00 },
-				},
-			},
-			paper_bgcolor: "#96979C",
-			autocolorscale: true,
-			autosize: true,
-		};
+		this.#plotly = Plotly;
 	};
 
-	#defineSides(info, coordinates) {
-		const x_coords = [ 0, 1, 1, 0, 0, 1, 1, 0 ]; // x-coordinates of vertices
-		const y_coords = [ 0, 0, 1, 1, 0, 0, 1, 1 ]; // y-coordinates of vertices
-		const z_coords = [ 0, 0, 0, 0, 1, 1, 1, 1 ]; // z-coordinates of vertices
-		const walls = this.#edges.map(vertices => {
-			const v1 = coordinates[vertices[0]];
-			const v2 = coordinates[vertices[1]];
-			const data = {
-				x: [v1.x, v2.x],
-				z: [v1.y, v2.y],
-				y: [v1.z, v2.z],
-				i: x_coords,
-				j: y_coords,
-				k: z_coords,
-				name: 'Work',
-				type: 'mesh3d',
-				color: '#BBBADD',
-				showlegend: false,
-				opacity: 0.5,
+	/**
+	* @method - catch the solved results.
+	*/
+	async #grabArtWorksOnIDB() {
+		const ref = localStorage.getItem('refNumb');
+		const WORKER = new Worker(
+			new URL("../panels/worker.IDB.crates.mjs", import.meta.url),
+			{ type: "module" },
+		);
+
+		WORKER.postMessage(ref);
+		const request = await new Promise((resolve, reject) => {
+			WORKER.onmessage = (res) => {
+				const { data } = res;
+				data?.reference === ref ? resolve(data) : reject(res);
 			};
-			return(data);
 		});
-
-		info.push(walls);
-		return(info);
+		return(request);
 	};
 
-	#defineShape(info, coordinates, colorType) {
+	#baseFrame(info, coordinates) {
 		this.#edges.forEach(edge => {
 			const v1 = coordinates[edge[0]];
 			const v2 = coordinates[edge[1]];
 
 			info.push({
-				x: [v1.x, v2.x],
-				y: [v1.y, v2.y],
-				z: [v1.z, v2.z],
-				name: 'Crate-01',
+				x: [ v1.x, v2.x ],
+				y: [ v1.y, v2.y ],
+				z: [ v1.z, v2.z ],
+				name: 'Frame',
 				mode: 'lines',
 				type: 'scatter3d',
-				line: {
-					color: colorType ? '#555FEF': '#3DDDDD',
-					width: 3
-				},
 				showlegend: false,
-				legendgroup: 'sides',
+				opacity: 0,
+				line: {
+					color: '#00000000'
+				}
 			});
 		});
 		return(info);
 	};
 
-	#moutingCrates() {
+	#populatePlotter(list) {
+		const designs = [];
+		let alterLayout = structuredClone(layout);
+
+		this.#crates.map(crate => {
+			const data = list.get(crate);
+			let draw;
+
+			switch(data ? crate: 0) {
+				case 'tubeCrate':
+					draw = new tubeCrateRender(data, alterLayout);
+					const tubeCrates = draw.composeCrate;
+					designs.push(tubeCrates.result);
+					alterLayout = tubeCrates.meta;
+					draw = null;
+					break;
+				case 'largestCrate':
+					draw = new largestCrateRender(data, alterLayout);
+					const largestCrates = draw.composeCrate;
+					designs.push(largestCrates.result);
+					alterLayout = largestCrates.meta;
+					draw = null;
+					break;
+				case 'sameSizeCrate':
+					draw = new sameSizeCrateRender(data, alterLayout);
+					const sameSizeCrates = draw.composeCrate;
+					designs.push(sameSizeCrates.result);
+					alterLayout = sameSizeCrates.meta;
+					draw = null;
+					break;
+				case 'noCanvasCrate':
+					draw = new notCanvasCrateRender(data, alterLayout);
+					const notCanvasCrates = draw.composeCrate;
+					designs.push(notCanvasCrates.result);
+					alterLayout = notCanvasCrates.meta;
+					draw = null;
+					break;
+				case 'standardCrate':
+					draw = new standardCrateRender(data, alterLayout);
+					const standardCrates = draw.composeCrate;
+					designs.push(standardCrates.result);
+					alterLayout = standardCrates.meta;
+					draw = null;
+					break;
+			};
+		});
+		designs.unshift(alterLayout);
+		return(designs);
+	};
+
+	async #cratesTriage() {
+		const { crates } = await this.#grabArtWorksOnIDB() || false;
+		const allCrates = new Map();
+
+		if(crates) {
+			Object.entries(crates).map(data => {
+				if(this.#crates.includes(data[0]))
+					allCrates.set(data[0], data[1]);
+			});
+			const finished = this.#populatePlotter(allCrates);
+			globalThis.sessionStorage.setItem('crate', `1/${crates.allCrates.length}`);
+			globalThis.sessionStorage.setItem('graphics', JSON.stringify(finished));
+			document.getElementById('layer-count').innerText = `Courrent crate: 1 / ${ crates.allCrates.length }`;
+		};
+	};
+
+	/**
+	* @method starts the drawing all graphic crates.
+	*/
+	async #moutingCrates() {
+		const walls = new DesignWalls();
+		const trace = new TraceMaker();
 		const vertices1 = [
 			{ x: 0, y: 0, z: 0 }, // Vertex 0
 			{ x: 100, y: 0, z: 0 }, // Vertex 1
@@ -143,141 +163,31 @@ export default class GraphicCrates {
 			{ x: 90, y: 20, z: 90 }, // Vertex 6
 			{ x: 10, y: 20, z: 90 }  // Vertex 7
 		];
-		let data = this.#defineShape([], vertices1, 1);
+		let data = this.#baseFrame([], vertices1);
 
-		data = this.#defineShape(data, vertices2, 0);
-		return(data);
+		await this.#cratesTriage();
+		trace.data = { info: data, coordinates: vertices1, name: 'walls' };
+		data = trace.defineTrace;
+		walls.objectData = {
+			width: 100, depth: 30, height: 100, info: data, name: 'walls',
+			offsetX: 0, offsetZ: 0, offsetY: 0
+		}
+		data = walls.designSides;
+
+		trace.data = { info: data, coordinates: vertices2, name: 'works' };
+		data = trace.defineTrace;
+		walls.objectData = {
+			width: 80, depth: 10, height: 80, info: data, name: 'works',
+			offsetX: 10, offsetZ: 10, offsetY: 10
+		};
+		data = walls.designSides;
+		data = walls.designSides
+		layout.legendgrouptitle['Walls'] = { text: 'Crate sides.' };
+		layout.legendgrouptitle['Works'] = { text: 'Works sides.' };
+		this.#plotly.newPlot('plotter-display', data, layout, { displaylogo: false });
 	};
 
 	get show() {
-		const data = this.#moutingCrates();
-		return(this.#plotly.newPlot('plotter-display', data, this.#layout, { displaylogo: false }));
+		this.#moutingCrates();
 	};
-};
-
-const dataD = [
-	{
-		name: 'Crate',
-		type: 'volume',
-		x: [ 0, 0, 0, 0, 50, 50, 50, 50, ],
-		z: [ 0, 30, 0, 30, 0, 30, 0, 30, ],
-		y: [ 30, 30, 0, 0, 30, 30, 0, 0, ],
-		value: [ 1,2,3,4,5,6,7,8 ],
-		marker: {
-			color: 'darkred',
-		},
-		line: {
-			color: 'red',
-			width: 5,
-		},
-		isomin: -10,
-		isomax: 10,
-		colorscale: 0,
-		opacity: 0.5,
-		text: "Crate-01",
-		showlegend: true,
-		legendgrouptitle: {
-			color: "Red",
-		},
-		intensity: [0, 0, 0, 0],
-		colorscale: 'Viridis',
-		showscale: true,
-		contour: {
-			show: true,
-			color: '#3DDDDD',
-			width: 3,
-		},
-		mode: 'lines',
-	},
-	{
-		name: 'Pack Layer',
-		type: 'volume',
-		x: [ 10, 10, 10, 10, 40, 40, 40, 40 ],
-		z: [ 25, 25, 10, 10, 25, 25, 10, 10 ],
-		y: [ 5, 25, 5, 25, 5, 25, 5, 25 ],
-		value: [1,2,3,4,5,6,7,8],
-		isomin: -10,
-		isomax: 10,
-		colorscale: "Blues",
-		opacity: 0.5,
-		text: "Crate",
-		caps: {
-			x: { show: true },
-			z: { show: true },
-			y: { show: true },
-		},
-		showlegend: true,
-		hovertext: "Pack",
-	},
-	{
-		name: 'Works',
-		type: 'volume',
-		x: [15, 15, 15, 15, 30, 30, 30, 30],
-		z: [20, 20, 15, 15, 20, 20, 15, 15],
-		y: [15, 20, 15, 20, 15, 20, 15, 20],
-		value: [1,2,3,4,5,6,7,8],
-		colorscale: "Greens",
-		opacity: 0.5,
-		text: "Solver",
-		caps: {
-			x: { show: true },
-			z: { show: true },
-			y: { show: true },
-		},
-		showlegend: true,
-		hovertext: "Work",
-	},
-	{
-		name: 'Padding',
-		type: 'volume',
-		x: [25, 25, 25, 25, 20, 20, 20, 20],
-		z: [10, 10, 25, 25, 10, 10, 25, 25],
-		y: [25, 10, 25, 10, 25, 10, 25, 10],
-		value: [1,2,3,4,5,6,7,8],
-		surface: { show: false },
-		colorscale: "purle",
-		opacity: 0.5,
-		text: "Solver",
-		caps: {
-			x: { show: true },
-			z: { show: true },
-			y: { show: true },
-		},
-		showlegend: false,
-		hovertext: "Work",
-	}
-];
-
-const walls = 	{
-	name: 'Crate',
-	type: 'volume',
-	x: [ 0, 0, 0, 0, 50, 50, 50, 50, ],
-	z: [ 0, 30, 0, 30, 0, 30, 0, 30, ],
-	y: [ 30, 30, 0, 0, 30, 30, 0, 0, ],
-	value: [ 1,2,3,4,5,6,7,8 ],
-	marker: {
-		color: 'darkred',
-	},
-	line: {
-		color: 'red',
-		width: 5,
-	},
-	isomin: -10,
-	isomax: 10,
-	colorscale: 0,
-	opacity: 0.5,
-	text: "Crate-01",
-	showlegend: true,
-	legendgrouptitle: {
-		color: "Red",
-	},
-	intensity: [0, 0, 0, 0],
-	colorscale: 'Viridis',
-	showscale: true,
-	contour: {
-		show: true,
-		color: '#3DDDDD',
-		width: 3,
-	},
-	mode: 'lines',
 };
