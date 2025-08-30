@@ -1,4 +1,3 @@
-
 export default class TraceMaker {
 	#edges;
 	#data;
@@ -7,11 +6,7 @@ export default class TraceMaker {
 	constructor() {
 		[
 			[ 'frame', '#BF5E30' ],
-			[ 'walls', '#555FEF' ],
-			[ 'padding', '#222725' ],
-			[ 'fill', '#555FEF' ],
-			[ 'padding', '#222725' ],
-			[ 'walls', '#555FEF' ],
+ 			[ 'walls', '#555FEF' ],
 			[ 'padding', '#FFFFF0' ],
 			[ 'div', '#BEBBBB' ],
 			[ 'works', '#BB0056BB' ],
@@ -28,7 +23,7 @@ export default class TraceMaker {
 	};
 
 	#defineShape() {
-		const { info, coordinates, name } = this.#data;
+		const { info, coordinates, name, show } = this.#data;
 		const color = this.#colors.get(name);
 		this.#edges.forEach((edge, i) => {
 			const v1 = coordinates[edge[0]];
@@ -36,8 +31,8 @@ export default class TraceMaker {
 
 			info.push({
 				x: [ v1.x, v2.x ],
-				y: [ v1.y, v2.y ],
-				z: [ v1.z, v2.z ],
+				z: [ v1.y, v2.y ],
+				y: [ v1.z, v2.z ],
 				name,
 				mode: 'lines',
 				type: 'scatter3d',
@@ -46,11 +41,11 @@ export default class TraceMaker {
 					width: 3
 				},
 				ids: name,
-				showlegend: i === 0 ? true: false,
+				showlegend: show && i === 0 ? true: false,
 				legendgroup: name,
 				hovertemplate: 'L: %{x}<br>' + 'H: %{z}<br>' + 'D: %{y}<br>',
 				contour: {
-					show: i === 0 ? true: false,
+					show: show && i === 0 ? true: false,
 					color: '#BB0056BB',
 					width: 2,
 				}
@@ -61,9 +56,9 @@ export default class TraceMaker {
 
 	set data(info) {
 		this.#data = info;
-	}
+	};
 
 	get defineTrace() {
 		return(this.#defineShape());
-	}
+	};
 }

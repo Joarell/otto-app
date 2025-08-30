@@ -71,11 +71,9 @@ export default class GraphicCrates {
 		return(info);
 	};
 
-	#populatePlotter(list) {
-		const designs = [];
-		let alterLayout = structuredClone(layout);
-
-		this.#crates.map(crate => {
+	async #populatePlotter(list) {
+		let alterLayout =	structuredClone(layout);
+		const designs =		this.#crates.map(async crate => {
 			const data = list.get(crate);
 			let draw;
 
@@ -110,31 +108,40 @@ export default class GraphicCrates {
 					break;
 				case 'standardCrate':
 					draw = new standardCrateRender(data, alterLayout);
-					const standardCrates = draw.composeCrate;
-					designs.push(standardCrates.result);
-					alterLayout = standardCrates.meta;
+					const { result, meta } = await draw.composeCrate;
+					alterLayout = meta;
 					draw = null;
-					break;
+					return(result);
 			};
 		});
-		designs.unshift(alterLayout);
-		return(designs);
+		const data =	await Promise.all(designs);
+		const result =	data.filter(info => Array.isArray(info)).flat();
+		return({ result, alterLayout });
 	};
 
 	async #cratesTriage() {
-		const { crates } = await this.#grabArtWorksOnIDB() || false;
-		const allCrates = new Map();
+		const { crates } =	await this.#grabArtWorksOnIDB() || false;
+		const allCrates =	new Map();
+		const designs =		sessionStorage.getItem('graphics') || false;
 
+		if(designs) {
+			const graphics = JSON.parse(designs);
+			const index =	sessionStorage.getItem('crate').split('/')[0]
+			return(graphics[index]);
+		};
 		if(crates) {
 			Object.entries(crates).map(data => {
 				if(this.#crates.includes(data[0]))
 					allCrates.set(data[0], data[1]);
 			});
 			const finished = this.#populatePlotter(allCrates);
+
 			globalThis.sessionStorage.setItem('crate', `1/${crates.allCrates.length}`);
-			globalThis.sessionStorage.setItem('graphics', JSON.stringify(finished));
+			globalThis.sessionStorage.setItem('graphics', JSON.stringify(finished.designs));
 			document.getElementById('layer-count').innerText = `Courrent crate: 1 / ${ crates.allCrates.length }`;
+			return(finished);
 		};
+		return(true);
 	};
 
 	/**
@@ -154,37 +161,52 @@ export default class GraphicCrates {
 			{ x: 0, y: 30, z: 100 }  // Vertex 7
 		];
 		const vertices2 = [
-			{ x: 10, y: 10, z: 10 }, // Vertex 0
-			{ x: 90, y: 10, z: 10 }, // Vertex 1
-			{ x: 90, y: 20, z: 10 }, // Vertex 2
-			{ x: 10, y: 20, z: 10 }, // Vertex 3
-			{ x: 10, y: 10, z: 90 }, // Vertex 4
-			{ x: 90, y: 10, z: 90 }, // Vertex 5
-			{ x: 90, y: 20, z: 90 }, // Vertex 6
-			{ x: 10, y: 20, z: 90 }  // Vertex 7
+			{ x: 10, y: 10, z: 90 }, // Vertex 0
+			{ x: 20, y: 10, z: 90 }, // Vertex 1
+			{ x: 20, y: 30, z: 90 }, // Vertex 2
+			{ x: 10, y: 30, z: 90 }, // Vertex 3
+			{ x: 10, y: 10, z: 92.5 }, // Vertex 4
+			{ x: 20, y: 10, z: 92.5 }, // Vertex 5
+			{ x: 20, y: 30, z: 92.5 }, // Vertex 6
+			{ x: 10, y: 30, z: 92.5 }  // Vertex 7
 		];
-		let data = this.#baseFrame([], vertices1);
+		// const vertices2 = [
+		// 	{ x: 10, y: 10, z: 10 }, // Vertex 0
+		// 	{ x: 90, y: 10, z: 10 }, // Vertex 1
+		// 	{ x: 90, y: 20, z: 10 }, // Vertex 2
+		// 	{ x: 10, y: 20, z: 10 }, // Vertex 3
+		// 	{ x: 10, y: 10, z: 90 }, // Vertex 4
+		// 	{ x: 90, y: 10, z: 90 }, // Vertex 5
+		// 	{ x: 90, y: 20, z: 90 }, // Vertex 6
+		// 	{ x: 10, y: 20, z: 90 }  // Vertex 7
+		// ];
+		let data =		this.#baseFrame([], vertices1);
+		const { result, alterLayout } =	await this.#cratesTriage();
 
-		await this.#cratesTriage();
-		trace.data = { info: data, coordinates: vertices1, name: 'walls' };
-		data = trace.defineTrace;
-		walls.objectData = {
-			width: 100, depth: 30, height: 100, info: data, name: 'walls',
-			offsetX: 0, offsetZ: 0, offsetY: 0
-		}
-		data = walls.designSides;
-
-		trace.data = { info: data, coordinates: vertices2, name: 'works' };
-		data = trace.defineTrace;
-		walls.objectData = {
-			width: 80, depth: 10, height: 80, info: data, name: 'works',
-			offsetX: 10, offsetZ: 10, offsetY: 10
-		};
-		data = walls.designSides;
-		data = walls.designSides
-		layout.legendgrouptitle['Walls'] = { text: 'Crate sides.' };
-		layout.legendgrouptitle['Works'] = { text: 'Works sides.' };
-		this.#plotly.newPlot('plotter-display', data, layout, { displaylogo: false });
+		// if(Array.isArray(graphic)) {
+		// 	const plotter = document.getElementById('plotter-display');
+		//
+		// 	plotter.removeChild(plotter.lastElementChild);
+		// 	this.#plotly.newPlot('plotter-display', graphic, layout, { displaylogo: false });
+		// };
+		// trace.data = { info: data, coordinates: vertices1, name: 'walls' };
+		// data = trace.defineTrace;
+		// walls.objectData = {
+		// 	width: 100, depth: 30, height: 100, info: data, name: 'walls',
+		// 	offsetX: 0, offsetZ: 0, offsetY: 0
+		// }
+		// data = walls.designSides;
+		// trace.data = { info: data, coordinates: vertices2, name: 'works' };
+		// data = trace.defineTrace;
+		// walls.objectData = {
+		// 	width: 80, depth: 10, height: 80, info: data, name: 'works',
+		// 	offsetX: 10, offsetZ: 10, offsetY: 10
+		// };
+		// data = walls.designSides;
+		// data = walls.designSides
+		// layout.legendgrouptitle['Walls'] = { text: 'Crate sides.' };
+		// layout.legendgrouptitle['Works'] = { text: 'Works sides.' };
+		this.#plotly.newPlot('plotter-display', result, alterLayout, { displaylogo: false });
 	};
 
 	get show() {

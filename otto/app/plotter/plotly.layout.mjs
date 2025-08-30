@@ -23,6 +23,7 @@ export let layout = {
 	legendgrouptitle: {},
 	margin: { t: 0, l: 0, b: 0, r: 0, pad: 10 },
 	scene: {
+		aspectmode: 'data',
 		xaxis: {
 			title: {
 				text: 'Length - (cm)',
@@ -51,7 +52,7 @@ export let layout = {
 			tick: 'outside',
 		},
 		camera: {
-			eye: { x: -2.00, y: 3, z: 1.00 },
+			eye: { x: 0.00, y: 3, z: 1.00 },
 		},
 	},
 	// paper_bgcolor: "#243B55",

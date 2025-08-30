@@ -57,10 +57,7 @@ export default class CraterPythagoras {
 
 	#pitagorasTheorem(crate) {
 		const MAXHEIGHT =	240;
-		const a =			crate[2] ** 2;
-		const b =			MAXHEIGHT ** 2;
-		const c =			a > b ? a - b : b - a;
-		const z =			(~~(Math.sqrt(c) * 100)) / 100;
+		const z =			+(Math.cos(Math.asin(MAXHEIGHT / crate[2])) * crate[2]).toFixed(3);
 
 		this.#coordinates.finalSize = [crate[0], z, MAXHEIGHT];
 		return ([...this.#coordinates.finalSize]);

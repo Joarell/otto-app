@@ -389,16 +389,13 @@ export default class CrateTrimmer {
 		const { provision, extraX, extraY } = this.#provideMaterial(count, [+foam[1], +foam[3]], innerSize);
 		let residual;
 
-		if(!onBank) {
+		if(!onBank)
 			residual =	!provision ? 0 : this.#foamDivisorLayers(innerSize, provision);
-		};
 
 		residual =	!residual && count ?
 			this.#foamDivisorLayers(innerSize, provision): residual;
-		this.#materialBank.set(foam[0], [ residual ]);
-		lowDepth && Array.isArray(lowDepth) ?
-			this.#materialBank.set('2', lowDepth):
-			this.#materialBank.set('2', [foam]);
+		if (Array.isArray(lowDepth) && lowDepth[0].length)
+			this.#materialBank.set('2', lowDepth);
 		return(await this.#fillEmptySpaceOnLayers(crate));
 	};
 
@@ -458,7 +455,7 @@ export default class CrateTrimmer {
 			return(this.#trimmingMainCrateMaterial(item, crate, pos));
 		}
 		catch(e) {
-			console.error(e);
+			return(console.error(e));
 		};
 	};
 
@@ -514,4 +511,4 @@ export default class CrateTrimmer {
 		this.#cutMaterial(this.#crates, mapCrates);
 		return(this.#crates);
 	};
-};
+}

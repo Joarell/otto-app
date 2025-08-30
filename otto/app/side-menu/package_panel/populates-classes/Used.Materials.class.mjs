@@ -92,7 +92,7 @@ export default class UsedMaterialsTable {
 				<td>Artwork</td>
 				<td>${item[0]}</td>
 				<td>${type}</td>
-				<td>${counter}</td>
+				<td>${(counter).toFixed(2)}</td>
 				<td>${~~(residual * area) / 100} m²</td>
 				<td>$ ${Math.ceil(totalCost)}</td>`;
 			imutable.appendChild(content);

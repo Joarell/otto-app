@@ -320,6 +320,7 @@ export default class MaterialManagement {
 			residualTotal.map(info => info[0] === pack ? residual += info[1]: 0);
 			counterMaterials.map(info => info[0] === pack ? counter += info[1]: 0);
 			data.push(pack);
+			counter = +(counter).toFixed(2);
 			materials.set(pack, { totalCost, residual, counter, type, area });
 		});
 		return(this.#summarazedMaterialReport(materials, data, pos + 1));

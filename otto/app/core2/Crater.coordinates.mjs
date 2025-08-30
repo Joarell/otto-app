@@ -16,7 +16,7 @@ export default class WorksCoordinates {
 			emptyArea: [],
 			artLocation: new Map(),
 			baseSize: this.#sizes,
-			plotter3D: new Map(),
+			usedMaterials: new Map(),
 			innerSize: [],
 			finalSize: [],
 			layers: [],
@@ -64,8 +64,16 @@ export default class WorksCoordinates {
 				this.layers.push({ vacuum, works });
 				this.reset;
 			},
+			get fillMaterials() {
+				const materials = JSON.parse(localStorage.getItem('materials'));
+				const cratesOnly = JSON.parse(localStorage.getItem('crating'));
+
+				materials.map(info => cratesOnly.includes(info[0]) ?
+						this.usedMaterials.set(info[0], info): 0);
+			},
 		};
 		template.reset;
+		template.fillMaterials;
 		return(template);
 	};
 

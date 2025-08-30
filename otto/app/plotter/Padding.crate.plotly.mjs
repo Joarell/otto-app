@@ -21,7 +21,6 @@ export default class PaddingCrate {
 		this.#pad[1] =	+this.#pad[1];
 		this.#pad[2] =	+this.#pad[2];
 		this.#pad[3] =	+this.#pad[3];
-		console.log(this.#pad)
 	};
 
 	#cratePadding() {
