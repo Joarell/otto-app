@@ -183,29 +183,6 @@ export default class GraphicCrates {
 		let data =		this.#baseFrame([], vertices1);
 		const { result, alterLayout } =	await this.#cratesTriage();
 
-		// if(Array.isArray(graphic)) {
-		// 	const plotter = document.getElementById('plotter-display');
-		//
-		// 	plotter.removeChild(plotter.lastElementChild);
-		// 	this.#plotly.newPlot('plotter-display', graphic, layout, { displaylogo: false });
-		// };
-		// trace.data = { info: data, coordinates: vertices1, name: 'walls' };
-		// data = trace.defineTrace;
-		// walls.objectData = {
-		// 	width: 100, depth: 30, height: 100, info: data, name: 'walls',
-		// 	offsetX: 0, offsetZ: 0, offsetY: 0
-		// }
-		// data = walls.designSides;
-		// trace.data = { info: data, coordinates: vertices2, name: 'works' };
-		// data = trace.defineTrace;
-		// walls.objectData = {
-		// 	width: 80, depth: 10, height: 80, info: data, name: 'works',
-		// 	offsetX: 10, offsetZ: 10, offsetY: 10
-		// };
-		// data = walls.designSides;
-		// data = walls.designSides
-		// layout.legendgrouptitle['Walls'] = { text: 'Crate sides.' };
-		// layout.legendgrouptitle['Works'] = { text: 'Works sides.' };
 		this.#plotly.newPlot('plotter-display', result, alterLayout, { displaylogo: false });
 	};
 
