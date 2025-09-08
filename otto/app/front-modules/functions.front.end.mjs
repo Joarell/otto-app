@@ -112,6 +112,9 @@ export async function crate(fetched = false) {
 	let list;
 	const cratesAsCm =	await checkMetric();
 	const root =	document.querySelector(':root');
+	const root =		document.querySelector(':root');
+	const material =	document.querySelector('.update-materials');
+	const upPanel =		document.querySelector('.materials')
 
 	if (fetched || confirm("Ready to crate all works?") && cratesAsCm) {
 		setPanels();
@@ -121,10 +124,15 @@ export async function crate(fetched = false) {
 		estimate.crates =		cratesAsCm;
 		addNewWorksToIndexedDB(estimate, fetched);
 
-		addPanelInfoData();
+		// addPanelInfoData();
+		material.setAttribute('name', 'materials-used');
+		upPanel.setAttribute('name', 'packed-works');
+		upPanel.setAttribute('content', 'crates');
 		grant === 'FULL' || grant === 'PLOTTER' || !grant ?
 			document.getElementById('crate-layers').disabled = false : 0;
 		root.style.setProperty("--layer-state", "block");
+		sessionStorage.removeItem('crate');
+		sessionStorage.removeItem('plotter');
 	};
 	weak.add(estimate);
 	return ('Crated');
@@ -156,12 +164,15 @@ export async function cleanInputs(fetched = false) {
 	const RENDER =	document.getElementById("show-layer");
 	const dialog =	document.querySelectorAll('padding-dialog').length;
 	const root =	document.querySelector(':root');
+	const packs =	document.querySelector('.update-materials');
 	let granted =	document.cookie;
 
 	granted = granted.split('=')[1]
-	RENDER.hasChildNodes() ? openDisplay() : false;
+	RENDER && RENDER.hasChildNodes() ? openDisplay() : false;
 		globalThis.document.getElementById("input_estimate").select();
 		globalThis.document.getElementById("input_code").select();
+	packs.getAttribute('name') !== 'update-materials' ?
+		packs.setAttribute('name', 'update-materials'): 0;
 	countWorks();
 	displayCub();
 	displayAirCub();
@@ -182,19 +193,25 @@ async function parseArtWork() {
 		"mode",
 		"storage",
 		"currency",
-		"currency",
 		"metrica",
 		"refNumb",
 		"offResults",
 		"FETCHED",
-	]
-
+		"materials",
+		"packing",
+		"crating",
+	];
+	// const packs = JSON.parse(globalThis.localStorage.getItem('packing'));
+	//
+	// if(!packs || packs.length === 0)
+	// 	return(alert(`Please, select a packing material to applyt to the artwork.`));
 	Object.entries(DB).map(data => {
 		!avoid.includes(data[0]) ? temp.push(JSON.parse(data[1])) : false;
 	});
 	if (temp.length > 0)
 		works = temp.map(work => {
-			return(new ArtWork(work.code, work.x, work.z, work.y));
+			const { code, x, z, y, packing } = work;
+			return(new ArtWork(code, x, z, y, packing));
 		});
 	return(works ? works : undefined);
 };

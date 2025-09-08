@@ -1,6 +1,3 @@
-
-
-
 export default class ArrangerSameSize {
 	#list;
 
@@ -12,35 +9,39 @@ export default class ArrangerSameSize {
 	#trailOne() {
 		const MAXDEPTH =	10;
 		const getter =		[];
-		const checker =		(a, b) => a[4] === b[4] && a[0] !== b[0];
+		const checker =		(a, b) => a.cubed <= b.cubed && a.code !== b.code;
+
 		this.map(work => {
 			let i =	0;
+			let checked;
 
-			if (work[2] <= MAXDEPTH)
-				for(i in this)
-					if (!getter.includes(this[i]) && checker(this[i], work))
+			if (work.z <= MAXDEPTH)
+				for(i in this) {
+					checked = checker(this[i], work);
+					if (!getter.includes(this[i]) && checked)
 						getter.push(this[i])
+				};
 		});
 		return(getter);
 	};
 
 	#checker(art, work) {
-		const x =	work[1];
-		const y =	work[3];
-		const cub =	work[4];
-	
-		return (art[1] === x && art[3] === y && art[4] === cub);
+		const x =	work.x;
+		const y =	work.y;
+		const cub =	work.cubed;
+
+		return (art.x === x && art.y === y && art.cubed <= cub);
 	};
 
 	#trailTwo(list) {
-		const sameSize = [];
+		const sameSize =	[];
 		list.map(work => {
 			let getter =	[];
-			let i =		0;
+			let i =			0;
 
 			for(i in list) {
 				if (this.#checker(list[i], work) && !sameSize.includes(list[i]))
-					getter.push(list[i]);	
+					getter.push(list[i]);
 			};
 			if (getter.length >= 4)
 				getter.map(element => {
@@ -48,18 +49,16 @@ export default class ArrangerSameSize {
 				});
 			getter = null;
 		});
-
 		return(sameSize);
 	};
 
-	#sameSizeTrail () {
+	#sameSizeTrail() {
 		const pathOne = this.#trailOne.call(this.#list);
 		const pathTwo = this.#trailTwo(pathOne);
 
 		pathTwo.map(art => {
 			this.#list.splice(this.#list.indexOf(art), 1);
 		});
-
 		return({sorted: this.#list, sameSize: pathTwo});
 	};
 };

@@ -57,6 +57,10 @@ async function setDBFetched(result) {
 			document.getElementById("input_estimate").value = result.reference;
 			globalThis.sessionStorage.clear();
 			globalThis.sessionStorage.setItem("FETCHED", JSON.stringify(result, null))
+			const { materials } = localStorage;
+			sessionStorage.clear();
+			sessionStorage.setItem("FETCHED", JSON.stringify(result, null))
+			localStorage.setItem('materials', materials);
 			return(addPanelFetched());
 		}
 		throw new TypeError("Data not found!");

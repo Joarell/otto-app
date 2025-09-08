@@ -7,28 +7,82 @@ import { createIDB } from './front-modules/link.storage.mjs';
 import { switchMode } from './front-modules/mode.color.mjs';
 import { accordionController, closeMenu } from './side-menu/interactive.menu.mjs';
 import { searchEstimate } from './side-menu/search.menu.mjs';
-import { changeCrateDisplay, openDisplay } from './plotter/layer.controller.mjs';
-import { layersNumber, skipLayer } from './plotter/select.menu.mjs';
+import { openDisplay } from './plotter/layer.controller.mjs';
+import { skipLayer } from './plotter/select.menu.mjs';
 import { logout } from './front-modules/logout.mjs';
 import { installer } from './installation.handler.mjs';
+import GraphicCrates from './plotter/Plotly.Renderer.Crates.mjs';
 
 
 globalThis.onkeydown = (push) => {
 	const task1 = ((push.key === "Enter") && (push.ctrlKey === true));
-	//const task2 = ((push.ctrlKey === true) && (push.key === "V"));
+	const task2 = ((push.ctrlKey === true) && (push.altKey === true) && (push.key === "c"));
 	const task3 = push.key === "Escape";
 
 	task1 ? crate() : false;
-	//task2 ? openDisplay() : false;
+	task2 ? openDisplay() : false;
 	task3 ? closeMenu() : false;
+	push.stopImmediatePropagation();
+};
+
+
+globalThis.onafterprint = () => {
+	const { shadowRoot } =	document.querySelector('.update-materials');
+	const area =		 	shadowRoot.querySelectorAll('[aria-hidden]');
+
+	[...area].map(node => node.ariaHidden = 'false');
+};
+
+
+globalThis.onbeforeprint = () => {
+	const { shadowRoot } =	document.querySelector('.update-materials');
+	const area =		 	shadowRoot.querySelectorAll('[aria-hidden]');
+
+	[...area].map(node => node.ariaHidden = 'false');
 };
 
 
 globalThis.document.getElementById('main-app')
 	.addEventListener("click", (element => {
+	const up =			document.querySelector('.materials');
+	const down =		document.querySelector('.update-materials');
+	const crates =		sessionStorage.getItem('crate');
+	let cratesNum =		crates ? +crates.split('/')[0]: 0;
+	const cratesTotal =	crates ? +crates.split('/')[1]: 0;
+	const plotter =		new GraphicCrates();
+	const crateDisplay = document.getElementById('layer-count');
+	let { id, className, attributes } = element.target;
 
-	// console.log(element.target.id);
-	switch (element.target.id) {
+	{
+		const { shadowRoot } =	up;
+		const shadow =			shadowRoot.querySelector('.upPane');
+		shadow?.addEventListener('click', (e) => {
+			const { id, className, tagName } = e.target;
+			const composeEvent = new CustomEvent('open-crate', {
+				bubbles: true,
+				composed: true,
+				detail: { id, className, tagName },
+			});
+			shadow.dispatchEvent(composeEvent);
+		}, true);
+	};
+	{
+		const { shadowRoot } =	down;
+		const shadow =			shadowRoot.querySelector('.data-update');
+		shadow?.addEventListener('click', (e) => {
+			const { id, className } = e.target;
+			const composeEvent = new CustomEvent('update-materials-info', {
+				bubbles: true,
+				composed: true,
+				detail: { id, className },
+			});
+			shadow.dispatchEvent(composeEvent);
+			e.stopImmediatePropagation();
+		});
+
+	};
+	attributes.content === 'crates' ? className = 'crates': 0;
+	switch (!id ? id = className: id) {
 		case "body-app" :
 			accordionController(element);
 			break;
@@ -106,18 +160,95 @@ globalThis.document.getElementById('main-app')
 			openDisplay();
 			break;
 		case "previous":
-			skipLayer(element);
+			if(cratesNum > 1) {
+				cratesNum -= 1;
+				sessionStorage.setItem('crate', `${cratesNum}/${cratesTotal}`);
+				crateDisplay.innerText = `Current crate: ${cratesNum} / ${ cratesTotal }`;
+				plotter.show;
+			};
 			break;
 		case "layer-prev":
-			skipLayer(element);
+			if(cratesNum > 1) {
+				cratesNum -= 1;
+				sessionStorage.setItem('crate', `${cratesNum}/${cratesTotal}`);
+				crateDisplay.innerText = `Current crate: ${cratesNum} / ${ cratesTotal }`;
+				plotter.show;
+			};
 			break;
 		case "next":
-			skipLayer(element);
+			if(cratesNum < cratesTotal) {
+				cratesNum += 1;
+				sessionStorage.setItem('crate', `${cratesNum}/${cratesTotal}`);
+				crateDisplay.innerText = `Current crate: ${cratesNum} / ${ cratesTotal }`;
+				plotter.show;
+			};
 			break;
 		case "layer-next":
-			skipLayer(element);
+			if(cratesNum < cratesTotal) {
+				cratesNum += 1;
+				sessionStorage.setItem('crate', `${cratesNum}/${cratesTotal}`);
+				crateDisplay.innerText = `Current crate: ${cratesNum} / ${ cratesTotal }`;
+				plotter.show;
+			};
 			break;
-	}
+		case 'settings-content':
+			className !== 'update-materials' && className !== 'new-material' ? up.setAttribute('content', 'settings-content'): 0
+			break;
+		case 'packages':
+			className !== 'update-materials' && className !== 'select-materials' ? up.setAttribute('content', 'packages'): 0;
+			break;
+		case 'select-materials':
+			className !== 'update-materials'&& className !== 'select-materials' ? up.setAttribute('content', 'select-materials'): 0;
+			break;
+		case 'materials':
+			className !== 'update-materials' && className !== 'select-materials' ? up.setAttribute('content', 'confirm-save'): 0;
+			break;
+		case 'report':
+			up.setAttribute('name', 'packages');
+			break;
+		case 'report':
+			up.setAttribute('name', 'packages');
+			break;
+		case 'pack-opts':
+			up.setAttribute('name', 'works-packed');
+			break;
+		case 'works-packed':
+			up.setAttribute('name', 'works-packed');
+			break;
+		case 'reset-sizes':
+			up.setAttribute('name', 'reset-sizes');
+			break;
+		case 'reset-szs':
+			up.setAttribute('name', 'reset-szs');
+			break;
+		case 'adding-material':
+			up.setAttribute('name', 'adding-material');
+			break;
+		case 'add__new__field':
+			up.setAttribute('name', 'add__new__field');
+			break;
+		case 'cancel-remove':
+			up.setAttribute('name', 'cancel-remove');
+			break;
+		case 'new-material':
+			up.setAttribute('name', 'new-material');
+			break;
+		case 'confirm-save':
+			up.setAttribute('name', 'confirm-save');
+			break;
+		case 'printer-icon':
+			globalThis.print();
+			break;
+		case 'printer-btn':
+			globalThis.print();
+			break;
+		case 'printer-svg':
+			globalThis.print();
+			break;
+		case 'printer':
+			globalThis.print();
+			break;
+	};
 }), true);
 
 
@@ -155,8 +286,7 @@ globalThis.document.getElementById('main-app')
 			unit.setUnitTwo();
 			break;
 		case "selected-crate":
-			layersNumber();
-			changeCrateDisplay();
+			openDisplay();
 			break;
 		default:
 	};
@@ -165,9 +295,9 @@ globalThis.document.getElementById('main-app')
 
 globalThis.document.getElementById('main-app')
 	.addEventListener("input", (element => {
+	let { id, className } = element.target;
 
-	// console.log('Inputs', element);
-	switch (element.target.id) {
+	switch (!id ? id = className: id) {
 		case "coin1-input":
 			accordion.getInputOne();
 			break;
@@ -188,6 +318,25 @@ globalThis.document.getElementById('main-app')
 globalThis.onsubmit = (event) => {
 	event.preventDefault();
 };
+
+
+globalThis.document.getElementById('main-app')
+	.addEventListener('open-crate', (e) => {
+	const { id, className, tagName } =	e.detail;
+	const up =	document.querySelector('.materials');
+
+	tagName === 'A' ? up.setAttribute('content', `${id}-${className}`): 0;
+}, true);
+
+
+globalThis.document.getElementById('main-app')
+	.addEventListener('update-materials-info', (e) => {
+	const { id } =	e.detail;
+	const down =	document.querySelector('.update-materials');
+
+	e.stopImmediatePropagation();
+	id === 'update-info' ? down.setAttribute('name', 'update'): 0;
+}, true);
 
 
 globalThis.document.getElementById('estimate_getter')

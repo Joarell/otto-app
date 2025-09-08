@@ -1,22 +1,24 @@
 
 
 header {
-	background: var(--gradient);
-	text-align: center;
-	height: 8rem;
+	background: transparent;
+	text-align: left;
 	font-family: 'Big Shoulders Stencil Display', cursive;
 	overflow: clip;
-	border-radius: 1rem;
+	border-bottom: .1rem solid var(--lines);
+	height: 5dvh;
+	width: 99dvw;
 }
 
 
 footer {
+	display: none;
 	position: relative;
 	place-items: center;
 	grid-area: header;
 	background: var(--gradient1);
 	text-align: center;
-	height: 8rem;
+	height: 3rem;
 	font-family: 'Big Shoulders Stencil Display', cursive;
 	overflow: clip;
 	border-radius: 1rem;
@@ -25,8 +27,15 @@ footer {
 
 .header--title, .container__footer {
 	margin: 0 0;
-	font-size: 13rem;
-	opacity: .05;
+	font-size: 5rem;
+	opacity: .1;
+	& > h1 {
+		color: var(--iframes-bg);
+	}
+}
+
+.container__footer {
+	text-align: center;
 }
 
 

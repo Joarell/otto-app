@@ -14,6 +14,19 @@ import ArtWork from '../core2/ArtWork.class.mjs';
 import * as mod from './functions.front.end.mjs'
 
 
+function definedPackingMaterials() {
+	const packs =		JSON.parse(localStorage.getItem('packing'));
+	const materials =	JSON.parse(localStorage.getItem('materials'));
+	const filtered =	[];
+
+	if(!packs || packs.length === 0)
+		return(false);
+	packs.filter(type => {
+		filtered.push(materials.find(opts => opts[0] === type).flat());
+	});
+	return(filtered);
+};
+
 // ╭────────────────────────────────────────────────────────────────────────╮
 // │ This function validates all inputs of the fields provided by the user. │
 // ╰────────────────────────────────────────────────────────────────────────╯
@@ -21,25 +34,30 @@ export function checkWork(work) {
 	const checked =		regValid(intParser([work[1], work[2], work[3]]));
 	const regex =		/[^-a-z-A-Z-0-9]/g;
 	const estimate =	document.getElementById("input_estimate").value;
+	const materials =	definedPackingMaterials();
 	let i =				0;
 
+	if(!materials) {
+		alert('Please, select some packing material to apply to the artwork.');
+		return('material');
+	};
+	if (regex.test(work[0]) || regex.test(estimate)) {
+		alert(`Found special character NOT allowed on "Work code",\
+		or "Estimate" input. Please, try again!`);
+		return (false);
+	};
 	for (i in localStorage.key(i)){
 		if(work[0] === localStorage.key(i)){
 			alert(`${work[0]} already added to the list. Please, try again`);
 			return(false);
-		}
-	}
-	switch (regex.test(work[0]) || regex.test(estimate)) {
-		case true:
-			alert(`Found special character NOT allowed on "Work code",\
-			or "Estimate" input. Please, try again!`);
-			return (false);
-	}
+		};
+	};
 	checkReference();
-	return ( Array.isArray(checked) ?
-		new ArtWork(work[0], checked[0], checked[1], checked[2]) : false
+	return (
+		Array.isArray(checked) ?
+		new ArtWork(work[0], checked[0], checked[1], checked[2], materials) : false
 	);
-}
+};
 
 
 // ╭──────────────────────────────────────────────────────╮
@@ -50,7 +68,7 @@ export function intParser(dimensions) {
 		return parseInt(size);
 	});
 	return (result);
-}
+};
 
 // ╭────────────────────────────────────────────────────────────────────╮
 // │ Regular expression function to validate if all inputs are numbers. │
@@ -78,7 +96,24 @@ export function regValid(sizes_parsed) {
 		}
 	}
 	return (sizes_parsed);
-}
+};
+
+
+function selectEmptyinput() {
+	const IDS = [
+		'input_estimate', 'input_code', 'input_length', 'input_depth', 'input_height'
+	];
+	let aux = false;
+
+	IDS.find(field => {
+		const input = document.getElementById(field);
+		console.log(input.value)
+		if(!input.value && !aux) {
+			aux = true;
+			return(input.select());
+		};
+	});
+};
 
 
 //╭───────────────────────────────────────────────────────────────────────────╮
@@ -86,7 +121,7 @@ export function regValid(sizes_parsed) {
 //│Secondly, calls the other functions from the modules when all verifications│
 //│                           were done and right.                            │
 //╰───────────────────────────────────────────────────────────────────────────╯
-export function catchWork() {
+export async function catchWork() {
 	const estimate =	document.getElementById("input_estimate").value;
 	const cod =			document.getElementById("input_code").value;
 	const length =		document.getElementById("input_length").value;
@@ -99,11 +134,12 @@ export function catchWork() {
 	switch (cod && length && depth && height) {
 		case "":
 			alert(`Oops! Do not forget to fill each field. Please, try again!`);
-			return (mod.cleanInputs());
+			return(selectEmptyinput());
+			// return (mod.cleanInputs());
 	}
 	tmp = checkWork([cod, length, depth, height]);
-	if (tmp !== false) {
-		orderWorks(tmp.data);
+	if (tmp && tmp !== 'material') {
+		await orderWorks(tmp.data);
 		localStorage.setItem(tmp.data.code, JSON.stringify(tmp.data));
 		localStorage.setItem("storage", "art-work");
 		mod.countWorks();
@@ -111,8 +147,8 @@ export function catchWork() {
 		mod.displayCub();
 		mod.cleanInputs();
 	}
-	return (mod.cleanInputs());
-}
+	return(!tmp || tmp === 'material' ? 0 : mod.cleanInputs());
+};
 
 
 // ╭─────────────────────────────────────────────────────────────────╮
@@ -134,7 +170,7 @@ export function catchRemove() {
 		alert(`"${work}" was not found in the list. Please, try again!`);
 	localStorage.setItem("storage", "art-work");
 	return(mod.cleanInputs());
-}
+};
 
 
 // ╭─────────────────────────────────────────────────────────────────╮
@@ -156,10 +192,10 @@ export function checkReference() {
 		}
 	}
 	localStorage.setItem("refNumb", actual);
-}
+};
 
 
-function orderWorks({ code }){
+async function orderWorks({ code }){
 	const storage =	sessionStorage;
 	const array =	JSON.parse(storage.getItem("codes"));
 	let num;

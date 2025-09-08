@@ -42,10 +42,9 @@ export default class CraterLastCheckReArranger {
 		return(structuredClone(list));
 	};
 
-// ╭───────────────────────────────────────────────────────────────────────────╮
-// │ Simulates if the crate with 5 layer can consolidate all same size canvas. │
-// ╰───────────────────────────────────────────────────────────────────────────╯
-	// BUG: the same size crate are being drained, but the sizes of consolidated crate is the same.
+	// ╭───────────────────────────────────────────────────────────────────────────╮
+	// │ Simulates if the crate with 5 layer can consolidate all same size canvas. │
+	// ╰───────────────────────────────────────────────────────────────────────────╯
 	#processingCratesList (listCrates, attCrate) {
 		const GC =			new WeakSet();
 		const LEN =			attCrate.works.length;
@@ -57,7 +56,7 @@ export default class CraterLastCheckReArranger {
 
 		while(i++ < listCrates.length && bool) {
 			if (i % 2 === 1) {
-				result =	LEN === 1 ?
+				result = LEN === 1 ?
 					structuredClone(attCrate.works[0]):
 					structuredClone(attCrate.works);
 				this.#removeCrate(listCrates, i, result);

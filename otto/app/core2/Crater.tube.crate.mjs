@@ -1,13 +1,19 @@
+import CrateMaker from "./Crate.maker.mjs";
+import WorksCoordinates from "./Crater.coordinates.mjs";
 
 export default class CraterTube {
 	#tubes;
 	#DIAMETER
+	#coordinates;
+	#rawList;
 
 	constructor(list) {
 		if(!list || list.length === 0)
 			return({ tube : false });
 
-		this.#tubes =		list;
+
+		this.#rawList =		list;
+		this.#tubes =		list.map(art => art.arr);
 		this.#DIAMETER =	35;
 		const checker =		this.#tubes.filter(item => {
 			return(item[2] < this.#DIAMETER ? item : false);
@@ -21,15 +27,30 @@ export default class CraterTube {
 
 	#crateMaker() {
 		this.#possibleCrates();
-		return (this.#tubes);
+		return(this.#tubes);
 	};
 
-	#sizeComposer(){
-		let x = this[0][1];
-		let z = this[0][2];
+	#setWokdCoordinates(innerSize, list) {
+		const coordinates =		new WorksCoordinates(innerSize);
+		this.#coordinates =		coordinates.bluePrintCoordinates;
+		const { emptyArea } =	this.#coordinates;
+		let info =				{ emptyArea, feat: [] };
+		let len =				Array.isArray(list[0]) ? list.length - 1 : 0;
+		let result;
+
+		coordinates.fillPreparing = { info, list, len, raw: this.#rawList };
+		result = coordinates.fillLayer;
+		this.#coordinates.defineLayer = [1, result.feat];
+		this.#coordinates.innerSize = [innerSize[0], innerSize[1], innerSize[2]];
+		this.#rawList.map(work => this.#coordinates.artLocation.set(work.code, work));
+	};
+
+	#sizeComposer(list){
+		let x = list[0][1];
+		let z = list[0][2];
 		let y = 0;
 
-		this.map(tube => {
+		list.map(tube => {
 			x = tube[1] > x ? tube[1]: x;
 			z = tube[2] > z ? tube[2]: z;
 			y += tube[3];
@@ -37,36 +58,31 @@ export default class CraterTube {
 		return([x, z, y]);
 	}
 
-	#setPaddings(pad, highPad) {
-		const X = this[0] + pad;
-		const Z = this[1] + pad;
-		const Y = this[2] + highPad;
+	#setPaddings() {
+		const crate = new CrateMaker(1);
+		const x = +(this[0] + crate.x).toFixed(3);
+		const z = +(this[1] + crate.z).toFixed(3);
+		const y = +(this[2] + crate.y).toFixed(3);
+		const X = x % 1 > 0 ? x: (x).toFixed(0);
+		const Z = z % 1 > 0 ? z: (z).toFixed(0);
+		const Y = y % 1 > 0 ? y: (y).toFixed(0);
 
-		return([X, Z, Y]);
-	};
-
-	#oneTubeCrate() {
-		const DEFAULTPAD =	18;
-		const HEIGHTPAD =	25;
-		const X =			this[0][1] + DEFAULTPAD;
-		const Z =			this[0][2] + DEFAULTPAD;
-		const Y =			this[0][3] + HEIGHTPAD;
-
-		return ([X, Z, Y]);
+		this.#setWokdCoordinates([
+			this[0] + crate.pad, this[1] + crate.pad, this[2] + crate.pad
+		], structuredClone(list));
+		this.#coordinates.finalSize = [+X,+Z, +Y];
+		return([...this.#coordinates.finalSize]);
 	};
 
 	#tubeCrate(works) {
-		const DEFAULTPAD =	18;
-		const HEIGHTPAD =	25;
-		const baseSize =	this.#sizeComposer.call(works);
-
-		return (this.#setPaddings.call(baseSize, DEFAULTPAD, HEIGHTPAD));
+		const baseSize =	this.#sizeComposer(works);
+		return (this.#setPaddings(baseSize, works));
 	};
 
 	#interfaceCrates(list) {
 		switch(list.length) {
 			case 1:
-				return(this.#oneTubeCrate.call(list));
+				return(this.#tubeCrate(list));
 			case 2:
 				return(this.#tubeCrate(list));
 			case 3:
@@ -86,7 +102,7 @@ export default class CraterTube {
 			result.push(this.#interfaceCrates(getter.length, getter));
 			result.push({ works: getter });
 		};
-		return (result);
+		return(result);
 	};
 
 	#checkHugeTubes() {
@@ -98,7 +114,7 @@ export default class CraterTube {
 		getter.map(roll => {
 			this.#tubes.splice(this.#tubes.indexOf(roll), 1);
 		});
-		return (getter);
+		return(getter);
 	};
 
 	#possibleCrates() {

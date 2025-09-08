@@ -60,12 +60,14 @@ function airPortStatus(create, sizeUnit) {
 
 function addHTMLTableLine(data, unit, table) {
 	const { crates } = data;
+	const blankRow = document.createElement('tr');
 
+	blankRow.innerHTML =`<span></span><span></span><span></span><span></span><span></span><span></span><span></span>`
 	crates.map((create, i) => {
 		if (i % 2 === 0) {
 			const port = airPortStatus(create, unit);
-			table.innerHTML += create
-				.map((info, i) => {
+			table.appendChild(blankRow);
+			table.innerHTML += create.map((info, i) => {
 					switch (i) {
 						case 0:
 							return `<tbody><tr><td>${port}</td><td>CREATE</td><td>${info}</td>`;
@@ -108,6 +110,8 @@ export async function showCrates1(estimate, pane) {
 };
 
 function finishedRender(table, info) {
+	const { whichAirPort, airCubTotal } = info;
+
 	table.innerHTML += `<tr>
 		<td>-</td>
 		<td>-</td>
@@ -120,16 +124,16 @@ function finishedRender(table, info) {
 	table.innerHTML += `<tr>
 		<td>AIRPORT</td>
 		<td>PAX</td>
-		<td>${info.whichAirPort[0].PAX}</td>
+		<td>${whichAirPort[0].PAX}</td>
 		</tr>`;
 	table.innerHTML += `<tr>
 		<td>AIRPORT</td>
 		<td>CARGO</td>
-		<td>${info.whichAirPort[1].CARGO}</td>
+		<td>${whichAirPort[1].CARGO}</td>
 		</tr>`;
 	table.innerHTML += `<tr>
 		<td>Total Cub:</td>
-		<td>${info.airCubTotal}</td>
+		<td>${airCubTotal}</td>
 		</tr>`;
 	return(table);
 };

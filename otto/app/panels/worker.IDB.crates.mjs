@@ -1,6 +1,6 @@
-
-
 globalThis.onmessage = (estimate) => {
+	if(!estimate.data)
+		return(globalThis.postMessage(false));
 	const dataName	= "Results";
 	const request	= globalThis.indexedDB.open(dataName);
 
@@ -12,7 +12,7 @@ globalThis.onmessage = (estimate) => {
 		.result
 		.transaction("Results")
 		.objectStore("Results")
-		.get(estimate.data);
+		.get(estimate?.data);
 
 		db.onerror = () => {
 			globalThis.postMessage(false);

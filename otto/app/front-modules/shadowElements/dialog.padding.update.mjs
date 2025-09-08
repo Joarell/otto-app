@@ -12,13 +12,18 @@ export class DialogPadding extends HTMLElement {
 	#type = [];
 	#shadowRoot = new WeakMap();
 	static observedAttributes = [ "name", "content", "mode" ];
+	#link;
 
 	constructor () {
 		super();
 		const shadow =	this.attachShadow({ mode: "open" });
 
-		this.close =	this.close.bind(this);
-		this.apply =	this.apply.bind(this);
+		this.#link =		document.createElement('link');
+		this.#link.rel =	'stylesheet';
+		this.#link.type =	'text/css';
+		this.#link.href =	'./stylesheet.css';
+		this.close =		this.close.bind(this);
+		this.apply =		this.apply.bind(this);
 		this.#shadowRoot.set(this, shadow);
 	};
 
@@ -47,15 +52,12 @@ export class DialogPadding extends HTMLElement {
 	*/
 	async #populatePaddingCrate() {
 		const shadowRoot =	this.#shadowRoot.get(this);
-		const link =		document.createElement('link');
 		const clone =		template.content.cloneNode(true);
 		const node =		document.importNode(clone, true);
 
-		link.rel =	'stylesheet';
-		link.type =	'text/css';
-		link.href = './stylesheet.css';
 		shadowRoot.append(node);
 		shadowRoot.appendChild(link);
+		shadowRoot.appendChild(this.#link);
 		shadowRoot.getElementById('padding-close')
 			.addEventListener('click', this.close);
 		shadowRoot.getElementById('padding-apply')
@@ -90,6 +92,7 @@ export class DialogPadding extends HTMLElement {
 			link.href = './stylesheet.css';
 			shadowRoot.append(node);
 			shadowRoot.appendChild(link);
+			shadowRoot.appendChild(this.#link);
 		};
 
 		return(table ? await statusTable(table, true, result):
@@ -103,16 +106,12 @@ export class DialogPadding extends HTMLElement {
 	*/
 	async #populatePane1(update = false) {
 		const shadowRoot =	this.#shadowRoot.get(this);
-		const link =		document.createElement('link');
 		const clone =		pane1.content.cloneNode(true);
 		const node =		document.importNode(clone, true);
 		const reference =	localStorage.getItem('refNumb');
 
-		link.rel =	'stylesheet';
-		link.type =	'text/css';
-		link.href = './stylesheet.css';
 		shadowRoot.append(node);
-		shadowRoot.appendChild(link);
+		shadowRoot.appendChild(this.#link);
 		const cratePane =	shadowRoot.getElementById('crates-only');
 		if(update)
 			while(cratePane.firstChild)
@@ -125,19 +124,15 @@ export class DialogPadding extends HTMLElement {
 	*/
 	async #populatePane2(update = false) {
 		const shadowRoot =	this.#shadowRoot.get(this);
-		const link =		document.createElement('link');
 		const clone =		pane2.content.cloneNode(true);
 		const node =		document.importNode(clone, true);
 		const reference =	localStorage.getItem('refNumb');
 
-		link.rel =	'stylesheet';
-		link.type =	'text/css';
-		link.href = './stylesheet.css';
 		shadowRoot.append(node);
-		shadowRoot.appendChild(link);
+		shadowRoot.appendChild(this.#link);
 
 		shadowRoot.append(node);
-		shadowRoot.appendChild(link);
+		shadowRoot.appendChild(this.#link);
 		const openPane =	shadowRoot.getElementById('opened-crates');
 		if(update)
 			while(openPane.firstChild)

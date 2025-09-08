@@ -71,6 +71,7 @@ export function statusTablePopulate(data) {
 	const doc =		JSON.parse(data);
 	const mode =	localStorage.getItem("mode");
 	const { reference, list } = doc;
+	const { materials } = localStorage;
 
 	localStorage.getItem("metrica") === "in - inches"
 		? (metric = "in - inches")
@@ -85,6 +86,7 @@ export function statusTablePopulate(data) {
 	localStorage.setItem("refNumb", reference);
 	localStorage.setItem("metrica", metric);
 	localStorage.setItem("mode", mode);
+	localStorage.setItem('materials', materials);
 };
 
 // ╭────────────────────────────────────────────────────╮
@@ -104,6 +106,11 @@ export async function statusTable(plot, table = false, fetched) {
 	element.id = "works-list";
 	if (table && codes) {
 		crateBTN.disabled ? crateBTN.disabled = false: false;
+		if (crateBTN.disabled ){
+			crateBTN.disabled = false;
+			document.getElementById('remove-btn').disabled = false
+			document.getElementById('clear-btn').disabled = false
+		};
 		while(plot.firstChild)
 			plot.removeChild(plot.firstChild);
 		createHeader(plot);
@@ -115,7 +122,7 @@ export async function statusTable(plot, table = false, fetched) {
 			work = JSON.parse(storage.getItem(code));
 			work = Object.values(work);
 			element.innerHTML += work.map((item, index) => {
-					if (!item)
+					if (!item || Array.isArray(item))
 						return;
 					return index === 0
 						? `<tbody><tr><td>${item}</td>`

@@ -16,9 +16,9 @@ export default class ArrangerNoCanvas {
 
 	#noCanvasOut () {
 		let { sorted, sameSize } =	this.#peces;
-		const MAXDEPTH =			14;
-		let checkerOne =			sorted.filter(pece => pece[2] > MAXDEPTH);
-		let checkerTwo =			sameSize.filter(pece => pece[2] > MAXDEPTH);
+		const MAXDEPTH =			15;
+		let checkerOne =			sorted.filter(pece => pece.z > MAXDEPTH);
+		let checkerTwo =			sameSize.filter(pece => pece.z > MAXDEPTH);
 		let found =					[];
 
 		checkerOne.map(pece => found.push(pece));

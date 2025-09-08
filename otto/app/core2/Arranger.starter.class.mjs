@@ -1,5 +1,3 @@
-
-
 export default class ArrangerStarter {
 	#list;
 
@@ -35,7 +33,12 @@ export default class ArrangerStarter {
 	#starter() {
 		const arrCubedList =	this.#addCubValueToEachWork();
 		const CUBEDPOS =		4
-		const sorted =			this.#quickS(arrCubedList, CUBEDPOS);
+		const inOrder =			this.#quickS(arrCubedList, CUBEDPOS);
+		const sorted =			[];
+
+		inOrder.map(work => {
+			this.#list.find(art => work[0] === art.code ? sorted.push(art): 0)
+		} );
 
 		return({ sorted });
 	};

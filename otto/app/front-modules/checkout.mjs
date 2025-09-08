@@ -11,19 +11,46 @@
 import * as mod from './functions.front.end.mjs'
 import { createIDB, createOffLineIDB } from './link.storage.mjs';
 import { openCloseDisplay } from '../plotter/layer.controller.mjs'
+import { createIDBMaterials, createIDB, createOffLineIDB } from './link.storage.mjs';
+import { openDisplay } from '../plotter/layer.controller.mjs'
 
 globalThis.onload = async () => {
 	const color =		localStorage.getItem("mode");
 	const statusFrame = document.getElementById("status-frame");
 	const list =		document.getElementById('statusList');
 
+	sessionStorage.removeItem('onCrate');
+	sessionStorage.removeItem('plotter');
+	sessionStorage.removeItem('graphics');
+	sessionStorage.removeItem('crate');
 	list ? list.setAttribute('content', 'reload'):
 		statusFrame.append(addPanelInfo());
 	browserStoragePrepare();
 	color === null ? localStorage.setItem("mode", "light") : false;
 	setCheckRadio();
 	setModeColor();
-	setTimeout(loadingPage, 1500);
+	populateRightPanels();
+};
+
+
+export async function populateRightPanels() {
+	const fragment1 =	 new DocumentFragment();
+	const fragment2 =	 new DocumentFragment();
+	const materials =	document.createElement('pack-up');
+	const report =		document.createElement('pack-down');
+	const paneUp =		document.getElementById('contents1');
+	const packDown =	document.getElementById('contents2');
+
+	materials.setAttribute('name', 'select-materials');
+	materials.className = 'materials';
+	materials.ariaHidden = 'false';
+	report.setAttribute('name', 'update-materials');
+	report.setAttribute('content', '0');
+	report.className = 'update-materials';
+	fragment1.appendChild(materials);
+	fragment2.appendChild(report);
+	paneUp.appendChild(fragment1);
+	packDown.appendChild(fragment2);
 };
 
 
@@ -45,7 +72,7 @@ export function addPanelInfo() {
 if (!localStorage.getItem("metrica")) {
 	const metrica =	document.getElementById("cm").value;
 	localStorage.setItem("metrica", metrica);
-}
+};
 
 
 export function setUnit() {
@@ -79,7 +106,7 @@ export const crate = () => {
 	const element = document.querySelector(".result");
 
 	if (sessionStorage.getItem('codes')) {
-		element.ariaHidden === 'true' ? openCloseDisplay([element]) : false;
+		element && element.ariaHidden === 'true' ? openDisplay() : false;
 		setTimeout(
 			() => globalThis.scroll({ top: 300, behavior: "smooth" }), 1000
 		);
@@ -88,13 +115,14 @@ export const crate = () => {
 
 
 function clearBrowserStorage() {
-	const mode = localStorage.getItem("mode");
-	const unit = localStorage.getItem("metrica");
+	const { mode, metrica, materials } = localStorage;
 
 	localStorage.clear();
 	sessionStorage.clear();
 	localStorage.setItem("mode", mode);
 	localStorage.setItem("metrica", unit);
+	localStorage.setItem("metrica", metrica);
+	localStorage.setItem("materials", materials);
 	mod.countWorks();
 	mod.displayCub();
 	mod.displayAirCub();
@@ -125,19 +153,11 @@ export const clearAll = () => {
 		closeDialog.getElementsByTagName('panel-info').length > 0 ?
 			document.querySelector(".side-menu")
 			.lastElementChild.setAttribute('name', 'close') : false;
+		document.querySelector(".materials").setAttribute('name', 'select-materials');
+		sessionStorage.removeItem('plotter');
+		sessionStorage.removeItem('graphics');
+		sessionStorage.removeItem('crate');
 	};
-};
-
-
-function loadingPage() {
-	const animation =	document.querySelector(".loading");
-	const pageApp =		document.querySelector(".app");
-	const footer =		document.querySelector(".footer-content");
-
-	animation.style.display = "none";
-	animation.setAttribute("aria-hidden", true);
-	pageApp.setAttribute("aria-hidden", false);
-	footer.setAttribute("aria-hidden", false);
 };
 
 
@@ -149,10 +169,11 @@ function browserStoragePrepare() {
 	if (ref)
 		document.getElementById("input_estimate").value = ref;
 	createIDB();
+	createIDBMaterials();
 	if (grants === "OFF" || grants === "FULL") {
 		createOffLineIDB();
-		globalThis.navigator.serviceWorker.register('../sw.mjs');
-	}
+		// globalThis.navigator.serviceWorker.register('../sw.mjs');
+	};
 	return (mod.displayCub() && mod.displayAirCub() && mod.countWorks());
 };
 

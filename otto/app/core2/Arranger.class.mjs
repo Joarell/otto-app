@@ -19,7 +19,7 @@ export default class Arranger {
 	};
 
 	#solver () {
-		this.#start();
+		this.#manySizes();
 		this.#sameSizeTrail();
 		this.#noCanvasTrail();
 		this.#largestCanvasTrail();
@@ -50,7 +50,7 @@ export default class Arranger {
 		};
 	};
 
-	#start () {
+	#manySizes () {
 		this.#works = new ArrangerStarter(this.#works);
 	};
 
