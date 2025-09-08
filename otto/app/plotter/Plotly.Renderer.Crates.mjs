@@ -2,7 +2,7 @@ import largestCrateRender from "./Largest.Canvas.Render.class.mjs";
 import notCanvasCrateRender from "./Not.Canvas.Render.class.mjs";
 import { layout } from "./plotly.layout.mjs";
 import TraceMaker from "./Plotly.trace.class.mjs";
-import DesignWalls from "./Plotly.walls.class.mjs";
+import DesignWalls from "./Plotly.fill.colors.class.mjs";
 import sameSizeCrateRender from "./Same.Size.Render.class.mjs";
 import standardCrateRender from "./Standard.Render.class.mjs";
 import tubeCrateRender from "./Tube.Render.class.mjs";

@@ -130,6 +130,7 @@ export async function crate(fetched = false) {
 			document.getElementById('crate-layers').disabled = false : 0;
 		root.style.setProperty("--layer-state", "block");
 		sessionStorage.removeItem('crate');
+		sessionStorage.removeItem('plotter');
 	};
 	weak.add(estimate);
 	return ('Crated');

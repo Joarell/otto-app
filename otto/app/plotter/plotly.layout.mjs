@@ -54,5 +54,6 @@ export let layout = {
 			eye: { x: -2.00, y: 3, z: 1.00 },
 		},
 	},
+	// paper_bgcolor: "#243B55",
 	paper_bgcolor: "#96979C",
 };

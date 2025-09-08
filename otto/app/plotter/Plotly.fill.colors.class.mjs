@@ -5,7 +5,7 @@ export default class DesignWalls {
 
 	constructor() {
 		[
-			[ 'frame', '#A39D29' ],
+			[ 'frame', 'yellow' ],
 			[ 'walls', '#3DDDDD' ],
 			[ 'padding', '#222725' ],
 			[ 'div', '#EFECBBBE' ],
@@ -29,7 +29,7 @@ export default class DesignWalls {
 			// Top face (y = height)
 			[[3, 2, 6], [3, 6, 7]]
 		];
-	}
+	};
 
 	#defineSides() {
 		const {
@@ -87,6 +87,7 @@ export default class DesignWalls {
 		return(info);
 	};
 
+	/** @param {any} objectData */
 	set objectData(objectData) {
 		this.#data = objectData;
 	};
