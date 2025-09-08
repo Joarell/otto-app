@@ -1,5 +1,5 @@
 import Converter from '../core2/Converter.class.mjs';
-import SetCrateWalls from './Crate.walls.plotly.mjs';
+import SetCrateWalls from './Crate.walls.plotly.class.mjs';
 import CratesFrame from './Frame.crate.graphic.mjs';
 import PaddingCrate from './Padding.crate.plotly.mjs';
 
