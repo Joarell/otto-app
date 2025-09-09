@@ -9,15 +9,15 @@ export default class PaddingCrate {
 	#crate;
 	#pad;
 
-	constructor(crate, meta, plywood, frame, pad) {
-		this.#pad =		pad;
+	constructor(crate, material, meta) {
+		const available =	JSON.parse(localStorage.getItem('crating'));
+		const used =		available.map(opt => material.usedMaterials.get(opt));
+
 		this.#crate =	crate;
 		this.#data =	meta;
-		this.#pine =	frame;
-		this.#ply =		plywood;
-		this.#ply[1] =	+this.#ply[1];
-		this.#ply[2] =	+this.#ply[2];
-		this.#ply[3] =	+this.#ply[3];
+		this.#pine =	used.find(list => list.at(-1) === 'Pinewood');
+		this.#ply =		used.find(list => list.at(-1) === 'Plywood');
+		this.#pad =		used.find(list => list.at(-1) === 'Foam Sheet' && list[2] > 2.5);
 		this.#pad[1] =	+this.#pad[1];
 		this.#pad[2] =	+this.#pad[2];
 		this.#pad[3] =	+this.#pad[3];
@@ -220,6 +220,8 @@ export default class PaddingCrate {
 		let meta =		structuredClone(this.#data);
 		let show =		true;
 
+		if(!this.#pad)
+			return(this.#data);
 		Object.entries(offsets).map(part => {
 			const { type, offsetX, offsetY, offsetZ, width, depth, height } = part[1];
 			const face =	padding[type];

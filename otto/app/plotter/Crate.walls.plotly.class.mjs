@@ -7,11 +7,14 @@ export default class SetCrateWalls {
 	#ply;
 	#crate;
 
-	constructor(crate, meta, plywood, frame) {
+	constructor(crate, material, meta) {
+		const available =	JSON.parse(localStorage.getItem('crating'));
+		const used =		available.map(opt => material.usedMaterials.get(opt));
+
+		this.#pine =	used.find(list => list.at(-1) === 'Pinewood');
+		this.#ply =		used.find(list => list.at(-1) === 'Plywood');
 		this.#crate =	crate;
 		this.#data =	meta;
-		this.#pine =	frame;
-		this.#ply =		plywood;
 		this.#ply[1] =	+this.#ply[1];
 		this.#ply[2] =	+this.#ply[2];
 		this.#ply[3] =	+this.#ply[3];
@@ -214,6 +217,8 @@ export default class SetCrateWalls {
 		let meta =		structuredClone(this.#data);
 		let show =		true;
 
+		if(!this.#ply)
+			return(this.#data);
 		Object.entries(offsets).map(part => {
 			const { type, offsetX, offsetY, offsetZ, width, depth, height } = part[1];
 			const face =	walls[type];

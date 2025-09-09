@@ -12,7 +12,7 @@
 		"@cloudflare/vitest-pool-workers": "^0.5.2",
 		"typescript": "^5.5.2",
 		"vitest": "2.0.5",
-		"wrangler": "4.33",
+		"wrangler": "^4.35.0",
 		"zod": "^3.23.8"
 	},
 	"repository": "https://github.com/Joarell/otto-app",

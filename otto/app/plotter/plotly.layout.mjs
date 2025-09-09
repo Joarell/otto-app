@@ -2,7 +2,7 @@ export let layout = {
 	showlegend: true,
 	legend: {
 		title: {
-			text: 'Crate Layers:',
+			text: 'Proto crate:',
 			font: {
 				family: 'Mitr, sans-serif',
 				size: 14,
@@ -20,7 +20,6 @@ export let layout = {
 		orientation: 'v',
 		groupclick: 'sides',
 	},
-	legendgrouptitle: {},
 	margin: { t: 0, l: 0, b: 0, r: 0, pad: 10 },
 	scene: {
 		aspectmode: 'data',

@@ -208,8 +208,8 @@ export default class CraterStandard {
 	};
 
 	#fillCrate(measure, list) {
-		const coordinates = new WorksCoordinates(measure);
-		this.#coordinates = coordinates.bluePrintCoordinates;
+		const coordinates =		new WorksCoordinates(measure);
+		this.#coordinates =		coordinates.bluePrintCoordinates;
 		const crate =	[];
 		let greb =		[];
 		let info;
