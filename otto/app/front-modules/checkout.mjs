@@ -9,8 +9,6 @@
 // ╰───────────────────────────────────────────────────────────────────────╯
 
 import * as mod from './functions.front.end.mjs'
-import { createIDB, createOffLineIDB } from './link.storage.mjs';
-import { openCloseDisplay } from '../plotter/layer.controller.mjs'
 import { createIDBMaterials, createIDB, createOffLineIDB } from './link.storage.mjs';
 import { openDisplay } from '../plotter/layer.controller.mjs'
 

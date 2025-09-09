@@ -111,7 +111,6 @@ export async function crate(fetched = false) {
 	let grant =			document.cookie.split('=')[1];
 	let list;
 	const cratesAsCm =	await checkMetric();
-	const root =	document.querySelector(':root');
 	const root =		document.querySelector(':root');
 	const material =	document.querySelector('.update-materials');
 	const upPanel =		document.querySelector('.materials')
