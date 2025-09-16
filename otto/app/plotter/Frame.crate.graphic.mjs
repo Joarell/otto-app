@@ -4,19 +4,22 @@ import DesignWalls from "./Plotly.fill.colors.class.mjs";
 export default class CratesFrame {
 	#edges;
 	#sized;
-	#mat;
+	#pine;
 
 	constructor(sized, material) {
-		this.#mat =	material;
+		const available =	JSON.parse(localStorage.getItem('crating'));
+		const used =		available.map(opt => material.usedMaterials.get(opt));
+
+		this.#pine =		used.find(list => list.at(-1) === 'Pinewood');
 		this.#sized =		sized;
 		this.#edges =		[
 			[0, 1], [1, 2], [2, 3], [3, 0], // Bottom face
 			[4, 5], [5, 6], [6, 7], [7, 4], // Top face
 			[0, 4], [1, 5], [2, 6], [3, 7]  // Vertical edges
 		];
-		this.#mat[1] = +this.#mat[1];
-		this.#mat[2] = +this.#mat[2];
-		this.#mat[3] = +this.#mat[3];
+		this.#pine[1] = +this.#pine[1];
+		this.#pine[2] = +this.#pine[2];
+		this.#pine[3] = +this.#pine[3];
 	};
 
 	#boundaries(coordinates) {
@@ -49,9 +52,9 @@ export default class CratesFrame {
 				x: 0,
 				y: 0,
 				z: 0,
-				width: this.#mat[3],
+				width: this.#pine[3],
 				depth: this.#sized[1],
-				height: this.#mat[2],
+				height: this.#pine[2],
 				offsetX: 0,
 				offsetY: 0,
 				offsetZ: 0,
@@ -61,322 +64,322 @@ export default class CratesFrame {
 				x: this.#sized[0],
 				y: 0,
 				z: 0,
-				width: this.#mat[3],
+				width: this.#pine[3],
 				depth: this.#sized[1],
-				height: this.#mat[2],
-				offsetX: this.#sized[0] - this.#mat[3],
+				height: this.#pine[2],
+				offsetX: this.#sized[0] - this.#pine[3],
 				offsetY: 0,
 				offsetZ: 0,
 			},
 			offsetFeetRightSecond: {
 				type: 'feetUp',
 				x: 0,
-				y: this.#mat[2],
+				y: this.#pine[2],
 				z: 0,
-				width: this.#mat[3],
+				width: this.#pine[3],
 				depth: this.#sized[1],
-				height: this.#mat[2],
+				height: this.#pine[2],
 				offsetX: 0,
 				offsetY: 0,
-				offsetZ: this.#mat[2],
+				offsetZ: this.#pine[2],
 			},
 			offsetFeetLeftSecond: {
 				type: 'feetUpR',
 				x: this.#sized[0],
-				y: this.#mat[2],
+				y: this.#pine[2],
 				z: 0,
-				width: this.#mat[3],
+				width: this.#pine[3],
 				depth: this.#sized[1],
-				height: this.#mat[2],
-				offsetX: this.#sized[0] - this.#mat[3],
+				height: this.#pine[2],
+				offsetX: this.#sized[0] - this.#pine[3],
 				offsetY: 0,
-				offsetZ: this.#mat[2],
+				offsetZ: this.#pine[2],
 			},
 			offsetFacesRightBackV: {
 				type: 'faceV',
-				x: this.#mat[2],
-				y: this.#mat[3] + 2 * this.#mat[2],
+				x: this.#pine[2],
+				y: this.#pine[3] + 2 * this.#pine[2],
 				z: 0,
-				width: this.#mat[3],
-				depth: this.#mat[2],
-				height: this.#sized[2] - (2 * this.#mat[3] + 3 * this.#mat[2]),
-				offsetX: this.#mat[2],
+				width: this.#pine[3],
+				depth: this.#pine[2],
+				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				offsetX: this.#pine[2],
 				offsetY: 0,
-				offsetZ: 2 * this.#mat[2] + this.#mat[3],
+				offsetZ: 2 * this.#pine[2] + this.#pine[3],
 			},
 			offsetFacesLeftBackV: {
 				type: 'faceVR',
-				x: this.#sized[0] - this.#mat[2],
-				y: this.#mat[3] + 2 * this.#mat[2],
+				x: this.#sized[0] - this.#pine[2],
+				y: this.#pine[3] + 2 * this.#pine[2],
 				z: 0,
-				width: this.#mat[3],
-				depth: this.#mat[2],
-				height: this.#sized[2] - (2 * this.#mat[3] + 3 * this.#mat[2]),
-				offsetX: this.#sized[0] - (this.#mat[3] + this.#mat[2]),
+				width: this.#pine[3],
+				depth: this.#pine[2],
+				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				offsetX: this.#sized[0] - (this.#pine[3] + this.#pine[2]),
 				offsetY: 0,
-				offsetZ: 2 * this.#mat[2] + this.#mat[3],
+				offsetZ: 2 * this.#pine[2] + this.#pine[3],
 			},
 			offsetFacesRightFrontV: {
 				type: 'faceVB',
-				x: this.#mat[2],
-				y: this.#mat[3] + 2 * this.#mat[2],
+				x: this.#pine[2],
+				y: this.#pine[3] + 2 * this.#pine[2],
 				z: this.#sized[1],
-				width: this.#mat[3],
-				depth: this.#mat[2],
-				height: this.#sized[2] - (2 * this.#mat[3] + 3 * this.#mat[2]),
-				offsetX: this.#mat[2],
-				offsetY: this.#sized[1] - this.#mat[2],
-				offsetZ: 2 * this.#mat[2] + this.#mat[3],
+				width: this.#pine[3],
+				depth: this.#pine[2],
+				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				offsetX: this.#pine[2],
+				offsetY: this.#sized[1] - this.#pine[2],
+				offsetZ: 2 * this.#pine[2] + this.#pine[3],
 			},
 			offsetFacesLeftFrontV: {
 				type: 'faceVBR',
-				x: this.#sized[0] - this.#mat[2],
-				y: this.#mat[3] + 2 * this.#mat[2],
+				x: this.#sized[0] - this.#pine[2],
+				y: this.#pine[3] + 2 * this.#pine[2],
 				z: this.#sized[1],
-				width: this.#mat[3],
-				depth: this.#mat[2],
-				height: this.#sized[2] - (2 * this.#mat[3] + 3 * this.#mat[2]),
-				offsetX: this.#sized[0] - (this.#mat[3] + this.#mat[2]),
-				offsetY: this.#sized[1] - this.#mat[2],
-				offsetZ: 2 * this.#mat[2] + this.#mat[3],
+				width: this.#pine[3],
+				depth: this.#pine[2],
+				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				offsetX: this.#sized[0] - (this.#pine[3] + this.#pine[2]),
+				offsetY: this.#sized[1] - this.#pine[2],
+				offsetZ: 2 * this.#pine[2] + this.#pine[3],
 			},
 			offsetSidesRightVUp: {
 				type: 'sideHUp',
 				x: 0,
-				y: this.#sized[2] - this.#mat[2],
-				z: this.#mat[2],
-				width: this.#mat[2],
-				depth: this.#sized[1] - (2 * this.#mat[2]),
-				height: this.#mat[3],
+				y: this.#sized[2] - this.#pine[2],
+				z: this.#pine[2],
+				width: this.#pine[2],
+				depth: this.#sized[1] - (2 * this.#pine[2]),
+				height: this.#pine[3],
 				offsetX: 0,
-				offsetY: this.#mat[2],
-				offsetZ: this.#sized[2] - (this.#mat[3] + this.#mat[2]),
+				offsetY: this.#pine[2],
+				offsetZ: this.#sized[2] - (this.#pine[3] + this.#pine[2]),
 			},
 			offsetSidesLeftVUp: {
 				type: 'sideLeftHUp',
 				x: this.#sized[0],
-				y: this.#sized[2] - this.#mat[2],
-				z: this.#mat[2],
-				width: this.#mat[2],
-				depth: this.#sized[1] - (2 * this.#mat[2]),
-				height: this.#mat[3],
-				offsetX: this.#sized[0] - this.#mat[2],
-				offsetY: this.#mat[2],
-				offsetZ: this.#sized[2] - (this.#mat[3] + this.#mat[2]),
+				y: this.#sized[2] - this.#pine[2],
+				z: this.#pine[2],
+				width: this.#pine[2],
+				depth: this.#sized[1] - (2 * this.#pine[2]),
+				height: this.#pine[3],
+				offsetX: this.#sized[0] - this.#pine[2],
+				offsetY: this.#pine[2],
+				offsetZ: this.#sized[2] - (this.#pine[3] + this.#pine[2]),
 			},
 			offsetSidesRightHDown: {
 				type: 'sideHDown',
 				x: 0,
-				y: 2 * this.#mat[2],
-				z: this.#mat[2],
-				width: this.#mat[2],
-				depth: this.#sized[1] - (2 * this.#mat[2]),
-				height: this.#mat[3],
+				y: 2 * this.#pine[2],
+				z: this.#pine[2],
+				width: this.#pine[2],
+				depth: this.#sized[1] - (2 * this.#pine[2]),
+				height: this.#pine[3],
 				offsetX: 0,
-				offsetY: this.#mat[2],
-				offsetZ: 2 * this.#mat[2],
+				offsetY: this.#pine[2],
+				offsetZ: 2 * this.#pine[2],
 			},
 			offsetSidesLeftHDown: {
 				type: 'sideLeftHDown',
 				x: this.#sized[0],
-				y: 2 * this.#mat[2],
-				z: this.#mat[2],
-				width: this.#mat[2],
-				depth: this.#sized[1] - (2 * this.#mat[2]),
-				height: this.#mat[3],
-				offsetX: this.#sized[0] - this.#mat[2],
-				offsetY: this.#mat[2],
-				offsetZ: 2 * this.#mat[2],
+				y: 2 * this.#pine[2],
+				z: this.#pine[2],
+				width: this.#pine[2],
+				depth: this.#sized[1] - (2 * this.#pine[2]),
+				height: this.#pine[3],
+				offsetX: this.#sized[0] - this.#pine[2],
+				offsetY: this.#pine[2],
+				offsetZ: 2 * this.#pine[2],
 			},
 			offsetFacesBackUpH: {
 				type: 'faceHUp',
 				x: 0,
-				y: this.#sized[2] - this.#mat[2],
+				y: this.#sized[2] - this.#pine[2],
 				z: 0,
 				width: this.#sized[0],
-				depth: this.#mat[2],
-				height: this.#mat[3],
+				depth: this.#pine[2],
+				height: this.#pine[3],
 				offsetX: 0,
 				offsetY: 0,
-				offsetZ: this.#sized[2] - (this.#mat[2] + this.#mat[3]),
+				offsetZ: this.#sized[2] - (this.#pine[2] + this.#pine[3]),
 			},
 			offsetFacesBackDownH: {
 				type: 'faceH',
 				x: 0,
-				y: 2 * this.#mat[2],
+				y: 2 * this.#pine[2],
 				z: 0,
 				width: this.#sized[0],
-				depth: this.#mat[2],
-				height: this.#mat[3],
+				depth: this.#pine[2],
+				height: this.#pine[3],
 				offsetX: 0,
 				offsetY: 0,
-				offsetZ: 2 * this.#mat[2],
+				offsetZ: 2 * this.#pine[2],
 			},
 			offsetFacesFrontUpH: {
 				type: 'faceHBackUp',
 				x: 0,
-				y: this.#sized[2] - this.#mat[2],
+				y: this.#sized[2] - this.#pine[2],
 				z: this.#sized[1],
 				width: this.#sized[0],
-				depth: this.#mat[2],
-				height: this.#mat[3],
+				depth: this.#pine[2],
+				height: this.#pine[3],
 				offsetX: 0,
-				offsetY: this.#sized[1] - this.#mat[2],
-				offsetZ: this.#sized[2] - (this.#mat[2] + this.#mat[3]),
+				offsetY: this.#sized[1] - this.#pine[2],
+				offsetZ: this.#sized[2] - (this.#pine[2] + this.#pine[3]),
 			},
 			offsetFacesFrontDownH: {
 				type: 'faceHBackDown',
 				x: 0,
-				y: 2 * this.#mat[2],
+				y: 2 * this.#pine[2],
 				z: this.#sized[1],
 				width: this.#sized[0],
-				depth: this.#mat[2],
-				height: this.#mat[3],
+				depth: this.#pine[2],
+				height: this.#pine[3],
 				offsetX: 0,
-				offsetY: this.#sized[1] - this.#mat[2],
-				offsetZ: 2 * this.#mat[2],
+				offsetY: this.#sized[1] - this.#pine[2],
+				offsetZ: 2 * this.#pine[2],
 			},
 			offsetSidesRightVBack: {
 				type: 'sideV',
 				x: 0,
-				y: this.#mat[3] + (2 * this.#mat[2]),
+				y: this.#pine[3] + (2 * this.#pine[2]),
 				z: 0,
-				width: this.#mat[2],
-				depth: this.#mat[3],
-				height: this.#sized[2] - (2 * this.#mat[3] + 3 * this.#mat[2]),
+				width: this.#pine[2],
+				depth: this.#pine[3],
+				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
 				offsetX: 0,
 				offsetY: 0,
-				offsetZ: 2 * this.#mat[2] + this.#mat[3],
+				offsetZ: 2 * this.#pine[2] + this.#pine[3],
 			},
 			offsetSidesRightVFront: {
 				type: 'sideRightFrontV',
 				x: 0,
-				y: this.#mat[3] + (2 * this.#mat[2]),
-				z: this.#sized[1] - this.#mat[3],
-				width: this.#mat[2],
-				depth: this.#mat[3],
-				height: this.#sized[2] - (2 * this.#mat[3] + 3 * this.#mat[2]),
+				y: this.#pine[3] + (2 * this.#pine[2]),
+				z: this.#sized[1] - this.#pine[3],
+				width: this.#pine[2],
+				depth: this.#pine[3],
+				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
 				offsetX: 0,
-				offsetY: this.#sized[1] - this.#mat[3],
-				offsetZ: 2 * this.#mat[2] + this.#mat[3],
+				offsetY: this.#sized[1] - this.#pine[3],
+				offsetZ: 2 * this.#pine[2] + this.#pine[3],
 			},
 			offsetSidesLeftVBack: {
 				type: 'sideLeftV',
 				x: this.#sized[0],
-				y: this.#mat[3] + (2 * this.#mat[2]),
+				y: this.#pine[3] + (2 * this.#pine[2]),
 				z: 0,
-				width: this.#mat[2],
-				depth: this.#mat[3],
-				height: this.#sized[2] - (2 * this.#mat[3] + 3 * this.#mat[2]),
-				offsetX: this.#sized[0] - this.#mat[2],
+				width: this.#pine[2],
+				depth: this.#pine[3],
+				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				offsetX: this.#sized[0] - this.#pine[2],
 				offsetY: 0,
-				offsetZ: 2 * this.#mat[2] + this.#mat[3],
+				offsetZ: 2 * this.#pine[2] + this.#pine[3],
 			},
 			offsetSidesLeftVFront: {
 				type: 'sideLeftFrontV',
 				x: this.#sized[0],
-				y: this.#mat[3] + (2 * this.#mat[2]),
-				z: this.#sized[1] - this.#mat[3],
-				width: this.#mat[2],
-				depth: this.#mat[3],
-				height: this.#sized[2] - (2 * this.#mat[3] + 3 * this.#mat[2]),
-				offsetX: this.#sized[0] - this.#mat[2],
-				offsetY: this.#sized[1] - this.#mat[3],
-				offsetZ: 2 * this.#mat[2] + this.#mat[3],
+				y: this.#pine[3] + (2 * this.#pine[2]),
+				z: this.#sized[1] - this.#pine[3],
+				width: this.#pine[2],
+				depth: this.#pine[3],
+				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				offsetX: this.#sized[0] - this.#pine[2],
+				offsetY: this.#sized[1] - this.#pine[3],
+				offsetZ: 2 * this.#pine[2] + this.#pine[3],
 			},
 			offsetTopFrontH: {
 				type: 'topFace',
-				x: this.#mat[3],
+				x: this.#pine[3],
 				y: this.#sized[2],
 				z: 0,
-				width: this.#sized[0] - 2 * this.#mat[3],
-				depth: this.#mat[3],
-				height: this.#mat[2],
-				offsetX: this.#mat[3],
+				width: this.#sized[0] - 2 * this.#pine[3],
+				depth: this.#pine[3],
+				height: this.#pine[2],
+				offsetX: this.#pine[3],
 				offsetY: 0,
-				offsetZ: this.#sized[2] - this.#mat[2],
+				offsetZ: this.#sized[2] - this.#pine[2],
 			},
 			offsetTopBackH: {
 				type: 'topComp',
-				x: this.#mat[3],
+				x: this.#pine[3],
 				y: this.#sized[2],
 				z: this.#sized[1],
-				width: this.#sized[0] - 2 * this.#mat[3],
-				depth: this.#mat[3],
-				height: this.#mat[2],
-				offsetX: this.#mat[3],
-				offsetY: this.#sized[1] - this.#mat[3],
-				offsetZ: this.#sized[2] - this.#mat[2],
+				width: this.#sized[0] - 2 * this.#pine[3],
+				depth: this.#pine[3],
+				height: this.#pine[2],
+				offsetX: this.#pine[3],
+				offsetY: this.#sized[1] - this.#pine[3],
+				offsetZ: this.#sized[2] - this.#pine[2],
 			},
 			offsetTopRight: {
 				type: 'topFeet',
 				x: 0,
 				y: this.#sized[2],
 				z: 0,
-				width: this.#mat[3],
+				width: this.#pine[3],
 				depth: this.#sized[1],
-				height: this.#mat[2],
+				height: this.#pine[2],
 				offsetX: 0,
 				offsetY: 0,
-				offsetZ: this.#sized[2] - this.#mat[2],
+				offsetZ: this.#sized[2] - this.#pine[2],
 			},
 			offsetTopLeft: {
 				type: 'topLeftFeet',
 				x: this.#sized[0],
 				y: this.#sized[2],
 				z: 0,
-				width: this.#mat[3],
+				width: this.#pine[3],
 				depth: this.#sized[1],
-				height: this.#mat[2],
-				offsetX: this.#sized[0] - this.#mat[3],
+				height: this.#pine[2],
+				offsetX: this.#sized[0] - this.#pine[3],
 				offsetY: 0,
-				offsetZ: this.#sized[2] - this.#mat[2],
+				offsetZ: this.#sized[2] - this.#pine[2],
 			},
 		};
 		return(allOffset);
 	};
 
 	#defineFrameComponents() {
-		const upFeet =			2 * this.#mat[2];
-		const vertical =		this.#sized[2] - this.#mat[3] - this.#mat[2];
-		const rightFeet =		this.#sized[0] - this.#mat[3];
-		const vDepth =			this.#sized[1] - this.#mat[2];
-		const upFace =			this.#sized[2] - this.#mat[3] - this.#mat[2];
-		const tinySide =		this.#sized[1] - this.#mat[2];
-		const tinyRightSide =	this.#sized[0] - this.#mat[2];
-		const sideComp =		this.#mat[3] + this.#mat[2];
-		const rightComp =		this.#sized[0] - this.#mat[3] - this.#mat[2];
-		const topZ =			this.#sized[2] - this.#mat[2];
-		const topzComp =		this.#sized[1] - this.#mat[3];
+		const upFeet =			2 * this.#pine[2];
+		const vertical =		this.#sized[2] - this.#pine[3] - this.#pine[2];
+		const rightFeet =		this.#sized[0] - this.#pine[3];
+		const vDepth =			this.#sized[1] - this.#pine[2];
+		const upFace =			this.#sized[2] - this.#pine[3] - this.#pine[2];
+		const tinySide =		this.#sized[1] - this.#pine[2];
+		const tinyRightSide =	this.#sized[0] - this.#pine[2];
+		const sideComp =		this.#pine[3] + this.#pine[2];
+		const rightComp =		this.#sized[0] - this.#pine[3] - this.#pine[2];
+		const topZ =			this.#sized[2] - this.#pine[2];
+		const topzComp =		this.#sized[1] - this.#pine[3];
 		const allParts =		{
 			feet: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
-				{ x: this.#mat[3], y: 0, z: 0 }, // Vertex 1
-				{ x: this.#mat[3], y: this.#mat[2], z: 0 }, // Vertex 2
-				{ x: 0, y: this.#mat[2], z: 0 }, // Vertex 3
+				{ x: this.#pine[3], y: 0, z: 0 }, // Vertex 1
+				{ x: this.#pine[3], y: this.#pine[2], z: 0 }, // Vertex 2
+				{ x: 0, y: this.#pine[2], z: 0 }, // Vertex 3
 				{ x: 0, y: 0, z: this.#sized[1] }, // Vertex 4
-				{ x: this.#mat[3], y: 0, z: this.#sized[1] }, // Vertex 5
-				{ x: this.#mat[3], y: this.#mat[2], z: this.#sized[1] }, // Vertex 6
-				{ x: 0, y: this.#mat[2], z: this.#sized[1] }  // Vertex 7
+				{ x: this.#pine[3], y: 0, z: this.#sized[1] }, // Vertex 5
+				{ x: this.#pine[3], y: this.#pine[2], z: this.#sized[1] }, // Vertex 6
+				{ x: 0, y: this.#pine[2], z: this.#sized[1] }  // Vertex 7
 			],
 			feetR: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
 				{ x: rightFeet, y: 0, z: 0 }, // Vertex 1
-				{ x: rightFeet, y: this.#mat[2], z: 0 }, // Vertex 2
-				{ x: 0, y: this.#mat[2], z: 0 }, // Vertex 3
+				{ x: rightFeet, y: this.#pine[2], z: 0 }, // Vertex 2
+				{ x: 0, y: this.#pine[2], z: 0 }, // Vertex 3
 				{ x: 0, y: 0, z: this.#sized[1] }, // Vertex 4
 				{ x: rightFeet, y: 0, z: this.#sized[1] }, // Vertex 5
-				{ x: rightFeet, y: this.#mat[2], z: this.#sized[1] }, // Vertex 6
-				{ x: 0, y: this.#mat[2], z: this.#sized[1] }  // Vertex 7
+				{ x: rightFeet, y: this.#pine[2], z: this.#sized[1] }, // Vertex 6
+				{ x: 0, y: this.#pine[2], z: this.#sized[1] }  // Vertex 7
 			],
 			feetUp: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
-				{ x: this.#mat[3], y: 0, z: 0 }, // Vertex 1
-				{ x: this.#mat[3], y: upFeet, z: 0 }, // Vertex 2
+				{ x: this.#pine[3], y: 0, z: 0 }, // Vertex 1
+				{ x: this.#pine[3], y: upFeet, z: 0 }, // Vertex 2
 				{ x: 0, y: upFeet, z: 0 }, // Vertex 3
 				{ x: 0, y: 0, z: this.#sized[1] }, // Vertex 4
-				{ x: this.#mat[3], y: 0, z: this.#sized[1] }, // Vertex 5
-				{ x: this.#mat[3], y: upFeet, z: this.#sized[1] }, // Vertex 6
+				{ x: this.#pine[3], y: 0, z: this.#sized[1] }, // Vertex 5
+				{ x: this.#pine[3], y: upFeet, z: this.#sized[1] }, // Vertex 6
 				{ x: 0, y: upFeet, z: this.#sized[1] }  // Vertex 7
 			],
 			feetUpR: [
@@ -394,20 +397,20 @@ export default class CratesFrame {
 				{ x: sideComp, y: 0, z: 0 }, // Vertex 1
 				{ x: sideComp, y: vertical, z: 0 }, // Vertex 2
 				{ x: 0, y: vertical, z: 0 }, // Vertex 3
-				{ x: 0, y: 0, z: this.#mat[2] }, // Vertex 4
-				{ x: sideComp, y: 0, z: this.#mat[2] }, // Vertex 5
-				{ x: sideComp, y: vertical, z: this.#mat[2] }, // Vertex 6
-				{ x: 0, y: vertical, z: this.#mat[2] }  // Vertex 7
+				{ x: 0, y: 0, z: this.#pine[2] }, // Vertex 4
+				{ x: sideComp, y: 0, z: this.#pine[2] }, // Vertex 5
+				{ x: sideComp, y: vertical, z: this.#pine[2] }, // Vertex 6
+				{ x: 0, y: vertical, z: this.#pine[2] }  // Vertex 7
 			],
 			faceVR: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
 				{ x: rightComp, y: 0, z: 0 }, // Vertex 1
 				{ x: rightComp, y: vertical, z: 0 }, // Vertex 2
 				{ x: 0, y: vertical, z: 0 }, // Vertex 3
-				{ x: 0, y: 0, z: this.#mat[2] }, // Vertex 4
-				{ x: rightComp, y: 0, z: this.#mat[2] }, // Vertex 5
-				{ x: rightComp, y: vertical, z: this.#mat[2] }, // Vertex 6
-				{ x: 0, y: vertical, z: this.#mat[2] }  // Vertex 7
+				{ x: 0, y: 0, z: this.#pine[2] }, // Vertex 4
+				{ x: rightComp, y: 0, z: this.#pine[2] }, // Vertex 5
+				{ x: rightComp, y: vertical, z: this.#pine[2] }, // Vertex 6
+				{ x: 0, y: vertical, z: this.#pine[2] }  // Vertex 7
 			],
 			faceVB: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
@@ -432,22 +435,22 @@ export default class CratesFrame {
 			faceH: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
 				{ x: this.#sized[0], y: 0, z: 0 }, // Vertex 1
-				{ x: this.#sized[0], y: this.#mat[3] + upFeet, z: 0 }, // Vertex 2
-				{ x: 0, y: this.#mat[3] + upFeet, z: 0 }, // Vertex 3
-				{ x: 0, y: 0, z: this.#mat[2] }, // Vertex 4
-				{ x: this.#sized[0], y: 0, z: this.#mat[2] }, // Vertex 5
-				{ x: this.#sized[0], y: this.#mat[3] + upFeet, z: this.#mat[2] }, // Vertex 6
-				{ x: 0, y: this.#mat[3] + upFeet, z: this.#mat[2] }  // Vertex 7
+				{ x: this.#sized[0], y: this.#pine[3] + upFeet, z: 0 }, // Vertex 2
+				{ x: 0, y: this.#pine[3] + upFeet, z: 0 }, // Vertex 3
+				{ x: 0, y: 0, z: this.#pine[2] }, // Vertex 4
+				{ x: this.#sized[0], y: 0, z: this.#pine[2] }, // Vertex 5
+				{ x: this.#sized[0], y: this.#pine[3] + upFeet, z: this.#pine[2] }, // Vertex 6
+				{ x: 0, y: this.#pine[3] + upFeet, z: this.#pine[2] }  // Vertex 7
 			],
 			faceHUp: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
 				{ x: this.#sized[0], y: 0, z: 0 }, // Vertex 1
 				{ x: this.#sized[0], y: upFace, z: 0 }, // Vertex 2
 				{ x: 0, y: upFace, z: 0 }, // Vertex 3
-				{ x: 0, y: 0, z: this.#mat[2] }, // Vertex 4
-				{ x: this.#sized[0], y: 0, z: this.#mat[2] }, // Vertex 5
-				{ x: this.#sized[0], y: upFace, z: this.#mat[2] }, // Vertex 6
-				{ x: 0, y: upFace, z: this.#mat[2] }  // Vertex 7
+				{ x: 0, y: 0, z: this.#pine[2] }, // Vertex 4
+				{ x: this.#sized[0], y: 0, z: this.#pine[2] }, // Vertex 5
+				{ x: this.#sized[0], y: upFace, z: this.#pine[2] }, // Vertex 6
+				{ x: 0, y: upFace, z: this.#pine[2] }  // Vertex 7
 			],
 			faceHBackUp: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
@@ -462,21 +465,21 @@ export default class CratesFrame {
 			faceHBackDown: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
 				{ x: this.#sized[0], y: 0, z: 0 }, // Vertex 1
-				{ x: this.#sized[0], y: this.#mat[3] + upFeet, z: 0 }, // Vertex 2
-				{ x: 0, y: this.#mat[3] + upFeet, z: 0 }, // Vertex 3
+				{ x: this.#sized[0], y: this.#pine[3] + upFeet, z: 0 }, // Vertex 2
+				{ x: 0, y: this.#pine[3] + upFeet, z: 0 }, // Vertex 3
 				{ x: 0, y: 0, z: vDepth }, // Vertex 4
 				{ x: this.#sized[0], y: 0, z: vDepth }, // Vertex 5
-				{ x: this.#sized[0], y: this.#mat[3] + upFeet, z: vDepth }, // Vertex 6
-				{ x: 0, y: this.#mat[3] + upFeet, z: vDepth }  // Vertex 7
+				{ x: this.#sized[0], y: this.#pine[3] + upFeet, z: vDepth }, // Vertex 6
+				{ x: 0, y: this.#pine[3] + upFeet, z: vDepth }  // Vertex 7
 			],
 			sideHUp: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
-				{ x: this.#mat[2], y: 0, z: 0 }, // Vertex 1
-				{ x: this.#mat[2], y: vertical, z: 0 }, // Vertex 2
+				{ x: this.#pine[2], y: 0, z: 0 }, // Vertex 1
+				{ x: this.#pine[2], y: vertical, z: 0 }, // Vertex 2
 				{ x: 0, y: vertical, z: 0 }, // Vertex 3
 				{ x: 0, y: 0, z: tinySide }, // Vertex 4
-				{ x: this.#mat[2], y: 0, z: tinySide }, // Vertex 5
-				{ x: this.#mat[2], y: vertical, z: tinySide }, // Vertex 6
+				{ x: this.#pine[2], y: 0, z: tinySide }, // Vertex 5
+				{ x: this.#pine[2], y: vertical, z: tinySide }, // Vertex 6
 				{ x: 0, y: vertical, z: tinySide }  // Vertex 7
 			],
 			sideLeftHUp: [
@@ -491,42 +494,42 @@ export default class CratesFrame {
 			],
 			sideHDown: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
-				{ x: this.#mat[2], y: 0, z: 0 }, // Vertex 1
-				{ x: this.#mat[2], y: this.#mat[3] + upFeet, z: 0 }, // Vertex 2
-				{ x: 0, y: this.#mat[3] + upFeet, z: 0 }, // Vertex 3
+				{ x: this.#pine[2], y: 0, z: 0 }, // Vertex 1
+				{ x: this.#pine[2], y: this.#pine[3] + upFeet, z: 0 }, // Vertex 2
+				{ x: 0, y: this.#pine[3] + upFeet, z: 0 }, // Vertex 3
 				{ x: 0, y: 0, z: tinySide }, // Vertex 4
-				{ x: this.#mat[2], y: 0, z: tinySide }, // Vertex 5
-				{ x: this.#mat[2], y: this.#mat[3] + upFeet, z: tinySide }, // Vertex 6
-				{ x: 0, y: this.#mat[3] + upFeet, z: tinySide }  // Vertex 7
+				{ x: this.#pine[2], y: 0, z: tinySide }, // Vertex 5
+				{ x: this.#pine[2], y: this.#pine[3] + upFeet, z: tinySide }, // Vertex 6
+				{ x: 0, y: this.#pine[3] + upFeet, z: tinySide }  // Vertex 7
 			],
 			sideLeftHDown: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
 				{ x: tinyRightSide, y: 0, z: 0 }, // Vertex 1
-				{ x: tinyRightSide, y: this.#mat[3] + upFeet, z: 0 }, // Vertex 2
-				{ x: 0, y: this.#mat[3] + upFeet, z: 0 }, // Vertex 3
+				{ x: tinyRightSide, y: this.#pine[3] + upFeet, z: 0 }, // Vertex 2
+				{ x: 0, y: this.#pine[3] + upFeet, z: 0 }, // Vertex 3
 				{ x: 0, y: 0, z: tinySide }, // Vertex 4
 				{ x: tinyRightSide, y: 0, z: tinySide }, // Vertex 5
-				{ x: tinyRightSide, y: this.#mat[3] + upFeet, z: tinySide }, // Vertex 6
-				{ x: 0, y: this.#mat[3] + upFeet, z: tinySide }  // Vertex 7
+				{ x: tinyRightSide, y: this.#pine[3] + upFeet, z: tinySide }, // Vertex 6
+				{ x: 0, y: this.#pine[3] + upFeet, z: tinySide }  // Vertex 7
 			],
 			sideV: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
-				{ x: this.#mat[2], y: 0, z: 0 }, // Vertex 1
-				{ x: this.#mat[2], y: upFace, z: 0 }, // Vertex 2
+				{ x: this.#pine[2], y: 0, z: 0 }, // Vertex 1
+				{ x: this.#pine[2], y: upFace, z: 0 }, // Vertex 2
 				{ x: 0, y: upFace, z: 0 }, // Vertex 3
-				{ x: 0, y: 0, z: this.#mat[3] }, // Vertex 4
-				{ x: this.#mat[2], y: 0, z: this.#mat[3] }, // Vertex 5
-				{ x: this.#mat[2], y: upFace, z: this.#mat[3] }, // Vertex 6
-				{ x: 0, y: upFace, z: this.#mat[3] }  // Vertex 7
+				{ x: 0, y: 0, z: this.#pine[3] }, // Vertex 4
+				{ x: this.#pine[2], y: 0, z: this.#pine[3] }, // Vertex 5
+				{ x: this.#pine[2], y: upFace, z: this.#pine[3] }, // Vertex 6
+				{ x: 0, y: upFace, z: this.#pine[3] }  // Vertex 7
 			],
 			sideRightFrontV: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
-				{ x: this.#mat[2], y: 0, z: 0 }, // Vertex 1
-				{ x: this.#mat[2], y: upFace, z: 0 }, // Vertex 2
+				{ x: this.#pine[2], y: 0, z: 0 }, // Vertex 1
+				{ x: this.#pine[2], y: upFace, z: 0 }, // Vertex 2
 				{ x: 0, y: upFace, z: 0 }, // Vertex 3
 				{ x: 0, y: 0, z: this.#sized[1] }, // Vertex 4
-				{ x: this.#mat[2], y: 0, z: this.#sized[1] }, // Vertex 5
-				{ x: this.#mat[2], y: upFace, z: this.#sized[1] }, // Vertex 6
+				{ x: this.#pine[2], y: 0, z: this.#sized[1] }, // Vertex 5
+				{ x: this.#pine[2], y: upFace, z: this.#sized[1] }, // Vertex 6
 				{ x: 0, y: upFace, z: this.#sized[1] }  // Vertex 7
 			],
 			sideLeftV: [
@@ -534,10 +537,10 @@ export default class CratesFrame {
 				{ x: tinyRightSide, y: 0, z: 0 }, // Vertex 1
 				{ x: tinyRightSide, y: upFace, z: 0 }, // Vertex 2
 				{ x: 0, y: upFace, z: 0 }, // Vertex 3
-				{ x: 0, y: 0, z: this.#mat[3] }, // Vertex 4
-				{ x: tinyRightSide, y: 0, z: this.#mat[3] }, // Vertex 5
-				{ x: tinyRightSide, y: upFace, z: this.#mat[3] }, // Vertex 6
-				{ x: 0, y: upFace, z: this.#mat[3] }  // Vertex 7
+				{ x: 0, y: 0, z: this.#pine[3] }, // Vertex 4
+				{ x: tinyRightSide, y: 0, z: this.#pine[3] }, // Vertex 5
+				{ x: tinyRightSide, y: upFace, z: this.#pine[3] }, // Vertex 6
+				{ x: 0, y: upFace, z: this.#pine[3] }  // Vertex 7
 			],
 			sideLeftFrontV: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
@@ -554,10 +557,10 @@ export default class CratesFrame {
 				{ x: rightFeet, y: 0, z: 0 }, // Vertex 1
 				{ x: rightFeet, y: topZ, z: 0 }, // Vertex 2
 				{ x: 0, y: topZ, z: 0 }, // Vertex 3
-				{ x: 0, y: 0, z: this.#mat[3] }, // Vertex 4
-				{ x: rightFeet, y: 0, z: this.#mat[3] }, // Vertex 5
-				{ x: rightFeet, y: topZ, z: this.#mat[3] }, // Vertex 6
-				{ x: 0, y: topZ, z: this.#mat[3] }  // Vertex 7
+				{ x: 0, y: 0, z: this.#pine[3] }, // Vertex 4
+				{ x: rightFeet, y: 0, z: this.#pine[3] }, // Vertex 5
+				{ x: rightFeet, y: topZ, z: this.#pine[3] }, // Vertex 6
+				{ x: 0, y: topZ, z: this.#pine[3] }  // Vertex 7
 			],
 			topComp: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
@@ -571,12 +574,12 @@ export default class CratesFrame {
 			],
 			topFeet: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
-				{ x: this.#mat[3], y: 0, z: 0 }, // Vertex 1
-				{ x: this.#mat[3], y: topZ, z: 0 }, // Vertex 2
+				{ x: this.#pine[3], y: 0, z: 0 }, // Vertex 1
+				{ x: this.#pine[3], y: topZ, z: 0 }, // Vertex 2
 				{ x: 0, y: topZ, z: 0 }, // Vertex 3
 				{ x: 0, y: 0, z: this.#sized[1] }, // Vertex 4
-				{ x: this.#mat[3], y: 0, z: this.#sized[1] }, // Vertex 5
-				{ x: this.#mat[3], y: topZ, z: this.#sized[1] }, // Vertex 6
+				{ x: this.#pine[3], y: 0, z: this.#sized[1] }, // Vertex 5
+				{ x: this.#pine[3], y: topZ, z: this.#sized[1] }, // Vertex 6
 				{ x: 0, y: topZ, z: this.#sized[1] }  // Vertex 7
 			],
 			topLeftFeet: [
@@ -631,7 +634,7 @@ export default class CratesFrame {
 		return(change);
 	};
 
-	async #setAllParts(meta, component, offsets) {
+	#setAllParts(meta, component, offsets) {
 		const trace =	new TraceMaker();
 		const fill =	new DesignWalls();
 		let show =		true;
@@ -664,7 +667,7 @@ export default class CratesFrame {
 		return(meta);
 	};
 
-	async #designFrame() {
+	#designFrame() {
 		const X = Math.ceil(this.#sized[0]);
 		const Y = Math.ceil(this.#sized[1]);
 		const Z = Math.ceil(this.#sized[2]);
@@ -679,10 +682,13 @@ export default class CratesFrame {
 			{ x: 0, y: Y, z: Z }  // Vertex 7
 		];
 		let meta =			this.#boundaries(boundarie);
+
+		if(!this.#pine)
+			return(meta);
 		const components =	this.#defineFrameComponents();
 		const offset =		this.#offsetFrame();
 
-		meta =				await this.#setAllParts(meta, components, offset);
+		meta =				this.#setAllParts(meta, components, offset);
 		return(meta);
 	};
 

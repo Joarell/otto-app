@@ -1,7 +1,7 @@
-import Converter from '../core2/Converter.class.mjs';
 import SetCrateWalls from './Crate.walls.plotly.class.mjs';
 import CratesFrame from './Frame.crate.graphic.mjs';
 import PaddingCrate from './Padding.crate.plotly.mjs';
+import PositionWorksInSideCrate from './Plotly.layer.position.work.class.mjs';
 
 export default class standardCrateRender {
 	#crates;
@@ -12,37 +12,25 @@ export default class standardCrateRender {
 		this.#layout = setup;
 	};
 
-	#usedMaterials(meta) {
-		const available =	JSON.parse(localStorage.getItem('crating'));
-		const used =		available.map(opt => meta.usedMaterials.get(opt));
-
-		return(used);
-	};
-
-	async #startDrawing() {
+	#startDrawing() {
 		const { crates } =		this.#crates;
-		const trace =			await Promise.resolve(crates.map(async (data, i) => {
+		const result =			crates.map((data, i) => {
+			console.count('OUT')
 			if(i % 2 === 0) {
-				const materials =	this.#usedMaterials(data.at(-1)[0]);
-				const pine =		materials.find(list => list.at(-1) === 'Pinewood');
-				const ply =			materials.find(list => list.at(-1) === 'Plywood');
-				const pad =			materials.find(list => list.at(-1) === 'Foam Sheet' && list[2] > 2.5);
-				const div =			materials.find(list => list.at(-1) === 'Foam Sheet' && list[2] <= 2.5);
 				const sized =		data.at(-1)[0].finalSize;
-				const frame =		pine ? new CratesFrame(sized, pine): 0;
-				let meta =			await frame.setFrame;
-				const walls =		new SetCrateWalls(sized, meta, ply, pine);
+				const frame =		new CratesFrame(sized, data.at(-1)[0]);
+				let meta =			frame.setFrame;
+				const walls =		new SetCrateWalls(sized, data.at(-1)[0], meta);
 				meta =				walls.setWalls;
-				const padding =		new PaddingCrate(sized, meta, ply, pine, pad);
+				const padding =		new PaddingCrate(sized, data.at(-1)[0], meta);
 				meta =				padding.setPadding;
+				const position =	new PositionWorksInSideCrate({ sized, type: "standardCrate" }, data, meta);
+				meta =				position.arrange;
 
-
-				// TODO: set class GraphicLayer -> GapsGraphic
+				position.arrange;
 				return(meta);
 			};
-		}, 0));
-		const data =		Promise.all(trace);
-		const result =		await data;
+		}, 0);
 
 		return(result.length ? { result: result[0], meta: this.#layout }: false);
 	};

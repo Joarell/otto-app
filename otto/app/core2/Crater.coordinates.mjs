@@ -123,12 +123,12 @@ export default class WorksCoordinates {
 	#workFeatnessLayer(art, coordinate) {
 		const space = coordinate[0] === coordinate[2]
 			&& coordinate[1] === coordinate[3];
-		const X = coordinate[2];
-		const Y = coordinate[3];
-		const x1 = art[1] + coordinate[0] <= X && coordinate[0] < X;
-		const y1 = art[3] + coordinate[1] <= Y && coordinate[1] < Y;
-		const x2 = art[3] + coordinate[0] <= X && coordinate[0] < X;
-		const y2 = art[1] + coordinate[1] <= Y && coordinate[1] < Y;
+		const X =	coordinate[2];
+		const Y =	coordinate[3];
+		const x1 =	art[1] + coordinate[0] <= X && coordinate[0] < X;
+		const y1 =	art[3] + coordinate[1] <= Y && coordinate[1] < Y;
+		const x2 =	art[3] + coordinate[0] <= X && coordinate[0] < X;
+		const y2 =	art[1] + coordinate[1] <= Y && coordinate[1] < Y;
 		const check01 = !space ? x1 && y1: false;
 		const check02 = !space ? x2 && y2: false;
 

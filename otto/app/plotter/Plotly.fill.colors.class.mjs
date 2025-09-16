@@ -35,7 +35,8 @@ export default class DesignWalls {
 		const {
 			width, depth, height, offsetX, offsetZ, offsetY, info, name
 		} = this.#data;
-		const color = this.#colors.get(name);
+		const color = this.#colors.get(name.color || name);
+		console.log(name, color)
 		const vertices = [
 			[ 0, 0, 0 ],
 			[ width, 0, 0 ],
@@ -70,11 +71,11 @@ export default class DesignWalls {
 			i,
 			j,
 			k,
-			name,
+			name: name.name || name,
 			type: 'mesh3d',
 			color,
 			showlegend: false,
-			legendgroup: name,
+			legendgroup: name.name || name,
 			opacity: 0.2,
 			flatshading: true,
 			showscale: true,
@@ -82,7 +83,7 @@ export default class DesignWalls {
 				show: true,
 				color: 'white',
 				width: 2,
-			}
+			},
 		});
 		return(info);
 	};

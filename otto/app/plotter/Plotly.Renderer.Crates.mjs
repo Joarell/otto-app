@@ -71,9 +71,9 @@ export default class GraphicCrates {
 		return(info);
 	};
 
-	async #populatePlotter(list) {
+	#populatePlotter(list) {
 		let alterLayout =	structuredClone(layout);
-		const designs =		this.#crates.map(async crate => {
+		const designs =		this.#crates.map(crate => {
 			const data = list.get(crate);
 			let draw;
 
@@ -108,13 +108,13 @@ export default class GraphicCrates {
 					break;
 				case 'standardCrate':
 					draw = new standardCrateRender(data, alterLayout);
-					const { result, meta } = await draw.composeCrate;
+					const { result, meta } = draw.composeCrate;
 					alterLayout = meta;
 					draw = null;
 					return(result);
 			};
 		});
-		const data =	await Promise.all(designs);
+		const data =	designs;
 		const result =	data.filter(info => Array.isArray(info)).flat();
 		return({ result, alterLayout });
 	};
