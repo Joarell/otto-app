@@ -5,11 +5,12 @@ export default class DesignWalls {
 
 	constructor() {
 		[
+			// [ 'walls', '#3DDDDD' ],
+			// [ 'works', '#BB0056BB' ],
 			[ 'frame', 'yellow' ],
-			[ 'walls', '#3DDDDD' ],
+			[ 'walls', '#BF5E30' ],
 			[ 'padding', '#222725' ],
 			[ 'div', '#EFECBBBE' ],
-			// [ 'works', '#BB0056BB' ],
 			[ 'fill', '#2DD751' ],
 		].map(col => {
 			this.#colors.set(col[0], col[1]);

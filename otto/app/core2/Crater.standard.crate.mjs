@@ -149,10 +149,12 @@ export default class CraterStandard {
 			};
 		tmp = crate.div * (this.#layers - 1) + z;
 		this.#coordinates.innerSize = [
-			innerSize[0] + crate.pad, tmp + crate.pad, innerSize[2] + crate.pad
+			+(innerSize[0] + crate.pad).toFixed(3),
+			+(tmp + crate.pad).toFixed(3),
+			+(innerSize[2] + crate.pad).toFixed(3)
 		];
 		crate.x += innerSize[0];
-		crate.z += z;
+		crate.z += !tmp ? innerSize[1]: tmp;
 		crate.y += innerSize[2];
 		crate.y += FORKFEET;
 		const X = crate.x % 1 > 0 ? (crate.x).toFixed(3): (crate.x).toFixed(0);

@@ -6,4 +6,12 @@ export default class FillGaps {
 		this.#gaps = vacuum;
 		this.#thickness = highZ;
 	};
+
+	#defineGaps() {
+
+	};
+
+	get fill() {
+		return(this.#defineGaps());
+	};
 };
