@@ -32,11 +32,11 @@ export default class CratesFrame {
 				x: [ v1.x, v2.x ],
 				y: [ v1.y, v2.y ],
 				z: [ v1.z, v2.z ],
-				name: 'Frame',
+				name: '',
 				mode: 'lines',
 				type: 'scatter3d',
 				showlegend: false,
-				opacity: 1,
+				opacity: 0,
 				line: {
 					color: '#F0000000'
 				}

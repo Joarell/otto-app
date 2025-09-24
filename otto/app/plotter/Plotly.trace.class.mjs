@@ -5,12 +5,13 @@ export default class TraceMaker {
 
 	constructor() {
 		[
-			[ 'frame', '#BF5E30' ],
+			// [ 'frame', '#BF5E30' ],
+			[ 'frame', '#002A3D' ],
  			[ 'walls', '#555FEF' ],
 			[ 'padding', '#FFFFF0' ],
-			[ 'div', '#BEBBBB' ],
 			[ 'fill', '#0B8325' ],
-			[ 'works', '#002A3D' ],
+			[ 'div', '#002A3D' ],
+			[ 'works', '#BB0056BB' ],
 		].map(col => {
 			this.#colors.set(col[0], col[1]);
 		});
@@ -49,8 +50,6 @@ export default class TraceMaker {
 					color: '#BB0056BB',
 					width: 2,
 				},
-				text: 'TEST',
-				textposition: 'middle center',
 			});
 		});
 		return(info);

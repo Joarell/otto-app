@@ -9,9 +9,8 @@ export default class DesignWalls {
 			[ 'walls', '#3DDDDD' ],
 			[ 'padding', '#222725' ],
 			[ 'div', '#EFECBBBE' ],
-			[ 'works', '#BB0056BB' ],
+			// [ 'works', '#BB0056BB' ],
 			[ 'fill', '#2DD751' ],
-			[ 'structure', '#557AEC' ],
 		].map(col => {
 			this.#colors.set(col[0], col[1]);
 		});
@@ -36,7 +35,6 @@ export default class DesignWalls {
 			width, depth, height, offsetX, offsetZ, offsetY, info, name
 		} = this.#data;
 		const color = this.#colors.get(name.color || name);
-		console.log(name, color)
 		const vertices = [
 			[ 0, 0, 0 ],
 			[ width, 0, 0 ],
@@ -71,11 +69,15 @@ export default class DesignWalls {
 			i,
 			j,
 			k,
-			name: name.name || name,
+			name: name.name ?? name,
 			type: 'mesh3d',
 			color,
+			hovertext: name.code ?? name,
+			hovertemplate: name.code ?
+				'L: %{x}<br>' + 'H: %{z}<br>' + 'D: %{y}<br>' + `Code: ${name.code}`:
+				'L: %{x}<br>' + 'H: %{z}<br>' + 'D: %{y}<br>',
 			showlegend: false,
-			legendgroup: name.name || name,
+			legendgroup: name.name ?? name,
 			opacity: 0.2,
 			flatshading: true,
 			showscale: true,
