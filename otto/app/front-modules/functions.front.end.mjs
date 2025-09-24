@@ -132,6 +132,7 @@ export async function crate(fetched = false) {
 		root.style.setProperty("--layer-state", "block");
 		sessionStorage.removeItem('crate');
 		sessionStorage.removeItem('plotter');
+		sessionStorage.removeItem('graphics');
 	};
 	weak.add(estimate);
 	return ('Crated');
