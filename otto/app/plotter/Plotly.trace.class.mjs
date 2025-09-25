@@ -5,13 +5,14 @@ export default class TraceMaker {
 
 	constructor() {
 		[
-			// [ 'frame', '#BF5E30' ],
+			// [ 'works', '#BB0056BB' ],
+ 			// [ 'walls', '#555FEF' ],
+			// [ 'fill', '#0B8325' ],
+			[ 'fill', '#BF5E30' ],
 			[ 'frame', '#002A3D' ],
- 			[ 'walls', '#555FEF' ],
+ 			[ 'walls', 'yellow' ],
 			[ 'padding', '#FFFFF0' ],
-			[ 'fill', '#0B8325' ],
 			[ 'div', '#002A3D' ],
-			[ 'works', '#BB0056BB' ],
 		].map(col => {
 			this.#colors.set(col[0], col[1]);
 		});
@@ -24,7 +25,7 @@ export default class TraceMaker {
 
 	#defineShape() {
 		const { info, coordinates, name, show } = this.#data;
-		const color = this.#colors.get(name.color ?? name);
+		const color = this.#colors.get(name.color ?? name) ?? name.color;
 
 		this.#edges.forEach((edge, i) => {
 			const v1 = coordinates[edge[0]];
