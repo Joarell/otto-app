@@ -82,38 +82,87 @@ export default class WorksCoordinates {
 	};
 
 	/**
+	 * @param { boolean } axisXorY
+	 * @param { Array:Number } local
+	 * @param { Array: Number } emptyArea
+	 * @param { string } code
+	 */
+	#defineNewCoordinates(axisXorY, local, { x, y }, emptyArea, code){
+		const X =		emptyArea[0][2];
+		const Y =		emptyArea[0][3];
+		const checkX =	emptyArea[0][0];
+		const checkY =	emptyArea[0][1];
+		const pointX =	axisXorY && checkX === X || !axisXorY && checkX + x === X ?
+			X : local[0];
+		const pointY =	!axisXorY && checkY === Y || axisXorY && checkY + y === Y ?
+			Y : local[1];
+		const emptyX =	axisXorY && pointX < X ?
+			[ +(local[0] + x).toFixed(3), +(local[1] + y).toFixed(3), X, Y, code ]:
+			[ X, local[1], X, Y, code ];
+		const emptyY =	!axisXorY && pointY < Y ?
+			[ local[0], +(local[1] + y).toFixed(3), X, Y, code ]:
+			[ +(local[0] + x).toFixed(3), Y, X, Y, code ];
+
+		return({ emptyX, emptyY, pointX, pointY });
+	};
+
+	/**
+	* @param { boolean } axisXorY
+	* @param { Array:Number } emptyArea
+	* @@param { Object } opts
+	*/
+	#finalCheckingCoordinates({ prevX, prevY, x, y, pos }, opts, emptyArea, axisXorY) {
+		const X = emptyArea[0][2];
+		const Y = emptyArea[0][3];
+
+		y === prevY || x === prevX ? emptyArea.splice(pos, 1): 0;
+		axisXorY || !opts.pointX && opts.emptyX[0] < X ?
+			emptyArea.push(opts.emptyX) : 0;
+		!axisXorY || !opts.pointY && opts.emptyY[1] < Y ?
+			emptyArea.push(opts.emptyY) : 0;
+	};
+
+	/**
 	* @method - update the available coordinates possible to feat the work
 	* @param { Number } pos the array index to be removed from the possibilities.
 	* @param { Array } local the position with the coordinates to place the work.
 	*/
-	#updateLayerAvailableCoordinates(pos, local, { x, y, flip }) {
+	#updateLayerAvailableCoordinates(pos, local, { x, y, flip }, code) {
 		const { emptyArea } =	this.#coordinates;
 		const X =				emptyArea[0][2];
 		const Y =				emptyArea[0][3];
 
-		if(X === x && Y === y || X === y && Y === x) {
+		if(X === x && Y === y || X === y && Y === x)
 			return ;
-		};
 		if (emptyArea.length > 1) {
-			const axisXorY = emptyArea[0][0] === local[0];
+			const { feat } =	this.#info.info;
+			const { work } =	feat.find(data => data.work[0] === local.at(-1));
+			const axisXorY =	emptyArea[0][0] === local[0];
+
 			axisXorY && !flip ? emptyArea[0][0] += x : emptyArea[0][1] += y;
 
-			const checkX =	emptyArea[0][0];
-			const checkY =	emptyArea[0][1];
-			const pointX =	checkX + x === X ? X : 0;
-			const pointY =	checkY + y === Y ? Y : 0;
-			const emptyX =	axisXorY ? [ x + checkX, pointY, X, Y ]: [ checkX, pointY, X, Y ];
-			const emptyY =	axisXorY ? [ pointX, y + checkY, X, Y ]: [ pointX, checkY, X, Y ];
+			const prevX =	work.length > 3 ? work[1]: work[3];
+			const prevY =	work.length > 3 ? work[3]: work[1];
+			const options =	this.#defineNewCoordinates(axisXorY, local, { x, y }, emptyArea, code);
 
-			emptyArea.splice(pos, 1);
-			axisXorY && emptyX[0] < X ? emptyArea.push(emptyX) : 0;
-			!axisXorY && emptyY[1] < Y ? emptyArea.push(emptyY) : 0;
-			return ;
+			if(axisXorY && y < prevY || !axisXorY && x < prevX) {
+					if(axisXorY) {
+					emptyArea[pos][0] = local[0];
+					emptyArea[pos][1] = local[1] + y;
+				}
+				else {
+					emptyArea[pos][0] = local[0] + x;
+					emptyArea[pos][1] = local[1];
+				};
+			};
+			return(this.#finalCheckingCoordinates(
+				{ x, y, pos, prevX, prevY }, options, emptyArea, axisXorY
+			));
 		};
 		const fullX = x === X;
 		const fullY = y === Y;
-		const firstX = !fullX ? [x, 0, X, Y]: false
-		const firstY = !fullY ? [0, y, X, Y]: false;
+		const firstX = !fullX ? [ x, 0, X, Y, code ]: false
+		const firstY = !fullY ? [ 0, y, X, Y, code ]: false;
 
 		firstX ? emptyArea.push(firstX): 0;
 		firstY ? emptyArea.push(firstY): 0;
@@ -144,11 +193,10 @@ export default class WorksCoordinates {
 	* @param { Array } param0.emptyArea - available empty coordinates.
 	* @param { boolean } param0.found - changes when a space is matched to the work.
 	* @param { Array } param0.art - the work sizes and code.
-	* @param { Number param0.ind - the rawList location to the work.
+	* @param { Number } param0.ind - the rawList location to the work.
 	* @param { Number } param0.pos the @emptyArea index.
 	*/
 	#featRecursionLayer({ emptyArea, found, art, ind, pos }) {
-		emptyArea.length > 1 && pos === 0 ? pos++ : 0;
 		const coordinates = emptyArea[pos];
 		const filled = emptyArea[0][0] === emptyArea[0][2] &&
 			emptyArea[0][1] === emptyArea[0][3];
@@ -160,6 +208,7 @@ export default class WorksCoordinates {
 		const X =			emptyArea[0][2];
 		const Y =			emptyArea[0][3];
 		const perfect = 	art[1] === X && art[3] === Y || art[3] === X && art[1] === Y;
+		const XorY =		emptyArea[0][0] === emptyArea[pos][0];
 		let flip = false;
 		let x;
 		let y;
@@ -175,8 +224,10 @@ export default class WorksCoordinates {
 				y: emptyArea[pos][1]
 			};
 			if(pos === 0) {
-				emptyArea[0][0] = (x || y > 0) && !perfect ? x : X;
-				emptyArea[0][1] = (x > 0 || y) && !perfect ? y : Y;
+				if(XorY)
+					emptyArea[0][0] = (x || y > 0) && !perfect ? x : X;
+				else
+					emptyArea[0][1] = (x > 0 || y) && !perfect ? y : Y;
 			};
 		}
 		else if(check02) {
@@ -192,12 +243,16 @@ export default class WorksCoordinates {
 				y: emptyArea[pos][1]
 			};
 			if(pos === 0) {
-				emptyArea[0][1] = (x || y > 0) && !perfect ? emptyArea[0][2] - art[3] : Y;
-				emptyArea[0][0] = (x > 0 || y) && !perfect ? emptyArea[0][3] - art[1] : X;
+				if(XorY)
+					emptyArea[0][1] = (x || y > 0) && !perfect ?
+						emptyArea[0][2] - art[3] : Y;
+				else
+					emptyArea[0][0] = (x > 0 || y) && !perfect ?
+						emptyArea[0][3] - art[1] : X;
 			};
 		};
-		found ? this.#updateLayerAvailableCoordinates(pos, coordinates, { x, y, flip }): pos++;
-		return(this.#featRecursionLayer({emptyArea, found, art, ind, pos}));
+		found ? this.#updateLayerAvailableCoordinates(pos, coordinates, { x, y, flip }, art[0]): pos--;
+		return(this.#featRecursionLayer({ emptyArea, found, art, ind, pos }));
 	};
 
 	/**
@@ -217,7 +272,7 @@ export default class WorksCoordinates {
 		const { emptyArea, feat } = info;
 		const art =		list[len];
 		const ind =		this.#rawList.findIndex(data => data.code === art[0]);
-		const data =	{ emptyArea, found: false, art, ind, pos: 0 };
+		const data =	{ emptyArea, found: false, art, ind, pos: emptyArea.length - 1 };
 		const result =	this.#featRecursionLayer(data);
 
 		if(result) {

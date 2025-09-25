@@ -23,10 +23,11 @@ export default class standardCrateRender {
 				meta =				walls.setWalls;
 				const padding =		new PaddingCrate(finalSize, data.at(-1)[0], meta);
 				meta =				padding.setPadding;
-				const position =	new PositionWorksInSideCrate({ sized: finalSize, innerSize, type: "standardCrate" }, data, meta);
+				const position =	new PositionWorksInSideCrate(
+					{ sized: finalSize, innerSize, type: "standardCrate" }, data, meta
+				);
 				meta =				position.arrange;
 
-				position.arrange;
 				return(meta);
 			};
 		}, 0);

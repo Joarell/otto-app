@@ -258,11 +258,11 @@ export default class CraterStandard {
 	// NOTE: have to improve the best sizes.
 	#composeCrateSizes(crate, list, len) {
 		if (len < 0) {
-			crate.x < crate.y ? [crate.x, crate.y] = [crate.y, crate.x]: 0;
-			return (crate);
+			crate.x < crate.y ? [ crate.x, crate.y ] = [ crate.y, crate.x ]: 0;
+			return(crate);
 		};
 		const THRESHOLDY =	140;
-		const sum =			list.length > 5;
+		const sum =			crate.x * crate.y > list[len][0] * list[len][3];
 
 		crate.x = crate.x < list[len][1] ? list[len][1] : crate.x;
 		crate.x = sum && crate.x >= list[len][1] && crate.x + list[len][1] <= this.#thresholdX ?

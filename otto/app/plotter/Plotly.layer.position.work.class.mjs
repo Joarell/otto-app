@@ -87,7 +87,7 @@ export default class PositionWorksInSideCrate {
 	#worksOffset(works, depth, layer) {
 		Object.entries(works).map(data => {
 			const { coordinates, code, art } = data[1];
-			const offY = Math.ceil(coordinates.y) - this.#pad[2];
+			const offY = coordinates.y - this.#pad[2];
 			const x = this.#threshold[0];
 			const y = coordinates.y ? this.#threshold[2] + offY: this.#threshold[2];
 			const z = this.#threshold[1] + coordinates.z + depth;
@@ -131,13 +131,13 @@ export default class PositionWorksInSideCrate {
 	#workGraphicPosition(dim, local, depth) {
 		let x =		dim.length > 4 ? +dim[3] + this.#threshold[0] - this.#pad[2]:
 			+dim[1] + this.#threshold[0] - this.#pad[2];
-		let y =		dim.length > 4 ? +dim[1] + Math.ceil(this.#threshold[2] - this.#pad[2]):
-			+dim[3] + Math.ceil(this.#threshold[2] - this.#pad[2]);
+		let y =		dim.length > 4 ? +dim[1] + this.#threshold[2] - this.#pad[2]:
+			+dim[3] + this.#threshold[2] - this.#pad[2];
 		const z =	depth + this.#threshold[1];
 		const { coordinates, code } = local;
 
 		!coordinates.x ? x += this.#pad[2]: x += this.#pad[2] + coordinates.x;
-		coordinates.y ? y += Math.ceil(coordinates.y) - this.#pad[2]: 0;
+		coordinates.y ? y += coordinates.y: 0;
 		const work = {
 			coordinates,
 			code,
@@ -154,12 +154,13 @@ export default class PositionWorksInSideCrate {
 			width: x - this.#threshold[0] - coordinates.x,
 			depth: dim[2],
 			height: coordinates.y ?
-				y - this.#threshold[2] - Math.ceil(coordinates.y) + this.#pad[2]:
+				y - this.#threshold[2] - coordinates.y + this.#pad[2]:
 				y - this.#threshold[2] - coordinates.y,
 			offsetX: this.#threshold[0] + coordinates.x,
 			offsetY: this.#threshold[1] + depth,
 			offsetZ: coordinates.y ?
-				this.#threshold[2] + Math.ceil(coordinates.y) - this.#pad[2]: this.#threshold[2],
+				this.#threshold[2] + coordinates.y - this.#pad[2]:
+				this.#threshold[2],
 		};
 		return(work);
 	};
@@ -171,7 +172,7 @@ export default class PositionWorksInSideCrate {
 		const offY =	this.#threshold[2];
 		let div =		structuredClone(layer);
 
-		y += Math.ceil(this.#div[2] - this.#pad[2]);
+		y -= this.#div[2];
 		const divisor = {
 			div: [
 				{ x: offX, y: offY, z: offZ },	// Vertex 0
@@ -264,18 +265,28 @@ export default class PositionWorksInSideCrate {
 			const allWorks =			works.map(info => {
 				return(this.#workGraphicPosition(info.work, artLocation.get(info.work[0]), depthSum));
 			});
-			const checkGap = 			vacuum.length >= 1 && vacuum[0] < vacuum[2] && vacuum[1] < vacuum[3];
+			const checkGap = 			vacuum.length > 1;
 
 			onLayers.push(this.#worksOffset(allWorks, depthSum, i + 1));
 			works.filter(info => !thickness || thickness < info.work[2] ?
 				thickness = info.work[2] : 0);
+			if(checkGap) {
+				const info = {
+					vacuum,
+					maxZ: fillGaps,
+					offZ: +(depthSum + this.#threshold[1]).toFixed(3),
+					pad: this.#pad,
+					div: this.#div,
+					offset: this.#threshold,
+				};
+				const gaps = new FillGaps(info, i + 1);
+				gaps.fill
+				// allWorks.push(...gaps.fill);
+			};
 			depthSum += +(thickness).toFixed(3);
 			if(layers.length > 1 && layers.length - 1 > i){
 				onLayers.push(this.#setDivLayer(i + 1, depthSum, structuredClone(this.#inner)));
 				depthSum += this.#div[2];
-			};
-			if(checkGap) {
-				const gaps = new FillGaps(vacuum, fillGaps);
 			};
 			thickness = 0;
 		}, 0);
