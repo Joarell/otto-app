@@ -191,7 +191,6 @@ export default class PositionWorksInSideCrate {
 			offsetZ: this.#threshold[2],
 			layer: { name: `layer-${ ++div }`, color: 'div' },
 		};
-		console.log('DIV', layer, 'and', div);
 		return(divisor);
 	};
 
@@ -223,7 +222,6 @@ export default class PositionWorksInSideCrate {
 					coordinates: art ? art: div,
 					name: layer ?? div,
 					show: div || tmp === layer.name ? false: true,
-					// show: div || tmp && tmp.name === layer.name ? false: true,
 				};
 				meta = trace.defineTrace;
 				fill.objectData = {
