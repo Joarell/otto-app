@@ -6,7 +6,11 @@ export default class WorksCoordinates {
 
 	constructor(size = false) {
 		if (size) {
-			this.#sizes = size;
+			this.#sizes = [
+				+(size[0]).toFixed(3),
+				+(size[1]).toFixed(3),
+				+(size[2]).toFixed(3),
+			];
 			this.#coordinates = this.#crateTemplate();
 		};
 	};
@@ -173,7 +177,7 @@ export default class WorksCoordinates {
 			if(pos === 0) {
 				emptyArea[0][0] = (x || y > 0) && !perfect ? x : X;
 				emptyArea[0][1] = (x > 0 || y) && !perfect ? y : Y;
-			}
+			};
 		}
 		else if(check02) {
 			found = true;
@@ -183,14 +187,14 @@ export default class WorksCoordinates {
 			art.push(ICON);
 			flip = true;
 			this.#rawList[ind].defCoordinate = {
-				x: emptyArea[pos][1],
+				x: emptyArea[pos][0],
 				z: art[2],
-				y: emptyArea[pos][0]
+				y: emptyArea[pos][1]
 			};
 			if(pos === 0) {
 				emptyArea[0][1] = (x || y > 0) && !perfect ? emptyArea[0][2] - art[3] : Y;
 				emptyArea[0][0] = (x > 0 || y) && !perfect ? emptyArea[0][3] - art[1] : X;
-			}
+			};
 		};
 		found ? this.#updateLayerAvailableCoordinates(pos, coordinates, { x, y, flip }): pos++;
 		return(this.#featRecursionLayer({emptyArea, found, art, ind, pos}));

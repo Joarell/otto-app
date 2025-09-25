@@ -30,6 +30,9 @@ export default class CrateMaker {
 			z += +item[2];
 			// y += +item[2];
 		});
+		x *= 2;
+		z *= 2;
+		y *= 2;
 		separator && separator.length ? separator.map(foam => {
 			if(this.#layers > 1 && foam[2] <= DIVISION) {
 				if(this.#crateType) {
@@ -39,14 +42,13 @@ export default class CrateMaker {
 				div = foam[2];
 				return(z += +foam[2] * (this.#layers - 1));
 			};
-			x += +foam[2];
-			z += +foam[2];
-			y += +foam[2];
+			if(this.#layers === 1 && foam[2] <= DIVISION)
+				return;
+			x += +foam[2] * 2;
+			z += +foam[2] * 2;
+			y += +foam[2] * 2;
 			foam[2] > 2.5 ? pad = 2 * foam[2]: 0;
 		}): 0;
-		x *= 2;
-		z *= 2;
-		y *= 2;
 		return({ x, z, y, div, pad });
 	};
 

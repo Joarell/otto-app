@@ -54,7 +54,12 @@ export default class ArtWork extends Hexaedro {
 				dimensions.z += item[2] * 2;
 				dimensions.y += item[2] * 2;
 			});
-		return([ this.code, dimensions.x, dimensions.z, dimensions.y ]);
+		return([
+			this.code,
+			+(dimensions.x).toFixed(3),
+			+(dimensions.z).toFixed(3),
+			+(dimensions.y).toFixed(3)
+		]);
 	};
 
 	/**
