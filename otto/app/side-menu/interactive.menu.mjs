@@ -1,18 +1,13 @@
-
-
 // ╭──────────────────────────────────────────────────────────╮
 // │                     Accordion setup.                     │
 // ╰──────────────────────────────────────────────────────────╯
-export function accordionController (event){
+export function accordionController(event) {
 	const activePanel = event.target.closest(".accordion-panel");
 
-	if (event.target.id === "body-app")
-		return(closeMenu());
-	if (!activePanel)
-		return;
+	if (event.target.id === "body-app") return closeMenu();
+	if (!activePanel) return;
 	toggleAccordion(activePanel);
-};
-
+}
 
 export function closeMenu() {
 	const element = document.querySelector(".accordion-panel");
@@ -21,38 +16,35 @@ export function closeMenu() {
 	let panel;
 
 	for (menu in element) {
-		buttons =	element.parentElement.querySelectorAll("button");
-		panel =		element.parentElement.querySelectorAll(".menu__input");
-		buttons.forEach(button => {
+		buttons = element.parentElement.querySelectorAll("button");
+		panel = element.parentElement.querySelectorAll(".menu__input");
+		buttons.forEach((button) => {
 			button.setAttribute("aria-expanded", false);
 		});
-		panel.forEach(aria => {
+		panel.forEach((aria) => {
 			aria.setAttribute("aria-hidden", true);
 		});
 	}
 }
 
-
 function toggleAccordion(clicked) {
-	const buttons =	clicked.parentElement.querySelectorAll("button");
-	const panel =	clicked.parentElement.querySelectorAll(".menu__input");
+	const buttons = clicked.parentElement.querySelectorAll("button");
+	const panel = clicked.parentElement.querySelectorAll(".menu__input");
 
-	buttons.forEach(button => {
+	buttons.forEach((button) => {
 		button.setAttribute("aria-expanded", false);
 	});
-	panel.forEach(aria => {
+	panel.forEach((aria) => {
 		aria.setAttribute("aria-hidden", true);
 	});
 	openPanel(clicked);
-};
-
+}
 
 function openPanel(panel) {
 	panel.querySelector("button").setAttribute("aria-expanded", true);
 	panel.querySelector(".menu__input").setAttribute("aria-hidden", false);
 	globalThis.document.getElementById("estimate_getter").select();
-};
-
+}
 
 // ╭──────────────────────────────────────────────────────────╮
 // │                 Mobile side menu setup.                  │

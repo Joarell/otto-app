@@ -1,4 +1,4 @@
-export const template = document.createElement('template');
+export const template = document.createElement("template");
 template.innerHTML = `
 <div id="padding-template">
 	<div class="dialog" id="modal" role="dialog" aria-labelledby="title" aria-describedby="content">
@@ -21,19 +21,16 @@ template.innerHTML = `
 	</div>
 </div> `;
 
-
-export const status = document.createElement('template');
+export const status = document.createElement("template");
 status.innerHTML = `<div class="table" id='content-list'></div>`;
 
-
-export const pane1 = document.createElement('template');
+export const pane1 = document.createElement("template");
 pane1.innerHTML = `
 <div class="panel-content">
 	<div class="crates-only" id="crates-only"></div>
 </div> `;
 
-
-export const pane2 = document.createElement('template');
+export const pane2 = document.createElement("template");
 pane2.innerHTML = `
 <div class="panel-content">
 	<div class="crates-opened" id="opened-crates"></div>

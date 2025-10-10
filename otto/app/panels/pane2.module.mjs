@@ -7,7 +7,7 @@ function changeMode(color) {
 	body.remove("light-mode");
 	body.remove("dark-mode");
 	return color === "dark" ? body.add("dark-mode") : body.add("light-mode");
-};
+}
 
 // ╭───────────────────────────────────────────────────────────────────────╮
 // │ This is the header creator when the page or localStorage are updated. │
@@ -28,7 +28,7 @@ export function createHeader(table) {
 		</tr></tbody>
 	`;
 	return table.appendChild(head);
-};
+}
 
 async function getIDBDataBrowser(ref) {
 	const WORKER = new Worker(
@@ -44,51 +44,55 @@ async function getIDBDataBrowser(ref) {
 			data?.reference === ref ? resolve(data) : reject(res);
 		};
 	});
-	return(request);
-};
+	return request;
+}
 
 function layerInterface(layer, num, unit) {
-	if (!Array.isArray(layer))
-		return;
-	const theEnd = layer.length > 4 ?
-		`<td>${unit}</td><td>${layer[4]}</td></tr></tbody>`:
-		`<td>${unit}</td><td>N/A</td></tr></tbody>`;
+	if (!Array.isArray(layer)) return;
+	const theEnd =
+		layer.length > 4
+			? `<td>${unit}</td><td>${layer[4]}</td></tr></tbody>`
+			: `<td>${unit}</td><td>N/A</td></tr></tbody>`;
 
-	const content = layer.map((info, i) => {
-		switch (i) {
-			case 0:
-				return `<tbody><tr><td>LAYER-${num}</td><td>${info}</td>`;
-			case 1:
-				return `<td>${info}</td>`;
-			case 2:
-				return `<td>${info}</td>`;
-			case 3:
-				return layer[i + 1] === undefined ?
-					`<td>${info}</td><td>${unit}</td><td>N/A</td></tr></tbody>`
-					:`<td>${info}</td>`;
-			case 4:
-				return layer[i + 1] === undefined ? theEnd : `<td>${unit}</td>`;
-			case 5:
-				return `<td>${info}</td></tr></tbody>`;
-		}
-	}, 0).join("");
-	return(content);
-};
+	const content = layer
+		.map((info, i) => {
+			switch (i) {
+				case 0:
+					return `<tbody><tr><td>LAYER-${num}</td><td>${info}</td>`;
+				case 1:
+					return `<td>${info}</td>`;
+				case 2:
+					return `<td>${info}</td>`;
+				case 3:
+					return layer[i + 1] === undefined
+						? `<td>${info}</td><td>${unit}</td><td>N/A</td></tr></tbody>`
+						: `<td>${info}</td>`;
+				case 4:
+					return layer[i + 1] === undefined ? theEnd : `<td>${unit}</td>`;
+				case 5:
+					return `<td>${info}</td></tr></tbody>`;
+			}
+		}, 0)
+		.join("");
+	return content;
+}
 
 function addSameSizeLayerWorksLine({ works }, table, unit, create) {
-	const AUX =		Array.isArray(works[0][0]) ? works[0] : works;
-	const PAD =		28;
-	const STACKED =	~~(+AUX[0][3] + +AUX[1][3] + PAD) === create[2];
-	let tmp =		[];
-	let count =		1;
+	const AUX = Array.isArray(works[0][0]) ? works[0] : works;
+	const PAD = 28;
+	const STACKED = ~~(+AUX[0][3] + +AUX[1][3] + PAD) === create[2];
+	let tmp = [];
+	let count = 1;
 
 	if (STACKED) {
 		AUX.map((art, counter) => {
 			tmp.push(art);
 			if (counter % 2 === 1) {
-				table.innerHTML += tmp.map((work) => {
+				table.innerHTML += tmp
+					.map((work) => {
 						return layerInterface(work, count, unit);
-					}).join("");
+					})
+					.join("");
 				tmp = [];
 				count++;
 			}
@@ -99,7 +103,7 @@ function addSameSizeLayerWorksLine({ works }, table, unit, create) {
 		});
 	}
 	return table;
-};
+}
 
 function addHTMLLayerWorksLine({ works }, table, unit, kind, create) {
 	let layer;
@@ -108,15 +112,18 @@ function addHTMLLayerWorksLine({ works }, table, unit, kind, create) {
 	while (i < works.length) {
 		if (!Array.isArray(works[i])) {
 			for (layer in works[i]) {
-				table.innerHTML += works[i][layer].map(info => {
-					if (!Array.isArray(info[0]))
-						return layerInterface(info, i + 1, unit);
-					return(info.map((peace, j) => {
-						if (j % 2 === 0)
-							return(layerInterface(peace, i + 1, unit));
-					}, 0).join(""));
-				}).join("");
-			};
+				table.innerHTML += works[i][layer]
+					.map((info) => {
+						if (!Array.isArray(info[0]))
+							return layerInterface(info, i + 1, unit);
+						return info
+							.map((peace, j) => {
+								if (j % 2 === 0) return layerInterface(peace, i + 1, unit);
+							}, 0)
+							.join("");
+					})
+					.join("");
+			}
 		} else if (kind === "sameSizeCrate") {
 			return addSameSizeLayerWorksLine({ works }, table, unit, create);
 		} else if (Array.isArray(works[i])) {
@@ -157,15 +164,17 @@ function setStatusCrateType(kind, unit) {
 }
 
 function addHTMLTableLine({ crates }, table, kind) {
-	const UNIT = localStorage.getItem("metrica") === "cm - centimeters" ? "cm" : "in";
-	const blankRow = document.createElement('tr');
+	const UNIT =
+		localStorage.getItem("metrica") === "cm - centimeters" ? "cm" : "in";
+	const blankRow = document.createElement("tr");
 
-	blankRow.innerHTML =`<span></span><span></span><span></span><span></span><span></span><span></span><span></span>`
+	blankRow.innerHTML = `<span></span><span></span><span></span><span></span><span></span><span></span><span></span>`;
 	crates.map((done, i) => {
 		if (i % 2 === 0) {
 			const port = airPortStatus(done, UNIT);
 			table.appendChild(blankRow);
-			table.innerHTML += done.map((info, i) => {
+			table.innerHTML += done
+				.map((info, i) => {
 					switch (i) {
 						case 0:
 							return `<tbody><tr><td>${port}</td><td>CREATE</td><td>${info}</td>`;
@@ -178,30 +187,27 @@ function addHTMLTableLine({ crates }, table, kind) {
 					}
 				}, 0)
 				.join("");
-		} else
-			addHTMLLayerWorksLine(crates[i], table, UNIT, kind, crates[i - 1]);
+		} else addHTMLLayerWorksLine(crates[i], table, UNIT, kind, crates[i - 1]);
 	}, 0);
-};
+}
 
 // ╭───────────────────────────────────────────────────────────╮
 // │ Returns all crates from the indexedDB or gets from cloud. │
 // ╰───────────────────────────────────────────────────────────╯
 export async function showCrates2(estimate, pane) {
-	const { crates } =	await getIDBDataBrowser(estimate);
-	const element =		document.createElement("table");
+	const { crates } = await getIDBDataBrowser(estimate);
+	const element = document.createElement("table");
 	let key;
 
-	if (!crates)
-		return;
+	if (!crates) return;
 	createHeader(element);
 	for (key in crates) {
-		if (crates[key].hasOwnProperty("crates")) {
+		if (Object.hasOwn(crates[key], "crates")) {
 			crates[key].crates.length > 0
 				? addHTMLTableLine(crates[key], element, key)
 				: false;
 		}
 	}
-	while(pane.firstChild)
-		pane.removeChild(pane.firstChild)
-	return(pane.appendChild(element));
-};
+	while (pane.firstChild) pane.removeChild(pane.firstChild);
+	return pane.appendChild(element);
+}

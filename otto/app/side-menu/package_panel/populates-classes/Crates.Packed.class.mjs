@@ -7,17 +7,17 @@ export default class PackedWorks {
 	#metric;
 
 	/**
-	* @param { HTMLElement } element
-	*/
+	 * @param { HTMLElement } element
+	 */
 	constructor(element) {
-		this.#pane = element
-	};
+		this.#pane = element;
+	}
 
 	/**
-	* @method - catch the solved results.
-	*/
+	 * @method - catch the solved results.
+	 */
 	async #grabArtWorksOnIDB() {
-		const ref = localStorage.getItem('refNumb');
+		const ref = localStorage.getItem("refNumb");
 		const WORKER = new Worker(
 			new URL("../../../panels/worker.IDB.crates.mjs", import.meta.url),
 			{ type: "module" },
@@ -30,124 +30,120 @@ export default class PackedWorks {
 				data?.reference === ref ? resolve(data) : reject(res);
 			};
 		});
-	};
+	}
 
 	/**
-	* @method - populate the list and anchor html element.
-	* @param { Array:HTMLElement } list - the layer array with all works inside.
-	*/
+	 * @method - populate the list and anchor html element.
+	 * @param { Array:HTMLElement } list - the layer array with all works inside.
+	 */
 	#setWorksUpList(list, layer, numCrate) {
-		const worksListed = document.createElement('ol');
+		const worksListed = document.createElement("ol");
 
-		list.map(work => {
-			if(!Array.isArray(work))
-				return ;
-			const info = document.createElement('li');
-			const anchor = document.createElement('a');
+		list.map((work) => {
+			if (!Array.isArray(work)) return;
+			const info = document.createElement("li");
+			const anchor = document.createElement("a");
 
-			anchor.setAttribute('href', `#${work[0]}`);
+			anchor.setAttribute("href", `#${work[0]}`);
 			anchor.id = work[0];
 			anchor.className = numCrate + "-" + layer;
 			anchor.innerText = `${work[0]} - ${work[1]} x ${work[2]} x ${work[3]} - ${this.#metric}`;
 			info.append(anchor);
 			worksListed.appendChild(info);
 		});
-		return(worksListed);
-	};
+		return worksListed;
+	}
 
 	/**
-	* @method - sets the detail html element to be populated
-	* @param {Object} works - the crate object content layers.
-	*/
+	 * @method - sets the detail html element to be populated
+	 * @param {Object} works - the crate object content layers.
+	 */
 	#layersStructureElements({ works }, element, numCrate) {
-		Object.entries(works).map(info => {
-			const levels = document.createElement('details');
+		Object.entries(works).map((info) => {
+			const levels = document.createElement("details");
 
-			if(Array.isArray(info[1])) {
-				const summaryLayer = document.createElement('summary');
+			if (Array.isArray(info[1])) {
+				const summaryLayer = document.createElement("summary");
 
-				summaryLayer.innerHTML = `<i class="nf nf-fae-layers"></i>`
+				summaryLayer.innerHTML = `<i class="nf nf-fae-layers"></i>`;
 				levels.appendChild(summaryLayer);
 				levels.appendChild(this.#setWorksUpList(info));
-			}
-			else
-				Object.entries(info[1]).map(data => {
-					const summaryLayer = document.createElement('summary');
+			} else
+				Object.entries(info[1]).map((data) => {
+					const summaryLayer = document.createElement("summary");
 
-					summaryLayer.innerText = `${data[0]}`
+					summaryLayer.innerText = `${data[0]}`;
 					levels.appendChild(summaryLayer);
 					levels.appendChild(this.#setWorksUpList(data[1], data[0], numCrate));
 				});
-			return(element.appendChild(levels));
+			return element.appendChild(levels);
 		});
-		return(element);
-	};
+		return element;
+	}
 
 	/**
-	* @method - starts the html element population calls.
-	* @param {Object} crates - the result object to feed them.
-	*/
+	 * @method - starts the html element population calls.
+	 * @param {Object} crates - the result object to feed them.
+	 */
 	#resultReportElements({ crates }, numCrate) {
-		const report =		document.createElement('details');
-		const crateSum =	document.createElement('summary');
-		const metric =		localStorage.getItem('metrica').split('-')[0];
-		const fragment =	new DocumentFragment();
+		const report = document.createElement("details");
+		const crateSum = document.createElement("summary");
+		const metric = localStorage.getItem("metrica").split("-")[0];
+		const fragment = new DocumentFragment();
 
 		this.#metric = metric;
-		if(!this.#countCrates)
-			this.#countCrates = 1;
+		if (!this.#countCrates) this.#countCrates = 1;
 		crateSum.innerText = `crate ${this.#countCrates} - ${crates[0][0]} x ${crates[0][1]} x ${crates[0][2]} - ${metric}`;
 		this.#countCrates++;
 		report.appendChild(crateSum);
 		this.#layersStructureElements(crates[1], report, numCrate);
 		fragment.append(report);
-		return(fragment);
-	};
+		return fragment;
+	}
 
 	/**
-	* @method - filter the crates content over the result data.
-	*/
+	 * @method - filter the crates content over the result data.
+	 */
 	async #pickCrateUpList() {
-		if(!this.#result)
-			await this.#grabArtWorksOnIDB();
-		const { crates } =	this.#result;
-		const crateTypes =	[
-			'tubeCrate',
-			'sameSizeCrate',
-			'noCanvasCrate',
-			'largestCrate',
-			'standardCrate'
+		if (!this.#result) await this.#grabArtWorksOnIDB();
+		const { crates } = this.#result;
+		const crateTypes = [
+			"tubeCrate",
+			"sameSizeCrate",
+			"noCanvasCrate",
+			"largestCrate",
+			"standardCrate",
 		];
-		const fragment =	new DocumentFragment();
+		const fragment = new DocumentFragment();
 
 		Object.entries(crates).map((crate, i) => {
-			if(Array.isArray(crate[1].crates) && crate[1].crates.length === 0)
-				return ;
-			if(crateTypes.includes(crate[0]))
+			if (Array.isArray(crate[1].crates) && crate[1].crates.length === 0)
+				return;
+			if (crateTypes.includes(crate[0]))
 				fragment.appendChild(this.#resultReportElements(crate[1], i));
 		}, 0);
-		return(fragment);
-	};
+		return fragment;
+	}
 
 	/**
-	* @method - defines the template node to be filled
-	*/
+	 * @method - defines the template node to be filled
+	 */
 	async #populateInfo() {
-		const clone =		cratesPacked.content.cloneNode(true);
-		const node =		document.importNode(clone, true);
-		const data =		node.getElementById('first-pane');
-		const fragment =	new DocumentFragment();
+		const clone = cratesPacked.content.cloneNode(true);
+		const node = document.importNode(clone, true);
+		const data = node.getElementById("first-pane");
+		const fragment = new DocumentFragment();
 
 		fragment.append(node);
 		data.appendChild(await this.#pickCrateUpList());
 		this.#pane.appendChild(fragment);
-		return(this.#pane);
-	};
+		return this.#pane;
+	}
 
 	/**
-	* @property - starts the panel population info.
-	*/
+	 * @property - starts the panel population info.
+	 */
 	get showWorksPacked() {
-		return(this.#populateInfo());
-	};
-};
+		return this.#populateInfo();
+	}
+}

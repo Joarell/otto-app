@@ -9,9 +9,8 @@
 // │ ╰───────────────────────────────────────────────────────────────────╯ │
 // ╰───────────────────────────────────────────────────────────────────────╯
 
-import * as clean from "./layer.puzzle.man.mjs";
 import * as arrange from "./labor.same.sizes.man.mjs";
-
+import * as clean from "./layer.puzzle.man.mjs";
 
 // ╭───────────────────────────────────────────────────────────────╮
 // │ Provides de map of each sizes found at howManySizes function. │
@@ -25,19 +24,16 @@ function defineCrate(works_sizes) {
 	sizes = [];
 	result = [];
 	while (i++ < works_sizes.length - 1) {
-		if (!Array.isArray(works_sizes[i]))
-			sizes.push(works_sizes[i]);
+		if (!Array.isArray(works_sizes[i])) sizes.push(works_sizes[i]);
 	}
 	i = 0;
 	while (i <= sizes.length) {
-		if (i + 1 < sizes.length && sizes[i] != sizes[i + 1])
-			sizes[i].push(1);
+		if (i + 1 < sizes.length && sizes[i] != sizes[i + 1]) sizes[i].push(1);
 		i++;
 	}
 	result = arrange.manager(works_sizes, sizes);
-	return (result);
+	return result;
 }
-
 
 // ╭────────────────────────────────────────────────╮
 // │ Checks if all works were put int to the crate. │
@@ -54,34 +50,28 @@ function zeroSizes(work_list, sizes) {
 	len = work_list.length - 1;
 	//this arrow function drops the tmp content to crate variable.
 	drain = (t, c) => {
-		if (t.length <= 0)
-			return (c);
+		if (t.length <= 0) return c;
 		c.unshift(clean.arrayLess(t.splice(0, 1)));
-		return (drain(t, c));
-	}
+		return drain(t, c);
+	};
 	//this arrow function drops the work_list content to tmp variable.
 	dump = (w, s, l) => {
-		if (w[len][1] === s[s.length - 2][1])
-			return (tmp = clean.arrayLess(tmp));
-		if (w[len][1] != s[0][1])
-			tmp.push(work_list.splice(len, 1))
-		return (dump(w, s, len--));
-	}
+		if (w[len][1] === s[s.length - 2][1]) return (tmp = clean.arrayLess(tmp));
+		if (w[len][1] != s[0][1]) tmp.push(work_list.splice(len, 1));
+		return dump(w, s, len--);
+	};
 	while (work_list.length > 0) {
 		if (sizes.length > 0 && work_list[0][0] === sizes[0][0])
 			crate.unshift(defineCrate(sizes));
-		if (sizes.length != 0)
-			dump(work_list, sizes, len);
+		if (sizes.length != 0) dump(work_list, sizes, len);
 		else {
 			tmp.push(work_list.splice(0, len + 1));
 			tmp = clean.arrayLess(tmp);
 		}
-		if (tmp.length > 0)
-			drain(tmp, crate);
+		if (tmp.length > 0) drain(tmp, crate);
 	}
-	return (crate);
+	return crate;
 }
-
 
 // ╭────────────────────────────────────────────────────────────────────────╮
 // │ This function is the second part to solve all the equal works with the │
@@ -102,21 +92,18 @@ function howManySizes(works) {
 		if (len === works.length) {
 			counter.push(len - last);
 			break;
-		}
-		else if (counter.length === 0 || counter[i][1] != works[len][1]) {
+		} else if (counter.length === 0 || counter[i][1] != works[len][1]) {
 			if (counter.length != 0) {
 				i += 2;
 				counter.push(len - last);
 				last = len;
 			}
-			if (works[len])
-				counter.push(works[len]);
+			if (works[len]) counter.push(works[len]);
 		}
 		len++;
 	}
-	return (zeroSizes(works, counter));
+	return zeroSizes(works, counter);
 }
-
 
 // ╭──────────────────────────────────────────────────────────────────────────╮
 // │ This function check if all sizes of the works is really equal to take it │
@@ -125,19 +112,18 @@ function howManySizes(works) {
 function checking(arr, works, length) {
 	let cleaner;
 
-	if (length > works.length - 1 || works[length][4] != arr[0][4])
-		return;
-	if (works[length][1] === arr[0][1] && works[length][2] === arr[0][2]
-		&& works[length][3] === arr[0][3]) {
+	if (length > works.length - 1 || works[length][4] != arr[0][4]) return;
+	if (
+		works[length][1] === arr[0][1] &&
+		works[length][2] === arr[0][2] &&
+		works[length][3] === arr[0][3]
+	) {
 		cleaner = works.splice(length, 1);
 		cleaner = clean.arrayLess(cleaner);
 		arr.push(cleaner);
-	}
-	else
-		length++;
+	} else length++;
 	return checking(arr, works, length);
 }
-
 
 // ╭─────────────────────────────────────────────────────────────────────────╮
 // │ This function finds the works 4 works or more with the same sizes based │
@@ -154,16 +140,13 @@ export function sameSizes(list) {
 	len = 0;
 	equals = [];
 	remainder = [];
-	if(list.length < 4)
-		return(list);
+	if (list.length < 4) return list;
 	while (len <= list.length - 1) {
 		if (list[len][2] <= 10) {
 			checked = list.splice(0, 1);
 			checking(checked, list, 0);
-			if (checked.length <= 3)
-				remainder = remainder.concat(checked);
-			else
-				equals = equals.concat(checked);
+			if (checked.length <= 3) remainder = remainder.concat(checked);
+			else equals = equals.concat(checked);
 		}
 		len++;
 	}
@@ -171,8 +154,8 @@ export function sameSizes(list) {
 		equals.unshift(howManySizes(equals));
 		while (remainder.length > 0)
 			list.push(clean.arrayLess(remainder.splice(0, 1)));
-		return (clean.arrayLess(equals));
+		return clean.arrayLess(equals);
 	}
 	// list.unshift(0);
-	return (copy);
+	return copy;
 }

@@ -1,31 +1,33 @@
-import html from '@rollup/plugin-html';
-import terser from '@rollup/plugin-terser';
-import css from 'rollup-plugin-css-only';
-import replace from '@rollup/plugin-replace';
-import nodeResolve from '@rollup/plugin-node-resolve';
+import html from "@rollup/plugin-html";
+import nodeResolve from "@rollup/plugin-node-resolve";
+import replace from "@rollup/plugin-replace";
+import terser from "@rollup/plugin-terser";
+import css from "rollup-plugin-css-only";
 
 export default {
-	input: './app/main.mjs',
+	input: "./app/main.mjs",
 	wtach: {
-		includes: './app/**',
-		clearScreen: false
+		includes: "./app/**",
+		clearScreen: false,
 	},
 	output: [
 		{
-			file: './app/main.min.mjs',
-			format: 'esm',
-			assetFileNames: './app/[name]-[hash][extname]',
+			file: "./app/main.min.mjs",
+			format: "esm",
+			assetFileNames: "./app/[name]-[hash][extname]",
 			preserverModules: true,
-			plugins: [terser({
-				format: 'cjs',
-				maxWorkers: 4,
-				keep_classnames: true,
-				ecma: 2023
-			})],
+			plugins: [
+				terser({
+					format: "cjs",
+					maxWorkers: 4,
+					keep_classnames: true,
+					ecma: 2023,
+				}),
+			],
 		},
 	],
 	dir: "./app/",
-	assetFileNames: "./app/[name]-[hash][extname]"
+	assetFileNames: "./app/[name]-[hash][extname]",
 };
 
 // export default [

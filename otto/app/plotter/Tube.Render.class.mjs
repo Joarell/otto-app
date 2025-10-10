@@ -1,4 +1,4 @@
-import Converter from '../core2/Converter.class.mjs';
+import Converter from "../core2/Converter.class.mjs";
 
 export default class tubeCrateRender {
 	#crates;
@@ -7,15 +7,15 @@ export default class tubeCrateRender {
 	constructor(data, layout) {
 		this.#crates = data;
 		this.#layout = layout;
-	};
+	}
 
 	#startDrawing() {
 		let result;
 
-		return({ result, meta: this.#layout });
-	};
+		return { result, meta: this.#layout };
+	}
 
 	get composeCrate() {
-		return(this.#startDrawing())
+		return this.#startDrawing();
 	}
-};
+}

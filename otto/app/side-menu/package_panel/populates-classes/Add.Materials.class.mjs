@@ -2,42 +2,41 @@ import { newOption } from "../templates.mjs";
 import AddPackingMaterials from "./Update.Materials.class.mjs";
 
 export default class AddNewMaterial {
-
 	/**
-	* @method - set the panel information.
-	*/
+	 * @method - set the panel information.
+	 */
 	async #showPanelInfo() {
-		const entryPoint =	document.getElementById('content1');
-		const settingsBtn =	document.getElementById('settings-content');
-		const cancel =		document.getElementById('cancel-remove');
-		const populated =	new AddPackingMaterials(entryPoint);
+		const entryPoint = document.getElementById("content1");
+		const settingsBtn = document.getElementById("settings-content");
+		const cancel = document.getElementById("cancel-remove");
+		const populated = new AddPackingMaterials(entryPoint);
 
-		document.getElementById('add__new__field').disabled = false;
+		document.getElementById("add__new__field").disabled = false;
 		settingsBtn.style.backgroundColor = "var(--yellow-select)";
 		settingsBtn.style.opacity = "1";
 		cancel.disabled = false;
-		return(await populated.populatePanels(1));
-	};
+		return await populated.populatePanels(1);
+	}
 
 	/**
-	* @method - adds new field for new material options.
-	*/
+	 * @method - adds new field for new material options.
+	 */
 	async #addNewOpts() {
 		const clone = newOption.content.cloneNode(true);
-		return(document.importNode(clone, true));
-	};
+		return document.importNode(clone, true);
+	}
 
 	/**
-	* @field - prepare the panel information.
-	*/
+	 * @field - prepare the panel information.
+	 */
 	get showPane() {
-		return(this.#showPanelInfo());
-	};
+		return this.#showPanelInfo();
+	}
 
 	/**
-	* @field - adds new file to fill with new material option.
-	*/
+	 * @field - adds new file to fill with new material option.
+	 */
 	get addNewMaterialOpts() {
-		return(this.#addNewOpts());
-	};
-};
+		return this.#addNewOpts();
+	}
+}

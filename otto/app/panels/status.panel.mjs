@@ -7,13 +7,13 @@ function changeMode(color) {
 	body.remove("light-mode");
 	body.remove("dark-mode");
 	return color === "dark" ? body.add("dark-mode") : body.add("light-mode");
-};
+}
 
 function restorePanel() {
-	const list =	localStorage;
-	const element =	document.createElement("table");
-	const plot =	document.getElementById("status");
-	const avoid =	[
+	const list = localStorage;
+	const element = document.createElement("table");
+	const plot = document.getElementById("status");
+	const avoid = [
 		"refNumb",
 		"metrica",
 		"mode",
@@ -22,16 +22,14 @@ function restorePanel() {
 		"pane1",
 		"pane2",
 	];
-	const codes =	getOrder();
+	const codes = getOrder();
 	let metric;
-	let works =	Object.entries(list).filter((data) => {
+	let works = Object.entries(list).filter((data) => {
 		if (!avoid.includes(data[0])) return data[1];
 	});
 
 	if (works.length === 0) return;
-	list.getItem("metrica") === "in - inches"
-		? (metric = "in")
-		: (metric = "cm");
+	list.getItem("metrica") === "in - inches" ? (metric = "in") : (metric = "cm");
 	works = works.map((art) => JSON.parse(art[1]));
 	createHeader(element);
 	if (codes)
@@ -43,9 +41,11 @@ function restorePanel() {
 			element.innerHTML += work
 				.map((item, index) => {
 					if (!item) return;
-					return index === 0 ? `<tbody><tr><td>${item}</td>`
-						: index === 3 ? `<td>${item}</td><td>${metric}</td></tr></tbody>`
-						: `<td>${item}</td>`;
+					return index === 0
+						? `<tbody><tr><td>${item}</td>`
+						: index === 3
+							? `<td>${item}</td><td>${metric}</td></tr></tbody>`
+							: `<td>${item}</td>`;
 				}, 0)
 				.join("");
 		});
@@ -63,13 +63,13 @@ function restorePanel() {
 			}
 		});
 	plot.appendChild(element);
-};
+}
 
 export function statusTablePopulate(data) {
 	let metric;
 	let codes;
-	const doc =		JSON.parse(data);
-	const mode =	localStorage.getItem("mode");
+	const doc = JSON.parse(data);
+	const mode = localStorage.getItem("mode");
 	const { reference, list } = doc;
 	const { materials } = localStorage;
 
@@ -86,18 +86,18 @@ export function statusTablePopulate(data) {
 	localStorage.setItem("refNumb", reference);
 	localStorage.setItem("metrica", metric);
 	localStorage.setItem("mode", mode);
-	localStorage.setItem('materials', materials);
-};
+	localStorage.setItem("materials", materials);
+}
 
 // ╭────────────────────────────────────────────────────╮
 // │ Returns the HTML table with all works in the list. │
 // ╰────────────────────────────────────────────────────╯
 export async function statusTable(plot, table = false, fetched) {
-	const storage =		localStorage;
-	const codes =		getOrder();
-	const crateBTN =	document.getElementById('crate-btn');
+	const storage = localStorage;
+	const codes = getOrder();
+	const crateBTN = document.getElementById("crate-btn");
 	let metric;
-	let element =		document.createElement("table");
+	let element = document.createElement("table");
 
 	storage.getItem("metrica") === "in - inches"
 		? (metric = "in")
@@ -105,42 +105,41 @@ export async function statusTable(plot, table = false, fetched) {
 	createHeader(element);
 	element.id = "works-list";
 	if (table && codes) {
-		crateBTN.disabled ? crateBTN.disabled = false: false;
-		if (crateBTN.disabled ){
+		crateBTN.disabled ? (crateBTN.disabled = false) : false;
+		if (crateBTN.disabled) {
 			crateBTN.disabled = false;
-			document.getElementById('remove-btn').disabled = false
-			document.getElementById('clear-btn').disabled = false
-		};
-		while(plot.firstChild)
-			plot.removeChild(plot.firstChild);
+			document.getElementById("remove-btn").disabled = false;
+			document.getElementById("clear-btn").disabled = false;
+		}
+		while (plot.firstChild) plot.removeChild(plot.firstChild);
 		createHeader(plot);
-		element = 		plot;
-		element.id =	"works-list";
+		element = plot;
+		element.id = "works-list";
 		codes.map((code) => {
 			let work;
 
 			work = JSON.parse(storage.getItem(code));
 			work = Object.values(work);
-			element.innerHTML += work.map((item, index) => {
-					if (!item || Array.isArray(item))
-						return;
+			element.innerHTML += work
+				.map((item, index) => {
+					if (!item || Array.isArray(item)) return;
 					return index === 0
 						? `<tbody><tr><td>${item}</td>`
 						: index === 3
-						? `<td>${item}</td><td>${metric}</td></tr></tbody>`
-						: `<td>${item}</td>`;
+							? `<td>${item}</td><td>${metric}</td></tr></tbody>`
+							: `<td>${item}</td>`;
 				}, 0)
 				.join("");
 		});
-	};
-	return(table ? element : plot.appendChild(element));
-};
+	}
+	return table ? element : plot.appendChild(element);
+}
 
 function getOrder() {
 	const session = JSON.parse(sessionStorage.getItem("codes"));
 	const allCodes = session ? session.map((code) => code[1]) : false;
 	return allCodes ? allCodes : false;
-};
+}
 
 // ╭───────────────────────────────────────────────────────────────────────╮
 // │ This is the header creator when the page or localStorage are updated. │
@@ -148,8 +147,7 @@ function getOrder() {
 export function createHeader(table) {
 	const head = document.createElement("tr");
 
-	while (table.firstChild)
-		table.removeChild(table.firstChild);
+	while (table.firstChild) table.removeChild(table.firstChild);
 	head.innerHTML = `
 		<tr>
 			<th>CODE</th>
@@ -160,4 +158,4 @@ export function createHeader(table) {
 		</tr>
 	`;
 	return table.appendChild(head);
-};
+}

@@ -1,6 +1,6 @@
-import TraceMaker from "./Plotly.trace.class.mjs";
-import DesignWalls from "./Plotly.fill.colors.class.mjs";
 import FillGaps from "./Plotly.crate.gaps.mjs";
+import DesignWalls from "./Plotly.fill.colors.class.mjs";
+import TraceMaker from "./Plotly.trace.class.mjs";
 
 export default class PositionWorksInSideCrate {
 	#crate;
@@ -8,181 +8,194 @@ export default class PositionWorksInSideCrate {
 	#info;
 	#threshold;
 	#div;
-	#pad
+	#pad;
 	#inner;
 
 	constructor(crate, data, meta) {
-		const available =	JSON.parse(localStorage.getItem('crating'));
-		const used =		available.map(opt => data.at(-1)[0].usedMaterials.get(opt));
-		const pine =		used.find(list => list.at(-1) === 'Pinewood');
-		const ply =			used.find(list => list.at(-1) === 'Plywood');
-		this.#pad =			used.find(list => list.at(-1) === 'Foam Sheet' && list[2] > 2.5);
-		this.#div =			used.find(list => list.at(-1) === 'Foam Sheet' && list[2] <= 2.5);
-		this.#crate =		crate;
-		this.#data =		meta;
-		this.#info =		data.at(-1)[0];
-		this.#threshold =	[];
-		this.#inner =		crate.innerSize;
-		const populate =	(size) => {
+		const available = JSON.parse(localStorage.getItem("crating"));
+		const used = available.map((opt) => data.at(-1)[0].usedMaterials.get(opt));
+		const pine = used.find((list) => list.at(-1) === "Pinewood");
+		const ply = used.find((list) => list.at(-1) === "Plywood");
+		this.#pad = used.find(
+			(list) => list.at(-1) === "Foam Sheet" && list[2] > 2.5,
+		);
+		this.#div = used.find(
+			(list) => list.at(-1) === "Foam Sheet" && list[2] <= 2.5,
+		);
+		this.#crate = crate;
+		this.#data = meta;
+		this.#info = data.at(-1)[0];
+		this.#threshold = [];
+		this.#inner = crate.innerSize;
+		const populate = (size) => {
 			this.#threshold.push(size);
 			this.#threshold.push(size);
 			this.#threshold.push(size);
 		};
-		const addSides = 	(size) => {
+		const addSides = (size) => {
 			this.#threshold[0] += size;
 			this.#threshold[1] += size;
 			this.#threshold[2] += size;
 		};
 
-		[pine, ply, this.#pad].map(info => {
-			if(Array.isArray(info)) {
-				switch(info.at(-1)) {
-					case 'Pinewood':
+		[pine, ply, this.#pad].map((info) => {
+			if (Array.isArray(info)) {
+				switch (info.at(-1)) {
+					case "Pinewood": {
 						const x = info[2];
 						const z = info[2];
 						const y = 2 * info[2];
-						if(!this.#threshold.length) {
+						if (!this.#threshold.length) {
 							this.#threshold.push(x);
 							this.#threshold.push(z);
 							this.#threshold.push(y);
-							return(info);
-						};
+							return info;
+						}
 						this.#threshold[0] += x;
 						this.#threshold[1] += y;
 						this.#threshold[2] += z;
 						break;
-					case 'Plywood':
-						if(!this.#threshold.length) {
+					}
+					case "Plywood":
+						if (!this.#threshold.length) {
 							populate(info[2]);
-							return(info);
-						};
+							return info;
+						}
 						addSides(info[2]);
 						break;
-					case 'Foam Sheet':
-						if(!this.#threshold.length) {
+					case "Foam Sheet":
+						if (!this.#threshold.length) {
 							populate(info[2]);
-							return(info);
-						};
+							return info;
+						}
 						addSides(info[2]);
 						break;
-					default :
-						return(info);
-				};
-			};
+					default:
+						return info;
+				}
+			}
 		});
-		this.#div[1] =	+this.#div[1];
-		this.#div[2] =	+this.#div[2];
-		this.#div[3] =	+this.#div[3];
-	};
+		this.#div[1] = +this.#div[1];
+		this.#div[2] = +this.#div[2];
+		this.#div[3] = +this.#div[3];
+	}
 
 	#traceColor() {
-		let letters = "0123456789ABCDEF";
+		const letters = "0123456789ABCDEF";
 		let color = "#";
 
-		for(let i = 0; i < 6; i++)
+		for (let i = 0; i < 6; i++)
 			color += letters[Math.floor(Math.random() * 16)];
-		return(color);
-	};
+		return color;
+	}
 
 	#worksOffset(works, depth, layer) {
-		Object.entries(works).map(data => {
+		Object.entries(works).map((data) => {
 			const { coordinates, code, art } = data[1];
 			const offY = coordinates.y - this.#pad[2];
 			const x = this.#threshold[0];
-			const y = coordinates.y ? this.#threshold[2] + offY: this.#threshold[2];
+			const y = coordinates.y ? this.#threshold[2] + offY : this.#threshold[2];
 			const z = this.#threshold[1] + coordinates.z + depth;
 
-			data[1]['layer'] = { code, name: `layer-${layer}`, color: this.#traceColor() };
+			data[1]["layer"] = {
+				code,
+				name: `layer-${layer}`,
+				color: this.#traceColor(),
+			};
 			art.map((info, i) => {
-				switch(i) {
+				switch (i) {
 					case 0:
-						info.x === 0 ? info.x = x + coordinates.x: 0;
-						info.y === 0 ? info.y = y: 0;
-						info.z === 0 ? info.z = z: 0;
-						return(info);
+						info.x === 0 ? (info.x = x + coordinates.x) : 0;
+						info.y === 0 ? (info.y = y) : 0;
+						info.z === 0 ? (info.z = z) : 0;
+						return info;
 					case 1:
-						info.y === 0 ? info.y = y: 0;
-						info.z === 0 ? info.z = z: 0;
-						return(info);
+						info.y === 0 ? (info.y = y) : 0;
+						info.z === 0 ? (info.z = z) : 0;
+						return info;
 					case 2:
-						info.z === 0 ? info.z = z: 0;
-						return(info);
+						info.z === 0 ? (info.z = z) : 0;
+						return info;
 					case 3:
-						info.x === 0 ? info.x = x + coordinates.x: 0;
-						info.z === 0 ? info.z = z: 0;
-						return(info);
+						info.x === 0 ? (info.x = x + coordinates.x) : 0;
+						info.z === 0 ? (info.z = z) : 0;
+						return info;
 					case 4:
-						info.x === 0 ? info.x = x + coordinates.x: 0;
-						info.y === 0 ? info.y = y: 0;
-						return(info);
+						info.x === 0 ? (info.x = x + coordinates.x) : 0;
+						info.y === 0 ? (info.y = y) : 0;
+						return info;
 					case 5:
-						info.y === 0 ? info.y = y: 0;
-						return(art);
+						info.y === 0 ? (info.y = y) : 0;
+						return art;
 					case 7:
-						info.x === 0 ? info.x = x + coordinates.x: 0;
-						return(info);
-				};
-				return(info);
+						info.x === 0 ? (info.x = x + coordinates.x) : 0;
+						return info;
+				}
+				return info;
 			}, 0);
 		});
-		return(works);
-	};
+		return works;
+	}
 
 	#workGraphicPosition(dim, local, depth) {
-		let x =		dim.length > 4 ? +dim[3] + this.#threshold[0] - this.#pad[2]:
-			+dim[1] + this.#threshold[0] - this.#pad[2];
-		let y =		dim.length > 4 ? +dim[1] + this.#threshold[2] - this.#pad[2]:
-			+dim[3] + this.#threshold[2] - this.#pad[2];
-		const z =	depth + this.#threshold[1];
+		let x =
+			dim.length > 4
+				? +dim[3] + this.#threshold[0] - this.#pad[2]
+				: +dim[1] + this.#threshold[0] - this.#pad[2];
+		let y =
+			dim.length > 4
+				? +dim[1] + this.#threshold[2] - this.#pad[2]
+				: +dim[3] + this.#threshold[2] - this.#pad[2];
+		const z = depth + this.#threshold[1];
 		const { coordinates, code } = local;
 
-		!coordinates.x ? x += this.#pad[2]: x += this.#pad[2] + coordinates.x;
-		coordinates.y ? y += coordinates.y: 0;
+		!coordinates.x ? (x += this.#pad[2]) : (x += this.#pad[2] + coordinates.x);
+		coordinates.y ? (y += coordinates.y) : 0;
 		const work = {
 			coordinates,
 			code,
 			art: [
-				{ x: 0, y: 0, z: 0 },	// Vertex 0
-				{ x, y: 0, z: 0 },		// Vertex 1
-				{ x, y, z: 0 },			// Vertex 2
-				{ x: 0, y, z: 0 },		// Vertex 3
-				{ x: 0, y: 0, z },		// Vertex 4
-				{ x, y: 0, z },			// Vertex 5
-				{ x, y, z },			// Vertex 6
-				{ x: 0, y, z }			// Vertex 7
+				{ x: 0, y: 0, z: 0 }, // Vertex 0
+				{ x, y: 0, z: 0 }, // Vertex 1
+				{ x, y, z: 0 }, // Vertex 2
+				{ x: 0, y, z: 0 }, // Vertex 3
+				{ x: 0, y: 0, z }, // Vertex 4
+				{ x, y: 0, z }, // Vertex 5
+				{ x, y, z }, // Vertex 6
+				{ x: 0, y, z }, // Vertex 7
 			],
 			width: x - this.#threshold[0] - coordinates.x,
 			depth: dim[2],
-			height: coordinates.y ?
-				y - this.#threshold[2] - coordinates.y + this.#pad[2]:
-				y - this.#threshold[2] - coordinates.y,
+			height: coordinates.y
+				? y - this.#threshold[2] - coordinates.y + this.#pad[2]
+				: y - this.#threshold[2] - coordinates.y,
 			offsetX: this.#threshold[0] + coordinates.x,
 			offsetY: this.#threshold[1] + depth,
-			offsetZ: coordinates.y ?
-				this.#threshold[2] + coordinates.y - this.#pad[2]:
-				this.#threshold[2],
+			offsetZ: coordinates.y
+				? this.#threshold[2] + coordinates.y - this.#pad[2]
+				: this.#threshold[2],
 		};
-		return(work);
-	};
+		return work;
+	}
 
 	#defineDivSize({ x, y }, depth, layer) {
-		const z =		depth + this.#threshold[2];
-		const offX =	this.#threshold[0];
-		const offZ =	depth + this.#threshold[2] - this.#div[2];
-		const offY =	this.#threshold[2];
-		let div =		structuredClone(layer);
+		const z = depth + this.#threshold[2];
+		const offX = this.#threshold[0];
+		const offZ = depth + this.#threshold[2] - this.#div[2];
+		const offY = this.#threshold[2];
+		let div = structuredClone(layer);
 
 		y -= this.#div[2];
 		const divisor = {
 			div: [
-				{ x: offX, y: offY, z: offZ },	// Vertex 0
-				{ x, y: offY, z: offZ },		// Vertex 1
-				{ x, y, z: offZ },				// Vertex 2
-				{ x: offX, y, z: offZ },		// Vertex 3
-				{ x: offX, y: offY, z },		// Vertex 4
-				{ x, y: offY, z },				// Vertex 5
-				{ x, y, z },					// Vertex 6
-				{ x: offX, y, z }				// Vertex 7
+				{ x: offX, y: offY, z: offZ }, // Vertex 0
+				{ x, y: offY, z: offZ }, // Vertex 1
+				{ x, y, z: offZ }, // Vertex 2
+				{ x: offX, y, z: offZ }, // Vertex 3
+				{ x: offX, y: offY, z }, // Vertex 4
+				{ x, y: offY, z }, // Vertex 5
+				{ x, y, z }, // Vertex 6
+				{ x: offX, y, z }, // Vertex 7
 			],
 			width: x - 2 * this.#pad[2],
 			depth: this.#div[2],
@@ -190,39 +203,48 @@ export default class PositionWorksInSideCrate {
 			offsetX: this.#threshold[0],
 			offsetY: depth + this.#threshold[2] - this.#div[2],
 			offsetZ: this.#threshold[2],
-			layer: { name: `layer-${ ++div }`, color: 'div' },
+			layer: { name: `layer-${++div}`, color: "div" },
 		};
-		return(divisor);
-	};
+		return divisor;
+	}
 
 	// TODO: handle extra sizes.
 	#setDivLayer(layer, depth, inner, data = []) {
-		if(inner[0] <= 0 && inner[2] <= 0)
-			return(data);
-		let x = inner[0] < this.#div[1] ? inner[0] : inner[0] - this.#div[0];
-		let y = inner[2] < this.#div[3] ? inner[2] : inner[2] - this.#div[3];
+		if (inner[0] <= 0 && inner[2] <= 0) return data;
+		const x = inner[0] < this.#div[1] ? inner[0] : inner[0] - this.#div[0];
+		const y = inner[2] < this.#div[3] ? inner[2] : inner[2] - this.#div[3];
 
-		x !== inner[0] ? inner[0] -= x: inner[0] = 0;
-		y !== inner[2] ? inner[2] -= y: inner[2] = 0;
+		x !== inner[0] ? (inner[0] -= x) : (inner[0] = 0);
+		y !== inner[2] ? (inner[2] -= y) : (inner[2] = 0);
 		data.push(this.#defineDivSize({ x, y }, depth, layer));
-		return(this.#setDivLayer(layer, depth, inner, data));
-	};
+		return this.#setDivLayer(layer, depth, inner, data);
+	}
 
 	#buildTraceAndFill(list) {
-		let meta =		structuredClone(this.#data);
-		const trace =	new TraceMaker();
-		const fill =	new DesignWalls();
-		let tmp =		undefined;
+		let meta = structuredClone(this.#data);
+		const trace = new TraceMaker();
+		const fill = new DesignWalls();
+		let tmp;
 
-		list.map(info => {
-			info.map(data => {
-				const { div, layer, art, offsetX, offsetY, offsetZ, width, depth, height } = data;
+		list.map((info) => {
+			info.map((data) => {
+				const {
+					div,
+					layer,
+					art,
+					offsetX,
+					offsetY,
+					offsetZ,
+					width,
+					depth,
+					height,
+				} = data;
 
 				trace.data = {
 					info: meta,
-					coordinates: art ? art: div,
+					coordinates: art ? art : div,
 					name: layer ?? div,
-					show: div || tmp === layer.name ? false: true,
+					show: div || tmp === layer.name ? false : true,
 				};
 				meta = trace.defineTrace;
 				fill.objectData = {
@@ -236,41 +258,42 @@ export default class PositionWorksInSideCrate {
 					offsetZ,
 				};
 				meta = fill.designSides;
-				tmp = div || layer.name === tmp ? tmp: layer.name;
-			})
+				tmp = div || layer.name === tmp ? tmp : layer.name;
+			});
 		});
-		return(meta)
-	};
+		return meta;
+	}
 
-	#populateLayerTubeCrate() {
-	};
+	#populateLayerTubeCrate() {}
 
-	#populateLayerNotCanvas() {
-	};
+	#populateLayerNotCanvas() {}
 
-	#populateLayerHugeCanvas() {
-	};
+	#populateLayerHugeCanvas() {}
 
-	#populateLayerSameSizes() {
-	};
+	#populateLayerSameSizes() {}
 
 	#populateLayerStandard() {
 		const { layers, fillGaps, artLocation } = this.#info;
-		const onLayers =	[];
-		let depthSum =		0;
-		let thickness =		0;
+		const onLayers = [];
+		let depthSum = 0;
+		let thickness = 0;
 
 		layers.map((data, i) => {
-			const { vacuum, works } =	data;
-			const allWorks =			works.map(info => {
-				return(this.#workGraphicPosition(info.work, artLocation.get(info.work[0]), depthSum));
+			const { vacuum, works } = data;
+			const allWorks = works.map((info) => {
+				return this.#workGraphicPosition(
+					info.work,
+					artLocation.get(info.work[0]),
+					depthSum,
+				);
 			});
-			const checkGap = 			vacuum.length > 1;
+			const checkGap = vacuum.length > 1;
 
 			onLayers.push(this.#worksOffset(allWorks, depthSum, i + 1));
-			works.filter(info => !thickness || thickness < info.work[2] ?
-				thickness = info.work[2] : 0);
-			if(checkGap) {
+			works.filter((info) =>
+				!thickness || thickness < info.work[2] ? (thickness = info.work[2]) : 0,
+			);
+			if (checkGap) {
 				const info = {
 					vacuum,
 					maxZ: fillGaps,
@@ -280,35 +303,37 @@ export default class PositionWorksInSideCrate {
 					offset: this.#threshold,
 				};
 				const gaps = new FillGaps(info, i + 1);
-				gaps.fill
+				gaps.fill;
 				// allWorks.push(...gaps.fill);
-			};
-			depthSum += +(thickness).toFixed(3);
-			if(layers.length > 1 && layers.length - 1 > i){
-				onLayers.push(this.#setDivLayer(i + 1, depthSum, structuredClone(this.#inner)));
+			}
+			depthSum += +thickness.toFixed(3);
+			if (layers.length > 1 && layers.length - 1 > i) {
+				onLayers.push(
+					this.#setDivLayer(i + 1, depthSum, structuredClone(this.#inner)),
+				);
 				depthSum += this.#div[2];
-			};
+			}
 			thickness = 0;
 		}, 0);
-		return(this.#buildTraceAndFill(onLayers));
-	};
+		return this.#buildTraceAndFill(onLayers);
+	}
 
 	#defineWorksLocation() {
-		switch(this.#crate.type) {
-			case 'tubeCrate':
-				return(this.#populateLayerTubeCrate());
-			case 'sameSizeCrate':
-				return(this.#populateLayerSameSizes());
-			case 'largestCrate':
-				return(this.#populateLayerHugeCanvas());
-			case 'noCanvasCrate':
-				return(this.#populateLayerNotCanvas());
-			case 'standardCrate':
-				return(this.#populateLayerStandard());
-		};
-	};
+		switch (this.#crate.type) {
+			case "tubeCrate":
+				return this.#populateLayerTubeCrate();
+			case "sameSizeCrate":
+				return this.#populateLayerSameSizes();
+			case "largestCrate":
+				return this.#populateLayerHugeCanvas();
+			case "noCanvasCrate":
+				return this.#populateLayerNotCanvas();
+			case "standardCrate":
+				return this.#populateLayerStandard();
+		}
+	}
 
 	get arrange() {
-		return(this.#defineWorksLocation());
-	};
-};
+		return this.#defineWorksLocation();
+	}
+}

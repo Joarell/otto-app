@@ -4,69 +4,67 @@ import ArrangerSameSize from "./Arranger.same.size.class.mjs";
 import ArrangerStarter from "./Arranger.starter.class.mjs";
 import ArrangerTube from "./Arranger.tube.class.mjs";
 
-
 export default class Arranger {
 	#works;
 
-	constructor (list) {
+	constructor(list) {
 		this.#works = list;
-		const dataChecker =	this.#checkData();
+		const dataChecker = this.#checkData();
 
-		if(dataChecker && dataChecker.constructor.name === 'TypeError')
-			return (dataChecker);
+		if (dataChecker && dataChecker.constructor.name === "TypeError")
+			return dataChecker;
 		this.#solver();
-		return(Object.assign(Arranger, { list: this.#works }));
-	};
+		return Object.assign(Arranger, { list: this.#works });
+	}
 
-	#solver () {
+	#solver() {
 		this.#manySizes();
 		this.#sameSizeTrail();
 		this.#noCanvasTrail();
 		this.#largestCanvasTrail();
 		this.#findTubes();
 
-		return ;
-	};
+		return;
+	}
 
-	#checkData () {
+	#checkData() {
 		try {
-			const check =	(val) => val.length === 0 || !val;
-			const checker =	(!Array.isArray(this.#works) || check(this.#works));
+			const check = (val) => val.length === 0 || !val;
+			const checker = !Array.isArray(this.#works) || check(this.#works);
 
-			if(checker) {
-				const error = `Please, provide a type of 'ArtWork' object.`
+			if (checker) {
+				const error = `Please, provide a type of 'ArtWork' object.`;
 				throw new TypeError(error);
 			}
-			const artWork =	this.#works.map(work => {
-				return (work.constructor.name === "ArtWork");
+			const artWork = this.#works.map((work) => {
+				return work.constructor.name === "ArtWork";
 			});
 			if (artWork.includes(false)) {
 				const error = `Some work is not of the type 'ArtWork' object.`;
 				throw new TypeError(error);
 			}
+		} catch (err) {
+			return err;
 		}
-		catch (err) {
-			return(err);
-		};
-	};
+	}
 
-	#manySizes () {
+	#manySizes() {
 		this.#works = new ArrangerStarter(this.#works);
-	};
+	}
 
-	#sameSizeTrail () {
+	#sameSizeTrail() {
 		this.#works = new ArrangerSameSize(this.#works);
-	};
+	}
 
-	#noCanvasTrail () {
+	#noCanvasTrail() {
 		this.#works = new ArrangerNoCanvas(this.#works);
-	};
+	}
 
-	#largestCanvasTrail () {
+	#largestCanvasTrail() {
 		this.#works = new ArrangerLargestCanvas(this.#works);
-	};
+	}
 
-	#findTubes () {
+	#findTubes() {
 		this.#works = new ArrangerTube(this.#works);
-	};
-};
+	}
+}
