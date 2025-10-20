@@ -1,11 +1,9 @@
-import Inspect from 'vite-plugin-inspect';
+import Inspect from "vite-plugin-inspect";
 
 export default {
-	root: 'src',
+	root: "src",
 	build: {
-		outDir: 'dist',
+		outDir: "dist",
 	},
-	plugins: [
-		Inspect()
-	],
-}
+	plugins: [Inspect()],
+};

@@ -1,22 +1,20 @@
 globalThis.onmessage = (estimate) => {
-	if(!estimate.data)
-		return(globalThis.postMessage(false));
-	const dataName	= "Results";
-	const request	= globalThis.indexedDB.open(dataName);
+	if (!estimate.data) return globalThis.postMessage(false);
+	const dataName = "Results";
+	const request = globalThis.indexedDB.open(dataName);
 
 	request.onerror = (event) => {
 		console.log(`WARNING: ${event.target.errorCode}`);
 	};
 	request.onsuccess = () => {
-		const db = request
-		.result
-		.transaction("Results")
-		.objectStore("Results")
-		.get(estimate?.data);
+		const db = request.result
+			.transaction("Results")
+			.objectStore("Results")
+			.get(estimate?.data);
 
 		db.onerror = () => {
 			globalThis.postMessage(false);
-		}
+		};
 		db.onsuccess = () => {
 			globalThis.postMessage(db.result);
 		};

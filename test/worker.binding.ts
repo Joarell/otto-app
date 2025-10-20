@@ -1,6 +1,6 @@
-import { unstable_dev } from 'wrangler';
+import { describe, expect, it } from 'vitest';
 import type { UnstableDevWorker } from 'wrangler';
-import { describe, it, expect } from 'vitest';
+import { unstable_dev } from 'wrangler';
 
 describe('Worker', () => {
 	let worker: UnstableDevWorker;

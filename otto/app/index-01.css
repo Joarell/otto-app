@@ -1,15 +1,12 @@
-
-
 header {
 	background: transparent;
 	text-align: left;
-	font-family: 'Big Shoulders Stencil Display', cursive;
+	font-family: "Big Shoulders Stencil Display", cursive;
 	overflow: clip;
-	border-bottom: .1rem solid var(--lines);
+	border-bottom: 0.1rem solid var(--lines);
 	height: 5dvh;
 	width: 99dvw;
 }
-
 
 footer {
 	display: none;
@@ -19,16 +16,16 @@ footer {
 	background: var(--gradient1);
 	text-align: center;
 	height: 3rem;
-	font-family: 'Big Shoulders Stencil Display', cursive;
+	font-family: "Big Shoulders Stencil Display", cursive;
 	overflow: clip;
 	border-radius: 1rem;
 }
 
-
-.header--title, .container__footer {
+.header--title,
+.container__footer {
 	margin: 0 0;
 	font-size: 5rem;
-	opacity: .1;
+	opacity: 0.1;
 	& > h1 {
 		color: var(--iframes-bg);
 	}
@@ -37,7 +34,6 @@ footer {
 .container__footer {
 	text-align: center;
 }
-
 
 /* ╭──────────────────────────────────────────────────────────╮
    │                       Light Button                       │
@@ -48,15 +44,15 @@ footer {
 	display: flex;
 	align-items: center;
 	justify-content: space-evenly;
-	transition: all .3s ease-in-out;
+	transition: all 0.3s ease-in-out;
 	& {
 		width: 4rem;
 		height: 2.3rem;
 		border-radius: 1rem;
-		transition: .5s ease;
+		transition: 0.5s ease;
 	}
 	& > input:checked + label > svg {
-		transition: all .5s ease;
+		transition: all 0.5s ease;
 		fill: var(--dark);
 		z-index: 5;
 	}
@@ -65,18 +61,20 @@ footer {
 		box-shadow: var(--shadow1);
 	}
 }
-.mode--light, .mode--dark {
+.mode--light,
+.mode--dark {
 	display: flex;
 	align-items: center;
 	position: relative;
 }
 
-
-.mode--light, .mode--dark {
+.mode--light,
+.mode--dark {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	&, & {
+	&,
+	& {
 		width: 2rem;
 		height: 1rem;
 		line-height: 0;
@@ -86,13 +84,12 @@ footer {
 	}
 }
 
-
-.light, .dark {
-	padding: .1rem .1rem;
-	margin: .1rem .1rem;
+.light,
+.dark {
+	padding: 0.1rem 0.1rem;
+	margin: 0.1rem 0.1rem;
 	display: none;
 }
-
 
 .mode--color {
 	position: absolute;
@@ -102,18 +99,16 @@ footer {
 	border-radius: 40%;
 	pointer-events: none;
 	background: var(--menu-col);
-	border-bottom: .05rem solid var(--color4);
-	border-right: .05rem solid var(--color4);
+	border-bottom: 0.05rem solid var(--color4);
+	border-right: 0.05rem solid var(--color4);
 }
-
 
 .light:checked ~ .mode--color {
 	transform: translateX(0);
-	transition: transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1)
+	transition: transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
-
 
 .dark:checked ~ .mode--color {
 	transform: translateX(1.9rem);
-	transition: transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1)
+	transition: transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }

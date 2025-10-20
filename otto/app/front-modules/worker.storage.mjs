@@ -5,15 +5,14 @@ globalThis.onmessage = (estimate) => {
 		console.log(`WARNING: ${event.target.errorCode}`);
 	};
 	request.onsuccess = () => {
-		const db = request
-		.result
-		.transaction("Results")
-		.objectStore("Results")
-		.get(estimate.data);
+		const db = request.result
+			.transaction("Results")
+			.objectStore("Results")
+			.get(estimate.data);
 
 		db.onerror = () => {
 			globalThis.postMessage(undefined);
-		}
+		};
 		db.onsuccess = () => {
 			globalThis.postMessage(db.result);
 		};

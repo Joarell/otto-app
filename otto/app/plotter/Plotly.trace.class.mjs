@@ -6,22 +6,31 @@ export default class TraceMaker {
 	constructor() {
 		[
 			// [ 'works', '#BB0056BB' ],
- 			// [ 'walls', '#555FEF' ],
+			// [ 'walls', '#555FEF' ],
 			// [ 'fill', '#0B8325' ],
-			[ 'fill', '#BF5E30' ],
-			[ 'frame', '#002A3D' ],
- 			[ 'walls', 'yellow' ],
-			[ 'padding', '#FFFFF0' ],
-			[ 'div', '#002A3D' ],
-		].map(col => {
+			["fill", "#BF5E30"],
+			["frame", "#002A3D"],
+			["walls", "yellow"],
+			["padding", "#FFFFF0"],
+			["div", "#002A3D"],
+		].map((col) => {
 			this.#colors.set(col[0], col[1]);
 		});
 		this.#edges = [
-			[0, 1], [1, 2], [2, 3], [3, 0], // Bottom face
-			[4, 5], [5, 6], [6, 7], [7, 4], // Top face
-			[0, 4], [1, 5], [2, 6], [3, 7]  // Vertical edges
+			[0, 1],
+			[1, 2],
+			[2, 3],
+			[3, 0], // Bottom face
+			[4, 5],
+			[5, 6],
+			[6, 7],
+			[7, 4], // Top face
+			[0, 4],
+			[1, 5],
+			[2, 6],
+			[3, 7], // Vertical edges
 		];
-	};
+	}
 
 	#defineShape() {
 		const { info, coordinates, name, show } = this.#data;
@@ -32,35 +41,36 @@ export default class TraceMaker {
 			const v2 = coordinates[edge[1]];
 
 			info.push({
-				x: [ v1.x, v2.x ],
-				z: [ v1.y, v2.y ],
-				y: [ v1.z, v2.z ],
+				x: [v1.x, v2.x],
+				z: [v1.y, v2.y],
+				y: [v1.z, v2.z],
 				name: name.name ?? name,
-				mode: 'lines',
-				type: 'scatter3d',
+				mode: "lines",
+				type: "scatter3d",
 				line: {
 					color,
-					width: 1.5
+					width: 1.5,
 				},
-				showlegend: show && i === 0 ? true: false,
+				showlegend: show && i === 0 ? true : false,
 				hovertext: name.code ?? name,
 				legendgroup: name.name ?? name,
-				hovertemplate: 'L: %{x}<br>' + 'H: %{z}<br>' + 'D: %{y}<br>' + `Code: ${name.code}`,
+				hovertemplate:
+					"L: %{x}<br>" + "H: %{z}<br>" + "D: %{y}<br>" + `Code: ${name.code}`,
 				contour: {
-					show: show && i === 0 ? true: false,
-					color: '#BB0056BB',
+					show: show && i === 0 ? true : false,
+					color: "#BB0056BB",
 					width: 2,
 				},
 			});
 		});
-		return(info);
-	};
+		return info;
+	}
 
 	set data(info) {
 		this.#data = info;
-	};
+	}
 
 	get defineTrace() {
-		return(this.#defineShape());
-	};
+		return this.#defineShape();
+	}
 }

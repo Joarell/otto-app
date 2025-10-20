@@ -1,41 +1,39 @@
-
-
 export default class ArrangerNoCanvas {
 	#peces;
 
-	constructor (list) {
+	constructor(list) {
 		this.#peces = list;
-		return(this.#noCanvas());
-	};
+		return this.#noCanvas();
+	}
 
-	#removePeces (peces) {
-		peces.map(element => {
+	#removePeces(peces) {
+		peces.map((element) => {
 			this.sorted.splice(this.sorted.indexOf(element), 1);
 		});
-	};
+	}
 
-	#noCanvasOut () {
-		let { sorted, sameSize } =	this.#peces;
-		const MAXDEPTH =			15;
-		let checkerOne =			sorted.filter(pece => pece.z > MAXDEPTH);
-		let checkerTwo =			sameSize.filter(pece => pece.z > MAXDEPTH);
-		let found =					[];
+	#noCanvasOut() {
+		let { sorted, sameSize } = this.#peces;
+		const MAXDEPTH = 15;
+		let checkerOne = sorted.filter((pece) => pece.z > MAXDEPTH);
+		let checkerTwo = sameSize.filter((pece) => pece.z > MAXDEPTH);
+		const found = [];
 
-		checkerOne.map(pece => found.push(pece));
+		checkerOne.map((pece) => found.push(pece));
 		this.#removePeces.call(this.#peces, checkerOne);
-		checkerTwo.map(pece => found.push(pece));
+		checkerTwo.map((pece) => found.push(pece));
 		this.#removePeces.call(this.#peces, checkerTwo);
 
-		sorted =		null;
-		sameSize =		null;
-		checkerOne =	null;
-		checkerTwo =	null;
+		sorted = null;
+		sameSize = null;
+		checkerOne = null;
+		checkerTwo = null;
 		this.#peces.noCanvas = found;
-		return(this.#peces);
-	};
+		return this.#peces;
+	}
 
-	#noCanvas () {
+	#noCanvas() {
 		const filtered = this.#noCanvasOut();
-		return (filtered);
-	};
-};
+		return filtered;
+	}
+}

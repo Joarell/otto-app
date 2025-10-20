@@ -7,7 +7,7 @@ function changeMode(color) {
 	body.remove("light-mode");
 	body.remove("dark-mode");
 	return color === "dark" ? body.add("dark-mode") : body.add("light-mode");
-};
+}
 
 // ╭───────────────────────────────────────────────────────────────────────╮
 // │ This is the header creator when the page or localStorage are updated. │
@@ -28,7 +28,7 @@ export function createHeader(table) {
 		</tr></tbody>
 	`;
 	return table.append(head);
-};
+}
 
 async function getIDBINFO(ref) {
 	const WORKER = new Worker(
@@ -45,7 +45,7 @@ async function getIDBINFO(ref) {
 		};
 	});
 	return request;
-};
+}
 
 function airPortStatus(create, sizeUnit) {
 	const MAXX = sizeUnit === "cm" ? 300 : 118.11; // INFO: cm and in max size
@@ -56,18 +56,19 @@ function airPortStatus(create, sizeUnit) {
 	const Y = create[2];
 
 	return X <= MAXX && Z <= MAXZ && Y <= MAXY ? "PAX" : "CARGO";
-};
+}
 
 function addHTMLTableLine(data, unit, table) {
 	const { crates } = data;
-	const blankRow = document.createElement('tr');
+	const blankRow = document.createElement("tr");
 
-	blankRow.innerHTML =`<span></span><span></span><span></span><span></span><span></span><span></span><span></span>`
+	blankRow.innerHTML = `<span></span><span></span><span></span><span></span><span></span><span></span><span></span>`;
 	crates.map((create, i) => {
 		if (i % 2 === 0) {
 			const port = airPortStatus(create, unit);
 			table.appendChild(blankRow);
-			table.innerHTML += create.map((info, i) => {
+			table.innerHTML += create
+				.map((info, i) => {
 					switch (i) {
 						case 0:
 							return `<tbody><tr><td>${port}</td><td>CREATE</td><td>${info}</td>`;
@@ -82,32 +83,31 @@ function addHTMLTableLine(data, unit, table) {
 				.join("");
 		}
 	}, 0);
-};
+}
 
 // ╭───────────────────────────────────────────────────────────╮
 // │ Returns all crates from the indexedDB or gets from cloud. │
 // ╰───────────────────────────────────────────────────────────╯
 export async function showCrates1(estimate, pane) {
-	const { crates } =	await getIDBINFO(estimate);
-	const element =		document.createElement("table");
-	let key =			0;
+	const { crates } = await getIDBINFO(estimate);
+	const element = document.createElement("table");
+	let key = 0;
 	let metric;
 
-	if (!crates)
-		return;
+	if (!crates) return;
 	localStorage.getItem("metrica") === "in - inches"
 		? (metric = "in")
 		: (metric = "cm");
 	createHeader(element);
 	for (key in crates) {
-		if (crates[key].hasOwnProperty("crates")) {
-			crates[key].crates.length > 0 ?
-				addHTMLTableLine(crates[key], metric, element)
+		if (Object.hasOwn(crates[key], "crates")) {
+			crates[key].crates.length > 0
+				? addHTMLTableLine(crates[key], metric, element)
 				: false;
 		}
 	}
-	return(pane.appendChild(finishedRender(element, crates)));
-};
+	return pane.appendChild(finishedRender(element, crates));
+}
 
 function finishedRender(table, info) {
 	const { whichAirPort, airCubTotal } = info;
@@ -135,5 +135,5 @@ function finishedRender(table, info) {
 		<td>Total Cub:</td>
 		<td>${airCubTotal}</td>
 		</tr>`;
-	return(table);
-};
+	return table;
+}

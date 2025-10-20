@@ -1,57 +1,57 @@
-export let layout = {
+export const layout = {
 	showlegend: true,
 	legend: {
 		title: {
-			text: 'Proto crate:',
+			text: "Proto crate:",
 			font: {
-				family: 'Mitr, sans-serif',
+				family: "Mitr, sans-serif",
 				size: 14,
-			}
+			},
 		},
 		font: {
-			family: 'Mitr, sans-serif',
+			family: "Mitr, sans-serif",
 			sizes: 14,
-			color: '#FFFFFFAA'
+			color: "#FFFFFFAA",
 		},
 		x: 0.02,
-		xanchor: 'left',
+		xanchor: "left",
 		y: 0.99,
-		yanchor: 'top',
-		orientation: 'v',
-		groupclick: 'sides',
+		yanchor: "top",
+		orientation: "v",
+		groupclick: "sides",
 	},
 	margin: { t: 0, l: 0, b: 0, r: 0, pad: 10 },
 	scene: {
-		aspectmode: 'data',
+		aspectmode: "data",
 		xaxis: {
 			title: {
-				text: 'Length - (cm)',
-				family: 'Mitr, sans-serif',
+				text: "Length - (cm)",
+				family: "Mitr, sans-serif",
 			},
-			color: 'white',
-			thickcolor: 'white',
-			ticks: 'outside',
+			color: "white",
+			thickcolor: "white",
+			ticks: "outside",
 		},
 		yaxis: {
 			title: {
-				text: 'Depth - (cm)',
-				family: 'Mitr, sans-serif',
+				text: "Depth - (cm)",
+				family: "Mitr, sans-serif",
 			},
-			color: 'white',
-			thickcolor: 'white',
-			tick: 'outside',
+			color: "white",
+			thickcolor: "white",
+			tick: "outside",
 		},
 		zaxis: {
 			title: {
-				text: 'Height - (cm)',
-				family: 'Mitr, sans-serif',
+				text: "Height - (cm)",
+				family: "Mitr, sans-serif",
 			},
-			color: 'white',
-			thickcolor: 'white',
-			tick: 'outside',
+			color: "white",
+			thickcolor: "white",
+			tick: "outside",
 		},
 		camera: {
-			eye: { x: 0.00, y: 3, z: 1.00 },
+			eye: { x: 0.0, y: 3, z: 1.0 },
 		},
 	},
 	// paper_bgcolor: "#243B55",

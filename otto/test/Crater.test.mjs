@@ -1,224 +1,232 @@
-import Crater from '../app/core2/Crater.class.mjs';
-import { describe, it } from 'node:test';
-import assert from 'node:assert';
-import * as mock from './mock.artworks.mjs';
-import CraterTube from '../app/core2/Crater.tube.crate.mjs';
-import CraterPythagoras from '../app/core2/Crater.largest.canvas.mjs';
-import CraterSameSize from '../app/core2/Crater.same.size.mjs';
-import CraterNotCanvas from '../app/core2/Crater.no.canvas.mjs';
-import CraterStandard from '../app/core2/Crater.standard.crate.mjs';
-import Arranger from '../app/core2/Arranger.class.mjs';
+import assert from "node:assert";
+import { describe, it } from "node:test";
+import Arranger from "../app/core2/Arranger.class.mjs";
+import Crater from "../app/core2/Crater.class.mjs";
+import CraterPythagoras from "../app/core2/Crater.largest.canvas.mjs";
+import CraterNotCanvas from "../app/core2/Crater.no.canvas.mjs";
+import CraterSameSize from "../app/core2/Crater.same.size.mjs";
+import CraterStandard from "../app/core2/Crater.standard.crate.mjs";
+import CraterTube from "../app/core2/Crater.tube.crate.mjs";
+import * as mock from "./mock.artworks.mjs";
 
 describe("These are tests to Crater class.", () => {
 	it("TEST-1: returns false to no tube list.", () => {
-		const current =		new CraterTube();
-		const expected =	{ tube: false };
+		const current = new CraterTube();
+		const expected = { tube: false };
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-2: returns the crate to one rolled work.", () => {
-		const current =		new CraterTube(structuredClone(mock.caseTube1));
-		const expected =	mock.provideTubeCrate(structuredClone(mock.caseTube1));
+		const current = new CraterTube(structuredClone(mock.caseTube1));
+		const expected = mock.provideTubeCrate(structuredClone(mock.caseTube1));
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-3: returns the crate to two rolled works.", () => {
-		const current =		new CraterTube(structuredClone(mock.caseTube2));
-		const expected =	mock.provideTubeCrate(structuredClone(mock.caseTube2));
+		const current = new CraterTube(structuredClone(mock.caseTube2));
+		const expected = mock.provideTubeCrate(structuredClone(mock.caseTube2));
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-4: returns the crate to three rolled works.", () => {
-		const current =		new CraterTube(structuredClone(mock.caseTube3));
-		const expected =	mock.provideTubeCrate(structuredClone(mock.caseTube3));
+		const current = new CraterTube(structuredClone(mock.caseTube3));
+		const expected = mock.provideTubeCrate(structuredClone(mock.caseTube3));
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-5: returns the crate to four rolled works.", () => {
-		const current =		new CraterTube(structuredClone(mock.caseTube4));
-		const expected =	mock.provideTubeCrate(structuredClone(mock.caseTube4));
+		const current = new CraterTube(structuredClone(mock.caseTube4));
+		const expected = mock.provideTubeCrate(structuredClone(mock.caseTube4));
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-6: returns the crate to more then 4 rolled works.", () => {
-		const current =		new CraterTube(structuredClone(mock.caseTube5));
-		const expected =	mock.provideTubeCrate(structuredClone(mock.caseTube5));
+		const current = new CraterTube(structuredClone(mock.caseTube5));
+		const expected = mock.provideTubeCrate(structuredClone(mock.caseTube5));
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-7: returns the crate to huge diameter rolled works.", () => {
-		const current =		new CraterTube(structuredClone(mock.caseTube6));
-		const expected =	mock.provideTubeCrate(structuredClone(mock.caseTube6));
+		const current = new CraterTube(structuredClone(mock.caseTube6));
+		const expected = mock.provideTubeCrate(structuredClone(mock.caseTube6));
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-8: returns false object to no list passe to the class.", () => {
-		const current =		new CraterPythagoras();
-		const expected =	{ largest: false };
+		const current = new CraterPythagoras();
+		const expected = { largest: false };
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-9: returns the Pythagoras crate to the list passed.", () => {
-		const current =		new CraterPythagoras(structuredClone(mock.canvas1));
-		const expected =	mock.provideLargestCanvas(structuredClone(mock.canvas1));
+		const current = new CraterPythagoras(structuredClone(mock.canvas1));
+		const expected = mock.provideLargestCanvas(structuredClone(mock.canvas1));
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-10: returns the Pythagoras crate to the list passed.", () => {
-		const current =		new CraterPythagoras(structuredClone(mock.canvas2));
-		const expected =	mock.provideLargestCanvas(structuredClone(mock.canvas2));
+		const current = new CraterPythagoras(structuredClone(mock.canvas2));
+		const expected = mock.provideLargestCanvas(structuredClone(mock.canvas2));
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-11: returns the Pythagoras crate to the list passed.", () => {
-		const current =		new CraterPythagoras(structuredClone(mock.canvas3));
-		const expected =	mock.provideLargestCanvas(structuredClone(mock.canvas3));
+		const current = new CraterPythagoras(structuredClone(mock.canvas3));
+		const expected = mock.provideLargestCanvas(structuredClone(mock.canvas3));
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-12: returns the Pythagoras crate to the list passed.", () => {
-		const current =		new CraterPythagoras(structuredClone(mock.canvas4));
-		const expected =	mock.provideLargestCanvas(structuredClone(mock.canvas4));
+		const current = new CraterPythagoras(structuredClone(mock.canvas4));
+		const expected = mock.provideLargestCanvas(structuredClone(mock.canvas4));
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-13: returns false object to no list passe to the class.", () => {
-		const current =		new CraterSameSize();
-		const expected =	{ sameSize: false };
+		const current = new CraterSameSize();
+		const expected = { sameSize: false };
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-14: returns the same size crate to the list passed.", () => {
-		const current =		new CraterSameSize(structuredClone(mock.sameMeasure1));
-		const expected =	mock.provideSameSizeCanvas(structuredClone(mock.sameMeasure1));
+		const current = new CraterSameSize(structuredClone(mock.sameMeasure1));
+		const expected = mock.provideSameSizeCanvas(
+			structuredClone(mock.sameMeasure1),
+		);
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-15: returns the same size crate to the list passed.", () => {
-		const current =		new CraterSameSize(structuredClone(mock.sameMeasure2));
-		const expected =	mock.provideSameSizeCanvas(structuredClone(mock.sameMeasure2));
+		const current = new CraterSameSize(structuredClone(mock.sameMeasure2));
+		const expected = mock.provideSameSizeCanvas(
+			structuredClone(mock.sameMeasure2),
+		);
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-16: returns the same size crate to the list passed.", () => {
-		const current =		new CraterSameSize(structuredClone(mock.sameMeasure3));
-		const expected =	mock.provideSameSizeCanvas(structuredClone(mock.sameMeasure3));
+		const current = new CraterSameSize(structuredClone(mock.sameMeasure3));
+		const expected = mock.provideSameSizeCanvas(
+			structuredClone(mock.sameMeasure3),
+		);
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-17: returns the same size crate to the list passed.", () => {
-		const current =		new CraterSameSize(structuredClone(mock.sameMeasure4));
-		const expected =	mock.provideSameSizeCanvas(structuredClone(mock.sameMeasure4));
+		const current = new CraterSameSize(structuredClone(mock.sameMeasure4));
+		const expected = mock.provideSameSizeCanvas(
+			structuredClone(mock.sameMeasure4),
+		);
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-18: returns false object to no list passe to the class.", () => {
-		const current =		new CraterNotCanvas();
-		const expected =	{ noCanvas: false };
+		const current = new CraterNotCanvas();
+		const expected = { noCanvas: false };
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-19: returns one crate assuming 1 sculptures provided.", () => {
-		const current =		new CraterNotCanvas(structuredClone(mock.furniture0));
-		const expected =	mock.provideNoCanvas(structuredClone(mock.furniture0));
+		const current = new CraterNotCanvas(structuredClone(mock.furniture0));
+		const expected = mock.provideNoCanvas(structuredClone(mock.furniture0));
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-20: returns one crate assuming 3 sculptures provided.", () => {
-		const current =		new CraterNotCanvas(structuredClone(mock.furniture1));
-		const expected =	mock.provideNoCanvas(structuredClone(mock.furniture1));
+		const current = new CraterNotCanvas(structuredClone(mock.furniture1));
+		const expected = mock.provideNoCanvas(structuredClone(mock.furniture1));
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-21: returns one crate assuming 6 sculptures provided.", () => {
-		const current =		new CraterNotCanvas(structuredClone(mock.furniture2));
-		const expected =	mock.provideNoCanvas(structuredClone(mock.furniture2));
+		const current = new CraterNotCanvas(structuredClone(mock.furniture2));
+		const expected = mock.provideNoCanvas(structuredClone(mock.furniture2));
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-22: returns the crate assuming 12 sculptures provided.", () => {
-		const current =		new CraterNotCanvas(structuredClone(mock.furniture3));
-		const expected =	mock.provideNoCanvas(structuredClone(mock.furniture3));
+		const current = new CraterNotCanvas(structuredClone(mock.furniture3));
+		const expected = mock.provideNoCanvas(structuredClone(mock.furniture3));
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-23: returns the crate assuming huge sculptures provided.", () => {
-		const current =		new CraterNotCanvas(structuredClone(mock.furniture4));
-		const expected =	mock.provideNoCanvas(structuredClone(mock.furniture4));
+		const current = new CraterNotCanvas(structuredClone(mock.furniture4));
+		const expected = mock.provideNoCanvas(structuredClone(mock.furniture4));
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-24: returns false object to mix sculptures input to the class.", () => {
-		const current =		new CraterNotCanvas(structuredClone(mock.furniture5));
-		const expected =	mock.provideNoCanvas(structuredClone(mock.furniture5));
+		const current = new CraterNotCanvas(structuredClone(mock.furniture5));
+		const expected = mock.provideNoCanvas(structuredClone(mock.furniture5));
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-25: returns false object to no list input to the class.", () => {
-		const current =		new CraterStandard();
-		const expected =	{ standard: false };
+		const current = new CraterStandard();
+		const expected = { standard: false };
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-31: returns false to empty list.", () => {
-		const current =		new Crater();
-		let expected =		{ crater: false };
+		const current = new Crater();
+		const expected = { crater: false };
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-32: returns the Crater assign object.", () => {
-		const works  =	new Arranger(mock.artWorksList());
-		const current =	new Crater(works);
+		const works = new Arranger(mock.artWorksList());
+		const current = new Crater(works);
 
 		assert.deepStrictEqual(current, Crater);
 	});
 
 	it("TEST-33: returns less sameSizeCrates and adds to the standards", () => {
-		const works =		new Arranger(mock.artWorksList());
-		const current =		new Crater(works).crates.sameSizeCrate;
-		const expected =	mock.fakeCrater().crates.sameSizeCrate;
+		const works = new Arranger(mock.artWorksList());
+		const current = new Crater(works).crates.sameSizeCrate;
+		const expected = mock.fakeCrater().crates.sameSizeCrate;
 
 		assert.notEqual(current, expected);
 	});
 
 	it("TEST-34: returns only one sameSizeCrates and adds to the standards", () => {
-		const works =		new Arranger(mock.artWorksList());
-		const current =		new Crater(works)
-		const expected =	mock.mockOptions().crates.sameSizeCrate;
+		const works = new Arranger(mock.artWorksList());
+		const current = new Crater(works);
+		const expected = mock.mockOptions().crates.sameSizeCrate;
 
 		assert.notEqual(current, expected);
 	});
 
 	it("TEST-35: returns the sameSizeCrate backUp.", () => {
-		const works =		new Arranger(mock.artWorksList());
-		const current =		new Crater(works).crates.sameSizeCrate.backUp;
-		const expected =	mock.mockOptions().crates.sameSizeCrate.backUp;
+		const works = new Arranger(mock.artWorksList());
+		const current = new Crater(works).crates.sameSizeCrate.backUp;
+		const expected = mock.mockOptions().crates.sameSizeCrate.backUp;
 
 		assert.deepEqual(current, expected);
 	});
