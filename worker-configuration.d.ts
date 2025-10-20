@@ -37,183 +37,165 @@ declare var onmessage: never
  * [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMException)
  */
 declare class DOMException extends Error {
-	constructor(message?: string, name?: string)
-	/* [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMException/message) */
-	readonly message: string
-	/* [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMException/name) */
-	readonly name: string
-	/**
-	 * @deprecated
-	 *
-	 * [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMException/code)
-	 */
-	readonly code: number
-	static readonly INDEX_SIZE_ERR: number
-	static readonly DOMSTRING_SIZE_ERR: number
-	static readonly HIERARCHY_REQUEST_ERR: number
-	static readonly WRONG_DOCUMENT_ERR: number
-	static readonly INVALID_CHARACTER_ERR: number
-	static readonly NO_DATA_ALLOWED_ERR: number
-	static readonly NO_MODIFICATION_ALLOWED_ERR: number
-	static readonly NOT_FOUND_ERR: number
-	static readonly NOT_SUPPORTED_ERR: number
-	static readonly INUSE_ATTRIBUTE_ERR: number
-	static readonly INVALID_STATE_ERR: number
-	static readonly SYNTAX_ERR: number
-	static readonly INVALID_MODIFICATION_ERR: number
-	static readonly NAMESPACE_ERR: number
-	static readonly INVALID_ACCESS_ERR: number
-	static readonly VALIDATION_ERR: number
-	static readonly TYPE_MISMATCH_ERR: number
-	static readonly SECURITY_ERR: number
-	static readonly NETWORK_ERR: number
-	static readonly ABORT_ERR: number
-	static readonly URL_MISMATCH_ERR: number
-	static readonly QUOTA_EXCEEDED_ERR: number
-	static readonly TIMEOUT_ERR: number
-	static readonly INVALID_NODE_TYPE_ERR: number
-	static readonly DATA_CLONE_ERR: number
-	get stack(): any
-	set stack(value: any)
+    constructor(message?: string, name?: string);
+    /* [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMException/message) */
+    readonly message: string;
+    /* [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMException/name) */
+    readonly name: string;
+    /**
+     * @deprecated
+     *
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMException/code)
+     */
+    readonly code: number;
+    static readonly INDEX_SIZE_ERR: number;
+    static readonly DOMSTRING_SIZE_ERR: number;
+    static readonly HIERARCHY_REQUEST_ERR: number;
+    static readonly WRONG_DOCUMENT_ERR: number;
+    static readonly INVALID_CHARACTER_ERR: number;
+    static readonly NO_DATA_ALLOWED_ERR: number;
+    static readonly NO_MODIFICATION_ALLOWED_ERR: number;
+    static readonly NOT_FOUND_ERR: number;
+    static readonly NOT_SUPPORTED_ERR: number;
+    static readonly INUSE_ATTRIBUTE_ERR: number;
+    static readonly INVALID_STATE_ERR: number;
+    static readonly SYNTAX_ERR: number;
+    static readonly INVALID_MODIFICATION_ERR: number;
+    static readonly NAMESPACE_ERR: number;
+    static readonly INVALID_ACCESS_ERR: number;
+    static readonly VALIDATION_ERR: number;
+    static readonly TYPE_MISMATCH_ERR: number;
+    static readonly SECURITY_ERR: number;
+    static readonly NETWORK_ERR: number;
+    static readonly ABORT_ERR: number;
+    static readonly URL_MISMATCH_ERR: number;
+    static readonly QUOTA_EXCEEDED_ERR: number;
+    static readonly TIMEOUT_ERR: number;
+    static readonly INVALID_NODE_TYPE_ERR: number;
+    static readonly DATA_CLONE_ERR: number;
+    get stack(): any;
+    set stack(value: any);
 }
 type WorkerGlobalScopeEventMap = {
-	fetch: FetchEvent
-	scheduled: ScheduledEvent
-	queue: QueueEvent
-	unhandledrejection: PromiseRejectionEvent
-	rejectionhandled: PromiseRejectionEvent
-}
+    fetch: FetchEvent;
+    scheduled: ScheduledEvent;
+    queue: QueueEvent;
+    unhandledrejection: PromiseRejectionEvent;
+    rejectionhandled: PromiseRejectionEvent;
+};
 declare abstract class WorkerGlobalScope extends EventTarget<WorkerGlobalScopeEventMap> {
-	EventTarget: typeof EventTarget
+    EventTarget: typeof EventTarget;
 }
 /* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console) */
 interface Console {
-	assert(condition?: boolean, ...data: any[]): void
-	/* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/clear_static) */
-	clear(): void
-	/* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/count_static) */
-	count(label?: string): void
-	/* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/countReset_static) */
-	countReset(label?: string): void
-	/* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/debug_static) */
-	debug(...data: any[]): void
-	/* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/dir_static) */
-	dir(item?: any, options?: any): void
-	/* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/dirxml_static) */
-	dirxml(...data: any[]): void
-	/* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/error_static) */
-	error(...data: any[]): void
-	/* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/group_static) */
-	group(...data: any[]): void
-	/* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/groupCollapsed_static) */
-	groupCollapsed(...data: any[]): void
-	/* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/groupEnd_static) */
-	groupEnd(): void
-	/* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/info_static) */
-	info(...data: any[]): void
-	/* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/log_static) */
-	log(...data: any[]): void
-	/* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/table_static) */
-	table(tabularData?: any, properties?: string[]): void
-	/* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/time_static) */
-	time(label?: string): void
-	/* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/timeEnd_static) */
-	timeEnd(label?: string): void
-	/* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/timeLog_static) */
-	timeLog(label?: string, ...data: any[]): void
-	timeStamp(label?: string): void
-	/* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/trace_static) */
-	trace(...data: any[]): void
-	/* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/warn_static) */
-	warn(...data: any[]): void
+    "assert"(condition?: boolean, ...data: any[]): void;
+    /* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/clear_static) */
+    clear(): void;
+    /* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/count_static) */
+    count(label?: string): void;
+    /* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/countReset_static) */
+    countReset(label?: string): void;
+    /* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/debug_static) */
+    debug(...data: any[]): void;
+    /* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/dir_static) */
+    dir(item?: any, options?: any): void;
+    /* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/dirxml_static) */
+    dirxml(...data: any[]): void;
+    /* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/error_static) */
+    error(...data: any[]): void;
+    /* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/group_static) */
+    group(...data: any[]): void;
+    /* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/groupCollapsed_static) */
+    groupCollapsed(...data: any[]): void;
+    /* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/groupEnd_static) */
+    groupEnd(): void;
+    /* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/info_static) */
+    info(...data: any[]): void;
+    /* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/log_static) */
+    log(...data: any[]): void;
+    /* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/table_static) */
+    table(tabularData?: any, properties?: string[]): void;
+    /* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/time_static) */
+    time(label?: string): void;
+    /* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/timeEnd_static) */
+    timeEnd(label?: string): void;
+    /* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/timeLog_static) */
+    timeLog(label?: string, ...data: any[]): void;
+    timeStamp(label?: string): void;
+    /* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/trace_static) */
+    trace(...data: any[]): void;
+    /* [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/warn_static) */
+    warn(...data: any[]): void;
 }
-declare const console: Console
-type BufferSource = ArrayBufferView | ArrayBuffer
-type TypedArray =
-	| Int8Array
-	| Uint8Array
-	| Uint8ClampedArray
-	| Int16Array
-	| Uint16Array
-	| Int32Array
-	| Uint32Array
-	| Float32Array
-	| Float64Array
-	| BigInt64Array
-	| BigUint64Array
+declare const console: Console;
+type BufferSource = ArrayBufferView | ArrayBuffer;
+type TypedArray = Int8Array | Uint8Array | Uint8ClampedArray | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array | Float64Array | BigInt64Array | BigUint64Array;
 declare namespace WebAssembly {
-	class CompileError extends Error {
-		constructor(message?: string)
-	}
-	class RuntimeError extends Error {
-		constructor(message?: string)
-	}
-	type ValueType =
-		| "anyfunc"
-		| "externref"
-		| "f32"
-		| "f64"
-		| "i32"
-		| "i64"
-		| "v128"
-	interface GlobalDescriptor {
-		value: ValueType
-		mutable?: boolean
-	}
-	class Global {
-		constructor(descriptor: GlobalDescriptor, value?: any)
-		value: any
-		valueOf(): any
-	}
-	type ImportValue = ExportValue | number
-	type ModuleImports = Record<string, ImportValue>
-	type Imports = Record<string, ModuleImports>
-	type ExportValue = Function | Global | Memory | Table
-	type Exports = Record<string, ExportValue>
-	class Instance {
-		constructor(module: Module, imports?: Imports)
-		readonly exports: Exports
-	}
-	interface MemoryDescriptor {
-		initial: number
-		maximum?: number
-		shared?: boolean
-	}
-	class Memory {
-		constructor(descriptor: MemoryDescriptor)
-		readonly buffer: ArrayBuffer
-		grow(delta: number): number
-	}
-	type ImportExportKind = "function" | "global" | "memory" | "table"
-	interface ModuleExportDescriptor {
-		kind: ImportExportKind
-		name: string
-	}
-	interface ModuleImportDescriptor {
-		kind: ImportExportKind
-		module: string
-		name: string
-	}
-	abstract class Module {
-		static customSections(module: Module, sectionName: string): ArrayBuffer[]
-		static exports(module: Module): ModuleExportDescriptor[]
-		static imports(module: Module): ModuleImportDescriptor[]
-	}
-	type TableKind = "anyfunc" | "externref"
-	interface TableDescriptor {
-		element: TableKind
-		initial: number
-		maximum?: number
-	}
-	class Table {
-		constructor(descriptor: TableDescriptor, value?: any)
-		readonly length: number
-		get(index: number): any
-		grow(delta: number, value?: any): number
-		set(index: number, value?: any): void
-	}
-	function instantiate(module: Module, imports?: Imports): Promise<Instance>
-	function validate(bytes: BufferSource): boolean
+    class CompileError extends Error {
+        constructor(message?: string);
+    }
+    class RuntimeError extends Error {
+        constructor(message?: string);
+    }
+    type ValueType = "anyfunc" | "externref" | "f32" | "f64" | "i32" | "i64" | "v128";
+    interface GlobalDescriptor {
+        value: ValueType;
+        mutable?: boolean;
+    }
+    class Global {
+        constructor(descriptor: GlobalDescriptor, value?: any);
+        value: any;
+        valueOf(): any;
+    }
+    type ImportValue = ExportValue | number;
+    type ModuleImports = Record<string, ImportValue>;
+    type Imports = Record<string, ModuleImports>;
+    type ExportValue = Function | Global | Memory | Table;
+    type Exports = Record<string, ExportValue>;
+    class Instance {
+        constructor(module: Module, imports?: Imports);
+        readonly exports: Exports;
+    }
+    interface MemoryDescriptor {
+        initial: number;
+        maximum?: number;
+        shared?: boolean;
+    }
+    class Memory {
+        constructor(descriptor: MemoryDescriptor);
+        readonly buffer: ArrayBuffer;
+        grow(delta: number): number;
+    }
+    type ImportExportKind = "function" | "global" | "memory" | "table";
+    interface ModuleExportDescriptor {
+        kind: ImportExportKind;
+        name: string;
+    }
+    interface ModuleImportDescriptor {
+        kind: ImportExportKind;
+        module: string;
+        name: string;
+    }
+    abstract class Module {
+        static customSections(module: Module, sectionName: string): ArrayBuffer[];
+        static exports(module: Module): ModuleExportDescriptor[];
+        static imports(module: Module): ModuleImportDescriptor[];
+    }
+    type TableKind = "anyfunc" | "externref";
+    interface TableDescriptor {
+        element: TableKind;
+        initial: number;
+        maximum?: number;
+    }
+    class Table {
+        constructor(descriptor: TableDescriptor, value?: any);
+        readonly length: number;
+        get(index: number): any;
+        grow(delta: number, value?: any): number;
+        set(index: number, value?: any): void;
+    }
+    function instantiate(module: Module, imports?: Imports): Promise<Instance>;
+    function validate(bytes: BufferSource): boolean;
 }
 /**
  * This ServiceWorker API interface represents the global execution context of a service worker.
@@ -8474,6 +8456,7 @@ type MediaTransformationInputOptions = {
  * Controls the format, timing, and type of the generated output.
  */
 type MediaTransformationOutputOptions = {
+<<<<<<< HEAD
 	/**
 	 * Output mode determining the type of media to generate
 	 */
@@ -8497,6 +8480,31 @@ type MediaTransformationOutputOptions = {
 	 */
 	format?: "jpg" | "png" | "m4a"
 }
+=======
+    /**
+     * Output mode determining the type of media to generate
+     */
+    mode?: 'video' | 'spritesheet' | 'frame' | 'audio';
+    /** Whether to include audio in the output */
+    audio?: boolean;
+    /**
+     * Starting timestamp for frame extraction or start time for clips. (e.g. '2s').
+     */
+    time?: string;
+    /**
+     * Duration for video clips, audio extraction, and spritesheet generation (e.g. '5s').
+     */
+    duration?: string;
+    /**
+     * Number of frames in the spritesheet.
+     */
+    imageCount?: number;
+    /**
+     * Output format for the generated media.
+     */
+    format?: 'jpg' | 'png' | 'm4a';
+};
+>>>>>>> master
 /**
  * Error object for media transformation operations.
  * Extends the standard Error interface with additional media-specific information.
@@ -9575,52 +9583,45 @@ interface WorkflowInstanceCreateOptions<PARAMS = unknown> {
 }
 type InstanceStatus = {
 	status:
-		| "queued" // means that instance is waiting to be started (see concurrency limits)
-		| "running"
-		| "paused"
-		| "errored"
-		| "terminated" // user terminated the instance while it was running
-		| "complete"
-		| "waiting" // instance is hibernating and waiting for sleep or event to finish
-		| "waitingForPause" // instance is finishing the current work to pause
-		| "unknown"
-	error?: string
-	output?: object
-}
+    status: 'queued' // means that instance is waiting to be started (see concurrency limits)
+     | 'running' | 'paused' | 'errored' | 'terminated' // user terminated the instance while it was running
+     | 'complete' | 'waiting' // instance is hibernating and waiting for sleep or event to finish
+     | 'waitingForPause' // instance is finishing the current work to pause
+     | 'unknown';
+    error?: string;
+    output?: object;
+};
 interface WorkflowError {
-	code?: number
-	message: string
+    code?: number;
+    message: string;
 }
 declare abstract class WorkflowInstance {
-	public id: string
-	/**
-	 * Pause the instance.
-	 */
-	public pause(): Promise<void>
-	/**
-	 * Resume the instance. If it is already running, an error will be thrown.
-	 */
-	public resume(): Promise<void>
-	/**
-	 * Terminate the instance. If it is errored, terminated or complete, an error will be thrown.
-	 */
-	public terminate(): Promise<void>
-	/**
-	 * Restart the instance.
-	 */
-	public restart(): Promise<void>
-	/**
-	 * Returns the current status of the instance.
-	 */
-	public status(): Promise<InstanceStatus>
-	/**
-	 * Send an event to this instance.
-	 */
-	public sendEvent({
-		type,
-		payload,
-	}: {
-		type: string
-		payload: unknown
-	}): Promise<void>
+    public id: string;
+    /**
+     * Pause the instance.
+     */
+    public pause(): Promise<void>;
+    /**
+     * Resume the instance. If it is already running, an error will be thrown.
+     */
+    public resume(): Promise<void>;
+    /**
+     * Terminate the instance. If it is errored, terminated or complete, an error will be thrown.
+     */
+    public terminate(): Promise<void>;
+    /**
+     * Restart the instance.
+     */
+    public restart(): Promise<void>;
+    /**
+     * Returns the current status of the instance.
+     */
+    public status(): Promise<InstanceStatus>;
+    /**
+     * Send an event to this instance.
+     */
+    public sendEvent({ type, payload, }: {
+        type: string;
+        payload: unknown;
+    }): Promise<void>;
 }
