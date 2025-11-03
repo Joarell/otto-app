@@ -29,29 +29,33 @@ export default class Crater {
 			"standardCrate",
 		];
 
-		this.#tubeCrate();
-		this.#LargestCanvas();
-		this.#sameSizeCrate();
-		this.#noCanvasCrate();
-		this.#standardCrates();
-		this.#lastCheckArrangerSameSizeToStandard();
-		for (key in this.#crates)
+		try {
+			this.#tubeCrate();
+			this.#LargestCanvas();
+			this.#sameSizeCrate();
+			this.#noCanvasCrate();
+			this.#standardCrates();
+			this.#lastCheckArrangerSameSizeToStandard();
+			for (key in this.#crates)
 			if (
 				!(this.#crates[key]?.hasOwnProperty("crates") && CRATES.includes(key))
 			)
 				delete this.#crates[key];
-		//key !== 'sameSizeCrate' ? delete this.#crates[key] : false;
+			//key !== 'sameSizeCrate' ? delete this.#crates[key] : false;
 
-		this.#allCrates();
-		this.#cubAir();
-		this.#totalCub();
-		this.#whichAirPort();
-		if (Array.isArray(this.#crates?.sameSizeCrate?.backUp)) {
-			this.#totalCubBackUp();
-			this.#whichAirPortBackUp();
-			this.#allCratesBackUp();
+			this.#allCrates();
+			this.#cubAir();
+			this.#totalCub();
+			this.#whichAirPort();
+			if (Array.isArray(this.#crates?.sameSizeCrate?.backUp)) {
+				this.#totalCubBackUp();
+				this.#whichAirPortBackUp();
+				this.#allCratesBackUp();
+			}
+			return { crates: this.#crates };
+		} catch(e) {
+			console.error('Crater Failed:', e);
 		}
-		return { crates: this.#crates };
 	}
 
 	#tubeCrate() {

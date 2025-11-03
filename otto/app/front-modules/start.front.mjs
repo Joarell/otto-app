@@ -152,16 +152,21 @@ export async function catchWork() {
 // │ This is the function to find the work in the list to remove it. │
 // ╰─────────────────────────────────────────────────────────────────╯
 export function catchRemove() {
-	const work = prompt("Please enter the work code to be removed:", "code?");
+	const work = prompt("Please enter the work code to be removed split by spaces:", "code?");
+	const toRemove = work ? work.split(' '): false;
 
-	if (localStorage.getItem(work)) {
-		orderRemove(work);
-		localStorage.removeItem(work);
+	if (!toRemove) return mod.cleanInputs();
+	toRemove.map((art) => {
+		if (localStorage.getItem(art)) {
+			orderRemove(art);
+			localStorage.removeItem(work);
+		} else if (!art) return mod.cleanInputs();
+		else alert(`"${art}" was not found in the list. Please, try again!`);
 		mod.countWorks();
 		mod.displayAirCub();
 		mod.displayCub();
-	} else if (work === null) return mod.cleanInputs();
-	else alert(`"${work}" was not found in the list. Please, try again!`);
+		return art;
+	})
 	localStorage.setItem("storage", "art-work");
 	return mod.cleanInputs();
 }

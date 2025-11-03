@@ -1,3 +1,4 @@
 [tools]
+bun = "latest"
 lua = "5.4.8"
 python = "latest"

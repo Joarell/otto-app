@@ -201,12 +201,9 @@ async function parseArtWork() {
 		"packing",
 		"crating",
 	];
-	// const packs = JSON.parse(globalThis.localStorage.getItem('packing'));
-	//
-	// if(!packs || packs.length === 0)
-	// 	return(alert(`Please, select a packing material to applyt to the artwork.`));
 	Object.entries(DB).map((data) => {
 		!avoid.includes(data[0]) ? temp.push(JSON.parse(data[1])) : false;
+		return data;
 	});
 	if (temp.length > 0)
 		works = temp.map((work) => {

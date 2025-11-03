@@ -963,8 +963,9 @@ tbody {
 		padding: 2.5rem;
 		& .id__user {
 			grid-area: 1 / 1 / 1 / 2;
-			align-self: center;
-			justify-self: center;
+			display: grid;
+			align-items: center;
+			justify-items: center;
 			& div {
 				border: solid .1rem var(--light-blue1);
 				border-radius: 50%;

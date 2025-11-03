@@ -87,38 +87,38 @@ export default class GraphicCrates {
 			let draw;
 
 			switch (data ? crate : 0) {
-				case "tubeCrate": {
-					draw = new tubeCrateRender(data, alterLayout);
-					const tubeCrates = draw.composeCrate;
-					designs.push(tubeCrates.result);
-					alterLayout = tubeCrates.meta;
-					draw = null;
-					break;
-				}
-				case "largestCrate": {
-					draw = new largestCrateRender(data, alterLayout);
-					const largestCrates = draw.composeCrate;
-					designs.push(largestCrates.result);
-					alterLayout = largestCrates.meta;
-					draw = null;
-					break;
-				}
-				case "sameSizeCrate": {
-					draw = new sameSizeCrateRender(data, alterLayout);
-					const sameSizeCrates = draw.composeCrate;
-					designs.push(sameSizeCrates.result);
-					alterLayout = sameSizeCrates.meta;
-					draw = null;
-					break;
-				}
-				case "noCanvasCrate": {
-					draw = new notCanvasCrateRender(data, alterLayout);
-					const notCanvasCrates = draw.composeCrate;
-					designs.push(notCanvasCrates.result);
-					alterLayout = notCanvasCrates.meta;
-					draw = null;
-					break;
-				}
+				// case "tubeCrate": {
+				// 	draw = new tubeCrateRender(data, alterLayout);
+				// 	const tubeCrates = draw.composeCrate;
+				// 	designs.push(tubeCrates.result);
+				// 	alterLayout = tubeCrates.meta;
+				// 	draw = null;
+				// 	break;
+				// }
+				// case "largestCrate": {
+				// 	draw = new largestCrateRender(data, alterLayout);
+				// 	const largestCrates = draw.composeCrate;
+				// 	designs.push(largestCrates.result);
+				// 	alterLayout = largestCrates.meta;
+				// 	draw = null;
+				// 	break;
+				// }
+				// case "sameSizeCrate": {
+				// 	draw = new sameSizeCrateRender(data, alterLayout);
+				// 	const sameSizeCrates = draw.composeCrate;
+				// 	designs.push(sameSizeCrates.result);
+				// 	alterLayout = sameSizeCrates.meta;
+				// 	draw = null;
+				// 	break;
+				// }
+				// case "noCanvasCrate": {
+				// 	draw = new notCanvasCrateRender(data, alterLayout);
+				// 	const notCanvasCrates = draw.composeCrate;
+				// 	designs.push(notCanvasCrates.result);
+				// 	alterLayout = notCanvasCrates.meta;
+				// 	draw = null;
+				// 	break;
+				// }
 				case "standardCrate": {
 					draw = new standardCrateRender(data, alterLayout);
 					const { result, meta } = draw.composeCrate;
