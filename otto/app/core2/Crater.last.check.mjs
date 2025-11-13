@@ -3,10 +3,12 @@ import ArtWork from "./ArtWork.class.mjs";
 
 export default class CraterLastCheckReArranger {
 	#cratesDone;
+	#materials;
 
-	constructor(crates) {
+	constructor(crates, materials) {
 		if (crates[0] !== "crates ahead") return false;
 
+		this.#materials = materials;
 		this.#cratesDone = crates;
 		return this.#consolidationStarted();
 	}
@@ -30,9 +32,9 @@ export default class CraterLastCheckReArranger {
 	#removeCrate(crate, pos, list) {
 		const crateWorks = crate[pos];
 		const { works } = crateWorks;
-		const wrap = JSON.parse(globalThis.localStorage.getItem("packing"));
+		const { materials } = this.#materials;
 		const wrapOpts = JSON.parse(globalThis.localStorage.getItem("materials"));
-		const pack = wrapOpts.filter((info) => wrap.includes(info[0]));
+		const pack = wrapOpts.filter((info) => materials.includes(info[0]));
 
 		works.map((layer) => {
 			Object.entries(layer).map((arts) => {
@@ -40,8 +42,8 @@ export default class CraterLastCheckReArranger {
 					!Array.isArray(data[0])
 						? list.push(data)
 						: data.map((work) =>
-								Array.isArray(work[0]) ? list.push(work[0]) : 0,
-							);
+							Array.isArray(work[0]) ? list.push(work[0]) : 0,
+						);
 					return data;
 				});
 				return arts;
@@ -81,7 +83,7 @@ export default class CraterLastCheckReArranger {
 						: structuredClone(attCrate.works);
 				result = this.#removeCrate(listCrates, i, result);
 				result = this.#quickSort(result, CUBPOS);
-				result = new CraterStandard(result, false, MAXLAYER, true);
+				result = new CraterStandard(result, this.#materials, MAXLAYER, true);
 				if (result.crates.length === listCrates.length) {
 					listCrates.splice(i, 1, result.crates[1]);
 					listCrates.splice(i - 1, 1, result.crates[0]);
@@ -110,9 +112,7 @@ export default class CraterLastCheckReArranger {
 
 		for (info in data) {
 			if (i++ % 2 === 1)
-				data[info].works.length === 5
-					? (works = data[info].works[4].layer5)
-					: 0;
+				if (data[info].works.length === 5) works = data[info].works[4].layer5;
 			if (works) break;
 		}
 		return works ? { info, works } : false;
@@ -140,10 +140,12 @@ export default class CraterLastCheckReArranger {
 	}
 
 	#updatesCrates(crates, pos, newCrate, target) {
-		const PAD = 10;
+		const PAD = this.#materials.find((opt) =>
+			opt.at(-1) === 'Foam Sheet' && opt[2] > 2.5
+		);
 
 		crates[target].works.pop();
-		crates[target - 1][1] -= PAD;
+		crates[target - 1][1] -= PAD[2];
 		crates.splice(pos - 1, 1, newCrate.crates[0]);
 		crates.splice(pos, 1, newCrate.crates[1]);
 		return crates;
@@ -176,18 +178,11 @@ export default class CraterLastCheckReArranger {
 
 	#consolidationStarted() {
 		const sameSize = this.#cratesDone.sameSizeCrate.crates;
-		const checkBackUp = this.#cratesDone.sameSizeCrate.backUp;
 		const standard = this.#cratesDone.standardCrate.crates;
-		let sameLen;
 
 		if (!sameSize || !standard) return;
-		sameLen = sameSize.length;
+		const sameLen = sameSize.length;
 		this.#consolidationTrail(standard, sameSize, sameLen);
-		if (sameSize.length === checkBackUp.length) {
-			this.#cratesDone.sameSizeCrate.backUp = false;
-			this.#cratesDone.standardCrate.backUp = false;
-			return;
-		}
 		this.#removeTheFifthLayer();
 	}
 }

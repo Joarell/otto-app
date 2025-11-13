@@ -9,6 +9,7 @@ export default class ArrangerNoCanvas {
 	#removePeces(peces) {
 		peces.map((element) => {
 			this.sorted.splice(this.sorted.indexOf(element), 1);
+			return element;
 		});
 	}
 

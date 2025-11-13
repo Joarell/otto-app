@@ -5,11 +5,13 @@ export default class CraterNotCanvas {
 	#peces;
 	#rawList;
 	#coordinates;
+	#materials;
 	#list;
 
-	constructor(list) {
+	constructor(list, materials) {
 		if (!list || list.length === 0) return { noCanvas: false };
 
+		this.#materials = materials;
 		this.#rawList = list;
 		this.#peces = list.map((art) => art.arr);
 		this.#list = list.map((art) => art.arr);
@@ -54,7 +56,7 @@ export default class CraterNotCanvas {
 	}
 
 	#setPadding(innerCrate) {
-		const crate = new CrateMaker(this.#peces).outSizes;
+		const crate = new CrateMaker(this.#peces, this.#materials).outSizes;
 		const x = +(innerCrate[0] + crate.x).toFixed(3);
 		const z = +(innerCrate[1] + crate.z).toFixed(3);
 		const y = +(innerCrate[2] + crate.y).toFixed(3);

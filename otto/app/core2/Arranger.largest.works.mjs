@@ -25,9 +25,10 @@ export default class ArrangerLargestCanvas {
 					canvas
 						? this.#list.sorted.splice(this.#list.sorted.indexOf(canvas), 1)
 						: 0;
+					return canvas;
 				})
 			: 0;
-		finder ? (this.#list.largest = finder) : 0;
+		if(finder) this.#list.largest = finder;
 		return this.#list;
 	}
 }

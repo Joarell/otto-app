@@ -12,22 +12,23 @@
 	"license": "MIT",
 	"privaate": true,
 	"dependencies": {
+		"bun": "^1.3.5",
 		"cors": "^2.8.5",
 		"dotenv": "^17.2.3",
-		"express": "^5.1.0",
-		"jsonwebtoken": "^9.0.2",
+		"express": "^5.2.1",
+		"jsonwebtoken": "^9.0.3",
 		"sequelize": "^6.37.7"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.3.5",
+		"@biomejs/biome": "2.3.7",
 		"@rollup/plugin-html": "^2.0.0",
 		"@rollup/plugin-json": "^6.1.0",
 		"@rollup/plugin-node-resolve": "^16.0.3",
 		"@rollup/plugin-replace": "^6.0.3",
 		"@rollup/plugin-terser": "^0.4.4",
-		"@web/rollup-plugin-html": "^2.3.0",
+		"@web/rollup-plugin-html": "^2.4.1",
 		"nodemon": "^3.1.11",
-		"rollup": "^4.53.2",
+		"rollup": "^4.54.0",
 		"rollup-plugin-css-only": "^4.5.5"
 	},
 	"private": true

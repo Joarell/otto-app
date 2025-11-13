@@ -1,0 +1,12 @@
+telemetry = false
+
+[loader]
+".mjs" = "js"
+
+[test]
+smol = true
+# root = "./test/"
+onlyFailures = true
+
+[test.reporter]
+dots = true

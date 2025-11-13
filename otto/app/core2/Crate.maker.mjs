@@ -1,12 +1,14 @@
 export default class CrateMaker {
 	#layers;
-	#crateType;
+	#workStack;
+	#materials;
 
-	constructor(layers, opt = false) {
+	constructor(layers, materials, opt = false) {
 		if (!layers) return false;
 
+		this.#materials = materials;
 		this.#layers = layers;
-		this.#crateType = opt;
+		this.#workStack = opt;
 	}
 
 	/**
@@ -27,26 +29,27 @@ export default class CrateMaker {
 		woods.map((item) => {
 			x += +item[2];
 			z += +item[2];
-			// y += +item[2];
+			return item;
 		});
 		x *= 2;
 		z *= 2;
 		y *= 2;
-		separator && separator.length
-			? separator.map((foam) => {
+		separator?.length ? separator.map((foam) => {
 					if (this.#layers > 1 && foam[2] <= DIVISION) {
-						if (this.#crateType) {
-							this.#crateType = false;
+						if (this.#workStack) {
+							this.#workStack = false;
 							y += +foam[2];
 						}
 						div = foam[2];
-						return (z += +foam[2] * (this.#layers - 1));
+						z += +foam[2] * (this.#layers - 1);
+						return foam;
 					}
-					if (this.#layers === 1 && foam[2] <= DIVISION) return;
+					if (this.#layers === 1 && foam[2] <= DIVISION) return foam;
 					x += +foam[2] * 2;
 					z += +foam[2] * 2;
 					y += +foam[2] * 2;
-					foam[2] > 2.5 ? (pad = 2 * foam[2]) : 0;
+					if(foam[2] > 2.5) pad = 2 * foam[2];
+					return foam;
 				})
 			: 0;
 		return { x, z, y, div, pad };
@@ -56,15 +59,13 @@ export default class CrateMaker {
 	 * @method - take all materials to apply to the crate.
 	 */
 	#crateMaterialsDefined() {
-		let { materials, crating } = localStorage;
+		const { materials, cratesOnly } = this.#materials;
 		const crateMaterials = [];
 
-		materials = JSON.parse(materials);
-		crating = JSON.parse(crating);
-
-		crating.map((item) => {
+		cratesOnly.map((item) => {
 			const material = materials.find((opts) => opts[0] === item);
 			material ? crateMaterials.push(material) : 0;
+			return item;
 		});
 		if (!crateMaterials.length) return { x: 0, z: 0, y: 0 };
 

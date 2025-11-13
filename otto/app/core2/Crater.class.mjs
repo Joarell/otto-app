@@ -8,12 +8,14 @@ import CraterTube from "./Crater.tube.crate.mjs";
 import CubCalc from "./CubCalc.class.mjs";
 
 export default class Crater {
+	#materials;
 	#works;
 	#crates;
 
-	constructor(procList) {
+	constructor(procList, materials) {
 		if (!(procList === Arranger)) return { crater: false };
 
+		this.#materials = materials;
 		this.#works = procList.list;
 		this.#crates = ["crates ahead"];
 		return Object.assign(Crater, this.#startCrateList());
@@ -59,33 +61,32 @@ export default class Crater {
 	}
 
 	#tubeCrate() {
-		const tubeCrate = new CraterTube(this.#works?.tubes);
+		const tubeCrate = new CraterTube(this.#works?.tubes, this.#materials);
 		this.#crates.tubeCrate = tubeCrate;
 	}
 
 	#LargestCanvas() {
-		const largestcrates = new CraterPythagoras(this.#works?.largest);
+		const largestcrates = new CraterPythagoras(this.#works?.largest, this.#materials);
 		this.#crates.largestCrate = largestcrates;
 	}
 
 	#sameSizeCrate() {
-		const sameMeasure = new CraterSameSize(this.#works?.sameSize);
+		const sameMeasure = new CraterSameSize(this.#works?.sameSize, this.#materials);
 		this.#crates.sameSizeCrate = sameMeasure;
 	}
 
 	#noCanvasCrate() {
-		const noCanvas = new CraterNotCanvas(this.#works?.noCanvas);
+		const noCanvas = new CraterNotCanvas(this.#works?.noCanvas, this.#materials);
 		this.#crates.noCanvasCrate = noCanvas;
 	}
 
 	#standardCrates() {
-		const BACKUP = Object.hasOwn(this.#crates.sameSizeCrate, "crates");
-		const std = new CraterStandard(this.#works?.sorted, BACKUP, 4, false);
+		const std = new CraterStandard(this.#works?.sorted, this.#materials, 4, false);
 		this.#crates.standardCrate = std;
 	}
 
 	#lastCheckArrangerSameSizeToStandard() {
-		new CraterLastCheckReArranger(this.#crates);
+		new CraterLastCheckReArranger(this.#crates, this.#materials);
 	}
 
 	#allCrates() {

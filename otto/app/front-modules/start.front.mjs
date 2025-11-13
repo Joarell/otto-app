@@ -21,6 +21,7 @@ function definedPackingMaterials() {
 	if (!packs || packs.length === 0) return false;
 	packs.filter((type) => {
 		filtered.push(materials.find((opts) => opts[0] === type).flat());
+		return type;
 	});
 	return filtered;
 }

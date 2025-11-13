@@ -6,10 +6,12 @@ export default class CraterPythagoras {
 	#largest;
 	#rawList;
 	#coordinates;
+	#materials;
 
-	constructor(canvas) {
+	constructor(canvas, materials) {
 		if (!canvas || canvas.length === 0) return { largest: false };
 
+		this.#materials = materials;
 		this.#rawList = canvas;
 		this.#largest = canvas.map((art) => art.arr);
 		this.#list = structuredClone(this.#largest);
@@ -41,7 +43,7 @@ export default class CraterPythagoras {
 	}
 
 	#setPadding(innerCrate, layers) {
-		const crate = new CrateMaker(layers).outSizes;
+		const crate = new CrateMaker(layers, this.#materials).outSizes;
 		const x = +(innerCrate[0] + crate.x).toFixed(3);
 		const z = +(innerCrate[1] + crate.z).toFixed(3);
 		const y = +(innerCrate[2] + crate.y).toFixed(3);

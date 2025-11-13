@@ -8,9 +8,9 @@ export default class CraterStandard {
 	#rawList;
 	#list;
 	#maxLayers;
-	#backUp;
 	#coordinates;
 	#thresholdX;
+	#materials;
 	#layers = 0;
 
 	/**
@@ -19,13 +19,13 @@ export default class CraterStandard {
 	 * @param {Number} maxLayer - The max number of layers to the crate.
 	 * @param {Boolean} recheck - The option reset crates sizes.
 	 */
-	constructor(canvas, backUp, maxLayer, recheck) {
+	constructor(canvas, materials, maxLayer, recheck) {
 		if (!canvas || canvas.length === 0) return { standard: false };
 
+		this.#materials = materials
 		this.#rawList = canvas;
 		this.#list = canvas.map((work) => work.packedSized);
 		this.#maxLayers = maxLayer ?? 4;
-		this.#backUp = backUp;
 		return this.#startCrate([], recheck);
 	}
 
@@ -33,15 +33,11 @@ export default class CraterStandard {
 		switch (recheck) {
 			case false:
 				ARTS1 = this.#selectTheBestSolution();
-				return !this.#backUp
-					? { crates: ARTS1 }
-					: { crates: ARTS1, backUp: JSON.parse(JSON.stringify(ARTS1)) };
+				return { crates: ARTS1 };
 			case true:
 				ARTS1 = this.#provideCrate([], 1, structuredClone(this.#list));
-				return !this.#backUp
-					? { crates: ARTS1 }
-					: { crates: ARTS1, backUp: JSON.parse(JSON.stringify(ARTS1)) };
-		}
+				return { crates: ARTS1 };
+		};
 	}
 
 	#checkEqualLengths(list1, list2) {
@@ -140,7 +136,7 @@ export default class CraterStandard {
 		let z = 0;
 		let i = 0;
 		let tmp = 0;
-		const crate = new CrateMaker(this.#layers).outSizes;
+		const crate = new CrateMaker(this.#layers, this.#materials).outSizes;
 
 		if (this.#layers > 1)
 			for (i in works) {
@@ -220,8 +216,9 @@ export default class CraterStandard {
 	}
 
 	#fillCrate(measure, list) {
-		const coordinates = new WorksCoordinates(measure);
+		const coordinates = new WorksCoordinates(measure, this.#materials);
 		this.#coordinates = coordinates.bluePrintCoordinates;
+		if(!this.#coordinates) return;
 		const crate = [];
 		let greb = [];
 		let info;
@@ -280,23 +277,18 @@ export default class CraterStandard {
 			return crate;
 		}
 		const THRESHOLDY = 140;
-		const sum = crate.x * crate.y > list[len][1] * list[len][3];
-		const pos1 = sum && crate.x >= list[len][1];
-		const pos2 = sum && crate.y >= list[len][3];
+		const x = list[len][1] > list[len][3] ? list[len][1] : list[len][3];
+		const y = list[len][3] > list[len][1] ? list[len][1] : list[len][3];
+		const pos1 = crate.x >= x;
+		const pos2 = crate.y >= y;
 
-		crate.x = crate.x < list[len][1] ? list[len][1] : crate.x;
-		crate.x =
-			pos1 && crate.x + list[len][1] <= this.#thresholdX
-				? crate.x + list[len][1]
-				: crate.x;
+		crate.x = pos1 ? crate.x : list[len][1];
+		crate.x = pos1 && crate.x + x <= this.#thresholdX ? crate.x + x : crate.x;
 
 		crate.z = list[len][2] > crate.z ? list[len][2] : crate.z;
 
-		crate.y = list[len][3] > crate.y ? list[len][3] : crate.y;
-		crate.y =
-			pos2 && crate.y + list[len][3] <= THRESHOLDY
-				? crate.y + list[len][3]
-				: crate.y;
+		crate.y = pos2 ? crate.y : y;
+		crate.y = pos2 && crate.y + y <= THRESHOLDY ? crate.y + y : crate.y;
 		return this.#composeCrateSizes(crate, list, len - 1);
 	}
 
@@ -318,12 +310,19 @@ export default class CraterStandard {
 		const copyList = structuredClone(list);
 		let sum = 0;
 		let art = 0;
+		let extraSize = false;
 
 		copyList.pop();
-		for (art in copyList)
-			weights.push(~~(list[art][1] * list[art][3]));
+		for (art of copyList) {
+			weights.push(~~(art[1] * art[3]));
+			const check1 = art[1] > list.at(-1)[1] || art[3] > list.at(-1)[1];
+			const check2 = art[1] > list.at(-1)[3] || art[3] > list.at(-1)[3];
+
+			if(check1 || check2)
+				extraSize = true;
+		};
 		sum = weights.reduce((add, val) => add + val, 0);
-		return ((THEWEIGHT * TIMESIZE) / sum) / 10 > TIMESIZE;
+		return sum > ~~(THEWEIGHT * TIMESIZE) || extraSize;
 	}
 
 	#addXandYtimes(list) {

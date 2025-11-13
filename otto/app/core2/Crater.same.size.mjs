@@ -6,12 +6,14 @@ export default class CraterSameSize {
 	#packageSize;
 	#rawList;
 	#coordinates;
+	#materials;
 
-	constructor(list) {
+	constructor(list, materials) {
 		if (!list || list.length === 0) return { sameSize: false };
 
+		this.#materials = materials;
 		this.#rawList = structuredClone(list);
-		this.#pieces = list.map((art) => art.arr);
+		this.#pieces = list.map((art) => art.packedSized);
 		this.#packageSize = list[0].packedSized;
 		return this.#startCrateTrail();
 	}
@@ -21,27 +23,26 @@ export default class CraterSameSize {
 		const { emptyArea } = this.#coordinates;
 		const info = { emptyArea, feat: [] };
 		const len = list.length - 1;
-		let result;
 
 		arranger.fillPreparing = { info, list, len, raw: this.#rawList };
-		result = arranger.fillLayer;
+		const result = arranger.fillLayer;
 		this.#coordinates.defineLayer = [i, result.feat];
 		return this.#worksInPlace(list, arranger, i + 1);
 	}
 
 	#setWorksCoordinates(base, stack) {
-		const materials = JSON.parse(localStorage.getItem("materials"));
-		const crate = JSON.parse(localStorage.getItem("crating"));
+		const { materials, cratesOnly } = this.#materials;
 		const check = (a, b) => a === b[0] && b[2] < 5 && b[5] === "Foam Sheet";
 		let padLayer;
 
-		crate.map((item) => {
+		cratesOnly.map((item) => {
 			const padding = materials.filter((opt) => check(item, opt));
-			padding.length ? (padLayer = padding.flat()) : 0;
+			if (padding.length) padLayer = padding.flat();
+			return item;
 		});
-		stack ? (base[2] = +padLayer[2]) : 0;
+		if (stack) base[2] = +padLayer[2];
 
-		const coordinates = new WorksCoordinates(base);
+		const coordinates = new WorksCoordinates(base, this.#materials);
 		this.#coordinates = coordinates.bluePrintCoordinates;
 		const list = structuredClone(this.#pieces);
 
@@ -53,7 +54,11 @@ export default class CraterSameSize {
 	}
 
 	#setPad(innerCrate, layersUp) {
-		const crater = new CrateMaker(this.#pieces.length, layersUp).outSizes;
+		const crater = new CrateMaker(
+			this.#pieces.length,
+			this.#materials,
+			layersUp,
+		).outSizes;
 		const x = +(innerCrate[0] + crater.x).toFixed(3);
 		const z = +(innerCrate[1] + crater.z).toFixed(3);
 		const y = +(innerCrate[2] + crater.y).toFixed(3);
@@ -62,12 +67,8 @@ export default class CraterSameSize {
 		const Y = y % 1 > 0 ? y : y.toFixed(0);
 		const div = innerCrate[1] + crater.div * this.#pieces.length;
 
-		this.#setWorksCoordinates([+X, +Z, +Y], layersUp);
-		this.#coordinates.innerSize = [
-			innerCrate[0],
-			div,
-			innerCrate[2],
-		];
+		this.#setWorksCoordinates(innerCrate, layersUp);
+		this.#coordinates.innerSize = [innerCrate[0], div, innerCrate[2]];
 		this.#coordinates.finalSize = [+X, +Z, +Y];
 		return [...this.#coordinates.finalSize, this.#rawList];
 	}
@@ -149,9 +150,8 @@ export default class CraterSameSize {
 		let comp;
 		let baseCrate = list.splice(0, 1).flat();
 		let works = list.splice(0, 1).flat();
-		let crate;
 
-		list.length > 0 ? (comp = this.#composeLayer(baseCrate, list)) : false;
+		if (list.length > 0) comp = this.#composeLayer(baseCrate, list);
 		if (comp) {
 			baseCrate = this.#sizeStacking(baseCrate, list.splice(0, 1));
 			list[0].map((val) => works[0][0].push(val));
@@ -161,8 +161,8 @@ export default class CraterSameSize {
 				baseCrate = this.#sizeStacking(baseCrate, works[0]);
 			else baseCrate.unshift(false);
 		}
-		Array.isArray(works[0][0]) ? (works = works.flat()) : false;
-		crate = this.#orderSizes(baseCrate.flat(), works);
+		if (Array.isArray(works[0][0])) works = works.flat();
+		const crate = this.#orderSizes(baseCrate.flat(), works);
 		return { crate, works };
 	}
 
@@ -198,6 +198,7 @@ export default class CraterSameSize {
 				}
 				works.push(work);
 			}
+			return work;
 		});
 		sizes.push(works);
 		return sizes[1][0].length >= 4 ? sizes : null;
@@ -208,6 +209,6 @@ export default class CraterSameSize {
 		if (countDiffSizes === null) return null;
 		const crateDone = this.#compCrate(countDiffSizes);
 		countDiffSizes = null;
-		return { crates: crateDone, backUp: structuredClone(crateDone) };
+		return { crates: crateDone };
 	}
 }

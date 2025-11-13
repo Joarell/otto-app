@@ -950,4 +950,4 @@ describe("These are tests to Crater class.", () => {
 	//
 	//	assert.deepStrictEqual(current, expected);
 	//});
-});
+})

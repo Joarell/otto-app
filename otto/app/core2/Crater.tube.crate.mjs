@@ -6,10 +6,12 @@ export default class CraterTube {
 	#DIAMETER;
 	#coordinates;
 	#rawList;
+	#materials;
 
-	constructor(list) {
+	constructor(list, materials) {
 		if (!list || list.length === 0) return { tube: false };
 
+		this.#materials = materials;
 		this.#rawList = list;
 		this.#tubes = list.map((art) => art.arr);
 		this.#DIAMETER = 35;
@@ -58,7 +60,7 @@ export default class CraterTube {
 	}
 
 	#setPaddings() {
-		const crate = new CrateMaker(1);
+		const crate = new CrateMaker(1, this.#materials);
 		const x = +(this[0] + crate.x).toFixed(3);
 		const z = +(this[1] + crate.z).toFixed(3);
 		const y = +(this[2] + crate.y).toFixed(3);

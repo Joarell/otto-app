@@ -6,8 +6,13 @@ import Crater from "./Crater.class.mjs";
 export default class UnitAdapter {
 	#list;
 	#unit;
+	#materials;
 
 	constructor(works, unit) {
+		const materials = JSON.parse(localStorage.getItem("materials"));
+		const cratesOnly = JSON.parse(localStorage.getItem("crating"));
+
+		this.#materials = { materials, cratesOnly };
 		this.#list = works;
 		this.#unit = unit;
 
@@ -110,9 +115,10 @@ export default class UnitAdapter {
 		return crates;
 	}
 
+	//:TODO Convert the materials unit properly.
 	async #cmPath() {
 		const RESULT = await Promise.resolve(new Arranger(this.#list))
-			.then((procList) => new Crater(procList))
+			.then((procList) => new Crater(procList, this.#materials))
 			.then((cratesDone) => cratesDone.crates)
 			.catch((err) => err);
 		return RESULT;
@@ -121,7 +127,7 @@ export default class UnitAdapter {
 	async #inPath() {
 		const RESULT = await Promise.resolve(this.#convertToCM())
 			.then((list) => new Arranger(list))
-			.then((procList) => new Crater(procList))
+			.then((procList) => new Crater(procList, this.#materials))
 			.then((cratesDone) => this.#convertToIN(cratesDone.crates))
 			.catch((err) => err);
 		return RESULT;
@@ -143,7 +149,8 @@ function swapUnitReversion(sizes) {
 			y = sizes[2];
 			tmp = Array.from(new Converter(x, z, y).inConvert);
 			tmp.push(+(sizes[3] * CUBCONST).toFixed(3));
-			return (sizes = tmp);
+			sizes = tmp;
+			return (sizes);
 		case 5:
 			x = sizes[1];
 			z = sizes[2];
@@ -151,7 +158,8 @@ function swapUnitReversion(sizes) {
 			tmp = Array.from(new Converter(x, z, y).inConvert);
 			tmp.unshift(sizes[0]);
 			tmp.push(+(sizes[3] * CUBCONST).toFixed(3));
-			return (sizes = tmp);
+			sizes = tmp;
+			return (sizes);
 		case 6:
 			x = sizes[1];
 			z = sizes[2];
@@ -160,7 +168,8 @@ function swapUnitReversion(sizes) {
 			tmp.unshift(sizes[0]);
 			tmp.push(+(sizes[3] * CUBCONST).toFixed(3));
 			tmp.push(sizes[5]);
-			return (sizes = tmp);
+			sizes = tmp;
+			return (sizes);
 	}
 }
 
