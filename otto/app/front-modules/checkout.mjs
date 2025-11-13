@@ -109,21 +109,19 @@ export const crate = () => {
 function clearBrowserStorage() {
 	const { mode, metrica, materials } = localStorage;
 
-	localStorage.clear();
-	sessionStorage.clear();
-	localStorage.setItem("mode", mode);
-	localStorage.setItem("metrica", unit);
-	localStorage.setItem("metrica", metrica);
-	localStorage.setItem("materials", materials);
+	if (mode && metrica && materials) {
+		localStorage.clear();
+		sessionStorage.clear();
+		localStorage.setItem("mode", mode);
+		localStorage.setItem("metrica", metrica);
+		localStorage.setItem("materials", materials);
+	}
 	mod.countWorks();
 	mod.displayCub();
 	mod.displayAirCub();
 }
 
 export const clearAll = () => {
-	const element = document.querySelector(".result");
-	const plotter = document.getElementById("layers");
-	const menu = document.querySelector(".plotter__menu");
 	const status = document.getElementById("statusList");
 	const statusFrame = document.getElementById("status-frame");
 	const pane1 = document.getElementById("first_pane");
@@ -135,7 +133,6 @@ export const clearAll = () => {
 		mod.cleanInputs(true);
 		globalThis.document.getElementById("input_estimate").value = "";
 		globalThis.document.getElementById("input_estimate").select();
-		openCloseDisplay([element, plotter, menu]);
 		status.setAttribute("content", undefined);
 		statusFrame.removeChild(document.getElementById("statusList"));
 		pane1.firstChild
@@ -147,8 +144,8 @@ export const clearAll = () => {
 		statusFrame.append(addPanelInfo());
 		closeDialog.getElementsByTagName("panel-info").length > 0
 			? document
-					.querySelector(".side-menu")
-					.lastElementChild.setAttribute("name", "close")
+				.querySelector(".side-menu")
+				.lastElementChild.setAttribute("name", "close")
 			: false;
 		document
 			.querySelector(".materials")

@@ -2,7 +2,7 @@ import CrateMaker from "./Crate.maker.mjs";
 import WorksCoordinates from "./Crater.coordinates.mjs";
 
 export default class CraterSameSize {
-	#peces;
+	#pieces;
 	#packageSize;
 	#rawList;
 	#coordinates;
@@ -11,7 +11,7 @@ export default class CraterSameSize {
 		if (!list || list.length === 0) return { sameSize: false };
 
 		this.#rawList = structuredClone(list);
-		this.#peces = list.map((art) => art.arr);
+		this.#pieces = list.map((art) => art.arr);
 		this.#packageSize = list[0].packedSized;
 		return this.#startCrateTrail();
 	}
@@ -43,7 +43,7 @@ export default class CraterSameSize {
 
 		const coordinates = new WorksCoordinates(base);
 		this.#coordinates = coordinates.bluePrintCoordinates;
-		const list = structuredClone(this.#peces);
+		const list = structuredClone(this.#pieces);
 
 		this.#worksInPlace(list, coordinates);
 		this.#rawList.map((work) =>
@@ -53,20 +53,20 @@ export default class CraterSameSize {
 	}
 
 	#setPad(innerCrate, layersUp) {
-		const crater = new CrateMaker(this.#peces.length, layersUp).outSizes;
+		const crater = new CrateMaker(this.#pieces.length, layersUp).outSizes;
 		const x = +(innerCrate[0] + crater.x).toFixed(3);
 		const z = +(innerCrate[1] + crater.z).toFixed(3);
 		const y = +(innerCrate[2] + crater.y).toFixed(3);
 		const X = x % 1 > 0 ? x : x.toFixed(0);
 		const Z = z % 1 > 0 ? z : z.toFixed(0);
 		const Y = y % 1 > 0 ? y : y.toFixed(0);
-		const div = innerCrate[1] + crater.div * this.#peces.length;
+		const div = innerCrate[1] + crater.div * this.#pieces.length;
 
 		this.#setWorksCoordinates([+X, +Z, +Y], layersUp);
 		this.#coordinates.innerSize = [
-			innerCrate[0] + crate.pad,
-			div + crate.pad,
-			innerCrate[2] + crate.pad,
+			innerCrate[0],
+			div,
+			innerCrate[2],
 		];
 		this.#coordinates.finalSize = [+X, +Z, +Y];
 		return [...this.#coordinates.finalSize, this.#rawList];
@@ -79,7 +79,7 @@ export default class CraterSameSize {
 			const checkY = value[2] + test[2] <= baseLayer[2];
 
 			if (checkX && checkZ && checkY) return value;
-			return;
+			return value;
 		});
 
 		if (checker[0] !== undefined)
@@ -99,6 +99,7 @@ export default class CraterSameSize {
 			if (getter.length > 0) {
 				if (this.#checkComp(getter, size, baseSize)) return size;
 			} else getter.push(size);
+			return size;
 		});
 		return compLayer[0] !== undefined;
 	}
@@ -179,13 +180,13 @@ export default class CraterSameSize {
 
 	#countWorks() {
 		const MAXDEPTH = 14;
-		let x = this.#peces[0][1];
-		let z = this.#peces[0][2];
-		let y = this.#peces[0][3];
+		let x = this.#pieces[0][1];
+		let z = this.#pieces[0][2];
+		let y = this.#pieces[0][3];
 		const sizes = [[x, z, y]];
 		let works = [];
 
-		this.#peces.map((work) => {
+		this.#pieces.map((work) => {
 			if (work[2] <= MAXDEPTH) {
 				if (work[1] !== x && work[3] !== y) {
 					sizes.push([works]);

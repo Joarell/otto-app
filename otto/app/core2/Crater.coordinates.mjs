@@ -5,6 +5,10 @@ export default class WorksCoordinates {
 	#coordinates;
 	#limitX;
 	#limitY;
+	#packedList;
+	#centerWork;
+	#attachedTo;
+	#center;
 
 	constructor(size = false) {
 		if (size) {
@@ -13,6 +17,9 @@ export default class WorksCoordinates {
 				+size[1].toFixed(3),
 				+size[2].toFixed(3),
 			];
+			this.#center = [];
+			this.#attachedTo = new Map();
+			this.#centerWork = new Map();
 			this.#coordinates = this.#crateTemplate();
 			this.#limitX = [];
 			this.#limitY = [];
@@ -95,41 +102,180 @@ export default class WorksCoordinates {
 	}
 
 	/**
+	 * @method - update all coordinates based on the gap size.
+	 * @param { Array:Array:number } gaps
+	 */
+	#updateAllLocations(gaps) {
+		let astro = 0;
+		let i = 0;
+
+		for (astro of this.#center) {
+			const data = this.#centerWork.get(astro);
+			const work = this.#packedList.find((work) => work[0] === astro);
+			const rand = ~~Math.random(astro[1] * astro[2]);
+			const { x, y } = data;
+
+			if (x[0] >= work[1] && y[0] >= work[3]) {
+				let majorX = 0;
+				let majorY = 0;
+				let pos = 0;
+				let properX = 0;
+				let properY = 0;
+
+				for (pos of gaps) {
+					if (pos[4] === 0 && majorX < pos[0]) majorX = pos[0];
+					if (pos[4] === 1 && majorY < pos[1]) majorY = pos[1];
+				}
+				for (pos of gaps) {
+					if (pos[4] === 0) pos[0] = majorX;
+					if (pos[4] === 1) pos[1] = majorY;
+				}
+				for (pos of gaps) {
+					const valX = pos[0] > 0 && pos[1] > 0;
+					const valY = pos[1] > 0 && pos[0] > 0;
+
+					if (!pos[4] && valX && properY < pos[1]) properY = pos[1];
+					if (!pos[4] && valX && properY > pos[1]) pos.splice(5, 0, `${ rand }-y`);
+
+					if (pos[4] && valY && properX < pos[0]) properX = pos[0];
+					if (pos[4] && valY && properX > pos[0]) pos.splice(5, 0, `{ rand }-x`);
+				}
+				this.#center.splice(i, 1);
+			}
+			i++;
+		}
+		return gaps;
+	}
+
+	/**
+	 * @method - define the inner location.
+	 * @param { object } data all information needed to define new coordinates.
+	 */
+	#theEdgeLocations(data) {
+		const { prevWork, local, onAxis, x, y } = data;
+		const onCenter = this.#attachedTo.get(prevWork[0]);
+		const orbit = onCenter
+			? this.#centerWork.get(onCenter)
+			: this.#centerWork.get(prevWork[0]);
+		const centerWork = onCenter
+			? this.#packedList.find((work) => work[0] === onCenter)
+			: prevWork;
+		const X = local[2];
+		const Y = local[3];
+		const sumX =
+			+(local[0] + x).toFixed(3) <= X
+				? +(local[0] + x).toFixed(3)
+				: prevWork[1];
+		const sumY =
+			+(local[1] + y).toFixed(3) <= Y
+				? +(local[1] + y).toFixed(3)
+				: prevWork[3];
+		const properX = sumY >= centerWork[3] && onAxis ? sumX : orbit.x[0];
+		const properY = sumX >= centerWork[1] && !onAxis ? sumY : orbit.y[0];
+		const random =
+			orbit.x[0] > local[0] || orbit.y[0] > local[1]
+				? ~~(Math.random() * x)
+				: false;
+		const extra = random
+			? orbit.x[0] > local[0]
+				? { x: local[0], y: sumY, random: `${random}-y` }
+				: { x: sumX, y: local[1], random: `${random}-x` }
+			: false;
+		let postX;
+		let postY;
+		let edgeX = 0;
+		let edgeY = 0;
+
+		if (onAxis) {
+			postX = sumY >= centerWork[3] ? sumX : properX;
+			postY = sumX >= centerWork[1] ? properY : sumY;
+
+			edgeX = sumX < X ? postX : prevWork[1];
+			edgeY = sumY < Y ? postY : prevWork[3];
+		} else {
+			postX = local[0] === 0 && sumY < Y ? 0 : sumX;
+			postY = local[1] === 0 && sumX < X ? 0 : sumY;
+
+			edgeX = (sumX < X && x >= prevWork[1]) || !postX ? postX : prevWork[1];
+			edgeY = (sumY < Y && y >= prevWork[3]) || !postY ? postY : prevWork[3];
+		}
+		return { edgeX, edgeY, extra };
+	}
+
+	/**
+	 * @param { boolean } onAxis
+	 * @param { number } x
+	 * @param { number } y
+	 * @param { Array:Number } local
+	 * @param { Array:Array:Number } emptyArea
+	 * @param { Object } prevWork
+	 */
+	#nextLocationGap(onAxis, x, y, local, prevWork) {
+		const X = local[2];
+		const Y = local[3];
+		const sumX =
+			+(local[0] + x).toFixed(3) <= X
+				? +(local[0] + x).toFixed(3)
+				: prevWork[1];
+		const sumY =
+			+(local[1] + y).toFixed(3) <= Y
+				? +(local[1] + y).toFixed(3)
+				: prevWork[3];
+		const { edgeX, edgeY, extra } = this.#theEdgeLocations({
+			prevWork,
+			local,
+			onAxis,
+			x,
+			y,
+		});
+		const newX = edgeX;
+		const newY = edgeY;
+		return { newX, newY, sumX, sumY, extra };
+	}
+
+	/**
 	 * @param { boolean } axisXorY
 	 * @param { Array:Number } local
 	 * @param { Array: Number } emptyArea
 	 * @param { string } code
 	 */
 	#defineNewCoordinates(axisXorY, local, { x, y }, emptyArea, code) {
+		const prevWork = this.#packedList.find((work) => work[0] === local.at(-1));
 		const X = emptyArea[0][2];
 		const Y = emptyArea[0][3];
-		const checkX = emptyArea[0][0];
-		const checkY = emptyArea[0][1];
-		const pointX =
-			(axisXorY && checkX === X) || (!axisXorY && checkX + x === X)
-				? X
-				: local[0];
-		const pointY =
-			(!axisXorY && checkY === Y) || (axisXorY && checkY + y === Y)
-				? Y
-				: local[1];
-		let emptyX =
-			axisXorY && pointX < X
-				? [+(local[0] + x).toFixed(3), y, X, Y, code]
-				: [X, local[1], pointX, Y, code];
-		let emptyY =
-			!axisXorY && pointY < Y
-				? [y, +(local[1] + y).toFixed(3), X, Y, code]
-				: [+(local[0] + x).toFixed(3), pointY, X, Y, code];
+		const axis = axisXorY ? 0 : 1;
+		const { newX, newY, sumX, sumY, extra } = this.#nextLocationGap(
+			axisXorY,
+			x,
+			y,
+			local,
+			prevWork,
+		);
+		let plus;
+		let nextX =
+			axisXorY && local[1] === 0
+				? [sumX, 0, X, Y, axis, false, local.at(-1), code]
+				: [sumX, newY, X, Y, axis, false, local.at(-1), code];
+		let nextY =
+			!axisXorY && local[0] === 0
+				? [0, sumY, X, Y, axis, false, local.at(-1), code]
+				: [newX, sumY, X, Y, axis, false, local.at(-1), code];
 
-		if (emptyX[0] >= X) {
-			emptyX = false;
-			emptyY = false;
-		} else if (emptyY[1] >= Y) {
-			emptyX = false;
-			emptyY = false;
+		if (extra) {
+			const extraAxis = extra.random.split("-")[1];
+			plus = [extra.x, extra.y, X, Y, axis, extra.random, local.at(-1), code];
+			extraAxis === "x"
+				? nextX.splice(5, 1, extra.random)
+				: nextY.splice(5, 1, extra.random);
 		}
-		return { emptyX, emptyY, pointX, pointY };
+		if (nextX[0] >= X) {
+			nextX = false;
+			nextY = false;
+		} else if (nextY[1] >= Y) {
+			nextX = false;
+			nextY = false;
+		} else if (nextX[0] === nextY[0] && nextX[1] === nextY[[1]]) nextY = false;
+		return { nextX, nextY, plus };
 	}
 
 	/**
@@ -139,36 +285,27 @@ export default class WorksCoordinates {
 	 * @param { Number } pos Index of the coordinate
 	 * @param { Number } prevX last X value
 	 */
-	#removeAndUpdateCoordinates(emptyArea, x, y, pos) {
-		const availableLimit = 10;
-		const X = emptyArea[0][2];
-		const Y = emptyArea[0][3];
-		const updated = [];
-		let newX =
-			emptyArea[pos][1] === 0 ? x + emptyArea[pos][0] : emptyArea[pos][0];
-		let newY =
-			emptyArea[pos][0] === 0 ? y + emptyArea[pos][1] : emptyArea[pos][1];
+	#removeAndUpdateCoordinates(emptyArea, pos) {
+		let opt;
+		let xAndZero = 0;
+		let yAndZero = 0;
+		let maxX = 0;
+		let maxY = 0;
+		let i = 0;
+		const removeIndex = [];
+		const toRemove = emptyArea[pos][5] ? emptyArea[pos][5] : false;
 
-
-		if (emptyArea[pos][0] === 0) newX += x;
-		if (emptyArea[pos][1] === 0) newY += y;
-		const checkGapX = X - newX >= availableLimit;
-		const checkGapY = Y - newY >= availableLimit;
-
-		emptyArea.map((data, i) => {
-			if (!i) return data;
-			else if (data[1] > 0 && data[0] >= newX && newX >= X)
-				return updated.push(i);
-			else if (data[0] > 0 && data[1] > 0 && data[1] <= newY && newY >= Y)
-				return updated.push(i);
-
-			return data;
-		}, 0);
-
-		if (updated.length)
-			updated.map((ind, j) => emptyArea.splice(ind - j, 1), 0);
-		if(!checkGapX && !checkGapY)
-			emptyArea.splice(pos, 1);
+		for (opt of emptyArea) {
+			if (xAndZero < opt[0] && opt[1] === 0) xAndZero = opt[0];
+			if (yAndZero < opt[1] && opt[0] === 0) yAndZero = opt[1];
+			if (maxX < opt[0]) maxX = opt[0];
+			if (maxY < opt[1]) maxY = opt[1];
+			if (toRemove && opt[5] === toRemove) removeIndex.push(i);
+			i++;
+		}
+		removeIndex.length
+			? removeIndex.map((ind, i) => emptyArea.splice(ind - i, 1), 0)
+			: emptyArea.splice(pos, 1);
 	}
 
 	/**
@@ -176,16 +313,79 @@ export default class WorksCoordinates {
 	 * @param { Array:Number } emptyArea
 	 * @@param { Object } opts
 	 */
-	#addingNewCoordinates({ x, y, pos }, opts, emptyArea) {
-		const existX = emptyArea.some((data) => data[0] === opts.emptyX[0]);
-		const existY = emptyArea.some((data) => data[1] === opts.emptyY[1]);
+	#addingNewCoordinates(pos, opts, emptyArea) {
+		this.#removeAndUpdateCoordinates(emptyArea, pos);
+		const existX = emptyArea.some(
+			(data) => data[0] === opts.nextX[0] && data[1] === opts.nextX[1],
+		);
+		const existY = emptyArea.some(
+			(data) => data[0] === opts.nextY[0] && data[1] === opts.nextY[1],
+		);
+		const addX = !existX && opts.nextX && opts.nextX[3] > opts.nextX[1];
+		const addY = !existY && opts.nextY && opts.nextY[2] > opts.nextY[0];
+		const totalX = opts.nextX[0] + opts.nextX[1];
+		const totalY = opts.nextY[0] + opts.nextY[1];
+		let includedX = 0;
+		let includedY = 0;
 
-		if (!existX && opts.emptyX) emptyArea.push(opts.emptyX);
-		if (!existY && opts.emptyY) emptyArea.push(opts.emptyY);
+		if (addX && addY) {
+			if (totalX > totalY) {
+				emptyArea.push(opts.nextX);
+				includedX++;
+			} else if (!includedY && totalY > totalX) {
+				emptyArea.push(opts.nextY);
+				includedY++;
+			}
+			if (!includedX) emptyArea.push(opts.nextX);
+			if (!includedY) emptyArea.push(opts.nextY);
+		} else if (addX && !includedX) {
+			emptyArea.push(opts.nextX);
+		} else if (addY && !includedY) emptyArea.push(opts.nextY);
+		if (opts.plus) emptyArea.push(opts.plus);
+		return this.#updateAllLocations(emptyArea);
+	}
 
-		this.#removeAndUpdateCoordinates(emptyArea, x, y, pos);
-		console.log("OPTS", opts);
-		console.log("###", emptyArea);
+	/**
+	 * @method - set the works around the main work on orbits.
+	 */
+	#addToTheCenter(center, newWork, onAxis, x, y) {
+		let orbit = this.#centerWork.get(center);
+		let code;
+		if (!orbit && center)
+			for (code of this.#center) {
+				orbit = this.#centerWork.get(code);
+				if (orbit) break;
+			}
+		const found = orbit
+			? orbit.x.includes(center) || orbit.y.includes(center)
+			: false;
+
+		code
+			? this.#attachedTo.set(newWork, code)
+			: center
+				? this.#attachedTo.set(newWork, center)
+				: false;
+		if (!orbit && !found) {
+			this.#center.push(newWork);
+			const newCenter = center
+				? !onAxis
+					? { x: [x, newWork], y: [0] }
+					: { x: [0], y: [y, newWork] }
+				: { x: [0], y: [0] };
+			center
+				? this.#centerWork.set(center, newCenter)
+				: this.#centerWork.set(newWork, newCenter);
+			return;
+		}
+		!onAxis ? orbit.x.push(newWork) : orbit.y.push(newWork);
+		!onAxis ? (orbit.x[0] += x) : (orbit.y[0] += y);
+		if (found) {
+			this.#centerWork.delete(code);
+			this.#centerWork.set(code, orbit);
+			return;
+		}
+		this.#centerWork.delete(center);
+		this.#centerWork.set(center, orbit);
 	}
 
 	/**
@@ -193,44 +393,80 @@ export default class WorksCoordinates {
 	 * @param { Number } pos the array index to be removed from the possibilities.
 	 * @param { Array } local the position with the coordinates to place the work.
 	 */
-	#updateLayerAvailableCoordinates(pos, local, { x, y, flip }, code) {
+	#updateLayerAvailableCoordinates(pos, { x, y }, code) {
 		const { emptyArea } = this.#coordinates;
+		const onAxis = emptyArea[pos][4] === 0;
 		const X = emptyArea[0][2];
 		const Y = emptyArea[0][3];
+		const firstAdd = emptyArea[0][0] === 0 && emptyArea[0][1] === 0;
+		const prev =
+			emptyArea[pos].length > 6
+				? emptyArea[pos].length > 7
+					? emptyArea[pos].at(-2)
+					: emptyArea[pos].at(-1)
+				: false;
 
-		if ((X === x && Y === y) || (X === y && Y === x)) return;
 		if (emptyArea.length > 1) {
-			const axisXorY = emptyArea[0][0] === local[0];
 			const options = this.#defineNewCoordinates(
-				axisXorY,
-				local,
+				onAxis,
+				emptyArea[pos],
 				{ x, y },
 				emptyArea,
 				code,
 			);
-
-			console.log('POSITION', axisXorY, 'and', emptyArea[pos])
-			if (axisXorY) {
-				emptyArea[pos][0] = local[0];
-				emptyArea[pos][1] = flip ? local[1] + y : local[1] + x;
-			} else if (!axisXorY) {
-				emptyArea[pos][0] = flip ? local[0] + x : local[0] + y;
-				emptyArea[pos][1] = local[1] + y;
-			}
-			return this.#addingNewCoordinates(
-				{ x, y, pos },
-				options,
-				emptyArea,
-				axisXorY,
-			);
+			this.#addToTheCenter(prev, code, onAxis, x, y);
+			return this.#addingNewCoordinates(pos, options, emptyArea);
 		}
 		const fullX = x === X;
 		const fullY = y === Y;
-		const firstX = !fullX ? [x, 0, X, Y, code] : false;
-		const firstY = !fullY ? [0, y, X, Y, code] : false;
+		const firstX = prev
+			? [emptyArea[0][0] + x, emptyArea[0][1], X, Y, 0, prev, false, code]
+			: [emptyArea[0][0] + x, emptyArea[0][1], X, Y, 0, false, code];
+		const firstY = prev
+			? [emptyArea[0][0], emptyArea[0][1] + y, X, Y, 1, prev, false, code]
+			: [emptyArea[0][0], emptyArea[0][1] + y, X, Y, 1, false, code];
 
-		firstX ? emptyArea.push(firstX) : 0;
-		firstY ? emptyArea.push(firstY) : 0;
+		if (fullX && fullY) {
+			emptyArea[pos] = [X, Y, X, Y];
+			return emptyArea;
+		}
+		if (x < X) emptyArea.push(firstX);
+		if (y < Y) emptyArea.push(firstY);
+		if (emptyArea.length > 1 && !emptyArea[0][0] && !emptyArea[0][1])
+			emptyArea.splice(0, 1);
+		if (!firstAdd) this.#removeAndUpdateCoordinates(emptyArea, pos);
+		this.#addToTheCenter(prev, code, onAxis, x, y);
+	}
+
+	/**
+	 * @method - find the feasible position to the work into the crate.
+	 * @param { Array } art the artwork dimensions and ID.
+	 * @param { Array } coordinate the empty possibilities to feat the work in.
+	 * @param { Object: boolean } values for match position of the work in side the crate.
+	 */
+	#checkLimitSet(art, coordinate, values) {
+		const limit = coordinate[5] ? coordinate[5]?.split("-")[1] : false;
+
+		if (limit === "x" || limit === "y") {
+			const center = this.#packedList.find(
+				(work) => work[0] === this.#center[0],
+			);
+			const featness =
+				limit === "x" ? center[1] - coordinate[0] : center[3] - coordinate[1];
+			const avoidPos = coordinate[0] === center[1] || coordinate[1] === center[3];
+
+			values.check01 = values.check01 && avoidPos
+				? limit === "x"
+					? featness >= art[1]
+					: featness >= art[3]
+				: values.check01;
+			values.check02 = values.check02 && avoidPos
+				? limit === "x"
+					? featness >= art[1]
+					: featness >= art[3]
+				: values.check02;
+		}
+		return values;
 	}
 
 	/**
@@ -238,19 +474,17 @@ export default class WorksCoordinates {
 	 * @param { Array } art the artwork dimensions and ID.
 	 * @param { Array } coordinate the empty possibilities to feat the work in.
 	 */
-	#workFeatnessLayer(art, coordinate) {
-		const space =
-			coordinate[0] === coordinate[2] && coordinate[1] === coordinate[3];
+	#workMatchLayer(art, coordinate) {
 		const X = coordinate[2];
 		const Y = coordinate[3];
 		const x1 = art[1] + coordinate[0] <= X && coordinate[0] < X;
 		const y1 = art[3] + coordinate[1] <= Y && coordinate[1] < Y;
 		const x2 = art[3] + coordinate[0] <= X && coordinate[0] < X;
 		const y2 = art[1] + coordinate[1] <= Y && coordinate[1] < Y;
-		const check01 = !space ? x1 && y1 : false;
-		const check02 = !space ? x2 && y2 : false;
+		const check01 = x1 && y1;
+		const check02 = x2 && y2;
 
-		return { check01, check02 };
+		return this.#checkLimitSet(art, coordinate, { check01, check02 });
 	}
 
 	/**
@@ -260,33 +494,43 @@ export default class WorksCoordinates {
 	 */
 	#checkExtendSizeToFeatWork(art, coordinate) {
 		const EXPAND = 10;
-		const boundaries = this.#rawList.find(
-			(work) => work.code === coordinate.at(-1),
-		);
 		const limitX = coordinate[2] <= 285 ? 285 : 585;
 		const limitY = coordinate[3] <= 145 ? 145 : 225;
-		const diffX = art[1] + coordinate[0] - coordinate[2];
-		const diffY = art[3] + coordinate[1] - coordinate[3];
-		let check01 =
-			diffX > 0 && diffX <= limitX && EXPAND >= diffX && EXPAND >= diffY;
-		let check02 =
-			diffY > 0 && diffY <= limitY && EXPAND >= diffY && EXPAND >= diffX;
-		const extraX = diffX > 0 ? art[1] + coordinate[0] : 0;
-		const extraY = diffY > 0 ? art[3] + coordinate[1] : 0;
+		const sumX = +(art[1] + coordinate[0]).toFixed(3);
+		const sumY = +(art[3] + coordinate[1]).toFixed(3);
+		const diffX =
+			coordinate[0] === 0
+				? 0
+				: sumX <= coordinate[2]
+					? Math.abs(+(coordinate[2] - sumX).toFixed(3))
+					: Math.abs(+(sumX - coordinate[2]).toFixed(3));
+		const diffY =
+			coordinate[1] === 0
+				? 0
+				: sumY <= coordinate[3]
+					? Math.abs(+(coordinate[3] - sumY).toFixed(3))
+					: Math.abs(+(sumY - coordinate[3]).toFixed(3));
+		const pointX1 = sumX <= coordinate[2] || sumX <= coordinate[2] + EXPAND;
+		const pointY1 = sumY <= coordinate[3] || sumY <= coordinate[3] + EXPAND;
+		const pointX2 = sumX <= coordinate[3] || sumX <= coordinate[3] + EXPAND;
+		const pointY2 = sumY <= coordinate[2] || sumY <= coordinate[2] + EXPAND;
+		const checkX = coordinate[2] <= sumX && diffX <= EXPAND && diffY <= EXPAND;
+		const checkY = coordinate[3] <= sumY && diffY <= EXPAND && diffX <= EXPAND;
+		const edge = sumX <= limitX && sumY <= limitY;
 
-		if (boundaries) {
-			const { x, y } = boundaries;
-			const xLimit = this.#limitX.includes(boundaries.code);
-			const yLimit = this.#limitY.includes(boundaries.code);
-			const featX = yLimit && coordinate[0] < art[1] && x >= art[1];
-			const featY = xLimit && coordinate[1] < art[3] && y >= art[3];
+		const check01 = pointX1 && pointY1 && edge;
+		const check02 = pointX2 && pointY2 && edge;
+		const extraX = checkX ? sumX : 0;
+		const extraY = checkY ? sumY : 0;
 
-			check01 = check01 || featX;
-			check02 = check02 || featY;
-		}
-		if (check01 && extraX) this.#limitY.push(coordinate.at(-1));
-		if (check02 && extraY) this.#limitX.push(coordinate.at(-1));
-		return { check01, check02, extraX, extraY };
+		if (extraX) this.#limitY.push(coordinate.at(-1));
+		if (extraY) this.#limitX.push(coordinate.at(-1));
+		return this.#checkLimitSet(art, coordinate, {
+			check01,
+			check02,
+			extraX,
+			extraY,
+		});
 	}
 
 	/**
@@ -299,69 +543,41 @@ export default class WorksCoordinates {
 	 */
 	#onFoundDefineLocation(data, art, emptyArea, pos, ind) {
 		const { check01, check02, extraX, extraY } = data;
-		const coordinates = emptyArea[pos];
-		const X = emptyArea[0][2];
-		const Y = emptyArea[0][3];
-		const XorY = emptyArea[0][0] === emptyArea[pos][0];
 		const ICON = `<i class="nf nf-oct-sync"></i>`;
-		const perfect =
-			(art[1] === X && art[3] === Y) || (art[3] === X && art[1] === Y);
-		let flip = false;
-		let found;
+		let found = false;
 		let x;
 		let y;
+		let flip = false;
+		const fillSpace = (turn, x, y) => {
+			found = true;
+
+			if (turn && x !== y) art.push(ICON);
+			this.#rawList[ind].defCoordinate = {
+				x: emptyArea[pos][0],
+				z: art[2],
+				y: emptyArea[pos][1],
+			};
+			if (extraX || extraY) {
+				emptyArea.map((info) => {
+					if (extraX > 0) info[2] = extraX;
+					if (extraY > 0) info[3] = extraY;
+
+					return info;
+				});
+			}
+		};
 
 		if (check01) {
-			found = true;
 			x = art[1];
 			y = art[3];
-
-			this.#rawList[ind].defCoordinate = {
-				x: emptyArea[pos][0],
-				z: art[2],
-				y: emptyArea[pos][1],
-			};
-			if (pos === 0) {
-				if (XorY)
-					emptyArea[0][0] = (x || y > 0) && !perfect ? x + coordinates[0] : X;
-				if (!XorY || emptyArea.length === 1)
-					emptyArea[0][1] = (x > 0 || y) && !perfect ? y + coordinates[1] : Y;
-			}
-			if (extraX || extraY) {
-				if (extraX > 0) emptyArea[0][2] = extraX;
-				if (extraY > 0) emptyArea[0][3] = extraY;
-			}
+			fillSpace(flip, x, y);
 		} else if (check02) {
-			found = true;
 			x = art[3];
 			y = art[1];
-
-			!extraY ? art.push(ICON) : 0;
 			flip = true;
-			this.#rawList[ind].defCoordinate = {
-				x: emptyArea[pos][0],
-				z: art[2],
-				y: emptyArea[pos][1],
-			};
-			if (pos === 0) {
-				if (XorY)
-					emptyArea[0][1] = (x || y > 0) && !perfect ? x + coordinates[0] : Y;
-				if (!XorY || emptyArea.length === 1)
-					emptyArea[0][0] = (x > 0 || y) && !perfect ? coordinates[1] + y : X;
-			}
-			if (extraX || extraY) {
-				if (extraX > 0) emptyArea[0][2] = extraX;
-				if (extraY > 0) emptyArea[0][3] = extraY;
-			}
+			fillSpace(flip, x, y);
 		}
-		found
-			? this.#updateLayerAvailableCoordinates(
-				pos,
-				coordinates,
-				{ x, y, flip },
-				art[0],
-			)
-			: 0;
+		if (found) this.#updateLayerAvailableCoordinates(pos, { x, y }, art[0]);
 		return found;
 	}
 
@@ -379,7 +595,7 @@ export default class WorksCoordinates {
 		const checker = this.#checkExtendSizeToFeatWork(art, coordinate);
 
 		found = this.#onFoundDefineLocation(checker, art, emptyArea, pos, ind);
-		!found ? pos-- : 0;
+		if (!found) pos--;
 		return this.#secondCheckExtension(art, pos, emptyArea, ind, found);
 	}
 
@@ -397,11 +613,34 @@ export default class WorksCoordinates {
 			emptyArea[0][1] === emptyArea[0][3];
 		if (found || pos < 0 || filled) return found;
 		const coordinates = emptyArea[pos];
-		const checker = this.#workFeatnessLayer(art, coordinates);
-		found = this.#onFoundDefineLocation(checker, art, emptyArea, pos, ind);
+		const checker = this.#workMatchLayer(art, coordinates);
 
-		!found ? pos-- : 0;
+		if (checker.check01 || checker.check02)
+			found = this.#onFoundDefineLocation(checker, art, emptyArea, pos, ind);
+
+		if (!found) pos--;
 		return this.#featRecursionLayer({ emptyArea, found, art, ind, pos });
+	}
+
+	/**
+	 * @method - select the best candidate for match to the art work.
+	 * @param { Array:Array: Number | String } emptyArea
+	 */
+	#selectPositionCandidate(emptyArea) {
+		const last = emptyArea.length - 1;
+		const center = this.#centerWork.get(this.#center[0]);
+		const theWork = this.#packedList.find(
+			(work) => work[0] === this.#center[0],
+		);
+		const { x } = center;
+		const candidateAxis = x[0] === 0 || x[0] < theWork[1];
+		let position;
+
+		position = candidateAxis
+			? emptyArea.findIndex((pos) => pos[0] === 0)
+			: emptyArea.findIndex((pos) => pos[1] === 0);
+		if (!Array.isArray(position)) position = last;
+		return position;
 	}
 
 	/**
@@ -413,13 +652,22 @@ export default class WorksCoordinates {
 	#fillCrateRecursion(info, list, len) {
 		const check =
 			info.emptyArea[0] === undefined && info.emptyArea[1] === undefined;
-		const filledX = info.emptyArea[0][0] === info.emptyArea[0][2];
-		const filledY = info.emptyArea[0][1] === info.emptyArea[0][3];
-		if (check || !list[len] || (filledX && filledY)) return info;
-
+		const filledX = info.emptyArea.length
+			? info.emptyArea[0][0] === info.emptyArea[0][2]
+			: true;
+		const filledY = info.emptyArea.length
+			? info.emptyArea[0][1] === info.emptyArea[0][3]
+			: true;
+		if (check || !list[len] || (filledX && filledY)) {
+			this.#centerWork = null;
+			this.#centerWork = new Map();
+			return info;
+		}
 		const { emptyArea, feat } = info;
 		const art = list[len];
-		const pos = emptyArea.length - 1;
+		const pos = this.#center.length
+			? this.#selectPositionCandidate(emptyArea)
+			: emptyArea.length - 1;
 		const ind = this.#rawList.findIndex((data) => data.code === art[0]);
 		const data = { emptyArea, found: false, art, ind, pos };
 		let result = this.#featRecursionLayer(data);
@@ -448,7 +696,9 @@ export default class WorksCoordinates {
 		const { info, list, len, raw } = this.#info;
 
 		this.#rawList = raw;
-		return this.#info ? this.#fillCrateRecursion(info, list, len) : false;
+		this.#packedList = structuredClone(list);
+		const arrange = this.#fillCrateRecursion(info, list, len);
+		return arrange;
 	}
 
 	/** @param { Object } data  */

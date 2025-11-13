@@ -1,4 +1,5 @@
 import CraterStandard from "./Crater.standard.crate.mjs";
+import ArtWork from "./ArtWork.class.mjs";
 
 export default class CraterLastCheckReArranger {
 	#cratesDone;
@@ -29,19 +30,35 @@ export default class CraterLastCheckReArranger {
 	#removeCrate(crate, pos, list) {
 		const crateWorks = crate[pos];
 		const { works } = crateWorks;
+		const wrap = JSON.parse(globalThis.localStorage.getItem("packing"));
+		const wrapOpts = JSON.parse(globalThis.localStorage.getItem("materials"));
+		const pack = wrapOpts.filter((info) => wrap.includes(info[0]));
 
 		works.map((layer) => {
 			Object.entries(layer).map((arts) => {
-				arts[1].map((layer) => {
-					layer.length === 1
-						? list.push(layer[0][0])
-						: layer.map((work) =>
+				arts[1].map((data) => {
+					!Array.isArray(data[0])
+						? list.push(data)
+						: data.map((work) =>
 								Array.isArray(work[0]) ? list.push(work[0]) : 0,
 							);
+					return data;
 				});
+				return arts;
 			});
+			return layer;
 		});
-		return structuredClone(list);
+		const parsedList = list.map((canvas) => {
+			const parsed = new ArtWork(
+				canvas[0],
+				canvas[1],
+				canvas[2],
+				canvas[3],
+				pack,
+			);
+			return parsed;
+		});
+		return parsedList;
 	}
 
 	// ╭───────────────────────────────────────────────────────────────────────────╮
@@ -62,7 +79,7 @@ export default class CraterLastCheckReArranger {
 					LEN === 1
 						? structuredClone(attCrate.works[0])
 						: structuredClone(attCrate.works);
-				this.#removeCrate(listCrates, i, result);
+				result = this.#removeCrate(listCrates, i, result);
 				result = this.#quickSort(result, CUBPOS);
 				result = new CraterStandard(result, false, MAXLAYER, true);
 				if (result.crates.length === listCrates.length) {
@@ -104,7 +121,6 @@ export default class CraterLastCheckReArranger {
 	#newCrateSet(works, layers) {
 		const CUBPOS = 4;
 		const newList = [];
-		let listSorted;
 
 		Object.entries(layers).map((arr) => {
 			arr[1].map((data) => {
@@ -114,10 +130,12 @@ export default class CraterLastCheckReArranger {
 					if (data[info].length > 0 && Array.isArray(data[info]))
 						data[info].map((art) => newList.push(art));
 				}
+				return data;
 			});
+			return arr;
 		});
 		works.map((art) => newList.push(art));
-		listSorted = this.#quickSort(newList, CUBPOS);
+		const listSorted = this.#quickSort(newList, CUBPOS);
 		return listSorted;
 	}
 
