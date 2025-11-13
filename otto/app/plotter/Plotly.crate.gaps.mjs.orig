@@ -102,9 +102,11 @@ export default class FillGaps {
 	}
 
 	get fill() {
+<<<<<<< HEAD
 		return this.#defineGaps();
 	}
 }
+=======
 		return(this.#defineGaps());
 	};
 
@@ -116,3 +118,4 @@ export default class FillGaps {
 		return(this.#defineGaps());
 	};
 };
+>>>>>>> a29a81b (build(core): updates the graphic plotter but not done yet)
