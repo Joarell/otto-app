@@ -32,9 +32,6 @@ export default class CraterLastCheckReArranger {
 	#removeCrate(crate, pos, list) {
 		const crateWorks = crate[pos];
 		const { works } = crateWorks;
-		const { materials } = this.#materials;
-		const wrapOpts = JSON.parse(globalThis.localStorage.getItem("materials"));
-		const pack = wrapOpts.filter((info) => materials.includes(info[0]));
 
 		works.map((layer) => {
 			Object.entries(layer).map((arts) => {
@@ -51,13 +48,8 @@ export default class CraterLastCheckReArranger {
 			return layer;
 		});
 		const parsedList = list.map((canvas) => {
-			const parsed = new ArtWork(
-				canvas[0],
-				canvas[1],
-				canvas[2],
-				canvas[3],
-				pack,
-			);
+			const { code, x, y, z, packing } = JSON.parse(localStorage.getItem(canvas[0]));
+			const parsed = new ArtWork(code, x, z, y, packing);
 			return parsed;
 		});
 		return parsedList;
@@ -140,8 +132,8 @@ export default class CraterLastCheckReArranger {
 	}
 
 	#updatesCrates(crates, pos, newCrate, target) {
-		const PAD = this.#materials.find((opt) =>
-			opt.at(-1) === 'Foam Sheet' && opt[2] > 2.5
+		const PAD = this.#materials.find(
+			(opt) => opt.at(-1) === "Foam Sheet" && opt[2] > 2.5,
 		);
 
 		crates[target].works.pop();

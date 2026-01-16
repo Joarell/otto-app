@@ -44,12 +44,14 @@ export default class ArtWork extends Hexaedro {
 			z: structuredClone(this.#z),
 			y: structuredClone(this.#y),
 		};
+		const { packMaterials } = structuredClone(this);
 
-		if (this.packMaterials && this.packMaterials.length)
-			this.packMaterials.map((item) => {
+		if (packMaterials?.length)
+			packMaterials.map((item) => {
 				dimensions.x += item[2] * 2;
 				dimensions.z += item[2] * 2;
 				dimensions.y += item[2] * 2;
+				return item;
 			});
 		return [
 			this.code,
@@ -65,8 +67,9 @@ export default class ArtWork extends Hexaedro {
 	 * @param { number } demand the artworks total area in meters.
 	 */
 	#packingTypeMaterial(area, demand) {
+		const { packMaterials } = structuredClone(this);
 		const percent = area.map((info, i) => {
-			const result = [this.packMaterials[i][0]];
+			const result = [packMaterials[i][0]];
 
 			result.push(+((demand * 100) / info).toFixed(0));
 			return result;
@@ -79,8 +82,9 @@ export default class ArtWork extends Hexaedro {
 	 * @param { Array } percent the material total area in percentile.
 	 */
 	#materialQuantityApplied(percent) {
+		const { packMaterials } = structuredClone(this);
 		const result = percent.map((val, i) => {
-			if (this.packMaterials[i][5] === "Roll")
+			if (packMaterials[i][5] === "Roll")
 				return [val[0], +(val[1] / 100).toFixed(2)];
 			return [val[0], Math.ceil(val[1] / 100)];
 		}, 0);
@@ -104,14 +108,15 @@ export default class ArtWork extends Hexaedro {
 	 */
 	#packingData() {
 		const demand = this.packingDemanded;
-		const packArea = this.packMaterials.map(
+		const { packMaterials } = structuredClone(this);
+		const packArea = packMaterials.map(
 			(item) => (item[1] * item[3]) / 100,
 		);
 		const percent = this.#packingTypeMaterial(packArea, demand);
 		const reuse = packArea.map((data, i) => [percent[i][0], data > demand], 0);
 		const residual = this.#residualPacking(percent);
-		const prices = this.packMaterials.map((values) => values[4]);
-		const types = this.packMaterials.map(
+		const prices = packMaterials.map((values) => values[4]);
+		const types = packMaterials.map(
 			(kind, i) => [kind[5], packArea[i], kind[0]],
 			0,
 		);

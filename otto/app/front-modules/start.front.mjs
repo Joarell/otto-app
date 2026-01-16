@@ -6,7 +6,6 @@
 //│ │                          Function catchWork();                        │ │
 //│ │                         Function catchRemove();                       │ │
 //│ │                         Function checkReference();                    │ │
-//│ │                         Function intParser();                         │ │
 //│ ╰───────────────────────────────────────────────────────────────────────╯ │
 //╰───────────────────────────────────────────────────────────────────────────╯
 
@@ -30,7 +29,9 @@ function definedPackingMaterials() {
 // │ This function validates all inputs of the fields provided by the user. │
 // ╰────────────────────────────────────────────────────────────────────────╯
 export function checkWork(work) {
-	const checked = regValid(intParser([work[1], work[2], work[3]]));
+	const checked = regValid(
+		[+work[1], +work[2], +work[3]].map((size) => parseInt(size))
+	);
 	const regex = /[^-a-z-A-Z-0-9]/g;
 	const estimate = document.getElementById("input_estimate").value;
 	const materials = definedPackingMaterials();
@@ -53,29 +54,19 @@ export function checkWork(work) {
 	}
 	checkReference();
 	return Array.isArray(checked)
-		? new ArtWork(work[0], checked[0], checked[1], checked[2], materials)
+		? new ArtWork(work[0], checked[0], checked[1], checked[2], structuredClone(materials))
 		: false;
-}
-
-// ╭──────────────────────────────────────────────────────╮
-// │ This function converts all string inputs in integer. │
-// ╰──────────────────────────────────────────────────────╯
-export function intParser(dimensions) {
-	const result = dimensions.map((size) => {
-		return parseInt(size);
-	});
-	return result;
 }
 
 // ╭────────────────────────────────────────────────────────────────────╮
 // │ Regular expression function to validate if all inputs are numbers. │
 // ╰────────────────────────────────────────────────────────────────────╯
-export function regValid(sizes_parsed) {
+export function regValid(sizesParsed) {
 	let i = 2;
 	const regex = /^[0-9.0-9]{1,7}$/;
 
 	while (--i >= 0) {
-		if (!regex.test(sizes_parsed[i])) {
+		if (!regex.test(sizesParsed[i])) {
 			switch (i) {
 				case 2:
 					alert(`The provide HEIGHT is not a valid number.\
@@ -92,7 +83,7 @@ export function regValid(sizes_parsed) {
 			}
 		}
 	}
-	return sizes_parsed;
+	return sizesParsed;
 }
 
 function selectEmptyinput() {
@@ -111,6 +102,7 @@ function selectEmptyinput() {
 			aux = true;
 			return input.select();
 		}
+		return field;
 	});
 }
 
@@ -133,7 +125,6 @@ export async function catchWork() {
 		case "":
 			alert(`Oops! Do not forget to fill each field. Please, try again!`);
 			return selectEmptyinput();
-		// return (mod.cleanInputs());
 	}
 	tmp = checkWork([cod, length, depth, height]);
 	if (tmp && tmp !== "material") {
@@ -152,8 +143,11 @@ export async function catchWork() {
 // │ This is the function to find the work in the list to remove it. │
 // ╰─────────────────────────────────────────────────────────────────╯
 export function catchRemove() {
-	const work = prompt("Please enter the work code to be removed split by spaces:", "code?");
-	const toRemove = work ? work.split(' '): false;
+	const work = prompt(
+		"Please enter the work code to be removed split by spaces:",
+		"code?",
+	);
+	const toRemove = work ? work.split(" ") : false;
 
 	if (!toRemove) return mod.cleanInputs();
 	toRemove.map((art) => {
@@ -166,7 +160,7 @@ export function catchRemove() {
 		mod.displayAirCub();
 		mod.displayCub();
 		return art;
-	})
+	});
 	localStorage.setItem("storage", "art-work");
 	return mod.cleanInputs();
 }

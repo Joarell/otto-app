@@ -74,6 +74,7 @@ export default class PositionWorksInSideCrate {
 						return info;
 				}
 			}
+			return info;
 		});
 		this.#div[1] = +this.#div[1];
 		this.#div[2] = +this.#div[2];
@@ -210,7 +211,7 @@ export default class PositionWorksInSideCrate {
 
 	// TODO: handle extra sizes.
 	#setDivLayer(layer, depth, inner, data = []) {
-		if (inner[0] <= 0 && inner[2] <= 0) return data;
+		if (inner[0] <= 0 || inner[2] <= 0) return data;
 		const x = inner[0] < this.#div[1] ? inner[0] : inner[0] - this.#div[0];
 		const y = inner[2] < this.#div[3] ? inner[2] : inner[2] - this.#div[3];
 

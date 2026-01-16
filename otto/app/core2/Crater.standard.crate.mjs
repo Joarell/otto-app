@@ -101,6 +101,7 @@ export default class CraterStandard {
 					(crate, i) => (i % 2 === 0 ? crates2.push(crate) : 0),
 					0,
 				);
+			return solution;
 		});
 		const equalCrates = crates1.length === crates2.length;
 		let count;
