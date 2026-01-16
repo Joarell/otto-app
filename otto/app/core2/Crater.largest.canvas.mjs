@@ -76,9 +76,10 @@ export default class CraterPythagoras {
 		let y = 0;
 
 		canvas.map((work) => {
-			x < work[1] ? (x = work[1]) : false;
-			z < work[2] ? (z = work[2]) : false;
-			y < work[3] ? (y = work[3]) : false;
+			if(x < work[1]) (x = work[1]);
+			if(z < work[2]) (z = work[2]);
+			if(y < work[3]) (y = work[3]);
+			return work;
 		});
 		crate =
 			x >= y

@@ -246,7 +246,6 @@ export default class CraterStandard {
 				raw: this.#rawList,
 			};
 			getter = coordinates.fillLayer;
-			console.log("FILL", getter);
 			updateSize(getter);
 			copy = structuredClone(getter);
 			greb = copy.feat.map((info) => {
