@@ -132,6 +132,7 @@ export default class PaddingCrate {
 					data[1].x === 0 ? (data[1].x = x) : 0;
 					return data;
 			}
+			return data;
 		});
 		return change;
 	}

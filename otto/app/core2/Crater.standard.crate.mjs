@@ -227,18 +227,18 @@ export default class CraterStandard {
 		let getter;
 		let copy;
 		const updateSize = (filled) => {
-			const { emptyArea } = filled;
+			const { newBase } = filled;
 
-			emptyArea.map((data) => {
-				if (data[2] > measure[0]) measure[0] = data[2];
-				if (data[3] > measure[2]) measure[2] = data[3];
-				return data;
-			});
+			if(newBase[2] > 0 || newBase[3] > 0) {
+				measure[0] = newBase[2];
+				measure[2] = newBase[3];
+				this.#coordinates.baseSize = newBase;
+			}
 		};
 
 		while (i++ < this.#maxLayers && list.length) {
 			const { emptyArea } = this.#coordinates;
-			info = { emptyArea, feat: [] };
+			info = { emptyArea, feat: [], newBase: [0, 0, 0, 0] };
 			coordinates.fillPreparing = {
 				info,
 				list,

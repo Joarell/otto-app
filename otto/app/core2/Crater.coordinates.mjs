@@ -7,6 +7,7 @@ export default class WorksCoordinates {
 	#centerWork;
 	#packing;
 	#lastTry;
+	#newBaseSize;
 
 	constructor(size = false, materials) {
 		if (size && materials) {
@@ -427,20 +428,19 @@ export default class WorksCoordinates {
 
 			for (info of axis) {
 				const { sum, codes } = info[1];
-				const work = this.#packedList.find((data) => data[0] === info[0])
+				const work = this.#packedList.find((data) => data[0] === info[0]);
 				const X = work.length > 4 ? work[3] : work[1];
 				const Y = work.length > 4 ? work[1] : work[3];
-				const checkBeforeLast = codes?.includes(thread.at(-1)) &&
-					info[0] === thread.at(-2) && !codes?.includes(newArt);
+				const checkBeforeLast =
+					codes?.includes(thread.at(-1)) &&
+					info[0] === thread.at(-2) &&
+					!codes?.includes(newArt);
 				const foundOnCenter = updateLinkedWorks.length
-					? updateLinkedWorks.some((data) => codes.includes(data))
-						&& !codes?.includes(newArt)
+					? updateLinkedWorks.some((data) => codes.includes(data)) &&
+						!codes?.includes(newArt)
 					: false;
-				const greenLight = pos !== onAxis
-					? pos === 0
-						? sum < X
-						: sum < Y
-					: false;
+				const greenLight =
+					pos !== onAxis ? (pos === 0 ? sum < X : sum < Y) : false;
 
 				if (greenLight) {
 					if (checkBeforeLast && !updateLinkedWorks.includes(info[0])) {
@@ -467,7 +467,6 @@ export default class WorksCoordinates {
 	 * @param { string } newWork
 	 * @param { String } closeTo
 	 */
-	// BUG: The sum accumulator is not quite right yet.
 	#attachingWorksOrder(onAxis, closeTo, newWork, local) {
 		const newArt = this.#packedList.find((art) => art[0] === newWork);
 
@@ -485,7 +484,7 @@ export default class WorksCoordinates {
 	 * @param { number } y axis.
 	 * @param { string } prev last art work code.
 	 * @param { Array:Number:String } emptyArea available positions.
-	*/
+	 */
 	#onOnePosition(emptyArea, x, y, prev) {
 		const lastWork = this.#packedList.find((work) => work[0] === prev);
 		const lastX = lastWork.length > 4 ? lastWork[3] : lastWork[1];
@@ -533,7 +532,7 @@ export default class WorksCoordinates {
 	 * @method - update the available coordinates possible to feat the work
 	 * @param { Number } pos the array index to be removed from the possibilities.
 	 * @param { Array } local the position with the coordinates to place the work.
-	*/
+	 */
 	async #updateLayerAvailableCoordinates(pos, { x, y }, code) {
 		const { emptyArea } = this.#coordinates;
 		const closeTo = emptyArea[pos].length > 4 ? emptyArea[pos].at(-1) : code;
@@ -683,12 +682,21 @@ export default class WorksCoordinates {
 				y: structuredClone(emptyArea[pos][1]),
 			};
 			if (extraX || extraY) {
+				const checkSizes = extraX > this.#newBaseSize[2] ||
+					extraY > this.#newBaseSize[3];
 				emptyArea.map((info) => {
 					if (extraX > 0) info[2] = extraX;
 					if (extraY > 0) info[3] = extraY;
 
 					return info;
 				});
+				if(checkSizes) {
+					if(extraX > this.#newBaseSize[2])
+						this.#newBaseSize.splice(2, 1, extraX);
+					if(extraY > this.#newBaseSize[3])
+						this.#newBaseSize.push(extraX)
+						this.#newBaseSize.splice(3, 1, extraX);
+				}
 			}
 		};
 		if (check01 && !check02) {
@@ -715,13 +723,13 @@ export default class WorksCoordinates {
 	 * @param { Array } art - the work sizes and code.
 	 * @param { Number } ind - the rawList location to the work.
 	 * @param { Number } pos the @emptyArea index.
-	*/
+	 */
 	async #secondCheckExtension(art, pos, emptyArea, found) {
 		if (found || pos < 0) return found;
 		const coordinate = emptyArea[pos];
 		const checker = this.#checkExtendSizeToFeatWork(art, coordinate);
 
-		found = await this.#onFoundDefineLocation(checker, art, emptyArea, pos);
+		found = this.#onFoundDefineLocation(checker, art, emptyArea, pos);
 		if (!found) pos--;
 		return this.#secondCheckExtension(art, pos, emptyArea, found);
 	}
@@ -786,7 +794,7 @@ export default class WorksCoordinates {
 		return position;
 	}
 
-	#layerMapObject(crateArea) {
+	#layerMapObject() {
 		let onCenter;
 
 		if (this.#centerWork?.center) {
@@ -800,7 +808,7 @@ export default class WorksCoordinates {
 		}
 		this.#centerWork = null;
 		this.#centerWork = {
-			center: false,
+			center: onCenter,
 			works: [],
 			linked: [],
 			x: new Map(),
@@ -824,7 +832,7 @@ export default class WorksCoordinates {
 			? info.emptyArea[0][1] === info.emptyArea[0][3]
 			: true;
 		if (check || !list[len] || (filledX && filledY)) {
-			this.#layerMapObject(info.emptyArea[0]);
+			this.#layerMapObject();
 			return info;
 		}
 		const { emptyArea, feat } = info;
@@ -857,9 +865,11 @@ export default class WorksCoordinates {
 	get fillLayer() {
 		const { info, list, len, raw } = this.#info;
 
+		this.#newBaseSize = info.newBase;
 		this.#rawList = raw;
 		this.#packedList = structuredClone(list);
 		const arrange = this.#fillCrateRecursion(info, list, len);
+		arrange.neBase = this.#newBaseSize;
 		return arrange;
 	}
 

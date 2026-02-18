@@ -134,6 +134,7 @@ export default class PositionWorksInSideCrate {
 				}
 				return info;
 			}, 0);
+			return data;
 		});
 		return works;
 	}
@@ -179,14 +180,13 @@ export default class PositionWorksInSideCrate {
 		return work;
 	}
 
-	#defineDivSize({ x, y }, depth, layer) {
+	#defineDivSize(x, y , depth, layer, lastX) {
 		const z = depth + this.#threshold[2];
-		const offX = this.#threshold[0];
+		const offX = lastX || this.#threshold[0];
 		const offZ = depth + this.#threshold[2] - this.#div[2];
 		const offY = this.#threshold[2];
 		let div = structuredClone(layer);
 
-		y -= this.#div[2];
 		const divisor = {
 			div: [
 				{ x: offX, y: offY, z: offZ }, // Vertex 0
@@ -209,16 +209,39 @@ export default class PositionWorksInSideCrate {
 		return divisor;
 	}
 
-	// TODO: handle extra sizes.
-	#setDivLayer(layer, depth, inner, data = []) {
-		if (inner[0] <= 0 || inner[2] <= 0) return data;
-		const x = inner[0] < this.#div[1] ? inner[0] : inner[0] - this.#div[0];
-		const y = inner[2] < this.#div[3] ? inner[2] : inner[2] - this.#div[3];
+	#setDivLayer(layer, depth, inner, data = [], filled = { x: 0, y: 0, full: 0}) {
+		if (filled.x >= inner[0] && filled.y >= inner[2]) return data;
+		let { x, y, full } = filled;
+		let lastX = 0;
+		let lastY = 0;
 
-		x !== inner[0] ? (inner[0] -= x) : (inner[0] = 0);
-		y !== inner[2] ? (inner[2] -= y) : (inner[2] = 0);
-		data.push(this.#defineDivSize({ x, y }, depth, layer));
-		return this.#setDivLayer(layer, depth, inner, data);
+		if(x === 0) {
+			x = inner[0] < this.#div[1] ? inner[0] : this.#div[1];
+			filled.x = x;
+		}
+		else if (x < inner[0]) {
+			x = inner[0] - x >= this.#div[1] ? this.#div[1] : inner[0] - x;
+			lastX = structuredClone(filled.x);
+			filled.x += x;
+		}
+		if(y === 0) {
+			y = inner[2] < this.#div[3] ? inner[2] : this.#div[3];
+			filled.y = y;
+			y += this.#threshold[2] - this.#div[2];
+		}
+		else if (y < inner[2] && full === 0 && lastX === 0) {
+			y = inner[2] - y >= this.#div[3] ? this.#div[3] : inner[2] - y;
+			lastY = structuredClone(filled.y);
+			filled.y += y;
+			if (full === 0) {
+				filled.full = 1;
+				filled.x = inner[0] < this.#div[1] ? inner[0] : this.#div[1];
+			}
+		}
+		x += lastX;
+		y += lastY - this.#div[2];
+		data.push(this.#defineDivSize(x, y, depth, layer, lastX, lastY));
+		return this.#setDivLayer(layer, depth, inner, data, filled);
 	}
 
 	#buildTraceAndFill(list) {
@@ -260,18 +283,20 @@ export default class PositionWorksInSideCrate {
 				};
 				meta = fill.designSides;
 				tmp = div || layer.name === tmp ? tmp : layer.name;
+				return data;
 			});
+			return info;
 		});
 		return meta;
 	}
 
-	#populateLayerTubeCrate() {}
+	#populateLayerTubeCrate() { }
 
-	#populateLayerNotCanvas() {}
+	#populateLayerNotCanvas() { }
 
-	#populateLayerHugeCanvas() {}
+	#populateLayerHugeCanvas() { }
 
-	#populateLayerSameSizes() {}
+	#populateLayerSameSizes() { }
 
 	#populateLayerStandard() {
 		const { layers, fillGaps, artLocation } = this.#info;
@@ -291,9 +316,10 @@ export default class PositionWorksInSideCrate {
 			const checkGap = vacuum.length > 1;
 
 			onLayers.push(this.#worksOffset(allWorks, depthSum, i + 1));
-			works.filter((info) =>
-				!thickness || thickness < info.work[2] ? (thickness = info.work[2]) : 0,
-			);
+			works.filter((info) => {
+				if(!thickness || thickness < info.work[2]) (thickness = info.work[2])
+				return info;
+			});
 			if (checkGap) {
 				const info = {
 					vacuum,
@@ -305,7 +331,6 @@ export default class PositionWorksInSideCrate {
 				};
 				const gaps = new FillGaps(info, i + 1);
 				gaps.fill;
-				// allWorks.push(...gaps.fill);
 			}
 			depthSum += +thickness.toFixed(3);
 			if (layers.length > 1 && layers.length - 1 > i) {
@@ -315,6 +340,7 @@ export default class PositionWorksInSideCrate {
 				depthSum += this.#div[2];
 			}
 			thickness = 0;
+			return data;
 		}, 0);
 		return this.#buildTraceAndFill(onLayers);
 	}
