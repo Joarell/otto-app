@@ -1,5 +1,5 @@
 import { expect, describe, it } from 'bun:test';
-import CraterSameSize from "../app/core2/Crater.same.size.mjs";
+import CraterTube from "../app/core2/Crater.tube.crate.mjs";
 import ArtWork from "../app/core2/ArtWork.class.mjs";
 import * as mock from "./mock.artworks.js";
 
@@ -29,37 +29,37 @@ describe("The are test to Standard Crate solver.", () => {
 	}
 
 	it("TEST-01: returns false object to no list passe to the class.", () => {
-		const current = new CraterSameSize().makeCrate;
-		const expected = { sameSize: false };
+		const current = new CraterTube().makeCrate;
+		const expected = { tube: false };
 
 		expect(current).toEqual(expected);
 	});
 
 	it("TEST-02: returns the same size crate to the list passed.", () => {
-		const list = artParser(mock.sameMeasure1);
-		const current = new CraterSameSize(list, packing).makeCrate;
+		const list = artParser(mock.caseTube1);
+		const current = new CraterTube(list, packing).makeCrate;
 
 		expect(current.crates.length / 2).toEqual(1);
 	});
 
 	it("TEST-03: returns the same size crate to the list passed.", () => {
-		const list = artParser(mock.sameMeasure2);
-		const current = new CraterSameSize(list, packing).makeCrate;
+		const list = artParser(mock.caseTube2);
+		const current = new CraterTube(list, packing).makeCrate;
 
 		expect(current.crates.length / 2).toEqual(1);
 	});
 
 	it("TEST-04: returns the same size crate to the list passed.", () => {
-		const list = artParser(mock.sameMeasure3);
-		const current = new CraterSameSize(list, packing).makeCrate;
+		const list = artParser(mock.caseTube3);
+		const current = new CraterTube(list, packing).makeCrate;
 
 		expect(current.crates.length / 2).toEqual(1);
 	});
 
 	it("TEST-05: returns the same size crate to the list passed.", () => {
-		const list = artParser(mock.sameMeasure3);
-		const current = new CraterSameSize(list, packing).makeCrate;
+		const list = artParser(mock.caseTube4);
+		const current = new CraterTube(list, packing).makeCrate;
 
-		expect(current.crates.length / 2).toEqual(1);
+		expect(current.crates.length / 2).toEqual(2);
 	});
 });

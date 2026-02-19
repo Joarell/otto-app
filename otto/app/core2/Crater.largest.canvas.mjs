@@ -9,13 +9,12 @@ export default class CraterPythagoras {
 	#materials;
 
 	constructor(canvas, materials) {
-		if (!canvas || canvas.length === 0) return { largest: false };
-
-		this.#materials = materials;
-		this.#rawList = canvas;
-		this.#largest = canvas.map((art) => art.arr);
-		this.#list = structuredClone(this.#largest);
-		return this.#pitagorasCrater();
+		if (canvas && canvas.length > 0) {
+			this.#materials = materials;
+			this.#rawList = canvas;
+			this.#largest = canvas.map((art) => art.arr);
+			this.#list = structuredClone(this.#largest);
+		}
 	}
 
 	#worksInPlace(list, arranger, layers, i = 1) {
@@ -23,16 +22,15 @@ export default class CraterPythagoras {
 		const { emptyArea } = this.#coordinates;
 		const info = { emptyArea, feat: [] };
 		const len = list.length - 1;
-		let result;
 
 		arranger.fillPreparing = { info, list, len, raw: this.#rawList };
-		result = arranger.fillLayer;
-		this.#coordinates.defineLayer = [i, result.feat];
+		const { feat } = arranger.fillLayer;
+		this.#coordinates.defineLayer = [i, feat];
 		return this.#worksInPlace(list, arranger, layers - 1, i + 1);
 	}
 
 	#setWorksCoordinates(base, layers, div, pad) {
-		const coordinates = new WorksCoordinates(base);
+		const coordinates = new WorksCoordinates(base, this.#materials);
 		this.#coordinates = coordinates.bluePrintCoordinates;
 
 		this.#worksInPlace(this.#list, coordinates, layers);
@@ -70,19 +68,17 @@ export default class CraterPythagoras {
 	}
 
 	#defineCrate(canvas) {
-		let crate;
 		let x = 0;
 		let z = 0;
 		let y = 0;
 
 		canvas.map((work) => {
-			if(x < work[1]) (x = work[1]);
-			if(z < work[2]) (z = work[2]);
-			if(y < work[3]) (y = work[3]);
+			if (x < work[1]) x = work[1];
+			if (z < work[2]) z = work[2];
+			if (y < work[3]) y = work[3];
 			return work;
 		});
-		crate =
-			x >= y
+		const crate = x >= y
 				? this.#setPadding([x, z, y], canvas.length)
 				: this.#setPadding([y, z, x], canvas.length);
 		return crate;
@@ -95,6 +91,7 @@ export default class CraterPythagoras {
 		crate = this.#defineCrate(works);
 		works.map((art) => {
 			art[1] <= crate[2] && art[3] > crate[2] ? art.push(FLIP) : 0;
+			return art;
 		});
 		return this.#pitagorasTheorem(crate);
 	}
@@ -114,7 +111,13 @@ export default class CraterPythagoras {
 	}
 
 	#pitagorasCrater() {
+		if (!this.#rawList || this.#rawList.length === 0) return { largest: false };
+
 		const crates = this.#largestCrateTrail();
-		return (this.largest = { crates: crates });
+		return { crates: crates };
+	}
+
+	get makeCrate() {
+		return this.#pitagorasCrater();
 	}
 }

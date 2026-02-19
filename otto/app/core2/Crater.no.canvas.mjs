@@ -9,13 +9,12 @@ export default class CraterNotCanvas {
 	#list;
 
 	constructor(list, materials) {
-		if (!list || list.length === 0) return { noCanvas: false };
-
-		this.#materials = materials;
-		this.#rawList = list;
-		this.#peces = list.map((art) => art.arr);
-		this.#list = list.map((art) => art.arr);
-		return this.#noCanvasTrail();
+		if(list && list.length > 0) {
+			this.#materials = materials;
+			this.#rawList = list;
+			this.#peces = list.map((art) => art.arr);
+			this.#list = list.map((art) => art.arr);
+		}
 	}
 
 	#quickSort(arts, pos) {
@@ -27,6 +26,7 @@ export default class CraterNotCanvas {
 
 		arts.map((work) => {
 			work[pos] <= pivot[0][pos] ? left.push(work) : right.push(work);
+			return work;
 		});
 		return this.#quickSort(left, pos).concat(
 			pivot,
@@ -35,12 +35,11 @@ export default class CraterNotCanvas {
 	}
 
 	#setWorksCoordinates(base) {
-		const coordinates = new WorksCoordinates(base);
+		const coordinates = new WorksCoordinates(base, this.#materials);
 		this.#coordinates = coordinates.bluePrintCoordinates;
 		const { emptyArea } = this.#coordinates;
 		const info = { emptyArea, feat: [] };
 		const len = this.#list.length - 1;
-		let result;
 
 		coordinates.fillPreparing = {
 			info,
@@ -48,8 +47,8 @@ export default class CraterNotCanvas {
 			len,
 			raw: this.#rawList,
 		};
-		result = coordinates.fillLayer;
-		this.#coordinates.defineLayer = [1, result.feat];
+		const { feat } = coordinates.fillLayer;
+		this.#coordinates.defineLayer = [1, feat];
 		this.#rawList.map((work) =>
 			this.#coordinates.artLocation.set(work.code, work),
 		);
@@ -88,12 +87,13 @@ export default class CraterNotCanvas {
 		works.map((item) => {
 			if (aux-- > 0) {
 				x += item[1];
-				z < item[2] ? (z = item[2]) : false;
+				if(z < item[2]) z = item[2];
 			}
 			newX = item[1];
-			newZ < item[2] ? (newZ = item[2]) : false;
+			if(newZ < item[2]) newZ = item[2];
+			return item
 		});
-		newX > x ? true : (newX = x);
+		if(newX < x ) newX = x;
 		newZ += z;
 		return { newX, newZ };
 	}
@@ -110,6 +110,7 @@ export default class CraterNotCanvas {
 			x += item[1];
 			z = item[2] > z ? item[2] : z;
 			y = item[3] > y ? item[3] : y;
+			return item;
 		});
 		if (x > LENLIMIT || SPLIT) {
 			split = this.#splitCrate(peces);
@@ -127,7 +128,7 @@ export default class CraterNotCanvas {
 		const compareZ = val1[2] === val2[2] && val1[2] < MAXDEPTH;
 		const compareY = val1[3] <= MAXHEIGHT;
 
-		return compareX && compareZ && compareY ? true : false;
+		return compareX && compareZ && compareY;
 	}
 
 	#validationSizes(x, z, equals, items) {
@@ -159,6 +160,7 @@ export default class CraterNotCanvas {
 				x += art[1];
 				z += art[3];
 			}
+			return art;
 		});
 		return this.#validationSizes(x, z, equals, items);
 	}
@@ -175,10 +177,12 @@ export default class CraterNotCanvas {
 			art.pop();
 			return art;
 		});
-		return (this.#peces = procList);
+		this.#peces = procList;
 	}
 
 	#noCanvasTrail() {
+		if (!this.#rawList || this.#rawList.length === 0) return { noCanvas: false };
+
 		const crate = [];
 		let peces;
 
@@ -195,5 +199,9 @@ export default class CraterNotCanvas {
 			}
 		}
 		return { crates: crate };
+	}
+
+	get makeCrate() {
+		return this.#noCanvasTrail();
 	}
 }

@@ -18,42 +18,42 @@ describe("These are tests to Crater class.", () => {
 	});
 
 	it("TEST-2: returns the crate to one rolled work.", () => {
-		const current = new CraterTube(structuredClone(mock.caseTube1));
+		const current = new CraterTube(structuredClone(mock.caseTube1)).makeCrate;
 		const expected = mock.provideTubeCrate(structuredClone(mock.caseTube1));
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-3: returns the crate to two rolled works.", () => {
-		const current = new CraterTube(structuredClone(mock.caseTube2));
+		const current = new CraterTube(structuredClone(mock.caseTube2)).makeCrate;
 		const expected = mock.provideTubeCrate(structuredClone(mock.caseTube2));
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-4: returns the crate to three rolled works.", () => {
-		const current = new CraterTube(structuredClone(mock.caseTube3));
+		const current = new CraterTube(structuredClone(mock.caseTube3)).makeCrate;
 		const expected = mock.provideTubeCrate(structuredClone(mock.caseTube3));
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-5: returns the crate to four rolled works.", () => {
-		const current = new CraterTube(structuredClone(mock.caseTube4));
+		const current = new CraterTube(structuredClone(mock.caseTube4)).makeCrate;
 		const expected = mock.provideTubeCrate(structuredClone(mock.caseTube4));
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-6: returns the crate to more then 4 rolled works.", () => {
-		const current = new CraterTube(structuredClone(mock.caseTube5));
+		const current = new CraterTube(structuredClone(mock.caseTube5)).makeCrate;
 		const expected = mock.provideTubeCrate(structuredClone(mock.caseTube5));
 
 		assert.deepStrictEqual(current, expected);
 	});
 
 	it("TEST-7: returns the crate to huge diameter rolled works.", () => {
-		const current = new CraterTube(structuredClone(mock.caseTube6));
+		const current = new CraterTube(structuredClone(mock.caseTube6)).makeCrate;
 		const expected = mock.provideTubeCrate(structuredClone(mock.caseTube6));
 
 		assert.deepStrictEqual(current, expected);

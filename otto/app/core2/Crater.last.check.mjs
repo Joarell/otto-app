@@ -6,11 +6,8 @@ export default class CraterLastCheckReArranger {
 	#materials;
 
 	constructor(crates, materials) {
-		if (crates[0] !== "crates ahead") return false;
-
 		this.#materials = materials;
 		this.#cratesDone = crates;
-		return this.#consolidationStarted();
 	}
 
 	#quickSort(arts, pos) {
@@ -75,8 +72,8 @@ export default class CraterLastCheckReArranger {
 						: structuredClone(attCrate.works);
 				result = this.#removeCrate(listCrates, i, result);
 				result = this.#quickSort(result, CUBPOS);
-				result = new CraterStandard(result, this.#materials, MAXLAYER, true);
-				if (result.crates.length === listCrates.length) {
+				result = new CraterStandard(result, this.#materials, MAXLAYER, true).makeCrate;
+				if (result?.crates?.length === listCrates.length) {
 					listCrates.splice(i, 1, result.crates[1]);
 					listCrates.splice(i - 1, 1, result.crates[0]);
 					bool = false;
@@ -157,7 +154,7 @@ export default class CraterLastCheckReArranger {
 		for (layers in crates) {
 			if (!Array.isArray(crates[layers]) && count !== +list.info) {
 				newList = this.#newCrateSet(list.works, crates[layers]);
-				newCrate = new CraterStandard(newList, false, LIMITLAYER, true);
+				newCrate = new CraterStandard(newList, false, LIMITLAYER, true).makeCrate;
 				check = newCrate.crates.length === 2;
 				if (check) {
 					this.#updatesCrates(crates, count, newCrate, list.info);
@@ -169,12 +166,20 @@ export default class CraterLastCheckReArranger {
 	}
 
 	#consolidationStarted() {
-		const sameSize = this.#cratesDone.sameSizeCrate.crates;
-		const standard = this.#cratesDone.standardCrate.crates;
+		if (!this.#cratesDone) return;
+		const sameSize = this.#cratesDone?.sameSizeCrate?.crates;
+		const standard = this.#cratesDone?.standardCrate?.crates;
 
 		if (!sameSize || !standard) return;
 		const sameLen = sameSize.length;
 		this.#consolidationTrail(standard, sameSize, sameLen);
 		this.#removeTheFifthLayer();
+		if(this.#cratesDone.sameSizeCrate.crates.length === 0)
+			delete this.#cratesDone?.sameSizeCrate;
+		return this.#cratesDone;
+	}
+
+	get reduceCrates() {
+		return this.#consolidationStarted();
 	}
 }

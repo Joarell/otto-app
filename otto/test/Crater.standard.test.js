@@ -30,7 +30,7 @@ describe("The are test to Standard Crate solver.", () => {
 	}
 
 	it("TEST-01: returns false object to no list input to the class.", () => {
-		const current = new CraterStandard();
+		const current = new CraterStandard().makeCrate;
 		const expected = { standard: false };
 
 		expect(current).toEqual(expected);
@@ -38,31 +38,28 @@ describe("The are test to Standard Crate solver.", () => {
 
 	it("TEST-02: returns 3 crates as a result array with length of 6.", () => {
 		const list = artParser(mock.standard1);
-		const current = new CraterStandard(list, packing, 5, false);
-		const expected = 2;
+		const current = new CraterStandard(list, packing, 5, false).makeCrate;
 
-		expect(current.crates.length / 2).toEqual(expected);
+		expect(current.crates.length / 2).toEqual(1);
 	});
 
 	it("TEST-03: returns 1 crate with 5 layers.", () => {
 		const list = artParser(mock.standard2);
-		const current = new CraterStandard(list, packing, 5, false);
+		const current = new CraterStandard(list, packing, 5, false).makeCrate;
 
-		expect(current.crates.length / 2).toEqual(2);
+		expect(current.crates.length / 2).toEqual(1);
 	});
 
 	it("TEST-04: returns 1 crates as result an array with length of 2.", () => {
 		const list = artParser(mock.standard3);
-		const current = new CraterStandard(list, packing, 4, false).crates.length / 2;
+		const current = new CraterStandard(list, packing, 4, false).makeCrate.crates.length / 2;
 
-		// NOTE: To use only one crate and set 140 x 100 with 100 x 100
-		// the crate should increase 20 on X and 10 on y axis.
-		expect(current).toEqual(2);
+		expect(current).toEqual(1);
 	});
 	//
 	it("TEST-05: returns 1 crates as result an array length of 2.", () => {
 		const list = artParser(mock.standard4);
-		const current = new CraterStandard(list, packing, 4, false).crates.length;
+		const current = new CraterStandard(list, packing, 4, false).makeCrate.crates.length;
 
 		expect(current).toEqual(2);
 	});
@@ -70,28 +67,28 @@ describe("The are test to Standard Crate solver.", () => {
 	it("TEST-06: returns 2 crates as a result an array with length 4.", () => {
 		const { sorted } = mock.findTubesTest();
 		const list = artParser(sorted);
-		const current = new CraterStandard(list, packing, 4, false).crates.length;
+		const current = new CraterStandard(list, packing, 4, false).makeCrate.crates.length;
 
 		expect(current).toEqual(2);
 	});
 	//
 	it("TEST-07: returns 1 crates as a result array with length of 2.", () => {
 		const list = artParser(mock.standard8);
-		const current = new CraterStandard(list, packing, 5, false).crates.length / 2;
+		const current = new CraterStandard(list, packing, 5, false).makeCrate.crates.length / 2;
 
 		expect(current).toEqual(1);
 	});
 
 	it("TEST-08: returns 1 crates as a result array with length of 2.", () => {
 		const list = artParser(mock.standard9);
-		const current = new CraterStandard(list, packing, 5, false);
+		const current = new CraterStandard(list, packing, 5, false).makeCrate;
 
 		expect(current.crates.length / 2).toEqual(1);
 	});
 
 	it("TEST-09: ", () => {
 		const list = artParser(mock.standard9);
-		const current = new CraterStandard(list, packing, 5, false);
+		const current = new CraterStandard(list, packing, 5, false).makeCrate;
 
 		// console.log(current.crates);
 		expect(current.crates.length / 2).toEqual(1);

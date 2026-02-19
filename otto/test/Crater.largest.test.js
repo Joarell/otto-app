@@ -1,5 +1,5 @@
 import { expect, describe, it } from 'bun:test';
-import CraterSameSize from "../app/core2/Crater.same.size.mjs";
+import CraterPythagoras from '../app/core2/Crater.largest.canvas.mjs';
 import ArtWork from "../app/core2/ArtWork.class.mjs";
 import * as mock from "./mock.artworks.js";
 
@@ -29,37 +29,44 @@ describe("The are test to Standard Crate solver.", () => {
 	}
 
 	it("TEST-01: returns false object to no list passe to the class.", () => {
-		const current = new CraterSameSize().makeCrate;
-		const expected = { sameSize: false };
+		const current = new CraterPythagoras().makeCrate;
+		const expected = { largest: false };
 
 		expect(current).toEqual(expected);
 	});
 
 	it("TEST-02: returns the same size crate to the list passed.", () => {
-		const list = artParser(mock.sameMeasure1);
-		const current = new CraterSameSize(list, packing).makeCrate;
+		const list = artParser(mock.canvas1);
+		const current = new CraterPythagoras(list, packing).makeCrate;
 
 		expect(current.crates.length / 2).toEqual(1);
 	});
 
 	it("TEST-03: returns the same size crate to the list passed.", () => {
-		const list = artParser(mock.sameMeasure2);
-		const current = new CraterSameSize(list, packing).makeCrate;
+		const list = artParser(mock.canvas2);
+		const current = new CraterPythagoras(list, packing).makeCrate;
 
 		expect(current.crates.length / 2).toEqual(1);
 	});
 
 	it("TEST-04: returns the same size crate to the list passed.", () => {
-		const list = artParser(mock.sameMeasure3);
-		const current = new CraterSameSize(list, packing).makeCrate;
+		const list = artParser(mock.canvas3);
+		const current = new CraterPythagoras(list, packing).makeCrate;
 
 		expect(current.crates.length / 2).toEqual(1);
 	});
 
 	it("TEST-05: returns the same size crate to the list passed.", () => {
-		const list = artParser(mock.sameMeasure3);
-		const current = new CraterSameSize(list, packing).makeCrate;
+		const list = artParser(mock.canvas4);
+		const current = new CraterPythagoras(list, packing).makeCrate;
 
-		expect(current.crates.length / 2).toEqual(1);
+		expect(current.crates.length / 2).toEqual(2);
+	});
+
+	it("TEST-06: returns the same size crate to the list passed.", () => {
+		const list = artParser(mock.canvas5);
+		const current = new CraterPythagoras(list, packing).makeCrate;
+
+		expect(current.crates.length / 2).toEqual(3);
 	});
 });

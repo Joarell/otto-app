@@ -9,37 +9,34 @@ export default class CraterTube {
 	#materials;
 
 	constructor(list, materials) {
-		if (!list || list.length === 0) return { tube: false };
-
-		this.#materials = materials;
-		this.#rawList = list;
-		this.#tubes = list.map((art) => art.arr);
-		this.#DIAMETER = 35;
-		const checker = this.#tubes.filter((item) => {
-			return item[2] < this.#DIAMETER ? item : false;
-		});
-		const works = checker.find((data) => data !== false);
-
-		if (!works) return { tube: false };
-		return this.#crateMaker();
+		if (list && list.length > 0) {
+			this.#materials = materials;
+			this.#rawList = list;
+			this.#tubes = list.map((art) => art.arr);
+			this.#DIAMETER = 35;
+		}
 	}
 
 	#crateMaker() {
-		this.#possibleCrates();
-		return this.#tubes;
+		if (!this.#rawList || this.#rawList.length === 0) return { tube: false };
+		const checker = this.#tubes.filter((item) => {
+			return item[2] < this.#DIAMETER ? item : false;
+		});
+		if (checker.find((data) => !Array.isArray(data))) return { tube: false };
+
+		return this.#possibleCrates();
 	}
 
 	#setWokdCoordinates(innerSize, list) {
-		const coordinates = new WorksCoordinates(innerSize);
+		const coordinates = new WorksCoordinates(innerSize, this.#materials);
 		this.#coordinates = coordinates.bluePrintCoordinates;
 		const { emptyArea } = this.#coordinates;
 		const info = { emptyArea, feat: [] };
 		const len = Array.isArray(list[0]) ? list.length - 1 : 0;
-		let result;
 
 		coordinates.fillPreparing = { info, list, len, raw: this.#rawList };
-		result = coordinates.fillLayer;
-		this.#coordinates.defineLayer = [1, result.feat];
+		const { feat } = coordinates.fillLayer;
+		this.#coordinates.defineLayer = [1, feat];
 		this.#coordinates.innerSize = [innerSize[0], innerSize[1], innerSize[2]];
 		this.#rawList.map((work) =>
 			this.#coordinates.artLocation.set(work.code, work),
@@ -55,21 +52,23 @@ export default class CraterTube {
 			x = tube[1] > x ? tube[1] : x;
 			z = tube[2] > z ? tube[2] : z;
 			y += tube[3];
+			return tube;
 		});
 		return [x, z, y];
 	}
 
-	#setPaddings() {
+	#setPaddings(base, list) {
 		const crate = new CrateMaker(1, this.#materials);
-		const x = +(this[0] + crate.x).toFixed(3);
-		const z = +(this[1] + crate.z).toFixed(3);
-		const y = +(this[2] + crate.y).toFixed(3);
+		const x = +(base[0] + crate.outSizes.x).toFixed(3);
+		const z = +(base[1] + crate.outSizes.z).toFixed(3);
+		const y = +(base[2] + crate.outSizes.y).toFixed(3);
 		const X = x % 1 > 0 ? x : x.toFixed(0);
 		const Z = z % 1 > 0 ? z : z.toFixed(0);
 		const Y = y % 1 > 0 ? y : y.toFixed(0);
+		const { pad } = crate.outSizes;
 
 		this.#setWokdCoordinates(
-			[this[0] + crate.pad, this[1] + crate.pad, this[2] + crate.pad],
+			[base[0] + pad, base[1] + pad, base[2] + pad],
 			structuredClone(list),
 		);
 		this.#coordinates.finalSize = [+X, +Z, +Y];
@@ -108,12 +107,15 @@ export default class CraterTube {
 	}
 
 	#checkHugeTubes() {
-		const getter = this.#tubes.filter((tube) => {
-			if (tube[2] > this.#DIAMETER) return tube;
-			return;
+		const getter = [];
+
+		this.#tubes.filter((tube) => {
+			if (tube[2] > this.#DIAMETER) getter.push(tube);
+			return tube;
 		});
 		getter.map((roll) => {
 			this.#tubes.splice(this.#tubes.indexOf(roll), 1);
+			return roll;
 		});
 		return getter;
 	}
@@ -136,6 +138,10 @@ export default class CraterTube {
 			crates.push(this.#interfaceCrates(this.#tubes.length, this.#tubes));
 			crates.push({ works: this.#tubes });
 		}
-		return (this.#tubes = { crates });
+		return { crates };
+	}
+
+	get makeCrate() {
+		return this.#crateMaker();
 	}
 }

@@ -9,13 +9,12 @@ export default class CraterSameSize {
 	#materials;
 
 	constructor(list, materials) {
-		if (!list || list.length === 0) return { sameSize: false };
-
-		this.#materials = materials;
-		this.#rawList = structuredClone(list);
-		this.#pieces = list.map((art) => art.packedSized);
-		this.#packageSize = list[0].packedSized;
-		return this.#startCrateTrail();
+		if(list && list.length > 0) {
+			this.#materials = materials;
+			this.#rawList = structuredClone(list);
+			this.#pieces = list.map((art) => art.packedSized);
+			this.#packageSize = list[0].packedSized;
+		}
 	}
 
 	#worksInPlace(list, arranger, i = 1) {
@@ -205,10 +204,16 @@ export default class CraterSameSize {
 	}
 
 	#startCrateTrail() {
+		if (!this.#rawList || this.#rawList.length === 0) return { sameSize: false };
+
 		let countDiffSizes = this.#countWorks();
 		if (countDiffSizes === null) return null;
 		const crateDone = this.#compCrate(countDiffSizes);
 		countDiffSizes = null;
 		return { crates: crateDone };
+	}
+
+	get makeCrate () {
+		return this.#startCrateTrail();
 	}
 }

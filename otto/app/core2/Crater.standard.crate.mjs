@@ -12,6 +12,7 @@ export default class CraterStandard {
 	#thresholdX;
 	#materials;
 	#layers = 0;
+	#recheck;
 
 	/**
 	 * @param {Array} canvas - The list to be solved.
@@ -20,17 +21,18 @@ export default class CraterStandard {
 	 * @param {Boolean} recheck - The option reset crates sizes.
 	 */
 	constructor(canvas, materials, maxLayer, recheck) {
-		if (!canvas || canvas.length === 0) return { standard: false };
-
-		this.#materials = materials
-		this.#rawList = canvas;
-		this.#list = canvas.map((work) => work.packedSized);
-		this.#maxLayers = maxLayer ?? 4;
-		return this.#startCrate([], recheck);
+		if(canvas && canvas.length > 0) {
+			this.#materials = materials
+			this.#rawList = canvas;
+			this.#list = canvas.map((work) => work.packedSized);
+			this.#maxLayers = maxLayer ?? 4;
+			this.#recheck = recheck;
+		}
 	}
 
-	#startCrate(ARTS1, recheck) {
-		switch (recheck) {
+	#startCrate(ARTS1 = []) {
+		if (!this.#rawList || this.#rawList.length === 0) return { standard: false };
+		switch (this.#recheck) {
 			case false:
 				ARTS1 = this.#selectTheBestSolution();
 				return { crates: ARTS1 };
@@ -55,8 +57,10 @@ export default class CraterStandard {
 			check3 = list1[pos][2] > list2[pos][2];
 			check4 = list1[pos][2] !== list2[pos][2];
 
-			check1 && check2 ? (opt1 += 1) : check2 ? (opt2 += 1) : 0;
-			check3 && check4 ? (opt1 += 1) : check4 ? (opt2 += 1) : 0;
+			if(check1 && check2) (opt1 += 1)
+			else if (check2) opt2 += 1;
+			if(check3 && check4) opt1 += 1;
+			else if (check4) opt2 += 1;
 		}
 		return { opt1, opt2 };
 	}
@@ -107,9 +111,10 @@ export default class CraterStandard {
 		let count;
 		let bestOne;
 
-		equalCrates
-			? (count = this.#checkEqualLengths(crates1, crates2))
-			: (count = this.#checkBestAirportOptions(crates1, crates2));
+		if (equalCrates)
+			count = this.#checkEqualLengths(crates1, crates2)
+		else
+			count = this.#checkBestAirportOptions(crates1, crates2);
 
 		if (Object.hasOwn(count, "bestArrange")) bestOne = count.bestArrange;
 		else bestOne = count.opt1 <= count.opt2 ? 1 : 2;
@@ -359,5 +364,9 @@ export default class CraterStandard {
 		crates.push(this.#defineFinalSize(measure, crate));
 		crates.push({ works: crate });
 		return this.#provideCrate(crates, setup, list);
+	}
+
+	get makeCrate() {
+		return this.#startCrate();
 	}
 }
