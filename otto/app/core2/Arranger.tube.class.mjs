@@ -3,18 +3,19 @@ export default class ArrangerTube {
 
 	constructor(list) {
 		this.#list = list;
-		return this.#findTubesOnTheList();
 	}
 
 	#findTubesOnTheList() {
 		const { noCanvas } = this.#list;
-		const tubes = noCanvas.filter((piece) => {
+		const tubes = [];
+
+		noCanvas.filter((piece) => {
 			const MAXDIM = 35;
 			const LIMIT = piece.z < MAXDIM && piece.y < MAXDIM;
 			const CHECK = piece.z === piece.y;
 
-			if (LIMIT && CHECK) if (piece.x !== piece.y && CHECK) return piece;
-			return pace;
+			if (LIMIT && CHECK) if (piece.x !== piece.y && CHECK) tubes.push(piece);
+			return piece;
 		});
 
 		tubes.map((art) => {
@@ -23,5 +24,9 @@ export default class ArrangerTube {
 		});
 		this.#list.tubes = tubes;
 		return this.#list;
+	}
+
+	get makeArrange(){
+		return this.#findTubesOnTheList();
 	}
 }

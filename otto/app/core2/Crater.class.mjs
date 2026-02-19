@@ -87,7 +87,7 @@ export default class Crater {
 	}
 
 	#noCanvasCrate() {
-		if (this.#works?.largest?.length > 0) {
+		if (this.#works?.noCanvas?.length > 0) {
 			const noCanvas = new CraterNotCanvas(
 				this.#works?.noCanvas,
 				this.#materials,

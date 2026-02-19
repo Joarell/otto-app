@@ -9,12 +9,6 @@ export default class Arranger {
 
 	constructor(list) {
 		this.#works = list;
-		const dataChecker = this.#checkData();
-
-		if (dataChecker && dataChecker.constructor.name === "TypeError")
-			return dataChecker;
-		this.#solver();
-		return Object.assign(Arranger, { list: this.#works });
 	}
 
 	#solver() {
@@ -49,22 +43,31 @@ export default class Arranger {
 	}
 
 	#manySizes() {
-		this.#works = new ArrangerStarter(this.#works);
+		this.#works = new ArrangerStarter(this.#works).prepare;
 	}
 
 	#sameSizeTrail() {
-		this.#works = new ArrangerSameSize(this.#works);
+		this.#works = new ArrangerSameSize(this.#works).makeArrange;
 	}
 
 	#noCanvasTrail() {
-		this.#works = new ArrangerNoCanvas(this.#works);
+		this.#works = new ArrangerNoCanvas(this.#works).makeArrange;
 	}
 
 	#largestCanvasTrail() {
-		this.#works = new ArrangerLargestCanvas(this.#works);
+		this.#works = new ArrangerLargestCanvas(this.#works).makeArrange;
 	}
 
 	#findTubes() {
-		this.#works = new ArrangerTube(this.#works);
+		this.#works = new ArrangerTube(this.#works).makeArrange;
+	}
+
+	get start() {
+		const dataChecker = this.#checkData();
+
+		if (dataChecker && dataChecker.constructor.name === "TypeError")
+			return dataChecker;
+		this.#solver();
+		return Object.assign(Arranger, { list: this.#works });
 	}
 }

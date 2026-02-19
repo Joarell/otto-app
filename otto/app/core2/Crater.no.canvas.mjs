@@ -141,7 +141,6 @@ export default class CraterNotCanvas {
 		return equals === 0 || items[0][1] > MAXLEN ? 1 : equals;
 	}
 
-	//returns how many works to put in side the crate.
 	#defineMaxPeces(items) {
 		const PAD = 10;
 		let x = PAD * items.length;

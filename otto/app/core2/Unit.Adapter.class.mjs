@@ -117,7 +117,7 @@ export default class UnitAdapter {
 
 	//:TODO Convert the materials unit properly.
 	async #cmPath() {
-		const RESULT = await Promise.resolve(new Arranger(this.#list))
+		const RESULT = await Promise.resolve(new Arranger(this.#list).start)
 			.then((procList) => new Crater(procList, this.#materials).makeCrate)
 			.then((cratesDone) => cratesDone.crates)
 			.catch((err) => err);
@@ -126,7 +126,7 @@ export default class UnitAdapter {
 
 	async #inPath() {
 		const RESULT = await Promise.resolve(this.#convertToCM())
-			.then((list) => new Arranger(list))
+			.then((list) => new Arranger(list).start)
 			.then((procList) => new Crater(procList, this.#materials).makeCrate)
 			.then((cratesDone) => this.#convertToIN(cratesDone.crates))
 			.catch((err) => err);

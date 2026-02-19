@@ -3,7 +3,6 @@ export default class ArrangerSameSize {
 
 	constructor({ sorted }) {
 		this.#list = sorted;
-		return this.#sameSizeTrail();
 	}
 
 	#trailOne() {
@@ -20,6 +19,7 @@ export default class ArrangerSameSize {
 					checked = checker(this[i], work);
 					if (!getter.includes(this[i]) && checked) getter.push(this[i]);
 				}
+			return work;
 		});
 		return getter;
 	}
@@ -45,8 +45,10 @@ export default class ArrangerSameSize {
 			if (getter.length >= 4)
 				getter.map((element) => {
 					sameSize.push(element);
+					return element;
 				});
 			getter = null;
+			return work;
 		});
 		return sameSize;
 	}
@@ -57,7 +59,12 @@ export default class ArrangerSameSize {
 
 		pathTwo.map((art) => {
 			this.#list.splice(this.#list.indexOf(art), 1);
+			return art;
 		});
 		return { sorted: this.#list, sameSize: pathTwo };
+	}
+
+	get makeArrange() {
+		return this.#sameSizeTrail();
 	}
 }

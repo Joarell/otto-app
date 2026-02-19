@@ -3,7 +3,6 @@ export default class ArrangerLargestCanvas {
 
 	constructor(list) {
 		this.#list = list;
-		return this.#largest();
 	}
 
 	#finder() {
@@ -30,5 +29,9 @@ export default class ArrangerLargestCanvas {
 			: 0;
 		if(finder) this.#list.largest = finder;
 		return this.#list;
+	}
+
+	get makeArrange() {
+		return this.#largest();
 	}
 }

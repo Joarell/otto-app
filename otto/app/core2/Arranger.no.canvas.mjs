@@ -3,7 +3,6 @@ export default class ArrangerNoCanvas {
 
 	constructor(list) {
 		this.#peces = list;
-		return this.#noCanvas();
 	}
 
 	#removePeces(peces) {
@@ -36,5 +35,9 @@ export default class ArrangerNoCanvas {
 	#noCanvas() {
 		const filtered = this.#noCanvasOut();
 		return filtered;
+	}
+
+	get makeArrange() {
+		return this.#noCanvas();
 	}
 }
