@@ -664,13 +664,14 @@ export default class WorksCoordinates {
 		const { check01, check02, extraX, extraY } = data;
 		const ind = this.#rawList.findIndex((data) => data.code === art[0]);
 		const ICON = `<i class="nf nf-oct-sync"></i>`;
+		const thickness = 14;
 		let found = false;
 		let x;
 		let y;
 		const fillSpace = (turn, x, y) => {
 			found = true;
 
-			if (turn && x !== y) {
+			if (turn && x !== y && art[2] <= thickness) {
 				art.push(ICON);
 				this.#packedList.find((work) =>
 					work[0] === art[0] ? work.push(ICON) : 0,
@@ -838,8 +839,8 @@ export default class WorksCoordinates {
 		const { emptyArea, feat } = info;
 		const art = list[len];
 		const pos = this.#selectPositionCandidate(emptyArea, art);
-		const data = { emptyArea, found: false, art, pos };
-		let result = this.#featRecursionLayer(data);
+		const baseObject = { emptyArea, found: false, art, pos };
+		let result = this.#featRecursionLayer(baseObject);
 		let tmp;
 
 		if (!result)

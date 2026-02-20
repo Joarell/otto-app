@@ -13,9 +13,7 @@ export default class TraceMaker {
 			["walls", "yellow"],
 			["padding", "#FFFFF0"],
 			["div", "#002A3D"],
-		].map((col) => {
-			this.#colors.set(col[0], col[1]);
-		});
+		].map((col) => this.#colors.set(col[0], col[1]));
 		this.#edges = [
 			[0, 1],
 			[1, 2],
@@ -30,6 +28,50 @@ export default class TraceMaker {
 			[2, 6],
 			[3, 7], // Vertical edges
 		];
+	}
+
+	#defineHugeShape() {
+		const { info, coordinates, name, show, sizes } = this.#data;
+		const color = this.#colors.get(name.color ?? name) ?? name.color;
+		const { dep, high } = sizes;
+
+		this.#edges.forEach((edge, i) => {
+			const v1 = coordinates[edge[0]];
+			const v2 = coordinates[edge[1]];
+			const cosAngle = Math.cos(dep / high);
+			const sinAngle = Math.sin(high / dep);
+			const rotX = (x, y, z) => [
+				x,
+				z * sinAngle + y * cosAngle,
+				z * cosAngle - y * sinAngle,
+			];
+			const first = rotX(v1.x, v1.y, v1.z);
+			const second = rotX(v2.x, v2.y, v2.z);
+
+			info.push({
+				x: [first[0], second[0]],
+				z: [first[1], second[1]],
+				y: [first[2], second[2]],
+				name: name.name ?? name,
+				mode: "lines",
+				type: "scatter3d",
+				line: {
+					color,
+					width: 1.5,
+				},
+				showlegend: show && i === 0 ? true : false,
+				hovertext: name.code ?? name,
+				legendgroup: name.name ?? name,
+				hovertemplate:
+					"L: %{x}<br>" + "H: %{z}<br>" + "D: %{y}<br>" + `Code: ${name.code}`,
+				contour: {
+					show: show && i === 0 ? true : false,
+					color: "#BB0056BB",
+					width: 2,
+				},
+			});
+		});
+		return info;
 	}
 
 	#defineShape() {
@@ -72,5 +114,9 @@ export default class TraceMaker {
 
 	get defineTrace() {
 		return this.#defineShape();
+	}
+
+	get defineHugeTrace() {
+		return this.#defineHugeShape();
 	}
 }

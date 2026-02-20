@@ -59,18 +59,15 @@ export default class CraterTube {
 
 	#setPaddings(base, list) {
 		const crate = new CrateMaker(1, this.#materials);
-		const x = +(base[0] + crate.outSizes.x).toFixed(3);
-		const z = +(base[1] + crate.outSizes.z).toFixed(3);
-		const y = +(base[2] + crate.outSizes.y).toFixed(3);
+		const outSizes = crate.outSizes;
+		const x = +(base[0] + outSizes.x).toFixed(3);
+		const z = +(base[1] + outSizes.z).toFixed(3);
+		const y = +(base[2] + outSizes.y).toFixed(3);
 		const X = x % 1 > 0 ? x : x.toFixed(0);
 		const Z = z % 1 > 0 ? z : z.toFixed(0);
 		const Y = y % 1 > 0 ? y : y.toFixed(0);
-		const { pad } = crate.outSizes;
 
-		this.#setWokdCoordinates(
-			[base[0] + pad, base[1] + pad, base[2] + pad],
-			structuredClone(list),
-		);
+		this.#setWokdCoordinates(base, structuredClone(list));
 		this.#coordinates.finalSize = [+X, +Z, +Y];
 		return [...this.#coordinates.finalSize];
 	}
@@ -80,19 +77,6 @@ export default class CraterTube {
 		return this.#setPaddings(baseSize, works);
 	}
 
-	#interfaceCrates(list) {
-		switch (list.length) {
-			case 1:
-				return this.#tubeCrate(list);
-			case 2:
-				return this.#tubeCrate(list);
-			case 3:
-				return this.#tubeCrate(list);
-			case 4:
-				return this.#tubeCrate(list);
-		}
-	}
-
 	#hugeTubes(tubes) {
 		const result = [];
 		const MAXCONTENT = 3;
@@ -100,7 +84,7 @@ export default class CraterTube {
 
 		while (tubes.length >= MAXCONTENT) {
 			getter = tubes.splice(0, MAXCONTENT);
-			result.push(this.#interfaceCrates(getter.length, getter));
+			result.push(this.#tubeCrate(getter.length));
 			result.push({ works: getter });
 		}
 		return result;
@@ -121,7 +105,8 @@ export default class CraterTube {
 	}
 
 	#possibleCrates() {
-		let reduce = [];
+		let reduce;
+		let tubes;
 		const crates = [];
 		const MAXCONTENT = 3;
 		const biggest = this.#checkHugeTubes();
@@ -130,13 +115,20 @@ export default class CraterTube {
 			crates.push(this.#hugeTubes(biggest));
 
 		while (this.#tubes.length) {
-			reduce = this.#tubes.splice(0, MAXCONTENT);
-			crates.push(this.#interfaceCrates(reduce));
-			crates.push({ works: reduce });
+			tubes = this.#tubes.splice(0, MAXCONTENT);
+
+			reduce = structuredClone(tubes);
+			crates.push(this.#tubeCrate(reduce));
+			crates[0].push(this.#coordinates);
+			crates.push({ works: tubes });
 		}
 		if (this.#tubes.length >= 1) {
-			crates.push(this.#interfaceCrates(this.#tubes.length, this.#tubes));
-			crates.push({ works: this.#tubes });
+			tubes = this.#tubes.splice(0, MAXCONTENT);
+
+			reduce = structuredClone(tubes);
+			crates.push(this.#tubeCrate(reduce));
+			crates[0].push(this.#coordinates);
+			crates.push({ works: tubes });
 		}
 		return { crates };
 	}

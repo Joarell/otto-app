@@ -1,6 +1,7 @@
 import FillGaps from "./Plotly.crate.gaps.mjs";
-import DesignWalls from "./Plotly.fill.colors.class.mjs";
-import TraceMaker from "./Plotly.trace.class.mjs";
+import WorksPosition from "./Ploty.works.position.mjs";
+import PadDivSizes from "./Plotly.div.sizes.mjs";
+import DesignPlotter from "./Plotly.design.works.mjs";
 
 export default class PositionWorksInSideCrate {
 	#crate;
@@ -98,7 +99,7 @@ export default class PositionWorksInSideCrate {
 			const y = coordinates.y ? this.#threshold[2] + offY : this.#threshold[2];
 			const z = this.#threshold[1] + coordinates.z + depth;
 
-			data[1]["layer"] = {
+			data[1].layer = {
 				code,
 				name: `layer-${layer}`,
 				color: this.#traceColor(),
@@ -106,30 +107,30 @@ export default class PositionWorksInSideCrate {
 			art.map((info, i) => {
 				switch (i) {
 					case 0:
-						info.x === 0 ? (info.x = x + coordinates.x) : 0;
-						info.y === 0 ? (info.y = y) : 0;
-						info.z === 0 ? (info.z = z) : 0;
+						if(info.x === 0 ) info.x = x + coordinates.x;
+						if(info.y === 0) info.y = y;
+						if(info.z === 0) info.z = z;
 						return info;
 					case 1:
-						info.y === 0 ? (info.y = y) : 0;
-						info.z === 0 ? (info.z = z) : 0;
+						if(info.y === 0) info.y = y;
+						if(info.z === 0) info.z = z;
 						return info;
 					case 2:
-						info.z === 0 ? (info.z = z) : 0;
+						if(info.z === 0) info.z = z;
 						return info;
 					case 3:
-						info.x === 0 ? (info.x = x + coordinates.x) : 0;
-						info.z === 0 ? (info.z = z) : 0;
+						if(info.x === 0) info.x = x + coordinates.x;
+						if(info.z === 0) info.z = z;
 						return info;
 					case 4:
-						info.x === 0 ? (info.x = x + coordinates.x) : 0;
-						info.y === 0 ? (info.y = y) : 0;
+						if(info.x === 0) info.x = x + coordinates.x;
+						if(info.y === 0) info.y = y;
 						return info;
 					case 5:
-						info.y === 0 ? (info.y = y) : 0;
+						if(info.y === 0) info.y = y;
 						return art;
 					case 7:
-						info.x === 0 ? (info.x = x + coordinates.x) : 0;
+						if(info.x === 0) info.x = x + coordinates.x;
 						return info;
 				}
 				return info;
@@ -139,166 +140,7 @@ export default class PositionWorksInSideCrate {
 		return works;
 	}
 
-	#workGraphicPosition(dim, local, depth) {
-		let x =
-			dim.length > 4
-				? +dim[3] + this.#threshold[0] - this.#pad[2]
-				: +dim[1] + this.#threshold[0] - this.#pad[2];
-		let y =
-			dim.length > 4
-				? +dim[1] + this.#threshold[2] - this.#pad[2]
-				: +dim[3] + this.#threshold[2] - this.#pad[2];
-		const z = depth + this.#threshold[1];
-		const { coordinates, code } = local;
-
-		!coordinates.x ? (x += this.#pad[2]) : (x += this.#pad[2] + coordinates.x);
-		coordinates.y ? (y += coordinates.y) : 0;
-		const work = {
-			coordinates,
-			code,
-			art: [
-				{ x: 0, y: 0, z: 0 }, // Vertex 0
-				{ x, y: 0, z: 0 }, // Vertex 1
-				{ x, y, z: 0 }, // Vertex 2
-				{ x: 0, y, z: 0 }, // Vertex 3
-				{ x: 0, y: 0, z }, // Vertex 4
-				{ x, y: 0, z }, // Vertex 5
-				{ x, y, z }, // Vertex 6
-				{ x: 0, y, z }, // Vertex 7
-			],
-			width: x - this.#threshold[0] - coordinates.x,
-			depth: dim[2],
-			height: coordinates.y
-				? y - this.#threshold[2] - coordinates.y + this.#pad[2]
-				: y - this.#threshold[2] - coordinates.y,
-			offsetX: this.#threshold[0] + coordinates.x,
-			offsetY: this.#threshold[1] + depth,
-			offsetZ: coordinates.y
-				? this.#threshold[2] + coordinates.y - this.#pad[2]
-				: this.#threshold[2],
-		};
-		return work;
-	}
-
-	#defineDivSize(x, y , depth, layer, lastX) {
-		const z = depth + this.#threshold[2];
-		const offX = lastX || this.#threshold[0];
-		const offZ = depth + this.#threshold[2] - this.#div[2];
-		const offY = this.#threshold[2];
-		let div = structuredClone(layer);
-
-		const divisor = {
-			div: [
-				{ x: offX, y: offY, z: offZ }, // Vertex 0
-				{ x, y: offY, z: offZ }, // Vertex 1
-				{ x, y, z: offZ }, // Vertex 2
-				{ x: offX, y, z: offZ }, // Vertex 3
-				{ x: offX, y: offY, z }, // Vertex 4
-				{ x, y: offY, z }, // Vertex 5
-				{ x, y, z }, // Vertex 6
-				{ x: offX, y, z }, // Vertex 7
-			],
-			width: x - 2 * this.#pad[2],
-			depth: this.#div[2],
-			height: y - 2 * this.#pad[2] - this.#div[2],
-			offsetX: this.#threshold[0],
-			offsetY: depth + this.#threshold[2] - this.#div[2],
-			offsetZ: this.#threshold[2],
-			layer: { name: `layer-${++div}`, color: "div" },
-		};
-		return divisor;
-	}
-
-	#setDivLayer(layer, depth, inner, data = [], filled = { x: 0, y: 0, full: 0}) {
-		if (filled.x >= inner[0] && filled.y >= inner[2]) return data;
-		let { x, y, full } = filled;
-		let lastX = 0;
-		let lastY = 0;
-
-		if(x === 0) {
-			x = inner[0] < this.#div[1] ? inner[0] : this.#div[1];
-			filled.x = x;
-		}
-		else if (x < inner[0]) {
-			x = inner[0] - x >= this.#div[1] ? this.#div[1] : inner[0] - x;
-			lastX = structuredClone(filled.x);
-			filled.x += x;
-		}
-		if(y === 0) {
-			y = inner[2] < this.#div[3] ? inner[2] : this.#div[3];
-			filled.y = y;
-			y += this.#threshold[2] - this.#div[2];
-		}
-		else if (y < inner[2] && full === 0 && lastX === 0) {
-			y = inner[2] - y >= this.#div[3] ? this.#div[3] : inner[2] - y;
-			lastY = structuredClone(filled.y);
-			filled.y += y;
-			if (full === 0) {
-				filled.full = 1;
-				filled.x = inner[0] < this.#div[1] ? inner[0] : this.#div[1];
-			}
-		}
-		x += lastX;
-		y += lastY - this.#div[2];
-		data.push(this.#defineDivSize(x, y, depth, layer, lastX, lastY));
-		return this.#setDivLayer(layer, depth, inner, data, filled);
-	}
-
-	#buildTraceAndFill(list) {
-		let meta = structuredClone(this.#data);
-		const trace = new TraceMaker();
-		const fill = new DesignWalls();
-		let tmp;
-
-		list.map((info) => {
-			info.map((data) => {
-				const {
-					div,
-					layer,
-					art,
-					offsetX,
-					offsetY,
-					offsetZ,
-					width,
-					depth,
-					height,
-				} = data;
-
-				trace.data = {
-					info: meta,
-					coordinates: art ? art : div,
-					name: layer ?? div,
-					show: div || tmp === layer.name ? false : true,
-				};
-				meta = trace.defineTrace;
-				fill.objectData = {
-					width,
-					depth,
-					height,
-					info: meta,
-					name: layer ?? div,
-					offsetX,
-					offsetY,
-					offsetZ,
-				};
-				meta = fill.designSides;
-				tmp = div || layer.name === tmp ? tmp : layer.name;
-				return data;
-			});
-			return info;
-		});
-		return meta;
-	}
-
-	#populateLayerTubeCrate() { }
-
-	#populateLayerNotCanvas() { }
-
-	#populateLayerHugeCanvas() { }
-
-	#populateLayerSameSizes() { }
-
-	#populateLayerStandard() {
+	#populateLayerTubeCrate() {
 		const { layers, fillGaps, artLocation } = this.#info;
 		const onLayers = [];
 		let depthSum = 0;
@@ -307,11 +149,104 @@ export default class PositionWorksInSideCrate {
 		layers.map((data, i) => {
 			const { vacuum, works } = data;
 			const allWorks = works.map((info) => {
-				return this.#workGraphicPosition(
+				const position = new WorksPosition(
 					info.work,
 					artLocation.get(info.work[0]),
 					depthSum,
-				);
+					this.#threshold,
+					this.#pad
+				)
+				return position.tubes;
+			});
+			const checkGap = vacuum.length > 1;
+
+			onLayers.push(this.#worksOffset(allWorks, depthSum, i + 1));
+			works.filter((info) => {
+				if(!thickness || thickness < info.work[2]) (thickness = info.work[2])
+				return info;
+			});
+			if (checkGap) {
+				const info = {
+					vacuum,
+					maxZ: fillGaps,
+					offZ: +(depthSum + this.#threshold[1]).toFixed(3),
+					pad: this.#pad,
+					div: this.#div,
+					offset: this.#threshold,
+				};
+				const gaps = new FillGaps(info, i + 1);
+				gaps.fill;
+			}
+			depthSum += +thickness.toFixed(3);
+			thickness = 0;
+			return data;
+		}, 0);
+		const designWorks = new DesignPlotter(onLayers, this.#data);
+		return designWorks.tubesDesign;
+	}
+
+	#populateLayerNotCanvas() {
+		const { layers, fillGaps, artLocation } = this.#info;
+		const onLayers = [];
+		let depthSum = 0;
+		let thickness = 0;
+
+		layers.map((data, i) => {
+			const { vacuum, works } = data;
+			const allWorks = works.map((info) => {
+				const position = new WorksPosition(
+					info.work,
+					artLocation.get(info.work[0]),
+					depthSum,
+					this.#threshold,
+					this.#pad
+				)
+				return position.noCanvas;
+			});
+			const checkGap = vacuum.length > 1;
+
+			onLayers.push(this.#worksOffset(allWorks, depthSum, i + 1));
+			works.filter((info) => {
+				if(!thickness || thickness < info.work[2]) (thickness = info.work[2])
+				return info;
+			});
+			if (checkGap) {
+				const info = {
+					vacuum,
+					maxZ: fillGaps,
+					offZ: +(depthSum + this.#threshold[1]).toFixed(3),
+					pad: this.#pad,
+					div: this.#div,
+					offset: this.#threshold,
+				};
+				const gaps = new FillGaps(info, i + 1);
+				gaps.fill;
+			}
+			depthSum += +thickness.toFixed(3);
+			thickness = 0;
+			return data;
+		}, 0);
+		const designWorks = new DesignPlotter(onLayers, this.#data);
+		return designWorks.squaredDesign;
+	}
+
+	#populateLayerHugeCanvas() {
+		const { layers, fillGaps, artLocation, baseSize, finalSize } = this.#info;
+		const onLayers = [];
+		let depthSum = 0;
+		let thickness = 0;
+
+		layers.map((data, i) => {
+			const { vacuum, works } = data;
+			const allWorks = works.map((info) => {
+				const position = new WorksPosition(
+					info.work,
+					artLocation.get(info.work[0]),
+					depthSum,
+					this.#threshold,
+					this.#pad
+				)
+				return position.largestCanvas;
 			});
 			const checkGap = vacuum.length > 1;
 
@@ -334,15 +269,136 @@ export default class PositionWorksInSideCrate {
 			}
 			depthSum += +thickness.toFixed(3);
 			if (layers.length > 1 && layers.length - 1 > i) {
-				onLayers.push(
-					this.#setDivLayer(i + 1, depthSum, structuredClone(this.#inner)),
+				const div = new PadDivSizes(
+					this.#pad,
+					this.#threshold,
+					i + 1,
+					depthSum,
+					structuredClone(this.#inner),
+					this.#div,
 				);
+				onLayers.push(div.hugeDiv);
 				depthSum += this.#div[2];
 			}
 			thickness = 0;
 			return data;
 		}, 0);
-		return this.#buildTraceAndFill(onLayers);
+		const designWorks = new DesignPlotter(onLayers, this.#data, finalSize);
+		return designWorks.hugeDesign;
+	}
+
+	#populateLayerSameSizes() {
+		const { layers, fillGaps, artLocation } = this.#info;
+		const onLayers = [];
+		let depthSum = 0;
+		let thickness = 0;
+
+		layers.map((data, i) => {
+			const { vacuum, works } = data;
+			const allWorks = works.map((info) => {
+				const position = new WorksPosition(
+					info.work,
+					artLocation.get(info.work[0]),
+					depthSum,
+					this.#threshold,
+					this.#pad
+				)
+				return position.standardCanvas;
+			});
+			const checkGap = vacuum.length > 1;
+
+			onLayers.push(this.#worksOffset(allWorks, depthSum, i + 1));
+			works.filter((info) => {
+				if(!thickness || thickness < info.work[2]) (thickness = info.work[2])
+				return info;
+			});
+			if (checkGap) {
+				const info = {
+					vacuum,
+					maxZ: fillGaps,
+					offZ: +(depthSum + this.#threshold[1]).toFixed(3),
+					pad: this.#pad,
+					div: this.#div,
+					offset: this.#threshold,
+				};
+				const gaps = new FillGaps(info, i + 1);
+				gaps.fill;
+			}
+			depthSum += +thickness.toFixed(3);
+			if (layers.length > 1 && layers.length - 1 > i) {
+				const div = new PadDivSizes(
+					this.#pad,
+					this.#threshold,
+					i + 1,
+					depthSum,
+					structuredClone(this.#inner),
+					this.#div,
+				);
+				onLayers.push(div.sameSizeDiv);
+				depthSum += this.#div[2];
+			}
+			thickness = 0;
+			return data;
+		}, 0);
+		const designWorks = new DesignPlotter(onLayers, this.#data);
+		return designWorks.squaredDesign;
+	}
+
+	#populateLayerStandard() {
+		const { layers, fillGaps, artLocation } = this.#info;
+		const onLayers = [];
+		let depthSum = 0;
+		let thickness = 0;
+
+		layers.map((data, i) => {
+			const { vacuum, works } = data;
+			const allWorks = works.map((info) => {
+				const position = new WorksPosition(
+					info.work,
+					artLocation.get(info.work[0]),
+					depthSum,
+					this.#threshold,
+					this.#pad
+				)
+				return position.standardCanvas;
+			});
+			const checkGap = vacuum.length > 1;
+
+			onLayers.push(this.#worksOffset(allWorks, depthSum, i + 1));
+			works.filter((info) => {
+				if(!thickness || thickness < info.work[2]) (thickness = info.work[2])
+				return info;
+			});
+			if (checkGap) {
+				const info = {
+					vacuum,
+					maxZ: fillGaps,
+					offZ: +(depthSum + this.#threshold[1]).toFixed(3),
+					pad: this.#pad,
+					div: this.#div,
+					offset: this.#threshold,
+				};
+				const gaps = new FillGaps(info, i + 1);
+				gaps.fill;
+			}
+			depthSum += +thickness.toFixed(3);
+			if (layers.length > 1 && layers.length - 1 > i) {
+				const div = new PadDivSizes(
+					this.#pad,
+					this.#threshold,
+					i + 1,
+					depthSum,
+					structuredClone(this.#inner),
+					this.#div,
+				);
+				onLayers.push(div.standardDiv);
+				depthSum += this.#div[2];
+			}
+			thickness = 0;
+			return data;
+		}, 0);
+		const designWorks = new DesignPlotter(onLayers, this.#data);
+		return designWorks.squaredDesign;
 	}
 
 	#defineWorksLocation() {

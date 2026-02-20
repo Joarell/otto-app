@@ -72,7 +72,7 @@ export default class Crater {
 				this.#works?.largest,
 				this.#materials,
 			);
-			this.#crates.largestCrate = largestcrates;
+			this.#crates.largestCrate = largestcrates.makeCrate;
 		}
 	}
 
@@ -109,10 +109,13 @@ export default class Crater {
 	}
 
 	#lastCheckArrangerSameSizeToStandard() {
-		const check = Object.entries(this.#crates).some(
+		const check1 = Object.entries(this.#crates).some(
 			(data) => data[0] === "sameSizeCrate",
 		);
-		if (check)
+		const check2 = Object.entries(this.#crates).some(
+			(data) => data[0] === "standardCrate",
+		);
+		if (check1 && check2)
 			this.#crates = new CraterLastCheckReArranger(
 				this.#crates,
 				this.#materials,

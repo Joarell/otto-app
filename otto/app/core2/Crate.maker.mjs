@@ -4,11 +4,11 @@ export default class CrateMaker {
 	#materials;
 
 	constructor(layers, materials, opt = false) {
-		if (!layers) return false;
-
-		this.#materials = materials;
-		this.#layers = layers;
-		this.#workStack = opt;
+		if (layers) {
+			this.#materials = materials;
+			this.#layers = layers;
+			this.#workStack = opt;
+		}
 	}
 
 	/**
@@ -27,31 +27,30 @@ export default class CrateMaker {
 		let pad = 0;
 
 		woods.map((item) => {
-			x += +item[2];
-			z += +item[2];
+			x += +item[2] * 2;
+			z += +item[2] * 2;
+			if(item.at(-1) === "Pinewood") y += +item[2] * 3;
+			else y += +item[2] * 2;
 			return item;
 		});
-		x *= 2;
-		z *= 2;
-		y *= 2;
-		separator?.length ? separator.map((foam) => {
-					if (this.#layers > 1 && foam[2] <= DIVISION) {
-						if (this.#workStack) {
-							this.#workStack = false;
-							y += +foam[2];
-						}
-						div = foam[2];
-						z += +foam[2] * (this.#layers - 1);
-						return foam;
+		if(separator?.length)
+			separator.map((foam) => {
+				if (this.#layers > 1 && foam[2] <= DIVISION) {
+					if (this.#workStack) {
+						this.#workStack = false;
+						y += +foam[2];
 					}
-					if (this.#layers === 1 && foam[2] <= DIVISION) return foam;
-					x += +foam[2] * 2;
-					z += +foam[2] * 2;
-					y += +foam[2] * 2;
-					if(foam[2] > 2.5) pad = 2 * foam[2];
+					div = foam[2];
+					z += +foam[2] * (this.#layers - 1);
 					return foam;
-				})
-			: 0;
+				}
+				if (this.#layers === 1 && foam[2] <= DIVISION) return foam;
+				x += +foam[2] * 2;
+				z += +foam[2] * 2;
+				y += +foam[2] * 2;
+				if(foam[2] > 2.5) pad = 2 * foam[2];
+				return foam;
+			})
 		return { x, z, y, div, pad };
 	}
 
@@ -73,6 +72,7 @@ export default class CrateMaker {
 	}
 
 	get outSizes() {
+		if (!this.#layers) return false;
 		return this.#crateMaterialsDefined();
 	}
 }

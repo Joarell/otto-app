@@ -7,11 +7,13 @@ export default class PaddingCrate {
 	#ply;
 	#crate;
 	#pad;
+	#baseSize
 
-	constructor(crate, material, meta) {
+	constructor(crate, material, meta, baseSize) {
 		const available = JSON.parse(localStorage.getItem("crating"));
 		const used = available.map((opt) => material.usedMaterials.get(opt));
 
+		this.#baseSize = baseSize;
 		this.#crate = crate;
 		this.#data = meta;
 		this.#pine = used.find((list) => list.at(-1) === "Pinewood");
@@ -28,7 +30,7 @@ export default class PaddingCrate {
 		const pineDepth = this.#ply[2] + this.#pine[2];
 		const facesLength =
 			this.#crate[0] - (this.#pine[2] + this.#ply[2] + 2 * this.#ply[2]);
-		const facesHeight = this.#crate[2] - pineDepth - this.#pad[2];
+		const facesHeight = this.#crate[2] - pineDepth - 2 * this.#pad[2];
 		const sideLength = this.#crate[1] - pineDepth;
 		const faceLeftLen = this.#crate[0] - pineDepth;
 		const side = this.#pine[2] + this.#ply[2] + this.#pad[2];
@@ -149,7 +151,7 @@ export default class PaddingCrate {
 					(2 * this.#pine[2] + 2 * this.#ply[2] + 2 * this.#pad[2]),
 				depth: this.#pad[2],
 				height:
-					this.#crate[2] - 4 * this.#pine[2] - 3 * this.#ply[2] - this.#pad[2],
+					this.#crate[2] - 4 * this.#pine[2] - 3 * this.#ply[2] - 2 * this.#pad[2],
 				offsetX: this.#pine[2] + this.#ply[2] + this.#pad[2],
 				offsetY: this.#pad[2],
 				offsetZ: 3 * this.#pine[2] + 2 * this.#ply[2],
@@ -164,7 +166,7 @@ export default class PaddingCrate {
 					(2 * this.#pine[2] + 2 * this.#ply[2] + 2 * this.#pad[2]),
 				depth: this.#pad[2],
 				height:
-					this.#crate[2] - 4 * this.#pine[2] - 3 * this.#ply[2] - this.#pad[2],
+					this.#crate[2] - 4 * this.#pine[2] - 3 * this.#ply[2] - 2 * this.#pad[2],
 				offsetX: this.#pine[2] + this.#ply[2] + this.#pad[2],
 				offsetY: this.#crate[1] - 2 * this.#pad[2],
 				offsetZ: 3 * this.#pine[2] + 2 * this.#ply[2],
@@ -180,7 +182,7 @@ export default class PaddingCrate {
 					this.#crate[2] -
 					3 * this.#pine[2] -
 					2 * this.#ply[2] -
-					2 * this.#pad[2],
+					3 * this.#pad[2],
 				offsetX: this.#pine[2] + this.#ply[2],
 				offsetY: 2 * this.#pine[2],
 				offsetZ: 2 * this.#pine[2] + this.#ply[2] + this.#pad[2],
@@ -196,7 +198,7 @@ export default class PaddingCrate {
 					this.#crate[2] -
 					3 * this.#pine[2] -
 					2 * this.#ply[2] -
-					2 * this.#pad[2],
+					3 * this.#pad[2],
 				offsetX: this.#crate[0] - this.#ply[2] - this.#pine[2] - this.#pad[2],
 				offsetY: 2 * this.#pine[2],
 				offsetZ: 2 * this.#pine[2] + this.#ply[2] + this.#pad[2],
@@ -204,14 +206,14 @@ export default class PaddingCrate {
 			top: {
 				type: "top",
 				x: this.#pine[2] + this.#ply[2],
-				y: this.#crate[2] - this.#pine[2] - this.#ply[2],
+				y: this.#crate[2] - this.#pine[2] - 3 * this.#ply[2],
 				z: this.#pine[2] + this.#ply[2],
 				width: this.#crate[0] - (2 * this.#pine[2] + 2 * this.#ply[2]),
 				depth: this.#crate[1] - (this.#pine[2] + this.#ply[2] + this.#pad[2]),
 				height: this.#pad[2],
 				offsetX: this.#pine[2] + this.#ply[2],
 				offsetY: this.#pine[2] + this.#ply[2],
-				offsetZ: this.#crate[2] - (2 * this.#pine[2] + 2 * this.#ply[2]),
+				offsetZ: this.#crate[2] - (2 * this.#pine[2] + 2 * this.#ply[2] + this.#pad[2]),
 			},
 			bottom: {
 				type: "bottom",
@@ -262,11 +264,57 @@ export default class PaddingCrate {
 			};
 			meta = this.#data = fill.designSides;
 			show = false;
+			return part;
+		});
+		return meta;
+	}
+
+	#defineHugeCratePadding() {
+		const trace = new TraceMaker();
+		const fill = new DesignWalls();
+		const padding = this.#cratePadding();
+		const offsets = this.#offsetWalls();
+		const sizes = { dep: this.#baseSize[1], high: this.#baseSize[2] };
+		let meta = structuredClone(this.#data);
+		let show = true;
+
+		if (!this.#pad) return this.#data;
+		Object.entries(offsets).map((part) => {
+			const { type, offsetX, offsetY, offsetZ, width, depth, height } = part[1];
+			const face = padding[type];
+			const defined = this.#defineWalls(part[1], face);
+
+			trace.data = {
+				info: meta,
+				coordinates: defined,
+				name: "padding",
+				show,
+				sizes,
+			};
+			meta = trace.defineHugeTrace;
+			fill.objectData = {
+				width,
+				depth,
+				height,
+				info: meta,
+				name: "padding",
+				offsetX,
+				offsetY,
+				offsetZ,
+				sizes,
+			};
+			meta = this.#data = fill.largestCanvas;
+			show = false;
+			return part;
 		});
 		return meta;
 	}
 
 	get setPadding() {
 		return this.#defineCratePadding();
+	}
+
+	get setPaddingHuge() {
+		return this.#defineHugeCratePadding();
 	}
 }

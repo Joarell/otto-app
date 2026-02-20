@@ -2,7 +2,7 @@ import CrateMaker from "./Crate.maker.mjs";
 import WorksCoordinates from "./Crater.coordinates.mjs";
 
 export default class CraterNotCanvas {
-	#peces;
+	#pieces;
 	#rawList;
 	#coordinates;
 	#materials;
@@ -12,7 +12,7 @@ export default class CraterNotCanvas {
 		if(list && list.length > 0) {
 			this.#materials = materials;
 			this.#rawList = list;
-			this.#peces = list.map((art) => art.arr);
+			this.#pieces = list.map((art) => art.arr);
 			this.#list = list.map((art) => art.arr);
 		}
 	}
@@ -55,7 +55,7 @@ export default class CraterNotCanvas {
 	}
 
 	#setPadding(innerCrate) {
-		const crate = new CrateMaker(this.#peces, this.#materials).outSizes;
+		const crate = new CrateMaker(this.#pieces, this.#materials).outSizes;
 		const x = +(innerCrate[0] + crate.x).toFixed(3);
 		const z = +(innerCrate[1] + crate.z).toFixed(3);
 		const y = +(innerCrate[2] + crate.y).toFixed(3);
@@ -63,7 +63,7 @@ export default class CraterNotCanvas {
 		const Z = z % 1 > 0 ? z : z.toFixed(0);
 		const Y = y % 1 > 0 ? y : y.toFixed(0);
 		const div = crate.div
-			? innerCrate[1] + crate.div * this.#peces.length
+			? innerCrate[1] + crate.div * this.#pieces.length
 			: innerCrate[1];
 
 		this.#setWorksCoordinates([+X, +Z, +Y]);
@@ -98,22 +98,22 @@ export default class CraterNotCanvas {
 		return { newX, newZ };
 	}
 
-	#defCrate(peces) {
+	#defCrate(pieces) {
 		const LENLIMIT = 277;
-		const SPLIT = peces.length > 4 && peces.length % 2 === 0;
+		const SPLIT = pieces.length > 4 && pieces.length % 2 === 0;
 		let x = 0;
 		let z = 0;
 		let y = 0;
 		let split;
 
-		peces.map((item) => {
+		pieces.map((item) => {
 			x += item[1];
 			z = item[2] > z ? item[2] : z;
 			y = item[3] > y ? item[3] : y;
 			return item;
 		});
 		if (x > LENLIMIT || SPLIT) {
-			split = this.#splitCrate(peces);
+			split = this.#splitCrate(pieces);
 			x = split.newX;
 			z = split.newZ;
 		}
@@ -176,7 +176,7 @@ export default class CraterNotCanvas {
 			art.pop();
 			return art;
 		});
-		this.#peces = procList;
+		this.#pieces = procList;
 	}
 
 	#noCanvasTrail() {
@@ -185,15 +185,15 @@ export default class CraterNotCanvas {
 		const crate = [];
 		let peces;
 
-		this.#addXandZtimes(this.#peces);
-		while (this.#peces.length > 0) {
-			peces = this.#defineMaxPeces(this.#peces);
-			peces = this.#peces.splice(0, peces);
+		this.#addXandZtimes(this.#pieces);
+		while (this.#pieces.length > 0) {
+			peces = this.#defineMaxPeces(this.#pieces);
+			peces = this.#pieces.splice(0, peces);
 			if (peces.length > 0) {
 				crate.push(this.#defCrate(peces));
 				crate.push({ works: peces });
 			} else {
-				crate.push(this.#defCrate(this.#peces.splice(0, 1)));
+				crate.push(this.#defCrate(this.#pieces.splice(0, 1)));
 				crate.push({ works: peces });
 			}
 		}

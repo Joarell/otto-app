@@ -11,7 +11,7 @@ export default class CraterSameSize {
 	constructor(list, materials) {
 		if(list && list.length > 0) {
 			this.#materials = materials;
-			this.#rawList = structuredClone(list);
+			this.#rawList = list;
 			this.#pieces = list.map((art) => art.packedSized);
 			this.#packageSize = list[0].packedSized;
 		}
@@ -43,12 +43,29 @@ export default class CraterSameSize {
 
 		const coordinates = new WorksCoordinates(base, this.#materials);
 		this.#coordinates = coordinates.bluePrintCoordinates;
+		const { emptyArea } = this.#coordinates;
+		const info = { emptyArea, feat: [] };
+		// TODO: add loop for getting each work coordinates.
+		coordinates.fillPreparing = {
+			info,
+			list: this.#pieces,
+			len: this.#pieces.length - 1,
+			raw: this.#rawList
+		};
+		const { feat } = coordinates.fillLayer;
 		const list = structuredClone(this.#pieces);
 
+		this.#coordinates.defineLayer = [ 1, feat ];
+		this.#rawList.map((work) =>
+			this.#coordinates.artLocation.set(work.code, work),
+		);
 		this.#worksInPlace(list, coordinates);
 		this.#rawList.map((work) =>
 			this.#coordinates.artLocation.set(work.code, work),
 		);
+		this.#coordinates.innerSize = base;
+		delete this.#coordinates.defineLayer;
+		delete this.#coordinates.reset;
 		return base;
 	}
 
@@ -69,7 +86,7 @@ export default class CraterSameSize {
 		this.#setWorksCoordinates(innerCrate, layersUp);
 		this.#coordinates.innerSize = [innerCrate[0], div, innerCrate[2]];
 		this.#coordinates.finalSize = [+X, +Z, +Y];
-		return [...this.#coordinates.finalSize, this.#rawList];
+		return [...this.#coordinates.finalSize, this.#coordinates];
 	}
 
 	#checkComp(getter, test, baseLayer) {

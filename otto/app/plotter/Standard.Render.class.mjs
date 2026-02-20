@@ -33,7 +33,6 @@ export default class standardCrateRender {
 				return meta;
 			}
 		}, 0);
-
 		return result.length ? { result: result[0], meta: this.#layout } : false;
 	}
 

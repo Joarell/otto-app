@@ -30,15 +30,15 @@ export default class CraterStandard {
 		}
 	}
 
-	#startCrate(ARTS1 = []) {
+	#startCrate(ARTS = []) {
 		if (!this.#rawList || this.#rawList.length === 0) return { standard: false };
 		switch (this.#recheck) {
 			case false:
-				ARTS1 = this.#selectTheBestSolution();
-				return { crates: ARTS1 };
+				ARTS = this.#selectTheBestSolution();
+				return { crates: ARTS };
 			case true:
-				ARTS1 = this.#provideCrate([], 1, structuredClone(this.#list));
-				return { crates: ARTS1 };
+				ARTS = this.#provideCrate([], 1, structuredClone(this.#list));
+				return { crates: ARTS };
 		};
 	}
 
@@ -166,7 +166,6 @@ export default class CraterStandard {
 		crate.x += innerSize[0];
 		crate.z += !tmp ? innerSize[1] : tmp;
 		crate.y += innerSize[2];
-		crate.y += FORKFEET;
 		const X = crate.x % 1 > 0 ? crate.x.toFixed(3) : crate.x.toFixed(0);
 		const Z = crate.z % 1 > 0 ? crate.z.toFixed(3) : crate.z.toFixed(0);
 		const Y = crate.y % 1 > 0 ? crate.y.toFixed(3) : crate.y.toFixed(0);
@@ -243,7 +242,7 @@ export default class CraterStandard {
 
 		while (i++ < this.#maxLayers && list.length) {
 			const { emptyArea } = this.#coordinates;
-			info = { emptyArea, feat: [], newBase: [0, 0, 0, 0] };
+			info = { emptyArea, feat: [], newBase: [ 0, 0, 0, 0 ] };
 			coordinates.fillPreparing = {
 				info,
 				list,

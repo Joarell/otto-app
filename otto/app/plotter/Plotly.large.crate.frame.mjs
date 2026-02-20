@@ -1,15 +1,18 @@
+
 import DesignWalls from "./Plotly.fill.colors.class.mjs";
 import TraceMaker from "./Plotly.trace.class.mjs";
 
-export default class CratesFrame {
+export default class LargeCratesFrame {
 	#edges;
 	#sized;
 	#pine;
+	#baseFinalSize;
 
-	constructor(sized, material) {
+	constructor(sized, material, finalSize) {
 		const available = JSON.parse(localStorage.getItem("crating"));
 		const used = available.map((opt) => material.usedMaterials.get(opt));
 
+		this.#baseFinalSize = finalSize;
 		this.#pine = used.find((list) => list.at(-1) === "Pinewood");
 		this.#sized = sized;
 		this.#edges = [
@@ -612,31 +615,31 @@ export default class CratesFrame {
 		Object.entries(change).map((data, i) => {
 			switch (i) {
 				case 0:
-					if(data[1].x === 0) data[1].x = x;
-					if(data[1].y === 0) data[1].y = y;
-					if(data[1].z === 0) data[1].z = z;
-					return data;
+					if(data[1].x === 0) data[1].x = +x;
+					if(data[1].y === 0) data[1].y = +y;
+					if(data[1].z === 0) data[1].z = +z;
+					break;
 				case 1:
-					if(data[1].y === 0) data[1].y = y;
-					if(data[1].z === 0) data[1].z = z;
-					return data;
+					if(data[1].y === 0) data[1].y = +y;
+					if(data[1].z === 0) data[1].z = +z;
+					break;
 				case 2:
-					if(data[1].z === 0) data[1].z = z;
-					return data;
+					if(data[1].z === 0) data[1].z = +z;
+					break;
 				case 3:
-					if(data[1].x === 0) data[1].x = x;
-					if(data[1].z === 0) data[1].z = z;
-					return data;
+					if(data[1].x === 0) data[1].x = +x;
+					if(data[1].z === 0) data[1].z = +z;
+					break;
 				case 4:
-					if(data[1].x === 0) data[1].x = x;
-					if(data[1].y === 0) data[1].y = y;
-					return data;
+					if(data[1].x === 0) data[1].x = +x;
+					if(data[1].y === 0) data[1].y = +y;
+					break;
 				case 5:
-					if(data[1].y === 0) data[1].y = y;
-					return data;
+					if(data[1].y === 0) data[1].y = +y;
+					break;
 				case 7:
-					if(data[1].x === 0) data[1].x = x;
-					return data;
+					if(data[1].x === 0) data[1].x = +x;
+					break;
 			}
 			return data;
 		});
@@ -646,6 +649,7 @@ export default class CratesFrame {
 	#setAllParts(meta, component, offsets) {
 		const trace = new TraceMaker();
 		const fill = new DesignWalls();
+		const sizes = { dep: this.#baseFinalSize[1], high: this.#baseFinalSize[2] };
 		let show = true;
 
 		Object.entries(offsets).map((part) => {
@@ -658,8 +662,9 @@ export default class CratesFrame {
 				coordinates: defined,
 				name: "frame",
 				show,
+				sizes,
 			};
-			meta = trace.defineTrace;
+			meta = trace.defineHugeTrace;
 			fill.objectData = {
 				width,
 				depth,
@@ -669,8 +674,9 @@ export default class CratesFrame {
 				offsetX,
 				offsetY,
 				offsetZ,
+				sizes,
 			};
-			meta = fill.designSides;
+			meta = fill.largestCanvas;
 			show = false;
 			return part;
 		});
