@@ -1,5 +1,6 @@
 import TraceMaker from "./Plotly.trace.class.mjs";
 import DesignWalls from "./Plotly.fill.colors.class.mjs";
+import WorksLabel from "./Plotly.works.label.mjs";
 
 export default class DesignPlotter {
 	#data;
@@ -15,6 +16,7 @@ export default class DesignPlotter {
 	#buildTraceAndFillTubes() {
 		let meta = structuredClone(this.#data);
 		const fill = new DesignWalls();
+		const label = new WorksLabel();
 		let tmp;
 
 		this.#list.map((info) => {
@@ -28,6 +30,7 @@ export default class DesignPlotter {
 					width,
 					depth,
 					height,
+					code,
 				} = data;
 
 				fill.objectData = {
@@ -41,6 +44,16 @@ export default class DesignPlotter {
 					offsetZ,
 				};
 				meta = fill.designTubes;
+				if(code) {
+					label.data = {
+						info: meta,
+						x: offsetX + width / 2,
+						y: offsetY + depth / 6,
+						z: offsetZ + height / 6,
+						code,
+					}
+					meta = label.setLabel;
+				}
 				tmp = div || layer.name === tmp ? tmp : layer.name;
 				return data;
 			});
@@ -54,6 +67,7 @@ export default class DesignPlotter {
 		const trace = new TraceMaker();
 		const fill = new DesignWalls();
 		const sizes = { dep: this.#baseSize[1], high: this.#baseSize[2] };
+		const label = new WorksLabel();
 		let tmp;
 
 		this.#list.map((info) => {
@@ -68,6 +82,7 @@ export default class DesignPlotter {
 					width,
 					depth,
 					height,
+					code,
 				} = data;
 
 				trace.data = {
@@ -78,6 +93,18 @@ export default class DesignPlotter {
 					sizes,
 				};
 				meta = trace.defineHugeTrace;
+				if(code) {
+					label.data = {
+						info: meta,
+						x: offsetX + width / 2,
+						y: offsetY + depth / 2,
+						z: offsetZ + height / 2,
+						dep: depth,
+						high: height,
+						code,
+					}
+					meta = label.setHugeLabel;
+				}
 				fill.objectData = {
 					width,
 					depth,
@@ -102,6 +129,7 @@ export default class DesignPlotter {
 		let meta = structuredClone(this.#data);
 		const trace = new TraceMaker();
 		const fill = new DesignWalls();
+		const label = new WorksLabel();
 		let tmp;
 
 		this.#list.map((info) => {
@@ -116,6 +144,7 @@ export default class DesignPlotter {
 					width,
 					depth,
 					height,
+					code,
 				} = data;
 
 				trace.data = {
@@ -125,6 +154,16 @@ export default class DesignPlotter {
 					show: div || tmp === layer.name ? false : true,
 				};
 				meta = trace.defineTrace;
+				if(code) {
+					label.data = {
+						info: meta,
+						x: offsetX + width / 2,
+						y: offsetY + depth / 2,
+						z: offsetZ + height / 2,
+						code,
+					}
+					meta = label.setLabel;
+				}
 				fill.objectData = {
 					width,
 					depth,

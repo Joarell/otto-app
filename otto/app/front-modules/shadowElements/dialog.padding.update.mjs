@@ -1,9 +1,6 @@
 import { showCrates1 } from "../../panels/pane1.module.mjs";
 import { showCrates2 } from "../../panels/pane2.module.mjs";
-import {
-	statusTable,
-	statusTablePopulate,
-} from "../../panels/status.panel.mjs";
+import { statusTable, statusTablePopulate, } from "../../panels/status.panel.mjs";
 import { alterCrateSizes, populateCrates } from "./populate.dialog.mjs";
 import { pane1, pane2, status, template } from "./template.panel.mjs";
 

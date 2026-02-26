@@ -123,7 +123,8 @@ export default class CraterSameSize {
 
 	#orderSizes(base, art) {
 		const STACK = base.shift();
-		const LEN = Array.isArray(art[0]) ? art[0].length : art.length;
+		const LEN = art.length;
+		// const LEN = Array.isArray(art[0]) ? art[0].length : art.length;
 		let DEPTH;
 		let x;
 		let z;
@@ -135,9 +136,9 @@ export default class CraterSameSize {
 			z = DEPTH * this.#packageSize[2];
 			y = base[2];
 		} else {
-			DEPTH = (LEN % 2) + LEN;
+			// DEPTH = (LEN % 2) + LEN;
 			x = base[0];
-			z = DEPTH * this.#packageSize[2];
+			z = LEN * this.#packageSize[2];
 			y = base[2];
 		}
 		return this.#setPad([x, z, y], STACK);
