@@ -14,15 +14,9 @@ export default class WorksPosition {
 	}
 
 	#tubes() {
-		let x =
-			this.#dim.length > 4
-				? +this.#dim[3] + 2 * this.#threshold[0] - this.#pad[2]
-				: +this.#dim[1] + 2 * this.#threshold[0] - this.#pad[2];
-		let y =
-			this.#dim.length > 4
-				? +this.#dim[1] + this.#threshold[2] - 2 * this.#pad[2]
-				: +this.#dim[3] + this.#threshold[2] - 2 * this.#pad[2];
-		const z = this.#depth + this.#threshold[1];
+		let x = +this.#dim[1] + 2 * this.#threshold[0] - this.#pad[2];
+		let y = +this.#dim[3] + this.#threshold[2];
+		const z = this.#depth + this.#threshold[2];
 		const { coordinates, code } = this.#local;
 		const fillX = 0;
 		const fillZ = - this.#pad[2];
@@ -46,12 +40,10 @@ export default class WorksPosition {
 			],
 			width: x - this.#threshold[0],
 			depth: this.#dim[2] + fillZ,
-			height: y - 1.5 * this.#pad[2],
+			height: y - this.#pad[2] - this.#threshold[2],
 			offsetX: this.#threshold[0] + coordinates.x,
 			offsetY: this.#threshold[1] + this.#depth + 3 * this.#pad[2],
-			offsetZ: coordinates.y
-				? this.#threshold[2] + coordinates.y + this.#pad[2]
-				: 5 * this.#pad[2],
+			offsetZ: Math.pow(this.#pad[2], 2),
 		};
 		return work;
 	}
@@ -143,15 +135,15 @@ export default class WorksPosition {
 		return work;
 	}
 
-	#diffSizes() {
+	#standardCanvas() {
 		let x =
 			this.#dim.length > 4
 				? +this.#dim[3] + this.#threshold[0] - this.#pad[2]
 				: +this.#dim[1] + this.#threshold[0] - this.#pad[2];
 		let y =
 			this.#dim.length > 4
-				? +this.#dim[1] + this.#threshold[2] - this.#pad[2]
-				: +this.#dim[3] + this.#threshold[2] - this.#pad[2];
+				? +this.#dim[1] + this.#threshold[2]
+				: +this.#dim[3] + this.#threshold[2];
 		const z = this.#depth + this.#threshold[1];
 		const { coordinates, code } = this.#local;
 
@@ -186,7 +178,7 @@ export default class WorksPosition {
 	}
 
 	get standardCanvas() {
-		return this.#diffSizes();
+		return this.#standardCanvas();
 	}
 
 	get noCanvas() {

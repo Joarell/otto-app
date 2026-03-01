@@ -49,9 +49,9 @@ export default class DesignWalls {
 
 	#createTube() {
 		const segments = 100;
-		const { width, depth, height, offsetX, offsetZ, offsetY, info, name } =
+		const { width, depth, height, offsetX, offsetZ, offsetY, info, name, next } =
 			this.#data;
-		const radius = depth / 2;
+		const radius = depth / 1.95;
 		const color = "#BB0056BB";
 		const vertices_x = [];
 		const vertices_y = [];
@@ -104,11 +104,14 @@ export default class DesignWalls {
 			for (let s = 0; s < segments; s++) {
 				// const angle = 180;
 				const angle = (2 * Math.PI * s) / segments;
-				const cos = Math.cos(angle),
-					sin = Math.sin(angle);
+				const cos = Math.cos(angle);
+				const sin = Math.sin(angle);
+
 				vertices_x.push(px + radius * (cos * ux + sin * vx));
-				vertices_y.push(py + radius * (cos * uy + sin * vy));
-				vertices_z.push(pz + radius * (cos * uz + sin * vz));
+				vertices_y.push(py + radius * (cos * uy + sin * vy))
+				next === 0
+				? vertices_z.push(pz + radius * (cos * uz + sin * vz))
+				: vertices_z.push(pz + radius * (cos * uz + sin * vz) + height - offsetY)
 			}
 		}
 

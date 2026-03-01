@@ -63,12 +63,16 @@ export default class PadDivSizes  {
 			filled.x += x;
 		}
 		if(y === 0) {
-			y = this.#inner[2] < this.#div[3] ? this.#inner[2] : this.#div[3];
+			y = this.#inner[2] < this.#div[3]
+				? this.#inner[2] + this.#pad[2]
+				: this.#div[3] + this.#pad[2];
 			filled.y = y;
 			y += this.#threshold[2] - this.#div[2];
 		}
 		else if (y < this.#inner[2] && full === 0 && lastX === 0) {
-			y = this.#inner[2] - y >= this.#div[3] ? this.#div[3] : this.#inner[2] - y;
+			y = this.#inner[2] - y >= this.#div[3]
+				? this.#div[3] + this.#pad[2]
+				: this.#inner[2] - y + this.#pad[2];
 			lastY = structuredClone(filled.y);
 			filled.y += y;
 			if (full === 0) {
@@ -127,12 +131,16 @@ export default class PadDivSizes  {
 			filled.x += x;
 		}
 		if(y === 0) {
-			y = this.#inner[2] < this.#div[3] ? this.#inner[2] : this.#div[3];
+			y = this.#inner[2] < this.#div[3]
+				? this.#inner[2] + this.#pad[2]
+				: this.#div[3] + this.#pad[2];
 			filled.y = y;
 			y += this.#threshold[2] - this.#div[2];
 		}
 		else if (y < this.#inner[2] && full === 0 && lastX === 0) {
-			y = this.#inner[2] - y >= this.#div[3] ? this.#div[3] : this.#inner[2] - y;
+			y = this.#inner[2] - y >= this.#div[3]
+				? this.#div[3] + this.#pad[2]
+				: this.#inner[2] - y + this.#pad[2];
 			lastY = structuredClone(filled.y);
 			filled.y += y;
 			if (full === 0) {

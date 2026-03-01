@@ -114,7 +114,7 @@ export default class LargeCratesFrame {
 				z: 0,
 				width: this.#pine[3],
 				depth: this.#pine[2],
-				height: this.#sized[2] - (2 * this.#pine[3] + 5 * this.#pine[2]),
+				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
 				offsetX: this.#pine[2],
 				offsetY: 0,
 				offsetZ: 2 * this.#pine[2] + this.#pine[3],
@@ -126,7 +126,7 @@ export default class LargeCratesFrame {
 				z: 0,
 				width: this.#pine[3],
 				depth: this.#pine[2],
-				height: this.#sized[2] - (2 * this.#pine[3] + 5 * this.#pine[2]),
+				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
 				offsetX: this.#sized[0] - (this.#pine[3] + this.#pine[2]),
 				offsetY: 0,
 				offsetZ: 2 * this.#pine[2] + this.#pine[3],
@@ -138,7 +138,7 @@ export default class LargeCratesFrame {
 				z: this.#sized[1],
 				width: this.#pine[3],
 				depth: this.#pine[2],
-				height: this.#sized[2] - (2 * this.#pine[3] + 5 * this.#pine[2]),
+				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
 				offsetX: this.#pine[2],
 				offsetY: this.#sized[1] - this.#pine[2],
 				offsetZ: 2 * this.#pine[2] + this.#pine[3],
@@ -150,7 +150,7 @@ export default class LargeCratesFrame {
 				z: this.#sized[1],
 				width: this.#pine[3],
 				depth: this.#pine[2],
-				height: this.#sized[2] - (2 * this.#pine[3] + 5 * this.#pine[2]),
+				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
 				offsetX: this.#sized[0] - (this.#pine[3] + this.#pine[2]),
 				offsetY: this.#sized[1] - this.#pine[2],
 				offsetZ: 2 * this.#pine[2] + this.#pine[3],
@@ -158,26 +158,26 @@ export default class LargeCratesFrame {
 			offsetSidesRightVUp: {
 				type: "sideHUp",
 				x: 0,
-				y: this.#sized[2] - 3 * this.#pine[2],
+				y: this.#sized[2] - this.#pine[2],
 				z: this.#pine[2],
 				width: this.#pine[2],
 				depth: this.#sized[1] - 2 * this.#pine[2],
 				height: this.#pine[3],
 				offsetX: 0,
 				offsetY: this.#pine[2],
-				offsetZ: this.#sized[2] - (this.#pine[3] + 3 * this.#pine[2]),
+				offsetZ: this.#sized[2] - (this.#pine[3] + this.#pine[2]),
 			},
 			offsetSidesLeftVUp: {
 				type: "sideLeftHUp",
 				x: this.#sized[0],
-				y: this.#sized[2] - 3 * this.#pine[2],
+				y: this.#sized[2] - this.#pine[2],
 				z: this.#pine[2],
 				width: this.#pine[2],
 				depth: this.#sized[1] - 2 * this.#pine[2],
 				height: this.#pine[3],
 				offsetX: this.#sized[0] - this.#pine[2],
 				offsetY: this.#pine[2],
-				offsetZ: this.#sized[2] - (this.#pine[3] + 3 * this.#pine[2]),
+				offsetZ: this.#sized[2] - (this.#pine[3] + this.#pine[2]),
 			},
 			offsetSidesRightHDown: {
 				type: "sideHDown",
@@ -206,14 +206,14 @@ export default class LargeCratesFrame {
 			offsetFacesBackUpH: {
 				type: "faceHUp",
 				x: 0,
-				y: this.#sized[2] - 3 * this.#pine[2],
+				y: this.#sized[2] - this.#pine[2],
 				z: 0,
 				width: this.#sized[0],
 				depth: this.#pine[2],
 				height: this.#pine[3],
 				offsetX: 0,
 				offsetY: 0,
-				offsetZ: this.#sized[2] - (3 * this.#pine[2] + this.#pine[3]),
+				offsetZ: this.#sized[2] - (this.#pine[2] + this.#pine[3]),
 			},
 			offsetFacesBackDownH: {
 				type: "faceH",
@@ -230,14 +230,14 @@ export default class LargeCratesFrame {
 			offsetFacesFrontUpH: {
 				type: "faceHBackUp",
 				x: 0,
-				y: this.#sized[2] - 3 * this.#pine[2],
+				y: this.#sized[2] - this.#pine[2],
 				z: this.#sized[1],
 				width: this.#sized[0],
 				depth: this.#pine[2],
 				height: this.#pine[3],
 				offsetX: 0,
 				offsetY: this.#sized[1] - this.#pine[2],
-				offsetZ: this.#sized[2] - (3 * this.#pine[2] + this.#pine[3]),
+				offsetZ: this.#sized[2] - (this.#pine[2] + this.#pine[3]),
 			},
 			offsetFacesFrontDownH: {
 				type: "faceHBackDown",
@@ -258,7 +258,7 @@ export default class LargeCratesFrame {
 				z: 0,
 				width: this.#pine[2],
 				depth: this.#pine[3],
-				height: this.#sized[2] - (2 * this.#pine[3] + 5 * this.#pine[2]),
+				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
 				offsetX: 0,
 				offsetY: 0,
 				offsetZ: 2 * this.#pine[2] + this.#pine[3],
@@ -270,7 +270,7 @@ export default class LargeCratesFrame {
 				z: this.#sized[1] - this.#pine[3],
 				width: this.#pine[2],
 				depth: this.#pine[3],
-				height: this.#sized[2] - (2 * this.#pine[3] + 5 * this.#pine[2]),
+				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
 				offsetX: 0,
 				offsetY: this.#sized[1] - this.#pine[3],
 				offsetZ: 2 * this.#pine[2] + this.#pine[3],
@@ -282,7 +282,7 @@ export default class LargeCratesFrame {
 				z: 0,
 				width: this.#pine[2],
 				depth: this.#pine[3],
-				height: this.#sized[2] - (2 * this.#pine[3] + 5 * this.#pine[2]),
+				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
 				offsetX: this.#sized[0] - this.#pine[2],
 				offsetY: 0,
 				offsetZ: 2 * this.#pine[2] + this.#pine[3],
@@ -294,7 +294,7 @@ export default class LargeCratesFrame {
 				z: this.#sized[1] - this.#pine[3],
 				width: this.#pine[2],
 				depth: this.#pine[3],
-				height: this.#sized[2] - (2 * this.#pine[3] + 5 * this.#pine[2]),
+				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
 				offsetX: this.#sized[0] - this.#pine[2],
 				offsetY: this.#sized[1] - this.#pine[3],
 				offsetZ: 2 * this.#pine[2] + this.#pine[3],
@@ -302,66 +302,67 @@ export default class LargeCratesFrame {
 			offsetTopFrontH: {
 				type: "topFace",
 				x: this.#pine[3],
-				y: this.#sized[2] - 2 * this.#pine[2],
+				y: this.#sized[2] - this.#pine[2],
 				z: 0,
 				width: this.#sized[0] - 2 * this.#pine[3],
 				depth: this.#pine[3],
 				height: this.#pine[2],
 				offsetX: this.#pine[3],
 				offsetY: 0,
-				offsetZ: this.#sized[2] - 3 * this.#pine[2],
+				offsetZ: this.#sized[2] - this.#pine[2],
 			},
 			offsetTopBackH: {
 				type: "topComp",
 				x: this.#pine[3],
-				y: this.#sized[2] - 2 * this.#pine[2],
+				y: this.#sized[2] - this.#pine[2],
 				z: this.#sized[1],
 				width: this.#sized[0] - 2 * this.#pine[3],
 				depth: this.#pine[3],
 				height: this.#pine[2],
 				offsetX: this.#pine[3],
 				offsetY: this.#sized[1] - this.#pine[3],
-				offsetZ: this.#sized[2] - 3 * this.#pine[2],
+				offsetZ: this.#sized[2] - this.#pine[2],
 			},
 			offsetTopRight: {
 				type: "topFeet",
 				x: 0,
-				y: this.#sized[2] - 2 * this.#pine[2],
+				y: this.#sized[2] - this.#pine[2],
 				z: 0,
 				width: this.#pine[3],
 				depth: this.#sized[1],
 				height: this.#pine[2],
 				offsetX: 0,
 				offsetY: 0,
-				offsetZ: this.#sized[2] - 3 * this.#pine[2],
+				offsetZ: this.#sized[2] - this.#pine[2],
 			},
 			offsetTopLeft: {
 				type: "topLeftFeet",
 				x: this.#sized[0],
-				y: this.#sized[2] - 2 * this.#pine[2],
+				y: this.#sized[2] - this.#pine[2],
 				z: 0,
 				width: this.#pine[3],
 				depth: this.#sized[1],
 				height: this.#pine[2],
 				offsetX: this.#sized[0] - this.#pine[3],
 				offsetY: 0,
-				offsetZ: this.#sized[2] - 3 * this.#pine[2],
+				offsetZ: this.#sized[2] - this.#pine[2],
 			},
 		};
 		return allOffset;
 	}
 
 	#defineFrameComponents() {
+
 		const upFeet = 2 * this.#pine[2];
-		const vertical = this.#sized[2] - this.#pine[3] - 3 * this.#pine[2];
+		const vertical = this.#sized[2] - this.#pine[3] - this.#pine[2];
 		const rightFeet = this.#sized[0] - this.#pine[3];
 		const vDepth = this.#sized[1] - this.#pine[2];
-		const upFace = this.#sized[2] - this.#pine[3] - 3 * this.#pine[2];
+		const upFace = this.#sized[2] - this.#pine[3] - this.#pine[2];
 		const tinySide = this.#sized[1] - this.#pine[2];
 		const tinyRightSide = this.#sized[0] - this.#pine[2];
 		const sideComp = this.#pine[3] + this.#pine[2];
 		const rightComp = this.#sized[0] - this.#pine[3] - this.#pine[2];
-		const topZ = this.#sized[2] - 3 * this.#pine[2];
+		const topZ = this.#sized[2];
 		const topzComp = this.#sized[1] - this.#pine[3];
 		const allParts = {
 			feet: [

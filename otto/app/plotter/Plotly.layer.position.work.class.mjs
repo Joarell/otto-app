@@ -177,7 +177,6 @@ export default class PositionWorksInSideCrate {
 				const gaps = new FillGaps(info, i + 1);
 				gaps.fill;
 			}
-			depthSum += +thickness.toFixed(3);
 			thickness = 0;
 			return data;
 		}, 0);

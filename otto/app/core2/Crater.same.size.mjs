@@ -225,10 +225,12 @@ export default class CraterSameSize {
 		if (!this.#rawList || this.#rawList.length === 0) return { sameSize: false };
 
 		let countDiffSizes = this.#countWorks();
+
 		if (countDiffSizes === null) return null;
-		const crateDone = this.#compCrate(countDiffSizes);
+
+		const crates = this.#compCrate(countDiffSizes);
 		countDiffSizes = null;
-		return { crates: crateDone };
+		return { crates };
 	}
 
 	get makeCrate () {

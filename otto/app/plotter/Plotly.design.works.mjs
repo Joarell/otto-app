@@ -20,7 +20,7 @@ export default class DesignPlotter {
 		let tmp;
 
 		this.#list.map((info) => {
-			info.map((data) => {
+			info.map((data, i) => {
 				const {
 					div,
 					layer,
@@ -42,6 +42,7 @@ export default class DesignPlotter {
 					offsetX,
 					offsetY,
 					offsetZ,
+					next: i,
 				};
 				meta = fill.designTubes;
 				if(code) {
@@ -56,7 +57,7 @@ export default class DesignPlotter {
 				}
 				tmp = div || layer.name === tmp ? tmp : layer.name;
 				return data;
-			});
+			}, 0);
 			return info;
 		});
 		return meta;
@@ -160,6 +161,7 @@ export default class DesignPlotter {
 						x: offsetX + width / 2,
 						y: offsetY + depth / 2,
 						z: offsetZ + height / 2,
+						show: div || tmp === layer.name ? false : true,
 						code,
 					}
 					meta = label.setLabel;

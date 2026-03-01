@@ -870,7 +870,7 @@ export default class WorksCoordinates {
 		this.#rawList = raw;
 		this.#packedList = structuredClone(list);
 		const arrange = this.#fillCrateRecursion(info, list, len);
-		arrange.neBase = this.#newBaseSize;
+		arrange.newBase = this.#newBaseSize;
 		return arrange;
 	}
 

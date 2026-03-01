@@ -25,7 +25,7 @@ export default class SetCrateWalls {
 	#crateWalls() {
 		const pineDepth = this.#pine[2] + this.#ply[2];
 		const facesLength = this.#crate[0] - this.#pine[2];
-		const facesHeight = this.#crate[2] - pineDepth - 2 * this.#ply[2];
+		const facesHeight = this.#crate[2] - pineDepth;
 		const sideLength = this.#crate[1] - pineDepth;
 		const faceLeftLen = this.#crate[0] - pineDepth;
 		const side = this.#pine[2] + this.#ply[2];
@@ -139,38 +139,38 @@ export default class SetCrateWalls {
 			faceBack: {
 				type: "backFace",
 				x: this.#pine[2],
-				y: 3 * this.#pine[2],
+				y: this.#ply[2] + this.#pine[2],
 				z: 2 * this.#pine[2],
 				width: this.#crate[0] - 2 * this.#pine[2],
 				depth: this.#pine[2],
-				height: this.#crate[2] - (3 * this.#pine[2] + 4 * this.#ply[2]),
+				height: this.#crate[2] - (2 * this.#pine[2] + 2 * this.#ply[2]),
 				offsetX: this.#pine[2],
 				offsetY: this.#pine[2],
-				offsetZ: 3 * this.#pine[2],
+				offsetZ: 2 * this.#pine[2],
 			},
 			faceFront: {
 				type: "frontFace",
 				x: this.#pine[2],
-				y: 3 * this.#pine[2],
+				y: this.#ply[2] + this.#pine[2],
 				z: this.#crate[1] - this.#pine[2],
 				width: this.#crate[0] - 2 * this.#pine[2],
 				depth: this.#pine[2],
-				height: this.#crate[2] - (3 * this.#pine[2] + 4 * this.#ply[2]),
+				height: this.#crate[2] - (2 * this.#pine[2] + 2 * this.#ply[2]),
 				offsetX: this.#pine[2],
 				offsetY: this.#crate[1] - 2 * this.#pine[2],
-				offsetZ: 3 * this.#pine[2],
+				offsetZ: 2 * this.#pine[2],
 			},
 			faceRight: {
 				type: "sideRight",
 				x: this.#pine[2],
-				y: 3 * this.#pine[2],
+				y: this.#ply[2] + this.#pine[2],
 				z: 2 * this.#pine[2],
 				width: this.#pine[2],
 				depth: this.#crate[1] - 4 * this.#pine[2],
-				height: this.#crate[2] - (3 * this.#pine[2] + 4 * this.#ply[2]),
+				height: this.#crate[2] - (2 * this.#pine[2] + 2 * this.#ply[2]),
 				offsetX: this.#pine[2],
 				offsetY: 2 * this.#pine[2],
-				offsetZ: 3 * this.#pine[2],
+				offsetZ: 2 * this.#pine[2],
 			},
 			faceLeft: {
 				type: "sideLeft",
@@ -179,22 +179,22 @@ export default class SetCrateWalls {
 				z: 2 * this.#pine[2],
 				width: this.#pine[2],
 				depth: this.#crate[1] - (2 * this.#pine[2] + 2 * this.#ply[2]),
-				height: this.#crate[2] - (3 * this.#pine[2] + 4 * this.#ply[2]),
+				height: this.#crate[2] - (2 * this.#pine[2] + 2 * this.#ply[2]),
 				offsetX: this.#crate[0] - 2 * this.#pine[2],
 				offsetY: 2 * this.#pine[2],
-				offsetZ: 3 * this.#pine[2],
+				offsetZ: 2 * this.#pine[2],
 			},
 			top: {
 				type: "top",
 				x: this.#pine[2],
-				y: this.#crate[2] - 3 * this.#ply[2],
+				y: this.#crate[2] - this.#ply[2],
 				z: this.#pine[2],
 				width: this.#crate[0] - 2 * this.#pine[2],
 				depth: this.#crate[1] - 2 * this.#pine[2],
 				height: this.#pine[2],
 				offsetX: this.#pine[2],
 				offsetY: this.#pine[2],
-				offsetZ: this.#crate[2] - 4 * this.#pine[2],
+				offsetZ: this.#crate[2] - this.#pine[2] - this.#ply[2],
 			},
 			bottom: {
 				type: "bottom",

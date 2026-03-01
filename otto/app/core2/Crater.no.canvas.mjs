@@ -40,6 +40,10 @@ export default class CraterNotCanvas {
 		const { emptyArea } = this.#coordinates;
 		const info = { emptyArea, feat: [] };
 		const len = this.#list.length - 1;
+		const separator = this.#materials.materials.filter((foam) =>
+			foam[5] === "Foam Sheet" && foam[2] < 5
+		).flat();
+		let lastX = 0;
 
 		coordinates.fillPreparing = {
 			info,
@@ -49,29 +53,31 @@ export default class CraterNotCanvas {
 		};
 		const { feat } = coordinates.fillLayer;
 		this.#coordinates.defineLayer = [1, feat];
-		this.#rawList.map((work) =>
-			this.#coordinates.artLocation.set(work.code, work),
-		);
+		this.#rawList.map((work, i) => {
+			const location = {
+				x: i > 0 ? i * separator[2] + lastX: 0,
+				y: 0,
+				z: work.z,
+			}
+			work.coordinates = location;
+			this.#coordinates.artLocation.set(work.code, work);
+			lastX += work.x;
+			return work;
+		}, 0);
 	}
 
 	#setPadding(innerCrate) {
-		const crate = new CrateMaker(this.#pieces, this.#materials).outSizes;
-		const x = +(innerCrate[0] + crate.x).toFixed(3);
-		const z = +(innerCrate[1] + crate.z).toFixed(3);
+		const crate = new CrateMaker(this.#rawList.length, this.#materials).outSizes;
+		const div = crate.div ? crate.div * (this.#rawList.length - 1): 0;
+		const x = +(innerCrate[0] + crate.x + div).toFixed(3);
+		const z = +(innerCrate[1] + crate.z - crate.div).toFixed(3);
 		const y = +(innerCrate[2] + crate.y).toFixed(3);
-		const X = x % 1 > 0 ? x : x.toFixed(0);
-		const Z = z % 1 > 0 ? z : z.toFixed(0);
-		const Y = y % 1 > 0 ? y : y.toFixed(0);
-		const div = crate.div
-			? innerCrate[1] + crate.div * this.#pieces.length
-			: innerCrate[1];
+		const X = x % 1 > 0 ? x : x.toFixed(3);
+		const Z = z % 1 > 0 ? z : z.toFixed(3);
+		const Y = y % 1 > 0 ? y : y.toFixed(3);
 
-		this.#setWorksCoordinates([+X, +Z, +Y]);
-		this.#coordinates.innerSize = [
-			innerCrate[0] + crate.pad,
-			div + crate.pad,
-			innerCrate[2] + crate.pad,
-		];
+		this.#setWorksCoordinates(structuredClone([+X, +Z, +Y]));
+		this.#coordinates.innerSize = [ x, innerCrate[1], innerCrate[2] ];
 		this.#coordinates.finalSize = [+X, +Z, +Y];
 		return [...this.#coordinates.finalSize, this.#coordinates];
 	}

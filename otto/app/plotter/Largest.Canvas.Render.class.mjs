@@ -1,6 +1,5 @@
 import SetCrateWalls from "./Crate.walls.plotly.class.mjs";
 import LargeCratesFrame from "./Plotly.large.crate.frame.mjs";
-import CratesFrame from "./Frame.crate.graphic.mjs"
 import PaddingCrate from "./Padding.crate.plotly.mjs";
 import PositionWorksInSideCrate from "./Plotly.layer.position.work.class.mjs";
 

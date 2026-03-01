@@ -48,12 +48,12 @@ export default class CraterTube {
 		let z = list[0][2];
 		let y = 0;
 
-		list.map((tube) => {
+		list.map((tube, i) => {
 			x = tube[1] > x ? tube[1] : x;
 			z = tube[2] > z ? tube[2] : z;
-			y += tube[3];
+			y += i > 0 ? tube[3] + 10: tube[3];
 			return tube;
-		});
+		}, 0);
 		return [x, z, y];
 	}
 
