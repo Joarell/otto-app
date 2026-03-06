@@ -16,16 +16,13 @@ export default class AvailableMaterials {
 	 * @method - returns all stored materials available.
 	 */
 	async #grabMaterialsIDB() {
-		let request;
-
 		this.#WORKER.postMessage("Materials");
-		request = await new Promise((resolve) => {
+		return await new Promise((resolve) => {
 			this.#WORKER.onmessage = (res) => {
 				const { data } = res;
 				resolve(data);
 			};
 		});
-		return request;
 	}
 
 	async #woodOptions(woods) {
@@ -43,6 +40,7 @@ export default class AvailableMaterials {
 				<label for="wood-material-${i}" name="material-${i}">${opts[0]}</label>
 			`;
 			this.#entry.appendChild(material);
+			return woodMenu;
 		}, 0);
 		return this.#entry;
 	}
@@ -52,7 +50,7 @@ export default class AvailableMaterials {
 	 */
 	async #addsTheInfo() {
 		const materials = await this.#grabMaterialsIDB();
-		const woods = ["Pinewood", "Plywood", "Foam Sheet"];
+		const woods = ["Pinewood", "Plywood", "Foam Sheet", "Wooden Post"];
 		const woodOpts = [];
 
 		if (!materials) return false;
@@ -67,6 +65,7 @@ export default class AvailableMaterials {
 				<label for="packing-material-${i}" name="material-${i}">${pack[0]}</label>
 			`;
 			this.#entry.appendChild(material);
+			return pack;
 		}, 0);
 		if (woodOpts.length > 0) return await this.#woodOptions(woodOpts);
 		return this.#entry;

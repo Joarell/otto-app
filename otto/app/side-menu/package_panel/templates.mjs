@@ -14,7 +14,7 @@ templateMaterials.innerHTML = `
 export const availableMaterials = document.createElement("template");
 availableMaterials.innerHTML = `
 <div class="packing-materials" id="" aria-hidden="false" role="none" content="0">
-	<h3>Packing materials for updating in ${globalThis.localStorage.getItem("metrica").split("-")[1]}:</h3>
+	<h3>Packing materials for updating in ${globalThis.localStorage?.getItem("metrica")?.split("-")[1]}:</h3>
 	<p>Press this pane to save your updates.</p>
 </div>
 `;
@@ -29,13 +29,12 @@ newMaterials.innerHTML = `
 		<div>
 			<p>
 				Please, press the "<i class="nf nf-fa-circle_plus"></i>", button below for adding new materials in
-				${globalThis.localStorage.getItem("metrica").split("-")[1]}, or click in "<i class="nf nf-oct-x_circle_fill"></i>" for removing it".
+				${globalThis.localStorage?.getItem("metrica")?.split("-")[1]}, or click in "<i class="nf nf-oct-x_circle_fill"></i>" for removing it".
 				Then, press this pane to save all materials.
 			</p>
 		</div>
 	</div>
 `;
-// Then, hit the "<i class="nf nf-fa-check_circle"></i>", to save.
 
 /**
  * @typedef { HTMLElement } newOption
@@ -53,7 +52,7 @@ newOption.innerHTML = `
 		<option>Roll</option>
 		<option>Pinewood</option>
 		<option>Plywood</option>
-		<!-- <option>Tape</option> -->
+		<option>Wooden Post</option>
 		<option>Foam Sheet</option>
 	</select>
 </div>

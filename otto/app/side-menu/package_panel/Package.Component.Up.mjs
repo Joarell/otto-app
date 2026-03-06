@@ -255,15 +255,13 @@ export class PackageInfoUp extends HTMLElement {
 
 		if (!pack || !crate) return;
 		for (node of list.children) {
-			!crates && node.className ? (crates = true) : 0;
+			if(!crates && node.className) crates = true;
 			if (node.id === "populate-materials") {
 				temp = node.children.item(0).name;
-				pack.includes(temp) && !crates
-					? (node.children.item(0).checked = true)
-					: 0;
-				crate.includes(temp) && crates
-					? (node.children.item(0).checked = true)
-					: 0;
+				if(pack.includes(temp) && !crates)
+					node.children.item(0).checked = true
+				if(crate.includes(temp) && crates)
+					node.children.item(0).checked = true;
 			}
 		}
 	}

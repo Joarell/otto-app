@@ -15,7 +15,6 @@ export default class AddPackingMaterials {
 	 * @param { HTMLElement } entry2
 	 */
 	constructor(entry) {
-		if (!entry) return undefined;
 		this.#entry = entry;
 	}
 
@@ -60,7 +59,7 @@ export default class AddPackingMaterials {
 		content.className = "data-update";
 		content.id = "update-info";
 		fragment.append(node);
-		!this.#materials ? (this.#materials = await this.#grabNewMaterials()) : 0;
+		if(!this.#materials) this.#materials = await this.#grabNewMaterials();
 		this.#materials.types.map((pack, i) => {
 			const material = document.createElement("div");
 			const select = document.createElement("select");
@@ -69,18 +68,20 @@ export default class AddPackingMaterials {
 				"Roll",
 				"Pinewood",
 				"Plywood",
+				"Wooden Post",
 				"Tape",
 				"Foam Sheet",
 			];
-			const target = opts.findIndex((item) => item === pack[5]);
+			const target = opts.indexOf(pack[5]);
 
 			select.innerHTML = `
-			<option>Sheet</option>
-			<option>Roll</option>
-			<option>Pinewood</option>
-			<option>Plywood</option>
-			<option>Tape</option>
-			<option>Foam Sheet</option>`;
+			<option>${opts[0]}</option>
+			<option>${opts[1]}</option>
+			<option>${opts[2]}</option>
+			<option>${opts[3]}</option>
+			<option>${opts[4]}</option>
+			<option>${opts[5]}</option>
+			<option>${opts[6]}</option>`;
 
 			material.className = "material-info";
 			select.children.item(target).selected = true;
@@ -98,6 +99,7 @@ export default class AddPackingMaterials {
 			`;
 			material.appendChild(select);
 			fragment.appendChild(material);
+			return pack;
 		}, 0);
 		while (content?.firstChild) content.removeChild(content.firstChild);
 		return content.appendChild(fragment);
@@ -114,7 +116,6 @@ export default class AddPackingMaterials {
 		const diff = !opt ? updated.difference(stored) : stored.difference(updated);
 		const entries = diff.entries();
 		const result = [];
-		let check;
 		let item;
 
 		for (item of entries) !Array.isArray(item[0][0]) ? result.push(item[0]) : 0;
@@ -123,13 +124,15 @@ export default class AddPackingMaterials {
 				list.map((data) => {
 					if (data[0] === item[0]) {
 						for (let i = 0; i in data; i++)
-							item[i] && data[i] !== item[i] ? (data[i] = item[i]) : 0;
+							if(item[i] && data[i] !== item[i])
+							(data[i] = item[i]);
 					}
 					return data;
 				});
+				return item;
 			});
 		}
-		check = list.some((material) => material[0] === result[0]);
+		const check = list.some((material) => material[0] === result[0]);
 		!check && list.length !== result.length ? list.push(...result) : 0;
 		return opt && check ? this.#materials.types.concat(result) : list;
 	}
@@ -137,7 +140,7 @@ export default class AddPackingMaterials {
 	/**
 	 * @method - save all materials data in browser localStorage.
 	 */
-	#browserStorege(opt) {
+	#browserStorage(opt) {
 		const LS = localStorage;
 		const materials = JSON.parse(LS.getItem("materials"));
 
@@ -155,32 +158,24 @@ export default class AddPackingMaterials {
 	 */
 	async #storeNewMaterials() {
 		const checkMaterials = await this.#grabNewMaterials();
-		const woods = ["Pinewood", "Plywood", "Foam Sheet"];
+		const woods = ["Pinewood", "Plywood", "Foam Sheet", "Wooden Post"];
 		const wrap = ["Sheet", "Roll", "Tape"];
 		const checkWrap1 = this.#materials.types.some((item) =>
 			wrap.includes(item[5]),
 		);
-		const checkWrap2 =
-			checkMaterials &&
-			checkMaterials.types.some((item) => wrap.includes(item[5]));
+		const checkWrap2 = checkMaterials?.types.some((item) => wrap.includes(item[5]));
 		const crateMaterial1 = this.#materials.types.some((item) =>
 			woods.includes(item[5]),
 		);
-		const crateMaterial2 =
-			checkMaterials &&
-			checkMaterials.types.some((item) => woods.includes(item[5]));
-		const check =
-			checkMaterials &&
-			checkMaterials.types.length >= this.#materials.types.length
-				? 0
-				: 1;
+		const crateMaterial2 = checkMaterials?.types.some((item) => woods.includes(item[5]));
+		const check = checkMaterials?.types.length >= this.#materials.types.length ? 0 : 1;
 
 		if (!checkWrap1 && !checkWrap2) return "wrap";
 		if (!crateMaterial1 && !crateMaterial2) return "wood";
 		if (checkMaterials)
 			checkMaterials.types = this.#diffUpdateList(checkMaterials.types, check);
-		else this.#browserStorege(1);
-		checkMaterials && checkMaterials.types.length
+		else this.#browserStorage(1);
+		checkMaterials?.types.length
 			? this.#COMMANDWORKER.postMessage(checkMaterials)
 			: this.#COMMANDWORKER.postMessage(this.#materials);
 		checkMaterials
@@ -189,13 +184,12 @@ export default class AddPackingMaterials {
 					"materials",
 					JSON.stringify(this.#materials.types),
 				);
-		// check  ? this.#browserStorege(0): 0;
 		const message = await new Promise((resolve) => {
 			this.#COMMANDWORKER.onmessage = (res) => {
 				resolve(res.data);
 			};
 		});
-		checkMaterials ? (this.#materials = checkMaterials) : 0;
+		if(checkMaterials) this.#materials = checkMaterials;
 		return message === "Saved" ? this.#updateDownPanel() : 0;
 	}
 
@@ -215,7 +209,7 @@ export default class AddPackingMaterials {
 		this.#materials = { materials: "packing", types: updated };
 		this.#COMMANDWORKER.postMessage(this.#materials);
 		this.#updateDownPanel();
-		this.#browserStorege(0);
+		this.#browserStorage(0);
 		return this.#entry.setAttribute("name", "update");
 	}
 
@@ -237,6 +231,7 @@ export default class AddPackingMaterials {
 				<option>Roll</option>
 				<option>Pinewood</option>
 				<option>Plywood</option>
+				<option>Wooden Post</option>
 				<option>Type</option>
 				<option>Foam Sheet</option>
 			</select>

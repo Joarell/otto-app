@@ -50,9 +50,10 @@ export class PackageInfoDown extends HTMLElement {
 			newInfo.map((material) => {
 				if (material[0] === pack[0])
 					material.map(
-						(info, i) => (info && info !== pack[i] ? (pack[i] = info) : 0),
+						(info, i) =>  pack[i] = info && info !== pack[i] ? info : 0,
 						0,
 					);
+				return material;
 			});
 		}
 		updated.types = list;
@@ -185,7 +186,6 @@ export class PackageInfoDown extends HTMLElement {
 	 * @param { string } newVal - new attribute name;
 	 */
 	async attributeChangedCallback(attName, oldVal, newVal) {
-		// const shadowRoot = 	this.#shadowRoot.get(this);
 		const check = oldVal === "update-materials" && newVal === "materials-used";
 
 		check || oldVal === "materials-used" ? this.#hiddenContent(oldVal) : 0;
