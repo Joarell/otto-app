@@ -90,12 +90,13 @@ export default class UsedMaterialsTable {
 				<td>$ ${Math.ceil(totalCost)}</td>`;
 			imutable.appendChild(content);
 			prices.push(+totalCost);
+			return item;
 		});
 		Object.entries(cratesReport.finalReport).map((item) => {
 			const content = document.createElement("tr");
 			const { totalCost, residual, counter, type } = item[1];
 
-			if (!type) return;
+			if (!type) return item;
 			content.innerHTML = `
 				<td>Crate</td>
 				<td>${type}</td>
@@ -105,6 +106,7 @@ export default class UsedMaterialsTable {
 				<td>$ ${totalCost}</td>`;
 			imutable.appendChild(content);
 			prices.push(+totalCost);
+			return item;
 		});
 		imutable.appendChild(
 			this.#addSubtotalMaterialAppliedResult(prices, "crates"),
@@ -173,6 +175,7 @@ export default class UsedMaterialsTable {
 				<td>${types[i][0]}</td>
 				<td>$ ${cost[i][1]}</td>`;
 			table.appendChild(content);
+			return info;
 		}, 0);
 		table.appendChild(this.#addSubtotalMaterialAppliedResult(cost));
 		table.appendChild(span);
@@ -193,14 +196,14 @@ export default class UsedMaterialsTable {
 		);
 		const feet = 8;
 
-		material[5] === "Pinewood" ? (this.#zSum += material[2] * 2) : 0;
+		if(!frontBack) return false;
+		if (material[5] === "Pinewood") this.#zSum += material[2] * 2;
 		frontBack.x += this.#zSum;
 		frontBack.y += name === "Pinewood" ? this.#zSum + feet : this.#zSum;
 		sides.z += this.#zSum + layers * +div[2];
 		sides.y += this.#zSum;
 		upDown.x += this.#zSum;
-		upDown.z +=
-			name === "Pinewood"
+		upDown.z += name === "Pinewood"
 				? this.#zSum + feet + layers * +div[2]
 				: this.#zSum + +div[2] * layers;
 		this.#zSum += material[2] * 2;
@@ -234,7 +237,7 @@ export default class UsedMaterialsTable {
 			const { counter, size, area, name, type } = data;
 			const info =
 				type === "Pinewood"
-					? size.toFixed(3) + " - " + metric
+					? `${size.toFixed(3)} - ${metric}`
 					: `${size[0]}  x  ${size[1]} - ${metric}`;
 
 			row.innerHTML = `
@@ -243,6 +246,7 @@ export default class UsedMaterialsTable {
 				<td> ${info} </td>
 				<td>${counter}</td>`;
 			frag.appendChild(row);
+			return data;
 		});
 		table.appendChild(frag);
 		return table;
@@ -274,11 +278,8 @@ export default class UsedMaterialsTable {
 		[padding, faces, frame].map((data) => {
 			const row = document.createElement("tr");
 			const info = this.#correctCutMaterials(data, layers);
-			let first;
-			let second;
-			let third;
 
-			if (!info) return;
+			if (!info) return data;
 			const { frontBack, sides, upDown, name } = info;
 			const faces = [];
 			const rightLeft = [];
@@ -302,23 +303,24 @@ export default class UsedMaterialsTable {
 				topBottom.push(upDown.extraX);
 				topBottom.push(upDown.z);
 			}
-			first = faces.length
+			const first = faces.length
 				? `<td>${(frontBack.x).toFixed(2)} x ${(frontBack.y).toFixed(2)} - ${metric} </td>`
 				: 0;
-			second = rightLeft.length
+			const second = rightLeft.length
 				? `<td>${(sides.z).toFixed(2)} x ${(sides.y).toFixed(2)} - ${metric}</td>`
 				: 0;
-			third = topBottom.length
+			const third = topBottom.length
 				? `<td>${(upDown.x).toFixed(2)} x ${(upDown.z).toFixed(2)} - ${metric}</td>`
 				: 0;
-			if (!first || !second || !third) return;
-			!extra ? (extra = true) : 0;
+			if (!first || !second || !third) return data;
+			if (!extra) extra = true;
 			row.innerHTML = `
 				<td>${name}</td>
 				${first}
 				${second}
 				${third}`;
 			frag.appendChild(row);
+			return data;
 		});
 		if (extra) {
 			table.appendChild(frag);
@@ -340,6 +342,7 @@ export default class UsedMaterialsTable {
 		const frame = crate[2].get("Frame");
 		const faces = crate[2].get("Plywood");
 		const padding = crate[2].get("Foam Sheet");
+		const feet = crate[2].get("Wooden Post");
 		const frag = new DocumentFragment();
 		const layers = crate[0].layers.length - 1;
 
@@ -353,11 +356,27 @@ export default class UsedMaterialsTable {
 			<th>Each Side</th>
 			<th>Each top/bottom</th>`;
 		table.appendChild(content);
-		[padding, faces, frame].map((data) => {
+		[padding, faces, frame, feet].map((data) => {
 			const row = document.createElement("tr");
 			const info = this.#correctCutMaterials(data, layers);
 
-			if (!info) return;
+			if (!info && !data?.x) return data;
+			else if(!info) {
+				const blankRow = document.createElement("tr");
+				blankRow.innerHTML = `
+					<td> - </td>
+					<td> - </td>
+					<td> - </td>
+					<td> - </td>`;
+				row.innerHTML = `
+					<td>${data.name}</td>
+					<td> - </td>
+					<td> - </td>
+					<td>${(data.x).toFixed(2)} x (${data.quantity}) - ${metric}</td>`;
+				frag.appendChild(blankRow);
+				frag.appendChild(row);
+				return data;
+			}
 			const { frontBack, sides, upDown, name } = info;
 
 			row.innerHTML = `
@@ -366,6 +385,7 @@ export default class UsedMaterialsTable {
 				<td>${(sides.z).toFixed(2)} x ${(sides.y).toFixed(2)} - ${metric}</td>
 				<td>${(upDown.x).toFixed(2)} x ${(upDown.z).toFixed(2)} - ${metric}</td>`;
 			frag.appendChild(row);
+			return data;
 		});
 		table.appendChild(frag);
 		this.#crateExtraMaterialCut(table, { padding, faces, frame }, layers);
@@ -387,7 +407,7 @@ export default class UsedMaterialsTable {
 			const content = document.createElement("tr");
 			const data = crate[2].get(info);
 
-			if (!data) return;
+			if (!data) return info;
 			const { type, counter, residual, area, totalCost } = data;
 
 			cost.push(residual === "number" ? Math.ceil(totalCost) : totalCost);
@@ -404,6 +424,7 @@ export default class UsedMaterialsTable {
 				<td>${counter}</td>
 				<td>$ ${totalCost}</td>`;
 			table.appendChild(content);
+			return info;
 		});
 		table.appendChild(this.#addSubtotalMaterialAppliedResult(cost, "crate"));
 		return this.#crateMaterialCut(crate, table);
@@ -546,7 +567,7 @@ export default class UsedMaterialsTable {
 		header.id = "layers";
 		node.removeChild(node.firstChild);
 		calcLayer.map((info, i) => {
-			if (!info.total) return;
+			if (!info.total) return info;
 			const table = document.createElement("table");
 			const content = document.createElement("tr");
 			const headerLayer = document.createElement("th");
@@ -571,11 +592,12 @@ export default class UsedMaterialsTable {
 			table.role = "none";
 			Array.isArray(info.sizes[0])
 				? info.sizes.map((gap) =>
-						this.#fillLayerTable(table, info, gap, results[i]),
-					)
+					this.#fillLayerTable(table, info, gap, results[i]),
+				)
 				: this.#fillLayerTable(table, info, info.sizes, results[i]);
 			table.appendChild(document.createElement("h6"));
 			node.appendChild(table);
+			return info;
 		}, 0);
 		return node;
 	}
@@ -619,7 +641,7 @@ export default class UsedMaterialsTable {
 	/**
 	 * @method - starts the table population.
 	 */
-	async #populateTableMaterialsUesed() {
+	async #populateTableMaterialsUsed() {
 		const content = materialsTable.content.cloneNode(true);
 		const node = document.importNode(content, true);
 		const table = node.getElementById("second-pane");
@@ -637,6 +659,6 @@ export default class UsedMaterialsTable {
 	 * @method - returns the table populated with all package data used.
 	 */
 	get setupTable() {
-		return this.#populateTableMaterialsUesed();
+		return this.#populateTableMaterialsUsed();
 	}
 }

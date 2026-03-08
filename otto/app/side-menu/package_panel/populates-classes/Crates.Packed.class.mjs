@@ -40,16 +40,17 @@ export default class PackedWorks {
 		const worksListed = document.createElement("ol");
 
 		list.map((work) => {
-			if (!Array.isArray(work)) return;
+			if (!Array.isArray(work)) return work;
 			const info = document.createElement("li");
 			const anchor = document.createElement("a");
 
 			anchor.setAttribute("href", `#${work[0]}`);
 			anchor.id = work[0];
-			anchor.className = numCrate + "-" + layer;
+			anchor.className = `${numCrate}-${layer};`
 			anchor.innerText = `${work[0]} - ${work[1]} x ${work[2]} x ${work[3]} - ${this.#metric}`;
 			info.append(anchor);
 			worksListed.appendChild(info);
+			return work;
 		});
 		return worksListed;
 	}
@@ -75,6 +76,7 @@ export default class PackedWorks {
 					summaryLayer.innerText = `${data[0]}`;
 					levels.appendChild(summaryLayer);
 					levels.appendChild(this.#setWorksUpList(data[1], data[0], numCrate));
+					return data;
 				});
 			return element.appendChild(levels);
 		});
@@ -118,9 +120,10 @@ export default class PackedWorks {
 
 		Object.entries(crates).map((crate, i) => {
 			if (Array.isArray(crate[1].crates) && crate[1].crates.length === 0)
-				return;
+				return crate
 			if (crateTypes.includes(crate[0]))
 				fragment.appendChild(this.#resultReportElements(crate[1], i));
+			return crate
 		}, 0);
 		return fragment;
 	}

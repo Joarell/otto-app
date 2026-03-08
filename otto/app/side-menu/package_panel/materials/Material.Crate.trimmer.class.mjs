@@ -278,6 +278,27 @@ export default class CrateTrimmer {
 	}
 
 	/**
+	 * @method deifines how much wooden post are needed to the crate.
+	 * @param { Array } item data
+	 * @param { Object } crate data
+	 * @param { Number } index the crate position order
+	 */
+	#trimmingWoodenPostFeet(item, crate, index) {
+		const onBank = this.#materialBank.get(item[0]);
+		const { finalSize } = crate[0];
+		const plywood = this.#crateMaterials.find((material) => material[5] === "Plywood");
+		const total = finalSize[0] / +plywood[1];
+		const quantity = total > 2 ? Math.round(total) : 2; // NOTE: 2 is the minimum crates feet needed.
+		const residual = onBank?.length > 0
+			? +onBank[1] - quantity * finalSize[1]
+			: +item[1] - quantity * finalSize[1];
+
+		if(residual > 20 ) this.#materialBank.set(item[0], [index, residual]);
+		crate[2].set("Wooden Post", { name: item[0], x: finalSize[1], quantity });
+		return crate;
+	}
+
+	/**
 	 * @method - cuts the crate frame.
 	 * @param { Array } pine - material data.
 	 * @param { Object } crate - crate data.
@@ -287,16 +308,15 @@ export default class CrateTrimmer {
 		const { innerSize } = crate[0];
 		const totalMaterial = this.#plywoodJoinChecker(innerSize, pine);
 		const update = crate[2].get(pine[0]);
-		let pinewood =
-			totalMaterial > +pine[1]
-				? Math.ceil(totalMaterial / +pine[1]) * +pine[1]
-				: +pine[1];
+		let pinewood = totalMaterial > +pine[1]
+			? Math.ceil(totalMaterial / +pine[1]) * +pine[1]
+			: +pine[1];
 
 		this.#allSidesCrate(innerSize, crate, "Frame", pine, {
 			extraX: 0,
 			extraY: 0,
 		});
-		crate[1] === "largestCrate" ? this.#largeCrateStructure(crate, pine) : 0;
+		if(crate[1] === "largestCrate" ) this.#largeCrateStructure(crate, pine);
 		const structure = this.#largestData.get("pine");
 		if (!onBank) {
 			const residual = +(pinewood - totalMaterial).toFixed(3);
@@ -311,7 +331,7 @@ export default class CrateTrimmer {
 				update.residual += +(1 - (structure % 1));
 			}
 			crate[2].set(pine[0], update);
-			residual > 20 ? this.#materialBank.set(pine[0], [index, residual]) : 0;
+			if(residual > 20) this.#materialBank.set(pine[0], [index, residual]);
 			return crate;
 		}
 		pinewood -= onBank[1];
@@ -331,7 +351,7 @@ export default class CrateTrimmer {
 		crate[1] !== "largestData"
 			? this.#updateCratesMaterialUsage(pine, onBank[0])
 			: 0;
-		this.#materialBank.set(pine[0], [index, residual]);
+		if(residual > 20) this.#materialBank.set(pine[0], [index, residual]);
 		return crate;
 	}
 
@@ -476,16 +496,14 @@ export default class CrateTrimmer {
 					.reduce((sum, val) => sum + val, 0)
 				: 0;
 
-		material.counter = count;
+		if(material?.counter && count) material.counter = count;
 		if (!stored) {
 			this.#materialBank.delete(item[0]);
 			this.#materialBank.set(item[0], [index, provided]);
 		} else this.#materialBank.set(item[0], [onBank[1], bank]);
 
 		onBank && !stored ? this.#updateCratesMaterialUsage(item, onBank[0]) : 0;
-		// Array.isArray(useful) && useful.length ?
-		// 	material.residual = useful: material.residual = residual;
-		material.residual = useful;
+		if(material?.residual && useful) material.residual = count;
 		crate[2].set(item[0], material);
 		this.#allSidesCrate(innerSize, crate, item[5], item, { extraX, extraY });
 		return crate;
@@ -500,6 +518,8 @@ export default class CrateTrimmer {
 		try {
 			if (item[5] === "Pinewood")
 				return this.#trimmingFrameCrateMaterial(item, crate, pos);
+			else if (item[5] === "Wooden Post")
+				return this.#trimmingWoodenPostFeet(item, crate, pos);
 			else if (item[5] === "Foam Sheet")
 				return this.#trimmingPaddingLayersMaterials(item, crate, pos);
 			return this.#trimmingMainCrateMaterial(item, crate, pos);
@@ -517,7 +537,7 @@ export default class CrateTrimmer {
 	async #cutMaterial(crate, mapCrates, i = 0) {
 		if (!crate[i]) return crate;
 
-		crate[i].pop();
+		if(this.#crates.length > 1) crate[i].pop();
 		this.#crateMaterials.map((item) => this.#enoughMaterial(item, crate[i], i));
 		return this.#cutMaterial(crate, mapCrates, i + 1);
 	}
@@ -536,7 +556,7 @@ export default class CrateTrimmer {
 		const types = new Map();
 
 		Object.entries(this.#raw).map((crate, i) => {
-			opts.includes(crate[0]) ? types.set(i, crate[1]) : 0;
+			if(opts.includes(crate[0])) types.set(i, crate[1]);
 			return crate;
 		}, 0);
 		return types;
@@ -546,16 +566,19 @@ export default class CrateTrimmer {
 	 * @field - Call the fulfillment of the crate.
 	 */
 	get crateCutter() {
-		this.#crates.map((crate) => {
-			const x = crate[0];
-			const z = crate[1];
-			const y = crate[2];
-			const area = +(2 * (x * z) + 2 * (x * z) + 2 * (z * y)).toFixed(3);
+		if(this.#crates.length > 1) {
+			this.#crates.map((crate) => {
+				const { finalSize } = crate[0]
+				const x = finalSize[0];
+				const z = finalSize[1];
+				const y = finalSize[2];
+				const area = +(2 * (x * z) + 2 * (x * z) + 2 * (z * y)).toFixed(3);
 
-			crate.push(area);
-			return crate;
-		});
-		this.#crates = this.#quickSort([...this.#crates]);
+				crate.push(area);
+				return crate;
+			});
+			this.#crates = this.#quickSort([...this.#crates]);
+		}
 		const mapCrates = this.#mapCrateTypes();
 		this.#cutMaterial(this.#crates, mapCrates);
 		return this.#crates;
