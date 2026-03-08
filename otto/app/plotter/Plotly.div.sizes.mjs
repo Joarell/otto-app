@@ -135,7 +135,7 @@ export default class PadDivSizes  {
 				? this.#inner[2] + this.#pad[2]
 				: this.#div[3] + this.#pad[2];
 			filled.y = y;
-			y += this.#threshold[2] - this.#div[2];
+			if(this.#inner[2] > this.#div[3]) y += this.#threshold[2] - this.#div[2];
 		}
 		else if (y < this.#inner[2] && full === 0 && lastX === 0) {
 			y = this.#inner[2] - y >= this.#div[3]

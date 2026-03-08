@@ -85,6 +85,7 @@ export default class CraterStandard {
 		return { bestArrange };
 	}
 
+	// BUG: the recheck option is defining one more layer rather increase tiny length or hight centimeters
 	#selectTheBestSolution() {
 		const copy1 = structuredClone(this.#list);
 		const copy2 = structuredClone(this.#list);
