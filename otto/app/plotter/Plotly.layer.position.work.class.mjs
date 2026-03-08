@@ -276,7 +276,7 @@ export default class PositionWorksInSideCrate {
 					structuredClone(this.#inner),
 					this.#div,
 				);
-				onLayers.push(div.hugeDiv);
+				onLayers.push(div.standardDiv);
 				depthSum += this.#div[2];
 			}
 			thickness = 0;

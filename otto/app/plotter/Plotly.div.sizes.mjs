@@ -86,13 +86,15 @@ export default class PadDivSizes  {
 		return this.#setDivLayer(data, filled);
 	}
 
-	#defineDivSize(x, y, lastX) {
+	#defineDivSize(x, y, lastX, lastY) {
 		const z = this.#depth + this.#threshold[2];
-		const offX = lastX || this.#threshold[0];
+		const offX = lastX === 0 ? this.#threshold[0] : lastX + this.#threshold[0];
 		const offZ = this.#depth + this.#threshold[2] - this.#div[2];
-		const offY = this.#threshold[2];
-		let div = structuredClone(this.#layer);
+		const offY = this.#threshold[2] + lastY
+		let div = this.#layer;
 
+		x = x + lastX === this.#inner[0] ? x + offX - this.#threshold[0] : x + offX;
+		y = y + lastY === this.#inner[2] ? y + offY - 2 * this.#pad[2] : y + offY;
 		const divisor = {
 			div: [
 				{ x: offX, y: offY, z: offZ }, // Vertex 0
@@ -104,89 +106,47 @@ export default class PadDivSizes  {
 				{ x, y, z }, // Vertex 6
 				{ x: offX, y, z }, // Vertex 7
 			],
-			width: x - 2 * this.#pad[2],
+			width: x - offX,
 			depth: this.#div[2],
-			height: y - 2 * this.#pad[2] - this.#div[2],
-			offsetX: this.#threshold[0],
-			offsetY: this.#depth + this.#threshold[2] - this.#div[2],
-			offsetZ: this.#threshold[2],
+			height: y - offY,
+			offsetX: offX,
+			offsetY: offZ,
+			offsetZ: offY,
 			layer: { name: `layer-${++div}`, color: "div" },
 		};
 		return divisor;
 	}
 
 	#setDivLayer(data = [], filled = { x: 0, y: 0, full: 0}) {
-		if (filled.x >= this.#inner[0] && filled.y >= this.#inner[2]) return data;
-		let { x, y, full } = filled;
-		let lastX = 0;
-		let lastY = 0;
+		if(filled.full) return data;
+		let { x, y } = filled;
 
-		if(x === 0) {
-			x = this.#inner[0] < this.#div[1] ? this.#inner[0] : this.#div[1];
-			filled.x = x;
-		}
-		else if (x < this.#inner[0]) {
-			x = this.#inner[0] - x >= this.#div[1] ? this.#div[1] : this.#inner[0] - x;
-			lastX = structuredClone(filled.x);
-			filled.x += x;
-		}
-		if(y === 0) {
-			y = this.#inner[2] < this.#div[3]
-				? this.#inner[2] + this.#pad[2]
-				: this.#div[3] + this.#pad[2];
-			filled.y = y;
-			if(this.#inner[2] > this.#div[3]) y += this.#threshold[2] - this.#div[2];
-		}
-		else if (y < this.#inner[2] && full === 0 && lastX === 0) {
-			y = this.#inner[2] - y >= this.#div[3]
-				? this.#div[3] + this.#pad[2]
-				: this.#inner[2] - y + this.#pad[2];
-			lastY = structuredClone(filled.y);
-			filled.y += y;
-			if (full === 0) {
-				filled.full = 1;
-				filled.x = this.#inner[0] < this.#div[1] ? this.#inner[0] : this.#div[1];
+		if(x === 0) x = this.#div[1] > this.#inner[0]
+			? this.#inner[0]
+			: this.#div[1];
+		y = this.#inner[2] - y > this.#div[3]
+			? this.#div[3] - 2 * this.#pad[2]
+			: this.#inner[2] - y;
+		if (!filled.full && filled.x > 0) {
+			if(x >= this.#inner[0] && y < this.#inner[2]) {
+				filled.x = 0;
+				if(y < this.#inner[2] && x >= this.#inner[0]) {
+					filled.y += y;
+					y = this.#inner[2] - y > this.#div[3]
+						? this.#div[3] - this.#threshold[2] - 2 * this.#pad[2]
+						: this.#inner[2] - y - 2 * this.#pad[2];
+				}
 			}
+			x = this.#inner[0] - x === 0
+				? this.#div[1]
+				: this.#inner[0] - x;
 		}
-		x += lastX;
-		y += lastY - this.#div[2];
-		data.push(this.#defineDivSize(x, y, lastX));
+		const lastX = structuredClone(x);
+		data.push(this.#defineDivSize(x, y, filled.x, filled.y));
+		filled.x += lastX;
+		if(filled.x === this.#inner[0] && filled.y + y === this.#inner[2])
+			filled.full = true;
 		return this.#setDivLayer(data, filled);
-	}
-
-	#hugeDiv(data = [], filled = { x: 0, y: 0, full: 0}) {
-		if (filled.x >= this.#inner[0] && filled.y >= this.#inner[2]) return data;
-		let { x, y, full } = filled;
-		let lastX = 0;
-		let lastY = 0;
-
-		if(x === 0) {
-			x = this.#inner[0] < this.#div[1] ? this.#inner[0] : this.#div[1];
-			filled.x = x;
-		}
-		else if (x < this.#inner[0]) {
-			x = this.#inner[0] - x >= this.#div[1] ? this.#div[1] : this.#inner[0] - x;
-			lastX = structuredClone(filled.x);
-			filled.x += x;
-		}
-		if(y === 0) {
-			y = this.#inner[2] < this.#div[3] ? this.#inner[2] : this.#div[3];
-			filled.y = y;
-			y += this.#threshold[2] - this.#div[2];
-		}
-		else if (y < this.#inner[2] && full === 0 && lastX === 0) {
-			y = this.#inner[2] - y >= this.#div[3] ? this.#div[3] : this.#inner[2] - y;
-			lastY = structuredClone(filled.y);
-			filled.y += y;
-			if (full === 0) {
-				filled.full = 1;
-				filled.x = this.#inner[0] < this.#div[1] ? this.#inner[0] : this.#div[1];
-			}
-		}
-		x += lastX;
-		y += lastY - this.#div[2];
-		data.push(this.#defineDivSize(x, y, lastX));
-		return this.#hugeDiv(data, filled);
 	}
 
 	get standardDiv() {
@@ -195,9 +155,5 @@ export default class PadDivSizes  {
 
 	get sameSizeDiv() {
 		return this.#setDivSameSize();
-	}
-
-	get hugeDiv() {
-		return this.#hugeDiv();
 	}
 }

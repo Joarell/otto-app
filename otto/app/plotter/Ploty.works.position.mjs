@@ -100,8 +100,8 @@ export default class WorksPosition {
 				: +this.#dim[1] + this.#threshold[0] - this.#pad[2];
 		let y =
 			this.#dim.length > 4
-				? +this.#dim[1] + this.#threshold[2] - this.#pad[2]
-				: +this.#dim[3] + this.#threshold[2] - this.#pad[2];
+				? +this.#dim[1] + this.#threshold[2]
+				: +this.#dim[3] + this.#threshold[2];
 		const z = this.#depth + this.#threshold[1];
 		const { coordinates, code } = this.#local;
 
