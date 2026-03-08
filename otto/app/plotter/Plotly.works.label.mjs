@@ -13,12 +13,11 @@ export default class WorksLabel  {
 			textposition: 'middle center',
 			showlegend: false,
 			hoverinfo: "none",
-			show: true,
 		}
 	}
 
 	#defineHugeLabel() {
-		const { x, y, z, info, code, dep, high, show } = this.#data;
+		const { x, y, z, info, code, dep, high, name } = this.#data;
 		const cosAngle = Math.cos(dep / high);
 		const sinAngle = Math.sin(high / dep);
 		const rotX = {
@@ -30,19 +29,20 @@ export default class WorksLabel  {
 		this.#config.y.push(rotX.valY);
 		this.#config.z.push(rotX.valZ);
 		this.#config.text.push(code);
-		this.#config.show = show;
+		this.#config.legendgroup = name;
 		info.push(this.#config);
 		return info;
 	}
 
 	#defineLabel() {
-		const { x, y, z, info, code, show } = this.#data;
+		const { x, y, z, info, code, name } = this.#data;
 
 		this.#config.x.push(x);
 		this.#config.y.push(y);
 		this.#config.z.push(z);
 		this.#config.text.push(code);
-		this.#config.show = show;
+		this.#config.legendgroup = name;
+		this.#config.name = name;
 		info.push(this.#config);
 		return info;
 	}

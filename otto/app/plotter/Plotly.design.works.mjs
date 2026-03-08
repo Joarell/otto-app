@@ -130,7 +130,6 @@ export default class DesignPlotter {
 		let meta = structuredClone(this.#data);
 		const trace = new TraceMaker();
 		const fill = new DesignWalls();
-		const label = new WorksLabel();
 		let tmp;
 
 		this.#list.map((info) => {
@@ -156,12 +155,13 @@ export default class DesignPlotter {
 				};
 				meta = trace.defineTrace;
 				if(code) {
+					const label = new WorksLabel();
 					label.data = {
 						info: meta,
 						x: offsetX + width / 2,
 						y: offsetY + depth / 2,
 						z: offsetZ + height / 2,
-						show: div || tmp === layer.name ? false : true,
+						name: layer.name,
 						code,
 					}
 					meta = label.setLabel;
