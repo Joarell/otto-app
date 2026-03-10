@@ -11,75 +11,67 @@ export default class PositionWorksInSideCrate {
 	#div;
 	#pad;
 	#inner;
+	#type;
+	#pine;
 
-	constructor(crate, data, meta) {
-		const available = JSON.parse(localStorage.getItem("crating"));
-		const used = available.map((opt) => data.at(-1)[0].usedMaterials.get(opt));
-		const pine = used.find((list) => list.at(-1) === "Pinewood");
-		const ply = used.find((list) => list.at(-1) === "Plywood");
+	constructor(crate, data, meta, type = "standard") {
+		this.#type = type;
+		this.#crate = crate;
+		this.#data = meta;
+		this.#info = data.at(-1)[0];
+		this.#threshold = [];
+		this.#inner = crate.innerSize;
+	}
+
+	/**
+	 * @method - selected woods for crating
+	 * @param { Array: String: Number } materials all wood types
+	 */
+	#woodUsedMaterials(materials) {
+		const pine = materials.find((list) => list.at(-1) === "Pinewood");
+		const feet = materials.find((list) => list.at(-1) === "Wooden Post");
+		const ply = materials.find((list) => list.at(-1) === "Plywood");
+
+		[pine, feet, ply].map((wood) => {
+			if (wood.at(-1) === "Wooden Post") {
+				this.#threshold[2] += wood[3];
+				return wood;
+			}
+			else if (wood.at(-1) === "Pinewood") {
+				this.#threshold[0] += wood[2];
+				this.#threshold[1] += wood[2];
+				this.#pine = wood;
+				return wood;
+			}
+			this.#threshold[0] += wood[2];
+			this.#threshold[1] += wood[2];
+			this.#threshold[2] +=
+				this.#type === "huge" && wood.at(-1) === "Plywood"
+					? wood[2] * 3
+					: wood[2];
+			return wood;
+		});
+	}
+
+	/**
+	 * @method - fill all material used to each crate side
+	 * @param { Array:String } used - all selected materials to the crate
+	 */
+	#fillCrateThresholdData(used) {
 		this.#pad = used.find(
 			(list) => list.at(-1) === "Foam Sheet" && list[2] > 2.5,
 		);
 		this.#div = used.find(
 			(list) => list.at(-1) === "Foam Sheet" && list[2] <= 2.5,
 		);
-		this.#crate = crate;
-		this.#data = meta;
-		this.#info = data.at(-1)[0];
-		this.#threshold = [];
-		this.#inner = crate.innerSize;
-		const populate = (size) => {
-			this.#threshold.push(size);
-			this.#threshold.push(size);
-			this.#threshold.push(size);
-		};
-		const addSides = (size) => {
-			this.#threshold[0] += size;
-			this.#threshold[1] += size;
-			this.#threshold[2] += size;
-		};
 
-		[pine, ply, this.#pad].map((info) => {
-			if (Array.isArray(info)) {
-				switch (info.at(-1)) {
-					case "Pinewood": {
-						const x = info[2];
-						const z = info[2];
-						const y = 2 * info[2];
-						if (!this.#threshold.length) {
-							this.#threshold.push(x);
-							this.#threshold.push(z);
-							this.#threshold.push(y);
-							return info;
-						}
-						this.#threshold[0] += x;
-						this.#threshold[1] += y;
-						this.#threshold[2] += z;
-						break;
-					}
-					case "Plywood":
-						if (!this.#threshold.length) {
-							populate(info[2]);
-							return info;
-						}
-						addSides(info[2]);
-						break;
-					case "Foam Sheet":
-						if (!this.#threshold.length) {
-							populate(info[2]);
-							return info;
-						}
-						addSides(info[2]);
-						break;
-					default:
-						return info;
-				}
-			}
-			return info;
-		});
+		this.#threshold[0] = this.#pad[2];
+		this.#threshold[1] = this.#pad[2];
+		this.#threshold[2] = this.#pad[2];
 		this.#div[1] = +this.#div[1];
 		this.#div[2] = +this.#div[2];
 		this.#div[3] = +this.#div[3];
+		this.#woodUsedMaterials(used);
 	}
 
 	#traceColor() {
@@ -107,30 +99,30 @@ export default class PositionWorksInSideCrate {
 			art.map((info, i) => {
 				switch (i) {
 					case 0:
-						if(info.x === 0 ) info.x = x + coordinates.x;
-						if(info.y === 0) info.y = y;
-						if(info.z === 0) info.z = z;
+						if (info.x === 0) info.x = x + coordinates.x;
+						if (info.y === 0) info.y = y;
+						if (info.z === 0) info.z = z;
 						return info;
 					case 1:
-						if(info.y === 0) info.y = y;
-						if(info.z === 0) info.z = z;
+						if (info.y === 0) info.y = y;
+						if (info.z === 0) info.z = z;
 						return info;
 					case 2:
-						if(info.z === 0) info.z = z;
+						if (info.z === 0) info.z = z;
 						return info;
 					case 3:
-						if(info.x === 0) info.x = x + coordinates.x;
-						if(info.z === 0) info.z = z;
+						if (info.x === 0) info.x = x + coordinates.x;
+						if (info.z === 0) info.z = z;
 						return info;
 					case 4:
-						if(info.x === 0) info.x = x + coordinates.x;
-						if(info.y === 0) info.y = y;
+						if (info.x === 0) info.x = x + coordinates.x;
+						if (info.y === 0) info.y = y;
 						return info;
 					case 5:
-						if(info.y === 0) info.y = y;
+						if (info.y === 0) info.y = y;
 						return art;
 					case 7:
-						if(info.x === 0) info.x = x + coordinates.x;
+						if (info.x === 0) info.x = x + coordinates.x;
 						return info;
 				}
 				return info;
@@ -143,35 +135,39 @@ export default class PositionWorksInSideCrate {
 	#populateLayerTubeCrate() {
 		const { layers, fillGaps, artLocation } = this.#info;
 		const onLayers = [];
-		let depthSum = 0;
+		const gap = 10;
+		let heightSum = 0;
 		let thickness = 0;
 
+		this.#threshold[1] *= 2;
+		this.#threshold[2] = 2 * this.#threshold[2] + this.#pine[2];
 		layers.map((data, i) => {
 			const { vacuum, works } = data;
 			const allWorks = works.map((info) => {
 				const position = new WorksPosition(
 					info.work,
 					artLocation.get(info.work[0]),
-					depthSum,
+					heightSum,
 					this.#threshold,
-					this.#pad
-				)
+					this.#pad,
+				);
+				heightSum += +info.work[3] + gap;
 				return position.tubes;
 			});
 			const checkGap = vacuum.length > 1;
 
-			onLayers.push(this.#worksOffset(allWorks, depthSum, i + 1));
+			onLayers.push(this.#worksOffset(allWorks, heightSum, i + 1));
 			works.filter((info) => {
-				if(!thickness || thickness < info.work[2]) (thickness = info.work[2])
+				if (!thickness || thickness < info.work[2]) thickness = info.work[2];
 				return info;
 			});
 			if (checkGap) {
 				const info = {
 					vacuum,
 					maxZ: fillGaps,
-					offZ: +(depthSum + this.#threshold[1]).toFixed(3),
+					offZ: +(heightSum + this.#threshold[2]).toFixed(3),
 					pad: this.#pad,
-					div: this.#div,
+					div: 0,
 					offset: this.#threshold,
 				};
 				const gaps = new FillGaps(info, i + 1);
@@ -198,15 +194,15 @@ export default class PositionWorksInSideCrate {
 					artLocation.get(info.work[0]),
 					depthSum,
 					this.#threshold,
-					this.#pad
-				)
+					this.#pad,
+				);
 				return position.noCanvas;
 			});
 			const checkGap = vacuum.length > 1;
 
 			onLayers.push(this.#worksOffset(allWorks, depthSum, i + 1));
 			works.filter((info) => {
-				if(!thickness || thickness < info.work[2]) (thickness = info.work[2])
+				if (!thickness || thickness < info.work[2]) thickness = info.work[2];
 				return info;
 			});
 			if (checkGap) {
@@ -230,7 +226,7 @@ export default class PositionWorksInSideCrate {
 	}
 
 	#populateLayerHugeCanvas() {
-		const { layers, fillGaps, artLocation, baseSize, finalSize } = this.#info;
+		const { layers, fillGaps, artLocation, finalSize } = this.#info;
 		const onLayers = [];
 		let depthSum = 0;
 		let thickness = 0;
@@ -243,15 +239,15 @@ export default class PositionWorksInSideCrate {
 					artLocation.get(info.work[0]),
 					depthSum,
 					this.#threshold,
-					this.#pad
-				)
+					this.#pad,
+				);
 				return position.largestCanvas;
 			});
 			const checkGap = vacuum.length > 1;
 
 			onLayers.push(this.#worksOffset(allWorks, depthSum, i + 1));
 			works.filter((info) => {
-				if(!thickness || thickness < info.work[2]) (thickness = info.work[2])
+				if (!thickness || thickness < info.work[2]) thickness = info.work[2];
 				return info;
 			});
 			if (checkGap) {
@@ -300,15 +296,15 @@ export default class PositionWorksInSideCrate {
 					artLocation.get(info.work[0]),
 					depthSum,
 					this.#threshold,
-					this.#pad
-				)
+					this.#pad,
+				);
 				return position.standardCanvas;
 			});
 			const checkGap = vacuum.length > 1;
 
 			onLayers.push(this.#worksOffset(allWorks, depthSum, i + 1));
 			works.filter((info) => {
-				if(!thickness || thickness < info.work[2]) (thickness = info.work[2])
+				if (!thickness || thickness < info.work[2]) thickness = info.work[2];
 				return info;
 			});
 			if (checkGap) {
@@ -357,15 +353,15 @@ export default class PositionWorksInSideCrate {
 					artLocation.get(info.work[0]),
 					depthSum,
 					this.#threshold,
-					this.#pad
-				)
+					this.#pad,
+				);
 				return position.standardCanvas;
 			});
 			const checkGap = vacuum.length > 1;
 
 			onLayers.push(this.#worksOffset(allWorks, depthSum, i + 1));
 			works.filter((info) => {
-				if(!thickness || thickness < info.work[2]) (thickness = info.work[2])
+				if (!thickness || thickness < info.work[2]) thickness = info.work[2];
 				return info;
 			});
 			if (checkGap) {
@@ -416,6 +412,10 @@ export default class PositionWorksInSideCrate {
 	}
 
 	get arrange() {
+		const available = JSON.parse(localStorage.getItem("crating"));
+		const used = available.map((opt) => this.#info.usedMaterials.get(opt));
+		this.#fillCrateThresholdData(used);
+
 		return this.#defineWorksLocation();
 	}
 }

@@ -22,9 +22,6 @@ export default class WorksPosition {
 		const fillZ = - this.#pad[2];
 		const fillY = 0;
 
-		if (!coordinates.x) x += this.#pad[2]
-		else x += this.#pad[2] + coordinates.x;
-		if(coordinates.y ) y += coordinates.y;
 		const work = {
 			coordinates,
 			code,
@@ -38,12 +35,12 @@ export default class WorksPosition {
 				{ x, y, z }, // Vertex 6
 				{ x: fillX, y, z }, // Vertex 7
 			],
-			width: x - this.#threshold[0],
-			depth: this.#dim[2] + fillZ,
+			width: x - this.#threshold[0] - this.#pad[2],
+			depth: coordinates.z,
 			height: y - this.#pad[2] - this.#threshold[2],
-			offsetX: this.#threshold[0] + coordinates.x,
-			offsetY: this.#threshold[1] + this.#depth + 3 * this.#pad[2],
-			offsetZ: Math.pow(this.#pad[2], 2),
+			offsetX: - x / 2,
+			offsetY: this.#threshold[1] + this.#pad[2],
+			offsetZ: this.#threshold[2] + this.#depth,
 		};
 		return work;
 	}

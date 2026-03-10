@@ -16,7 +16,7 @@ export default class CrateMaker {
 	 * @param { Array } materials - all materials available to the crate.
 	 */
 	#stablishCrateSizes(materials) {
-		const wood = ["Pinewood", "Plywood"];
+		const wood = ["Pinewood", "Plywood", "Wooden Post"];
 		const woods = materials.filter((item) => wood.includes(item[5]));
 		const separator = materials.filter((foam) => foam[5] === "Foam Sheet");
 		const DIVISION = separator.find((sep) => sep[2] < 5).flat();
@@ -27,10 +27,13 @@ export default class CrateMaker {
 		let pad = 0;
 
 		woods.map((item) => {
-			x += +item[2] * 2;
-			z += +item[2] * 2;
-			if(item.at(-1) === "Pinewood") y += +item[2] * 3;
-			else y += +item[2] * 2;
+			if(item.at(-1) !== "Wooden Post") {
+				x += +item[2] * 2;
+				z += +item[2] * 2;
+			}
+			y += item.at(-1) === "Pinewood" || item.at(-1) === "Wooden Post"
+				? +item[2]
+				: +item[2] * 2;
 			return item;
 		});
 		if(separator?.length)

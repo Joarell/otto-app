@@ -3,157 +3,84 @@ import DesignWalls from "./Plotly.fill.colors.class.mjs";
 import TraceMaker from "./Plotly.trace.class.mjs";
 
 export default class LargeCratesFrame {
-	#edges;
 	#sized;
 	#pine;
 	#baseFinalSize;
+	#meta;
+	#feet;
+	#ply;
+	#depth;
 
-	constructor(sized, material, finalSize) {
+	constructor(meta, sized, material, finalSize, extraDepth) {
 		const available = JSON.parse(localStorage.getItem("crating"));
 		const used = available.map((opt) => material.usedMaterials.get(opt));
+		const parser = (data) => data.map((info, i) => {
+			if(i === 1 || i === 2 || i === 3) data[i] = +data[i];
+			return info;
+		})
 
-		this.#baseFinalSize = finalSize;
+		this.#meta = meta;
+		this.#baseFinalSize = [ finalSize[0], finalSize[1] - sized[1], finalSize[2] ];
 		this.#pine = used.find((list) => list.at(-1) === "Pinewood");
+		this.#feet = used.find((list) => list.at(-1) === "Wooden Post");
+		this.#ply = used.find((list) => list.at(-1) === "Plywood");
 		this.#sized = sized;
-		this.#edges = [
-			[0, 1],
-			[1, 2],
-			[2, 3],
-			[3, 0], // Bottom face
-			[4, 5],
-			[5, 6],
-			[6, 7],
-			[7, 4], // Top face
-			[0, 4],
-			[1, 5],
-			[2, 6],
-			[3, 7], // Vertical edges
-		];
-		this.#pine[1] = +this.#pine[1];
-		this.#pine[2] = +this.#pine[2];
-		this.#pine[3] = +this.#pine[3];
-	}
-
-	#boundaries(coordinates) {
-		const matrix = [];
-		this.#edges.forEach((edge) => {
-			const v1 = coordinates[edge[0]];
-			const v2 = coordinates[edge[1]];
-
-			matrix.push({
-				x: [v1.x, v2.x],
-				y: [v1.y, v2.y],
-				z: [v1.z, v2.z],
-				name: "",
-				mode: "lines",
-				type: "scatter3d",
-				showlegend: false,
-				opacity: 0,
-				line: {
-					color: "#F0000000",
-				},
-			});
-		});
-		return matrix;
+		parser(this.#feet)
+		parser(this.#ply);
+		parser(this.#pine);
+		this.#depth = extraDepth + this.#pine[2];
 	}
 
 	#offsetFrame() {
+		const structOffset = this.#depth - 2 * this.#pine[2] + +this.#feet[3];
 		const allOffset = {
-			offsetFeetRightFirst: {
-				type: "feet",
-				x: 0,
-				y: 0,
-				z: 0,
-				width: this.#pine[3],
-				depth: this.#sized[1],
-				height: this.#pine[2],
-				offsetX: 0,
-				offsetY: 0,
-				offsetZ: 0,
-			},
-			offsetFeetLeftFirst: {
-				type: "feetR",
-				x: this.#sized[0],
-				y: 0,
-				z: 0,
-				width: this.#pine[3],
-				depth: this.#sized[1],
-				height: this.#pine[2],
-				offsetX: this.#sized[0] - this.#pine[3],
-				offsetY: 0,
-				offsetZ: 0,
-			},
-			offsetFeetRightSecond: {
-				type: "feetUp",
-				x: 0,
-				y: this.#pine[2],
-				z: 0,
-				width: this.#pine[3],
-				depth: this.#sized[1],
-				height: this.#pine[2],
-				offsetX: 0,
-				offsetY: 0,
-				offsetZ: this.#pine[2],
-			},
-			offsetFeetLeftSecond: {
-				type: "feetUpR",
-				x: this.#sized[0],
-				y: this.#pine[2],
-				z: 0,
-				width: this.#pine[3],
-				depth: this.#sized[1],
-				height: this.#pine[2],
-				offsetX: this.#sized[0] - this.#pine[3],
-				offsetY: 0,
-				offsetZ: this.#pine[2],
-			},
 			offsetFacesRightBackV: {
 				type: "faceV",
 				x: this.#pine[2],
-				y: this.#pine[3] + 2 * this.#pine[2],
+				y: this.#pine[3] + structOffset,
 				z: 0,
 				width: this.#pine[3],
 				depth: this.#pine[2],
-				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				height: this.#sized[2] - structOffset - 2 * this.#pine[3] - this.#pine[2],
 				offsetX: this.#pine[2],
 				offsetY: 0,
-				offsetZ: 2 * this.#pine[2] + this.#pine[3],
+				offsetZ: structOffset + this.#pine[3],
 			},
 			offsetFacesLeftBackV: {
 				type: "faceVR",
 				x: this.#sized[0] - this.#pine[2],
-				y: this.#pine[3] + 2 * this.#pine[2],
+				y: this.#pine[3] + structOffset,
 				z: 0,
 				width: this.#pine[3],
 				depth: this.#pine[2],
-				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				height: this.#sized[2] - structOffset - 2 * this.#pine[3] - this.#pine[2],
 				offsetX: this.#sized[0] - (this.#pine[3] + this.#pine[2]),
 				offsetY: 0,
-				offsetZ: 2 * this.#pine[2] + this.#pine[3],
+				offsetZ: structOffset + this.#pine[3],
 			},
 			offsetFacesRightFrontV: {
 				type: "faceVB",
 				x: this.#pine[2],
-				y: this.#pine[3] + 2 * this.#pine[2],
+				y: this.#pine[3] + structOffset,
 				z: this.#sized[1],
 				width: this.#pine[3],
 				depth: this.#pine[2],
-				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				height: this.#sized[2] - structOffset - 2 * this.#pine[3] - this.#pine[2],
 				offsetX: this.#pine[2],
 				offsetY: this.#sized[1] - this.#pine[2],
-				offsetZ: 2 * this.#pine[2] + this.#pine[3],
+				offsetZ: structOffset + this.#pine[3],
 			},
 			offsetFacesLeftFrontV: {
 				type: "faceVBR",
 				x: this.#sized[0] - this.#pine[2],
-				y: this.#pine[3] + 2 * this.#pine[2],
+				y: this.#pine[3] + structOffset,
 				z: this.#sized[1],
 				width: this.#pine[3],
 				depth: this.#pine[2],
-				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				height: this.#sized[2] - structOffset - 2 * this.#pine[3] - this.#pine[2],
 				offsetX: this.#sized[0] - (this.#pine[3] + this.#pine[2]),
 				offsetY: this.#sized[1] - this.#pine[2],
-				offsetZ: 2 * this.#pine[2] + this.#pine[3],
+				offsetZ: structOffset + this.#pine[3],
 			},
 			offsetSidesRightVUp: {
 				type: "sideHUp",
@@ -182,26 +109,26 @@ export default class LargeCratesFrame {
 			offsetSidesRightHDown: {
 				type: "sideHDown",
 				x: 0,
-				y: 2 * this.#pine[2],
+				y: structOffset,
 				z: this.#pine[2],
 				width: this.#pine[2],
 				depth: this.#sized[1] - 2 * this.#pine[2],
 				height: this.#pine[3],
 				offsetX: 0,
 				offsetY: this.#pine[2],
-				offsetZ: 2 * this.#pine[2],
+				offsetZ: structOffset,
 			},
 			offsetSidesLeftHDown: {
 				type: "sideLeftHDown",
 				x: this.#sized[0],
-				y: 2 * this.#pine[2],
+				y: structOffset,
 				z: this.#pine[2],
 				width: this.#pine[2],
 				depth: this.#sized[1] - 2 * this.#pine[2],
 				height: this.#pine[3],
 				offsetX: this.#sized[0] - this.#pine[2],
 				offsetY: this.#pine[2],
-				offsetZ: 2 * this.#pine[2],
+				offsetZ: structOffset,
 			},
 			offsetFacesBackUpH: {
 				type: "faceHUp",
@@ -218,14 +145,14 @@ export default class LargeCratesFrame {
 			offsetFacesBackDownH: {
 				type: "faceH",
 				x: 0,
-				y: 2 * this.#pine[2],
+				y: structOffset,
 				z: 0,
 				width: this.#sized[0],
 				depth: this.#pine[2],
 				height: this.#pine[3],
 				offsetX: 0,
 				offsetY: 0,
-				offsetZ: 2 * this.#pine[2],
+				offsetZ: structOffset,
 			},
 			offsetFacesFrontUpH: {
 				type: "faceHBackUp",
@@ -242,62 +169,62 @@ export default class LargeCratesFrame {
 			offsetFacesFrontDownH: {
 				type: "faceHBackDown",
 				x: 0,
-				y: 2 * this.#pine[2],
+				y: structOffset,
 				z: this.#sized[1],
 				width: this.#sized[0],
 				depth: this.#pine[2],
 				height: this.#pine[3],
 				offsetX: 0,
 				offsetY: this.#sized[1] - this.#pine[2],
-				offsetZ: 2 * this.#pine[2],
+				offsetZ: structOffset,
 			},
 			offsetSidesRightVBack: {
 				type: "sideV",
 				x: 0,
-				y: this.#pine[3] + 2 * this.#pine[2],
+				y: structOffset + this.#pine[3],
 				z: 0,
 				width: this.#pine[2],
 				depth: this.#pine[3],
-				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				height: this.#sized[2] - structOffset - 2 * this.#pine[3] - this.#pine[2],
 				offsetX: 0,
 				offsetY: 0,
-				offsetZ: 2 * this.#pine[2] + this.#pine[3],
+				offsetZ: structOffset + this.#pine[3],
 			},
 			offsetSidesRightVFront: {
 				type: "sideRightFrontV",
 				x: 0,
-				y: this.#pine[3] + 2 * this.#pine[2],
+				y: structOffset + this.#pine[3],
 				z: this.#sized[1] - this.#pine[3],
 				width: this.#pine[2],
 				depth: this.#pine[3],
-				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				height: this.#sized[2] - structOffset - 2 * this.#pine[3] - this.#pine[2],
 				offsetX: 0,
 				offsetY: this.#sized[1] - this.#pine[3],
-				offsetZ: 2 * this.#pine[2] + this.#pine[3],
+				offsetZ: structOffset + this.#pine[3],
 			},
 			offsetSidesLeftVBack: {
 				type: "sideLeftV",
 				x: this.#sized[0],
-				y: this.#pine[3] + 2 * this.#pine[2],
+				y: structOffset + this.#pine[3],
 				z: 0,
 				width: this.#pine[2],
 				depth: this.#pine[3],
-				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				height: this.#sized[2] - structOffset - 2 * this.#pine[3] - this.#pine[2],
 				offsetX: this.#sized[0] - this.#pine[2],
 				offsetY: 0,
-				offsetZ: 2 * this.#pine[2] + this.#pine[3],
+				offsetZ: structOffset + this.#pine[3],
 			},
 			offsetSidesLeftVFront: {
 				type: "sideLeftFrontV",
 				x: this.#sized[0],
-				y: this.#pine[3] + 2 * this.#pine[2],
+				y: structOffset + this.#pine[3],
 				z: this.#sized[1] - this.#pine[3],
 				width: this.#pine[2],
 				depth: this.#pine[3],
-				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				height: this.#sized[2] - structOffset - 2 * this.#pine[3] - this.#pine[2],
 				offsetX: this.#sized[0] - this.#pine[2],
 				offsetY: this.#sized[1] - this.#pine[3],
-				offsetZ: 2 * this.#pine[2] + this.#pine[3],
+				offsetZ: structOffset + this.#pine[3],
 			},
 			offsetTopFrontH: {
 				type: "topFace",
@@ -352,8 +279,7 @@ export default class LargeCratesFrame {
 	}
 
 	#defineFrameComponents() {
-
-		const upFeet = 2 * this.#pine[2];
+		const offSetFeet = this.#depth - 2 * this.#ply[2] + this.#feet[3];
 		const vertical = this.#sized[2] - this.#pine[3] - this.#pine[2];
 		const rightFeet = this.#sized[0] - this.#pine[3];
 		const vDepth = this.#sized[1] - this.#pine[2];
@@ -365,46 +291,6 @@ export default class LargeCratesFrame {
 		const topZ = this.#sized[2];
 		const topzComp = this.#sized[1] - this.#pine[3];
 		const allParts = {
-			feet: [
-				{ x: 0, y: 0, z: 0 }, // Vertex 0
-				{ x: this.#pine[3], y: 0, z: 0 }, // Vertex 1
-				{ x: this.#pine[3], y: this.#pine[2], z: 0 }, // Vertex 2
-				{ x: 0, y: this.#pine[2], z: 0 }, // Vertex 3
-				{ x: 0, y: 0, z: this.#sized[1] }, // Vertex 4
-				{ x: this.#pine[3], y: 0, z: this.#sized[1] }, // Vertex 5
-				{ x: this.#pine[3], y: this.#pine[2], z: this.#sized[1] }, // Vertex 6
-				{ x: 0, y: this.#pine[2], z: this.#sized[1] }, // Vertex 7
-			],
-			feetR: [
-				{ x: 0, y: 0, z: 0 }, // Vertex 0
-				{ x: rightFeet, y: 0, z: 0 }, // Vertex 1
-				{ x: rightFeet, y: this.#pine[2], z: 0 }, // Vertex 2
-				{ x: 0, y: this.#pine[2], z: 0 }, // Vertex 3
-				{ x: 0, y: 0, z: this.#sized[1] }, // Vertex 4
-				{ x: rightFeet, y: 0, z: this.#sized[1] }, // Vertex 5
-				{ x: rightFeet, y: this.#pine[2], z: this.#sized[1] }, // Vertex 6
-				{ x: 0, y: this.#pine[2], z: this.#sized[1] }, // Vertex 7
-			],
-			feetUp: [
-				{ x: 0, y: 0, z: 0 }, // Vertex 0
-				{ x: this.#pine[3], y: 0, z: 0 }, // Vertex 1
-				{ x: this.#pine[3], y: upFeet, z: 0 }, // Vertex 2
-				{ x: 0, y: upFeet, z: 0 }, // Vertex 3
-				{ x: 0, y: 0, z: this.#sized[1] }, // Vertex 4
-				{ x: this.#pine[3], y: 0, z: this.#sized[1] }, // Vertex 5
-				{ x: this.#pine[3], y: upFeet, z: this.#sized[1] }, // Vertex 6
-				{ x: 0, y: upFeet, z: this.#sized[1] }, // Vertex 7
-			],
-			feetUpR: [
-				{ x: 0, y: 0, z: 0 }, // Vertex 0
-				{ x: rightFeet, y: 0, z: 0 }, // Vertex 1
-				{ x: rightFeet, y: upFeet, z: 0 }, // Vertex 2
-				{ x: 0, y: upFeet, z: 0 }, // Vertex 3
-				{ x: 0, y: 0, z: this.#sized[1] }, // Vertex 4
-				{ x: rightFeet, y: 0, z: this.#sized[1] }, // Vertex 5
-				{ x: rightFeet, y: upFeet, z: this.#sized[1] }, // Vertex 6
-				{ x: 0, y: upFeet, z: this.#sized[1] }, // Vertex 7
-			],
 			faceV: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
 				{ x: sideComp, y: 0, z: 0 }, // Vertex 1
@@ -448,12 +334,12 @@ export default class LargeCratesFrame {
 			faceH: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
 				{ x: this.#sized[0], y: 0, z: 0 }, // Vertex 1
-				{ x: this.#sized[0], y: this.#pine[3] + upFeet, z: 0 }, // Vertex 2
-				{ x: 0, y: this.#pine[3] + upFeet, z: 0 }, // Vertex 3
+				{ x: this.#sized[0], y: this.#pine[3] + offSetFeet, z: 0 }, // Vertex 2
+				{ x: 0, y: this.#pine[3] + offSetFeet, z: 0 }, // Vertex 3
 				{ x: 0, y: 0, z: this.#pine[2] }, // Vertex 4
 				{ x: this.#sized[0], y: 0, z: this.#pine[2] }, // Vertex 5
-				{ x: this.#sized[0], y: this.#pine[3] + upFeet, z: this.#pine[2] }, // Vertex 6
-				{ x: 0, y: this.#pine[3] + upFeet, z: this.#pine[2] }, // Vertex 7
+				{ x: this.#sized[0], y: this.#pine[3] + offSetFeet, z: this.#pine[2] }, // Vertex 6
+				{ x: 0, y: this.#pine[3] + offSetFeet, z: this.#pine[2] }, // Vertex 7
 			],
 			faceHUp: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
@@ -478,12 +364,12 @@ export default class LargeCratesFrame {
 			faceHBackDown: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
 				{ x: this.#sized[0], y: 0, z: 0 }, // Vertex 1
-				{ x: this.#sized[0], y: this.#pine[3] + upFeet, z: 0 }, // Vertex 2
-				{ x: 0, y: this.#pine[3] + upFeet, z: 0 }, // Vertex 3
+				{ x: this.#sized[0], y: this.#pine[3] + offSetFeet, z: 0 }, // Vertex 2
+				{ x: 0, y: this.#pine[3] + offSetFeet, z: 0 }, // Vertex 3
 				{ x: 0, y: 0, z: vDepth }, // Vertex 4
 				{ x: this.#sized[0], y: 0, z: vDepth }, // Vertex 5
-				{ x: this.#sized[0], y: this.#pine[3] + upFeet, z: vDepth }, // Vertex 6
-				{ x: 0, y: this.#pine[3] + upFeet, z: vDepth }, // Vertex 7
+				{ x: this.#sized[0], y: this.#pine[3] + offSetFeet, z: vDepth }, // Vertex 6
+				{ x: 0, y: this.#pine[3] + offSetFeet, z: vDepth }, // Vertex 7
 			],
 			sideHUp: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
@@ -508,22 +394,22 @@ export default class LargeCratesFrame {
 			sideHDown: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
 				{ x: this.#pine[2], y: 0, z: 0 }, // Vertex 1
-				{ x: this.#pine[2], y: this.#pine[3] + upFeet, z: 0 }, // Vertex 2
-				{ x: 0, y: this.#pine[3] + upFeet, z: 0 }, // Vertex 3
+				{ x: this.#pine[2], y: this.#pine[3] + offSetFeet, z: 0 }, // Vertex 2
+				{ x: 0, y: this.#pine[3] + offSetFeet, z: 0 }, // Vertex 3
 				{ x: 0, y: 0, z: tinySide }, // Vertex 4
 				{ x: this.#pine[2], y: 0, z: tinySide }, // Vertex 5
-				{ x: this.#pine[2], y: this.#pine[3] + upFeet, z: tinySide }, // Vertex 6
-				{ x: 0, y: this.#pine[3] + upFeet, z: tinySide }, // Vertex 7
+				{ x: this.#pine[2], y: this.#pine[3] + offSetFeet, z: tinySide }, // Vertex 6
+				{ x: 0, y: this.#pine[3] + offSetFeet, z: tinySide }, // Vertex 7
 			],
 			sideLeftHDown: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
 				{ x: tinyRightSide, y: 0, z: 0 }, // Vertex 1
-				{ x: tinyRightSide, y: this.#pine[3] + upFeet, z: 0 }, // Vertex 2
-				{ x: 0, y: this.#pine[3] + upFeet, z: 0 }, // Vertex 3
+				{ x: tinyRightSide, y: this.#pine[3] + offSetFeet, z: 0 }, // Vertex 2
+				{ x: 0, y: this.#pine[3] + offSetFeet, z: 0 }, // Vertex 3
 				{ x: 0, y: 0, z: tinySide }, // Vertex 4
 				{ x: tinyRightSide, y: 0, z: tinySide }, // Vertex 5
-				{ x: tinyRightSide, y: this.#pine[3] + upFeet, z: tinySide }, // Vertex 6
-				{ x: 0, y: this.#pine[3] + upFeet, z: tinySide }, // Vertex 7
+				{ x: tinyRightSide, y: this.#pine[3] + offSetFeet, z: tinySide }, // Vertex 6
+				{ x: 0, y: this.#pine[3] + offSetFeet, z: tinySide }, // Vertex 7
 			],
 			sideV: [
 				{ x: 0, y: 0, z: 0 }, // Vertex 0
@@ -650,7 +536,11 @@ export default class LargeCratesFrame {
 	#setAllParts(meta, component, offsets) {
 		const trace = new TraceMaker();
 		const fill = new DesignWalls();
-		const sizes = { dep: this.#baseFinalSize[1], high: this.#baseFinalSize[2] };
+		const align = this.#feet[3];
+		const sizes = {
+			dep: this.#sized[1] - this.#depth,
+			high: this.#baseFinalSize[2]
+		};
 		let show = true;
 
 		Object.entries(offsets).map((part) => {
@@ -664,9 +554,11 @@ export default class LargeCratesFrame {
 				name: "frame",
 				show,
 				sizes,
+				align,
 			};
 			meta = trace.defineHugeTrace;
 			fill.objectData = {
+				align,
 				width,
 				depth,
 				height,
@@ -685,27 +577,11 @@ export default class LargeCratesFrame {
 	}
 
 	#designFrame() {
-		const X = Math.ceil(this.#sized[0]);
-		const Y = Math.ceil(this.#sized[1]);
-		const Z = Math.ceil(this.#sized[2]);
-		const boundarie = [
-			{ x: 0, y: 0, z: 0 }, // Vertex 0
-			{ x: X, y: 0, z: 0 }, // Vertex 1
-			{ x: X, y: Y, z: 0 }, // Vertex 2
-			{ x: 0, y: Y, z: 0 }, // Vertex 3
-			{ x: 0, y: 0, z: Z }, // Vertex 4
-			{ x: X, y: 0, z: Z }, // Vertex 5
-			{ x: X, y: Y, z: Z }, // Vertex 6
-			{ x: 0, y: Y, z: Z }, // Vertex 7
-		];
-		let meta = this.#boundaries(boundarie);
-
-		if (!this.#pine) return meta;
 		const components = this.#defineFrameComponents();
 		const offset = this.#offsetFrame();
 
-		meta = this.#setAllParts(meta, components, offset);
-		return meta;
+		this.#meta = this.#setAllParts(this.#meta, components, offset);
+		return this.#meta;
 	}
 
 	get setFrame() {

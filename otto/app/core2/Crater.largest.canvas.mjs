@@ -12,7 +12,7 @@ export default class CraterPythagoras {
 		if (canvas && canvas.length > 0) {
 			this.#materials = materials;
 			this.#rawList = canvas;
-			this.#largest = canvas.map((art) => art.arr);
+			this.#largest = canvas.map((art) => art.packedSized);
 			this.#list = structuredClone(this.#largest);
 		}
 	}
@@ -51,19 +51,25 @@ export default class CraterPythagoras {
 		const div =
 			crate.div && layers.length > 1
 				? innerCrate[1] + crate.div * (layers - 1)
-				: innerCrate[1];
+				: crate.div;
 
 		this.#setWorksCoordinates(innerCrate, layers, div, crate.pad);
 		return [+X, +Z, +Y];
 	}
 
 	#pitagorasTheorem(crate) {
+		const ply = this.#materials?.materials.find((opts) => opts[5] === "Plywood");
+		const feet = this.#materials?.materials.find((opts) => opts[5] === "Wooden Post");
 		const MAXHEIGHT = 240;
-		const z = +(Math.cos(Math.asin(MAXHEIGHT / crate[2])) * crate[2])
-			.toFixed(3);
+		const realHeight = +(Math.sqrt(crate[2] ** 2 + crate[1] ** 2)).toFixed(3);
+		const diffExt = crate[2] - MAXHEIGHT + crate[1];
+		const extraDepth = +(Math.sqrt(diffExt ** 2 - crate[1] ** 2)).toFixed(3);
+		const heightFactor = realHeight + (2 * +ply[2]) + +feet[3];
+		const z = +(Math.cos(Math.asin(MAXHEIGHT / heightFactor)) * heightFactor).toFixed(3);
 
-		this.#coordinates.finalSize = [crate[0], z, MAXHEIGHT];
-		this.#coordinates.baseSize = crate;
+		this.#coordinates.finalSize = [ crate[0], z, MAXHEIGHT ];
+		this.#coordinates.baseSize = [ crate[0], crate[1], realHeight ];
+		this.#coordinates.extraDepth = extraDepth;
 		return [...this.#coordinates.finalSize];
 	}
 

@@ -68,7 +68,7 @@
 
 
 :root {
-	--font-title: 1.5rem;
+	--font-title: clamp(1.375rem, 2vw, 2.25rem);
 	--fonts-input: clamp(1.4ch, 1.4vw, .8rem);
 	--fonts: clamp(1.5ch, 1.5vw, .8rem);
 	--color1: oklch(0.8496 0.2442 200.9);
@@ -785,7 +785,8 @@ tbody {
 		border-radius: .5rem;
 		position: relative;
 		padding: .5rem;
-		background-color: var(--panel-backcolor);
+		color: var(--panel-backcolor);
+		background-color: oklch(from currentColor calc(l + 0) c h);
 		& .top-btns {
 			display: flex;
 			flex-direction: row;

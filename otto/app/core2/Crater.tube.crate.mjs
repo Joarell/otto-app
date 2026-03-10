@@ -27,20 +27,39 @@ export default class CraterTube {
 		return this.#possibleCrates();
 	}
 
+	#worksInPlace(list, arranger, i = 1) {
+		if (!list.length) return this.#coordinates;
+		const { emptyArea } = this.#coordinates;
+		const info = { emptyArea, feat: [] };
+		const len = list.length - 1;
+
+		arranger.fillPreparing = { info, list, len, raw: this.#rawList };
+		const result = arranger.fillLayer;
+		this.#coordinates.defineLayer = [i, result.feat];
+		return this.#worksInPlace(list, arranger, i + 1);
+	}
+
 	#setWokdCoordinates(innerSize, list) {
 		const coordinates = new WorksCoordinates(innerSize, this.#materials);
 		this.#coordinates = coordinates.bluePrintCoordinates;
 		const { emptyArea } = this.#coordinates;
 		const info = { emptyArea, feat: [] };
 		const len = Array.isArray(list[0]) ? list.length - 1 : 0;
+		const spanPad = 10;
+		let lastY = 0;
 
 		coordinates.fillPreparing = { info, list, len, raw: this.#rawList };
 		const { feat } = coordinates.fillLayer;
 		this.#coordinates.defineLayer = [1, feat];
 		this.#coordinates.innerSize = [innerSize[0], innerSize[1], innerSize[2]];
-		this.#rawList.map((work) =>
-			this.#coordinates.artLocation.set(work.code, work),
-		);
+		this.#worksInPlace(list, coordinates);
+		this.#rawList.map((work) => {
+			work.y += lastY;
+			this.#coordinates.artLocation.set(work.code, work)
+
+			lastY += work.y + spanPad;
+			return work;
+		});
 	}
 
 	#sizeComposer(list) {
@@ -87,6 +106,7 @@ export default class CraterTube {
 			result.push(this.#tubeCrate(getter.length));
 			result.push({ works: getter });
 		}
+		console.log("🗣️", result)
 		return result;
 	}
 

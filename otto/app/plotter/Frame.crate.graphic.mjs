@@ -2,108 +2,26 @@ import DesignWalls from "./Plotly.fill.colors.class.mjs";
 import TraceMaker from "./Plotly.trace.class.mjs";
 
 export default class CratesFrame {
-	#edges;
 	#sized;
 	#pine;
+	#feet;
+	#meta;
 
-	constructor(sized, material) {
+	constructor(meta, sized, material) {
 		const available = JSON.parse(localStorage.getItem("crating"));
 		const used = available.map((opt) => material.usedMaterials.get(opt));
 
+		this.#meta = meta;
 		this.#pine = used.find((list) => list.at(-1) === "Pinewood");
+		this.#feet = used.find((list) => list.at(-1) === "Wooden Post");
 		this.#sized = sized;
-		this.#edges = [
-			[0, 1],
-			[1, 2],
-			[2, 3],
-			[3, 0], // Bottom face
-			[4, 5],
-			[5, 6],
-			[6, 7],
-			[7, 4], // Top face
-			[0, 4],
-			[1, 5],
-			[2, 6],
-			[3, 7], // Vertical edges
-		];
 		this.#pine[1] = +this.#pine[1];
 		this.#pine[2] = +this.#pine[2];
 		this.#pine[3] = +this.#pine[3];
 	}
 
-	#boundaries(coordinates) {
-		const matrix = [];
-		this.#edges.forEach((edge) => {
-			const v1 = coordinates[edge[0]];
-			const v2 = coordinates[edge[1]];
-
-			matrix.push({
-				x: [v1.x, v2.x],
-				y: [v1.y, v2.y],
-				z: [v1.z, v2.z],
-				name: "",
-				mode: "lines",
-				type: "scatter3d",
-				showlegend: false,
-				opacity: 0,
-				line: {
-					color: "#F0000000",
-				},
-			});
-		});
-		return matrix;
-	}
-
 	#offsetFrame() {
 		const allOffset = {
-			offsetFeetRightFirst: {
-				type: "feet",
-				x: 0,
-				y: 0,
-				z: 0,
-				width: this.#pine[3],
-				depth: this.#sized[1],
-				height: this.#pine[2],
-				offsetX: 0,
-				offsetY: 0,
-				offsetZ: 0,
-			},
-			offsetFeetLeftFirst: {
-				type: "feetR",
-				x: this.#sized[0],
-				y: 0,
-				z: 0,
-				width: this.#pine[3],
-				depth: this.#sized[1],
-				height: this.#pine[2],
-				offsetX: this.#sized[0] - this.#pine[3],
-				offsetY: 0,
-				offsetZ: 0,
-			},
-			offsetFeetRightSecond: {
-				type: "feetUp",
-				x: 0,
-				y: this.#pine[2],
-				z: 0,
-				width: this.#pine[3],
-				depth: this.#sized[1],
-				height: this.#pine[2],
-				offsetX: 0,
-				offsetY: 0,
-				offsetZ: this.#pine[2],
-			},
-			offsetFeetLeftSecond: {
-				type: "feetUpR",
-				x: this.#sized[0],
-				y: this.#pine[2],
-				z: 0,
-				width: this.#pine[3],
-				depth: this.#sized[1],
-				height: this.#pine[2],
-				offsetX: this.#sized[0] - this.#pine[3],
-				offsetY: 0,
-				offsetZ: this.#pine[2],
-			},
 			offsetFacesRightBackV: {
 				type: "faceV",
 				x: this.#pine[2],
@@ -111,10 +29,10 @@ export default class CratesFrame {
 				z: 0,
 				width: this.#pine[3],
 				depth: this.#pine[2],
-				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				height: this.#sized[2] - (+this.#feet[3] + 2 * this.#pine[3] + this.#pine[2]),
 				offsetX: this.#pine[2],
 				offsetY: 0,
-				offsetZ: 2 * this.#pine[2] + this.#pine[3],
+				offsetZ: +this.#feet[3] + this.#pine[3],
 			},
 			offsetFacesLeftBackV: {
 				type: "faceVR",
@@ -123,10 +41,10 @@ export default class CratesFrame {
 				z: 0,
 				width: this.#pine[3],
 				depth: this.#pine[2],
-				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				height: this.#sized[2] - (+this.#feet[3] + 2 * this.#pine[3] + this.#pine[2]),
 				offsetX: this.#sized[0] - (this.#pine[3] + this.#pine[2]),
 				offsetY: 0,
-				offsetZ: 2 * this.#pine[2] + this.#pine[3],
+				offsetZ: +this.#feet[3] + this.#pine[3],
 			},
 			offsetFacesRightFrontV: {
 				type: "faceVB",
@@ -135,10 +53,10 @@ export default class CratesFrame {
 				z: this.#sized[1],
 				width: this.#pine[3],
 				depth: this.#pine[2],
-				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				height: this.#sized[2] - (+this.#feet[3] + 2 * this.#pine[3] + this.#pine[2]),
 				offsetX: this.#pine[2],
 				offsetY: this.#sized[1] - this.#pine[2],
-				offsetZ: 2 * this.#pine[2] + this.#pine[3],
+				offsetZ: +this.#feet[3] + this.#pine[3],
 			},
 			offsetFacesLeftFrontV: {
 				type: "faceVBR",
@@ -147,10 +65,10 @@ export default class CratesFrame {
 				z: this.#sized[1],
 				width: this.#pine[3],
 				depth: this.#pine[2],
-				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				height: this.#sized[2] - (+this.#feet[3] + 2 * this.#pine[3] + this.#pine[2]),
 				offsetX: this.#sized[0] - (this.#pine[3] + this.#pine[2]),
 				offsetY: this.#sized[1] - this.#pine[2],
-				offsetZ: 2 * this.#pine[2] + this.#pine[3],
+				offsetZ: +this.#feet[3] + this.#pine[3],
 			},
 			offsetSidesRightVUp: {
 				type: "sideHUp",
@@ -649,7 +567,9 @@ export default class CratesFrame {
 		let show = true;
 
 		Object.entries(offsets).map((part) => {
-			const { type, offsetX, offsetY, offsetZ, width, depth, height } = part[1];
+			const {
+				type, offsetX, offsetY, offsetZ, width, depth, height
+			} = part[1];
 			const design = component[type];
 			const defined = this.#definePosition(part[1], design);
 
@@ -678,27 +598,11 @@ export default class CratesFrame {
 	}
 
 	#designFrame() {
-		const X = Math.ceil(this.#sized[0]);
-		const Y = Math.ceil(this.#sized[1]);
-		const Z = Math.ceil(this.#sized[2]);
-		const boundarie = [
-			{ x: 0, y: 0, z: 0 }, // Vertex 0
-			{ x: X, y: 0, z: 0 }, // Vertex 1
-			{ x: X, y: Y, z: 0 }, // Vertex 2
-			{ x: 0, y: Y, z: 0 }, // Vertex 3
-			{ x: 0, y: 0, z: Z }, // Vertex 4
-			{ x: X, y: 0, z: Z }, // Vertex 5
-			{ x: X, y: Y, z: Z }, // Vertex 6
-			{ x: 0, y: Y, z: Z }, // Vertex 7
-		];
-		let meta = this.#boundaries(boundarie);
-
-		if (!this.#pine) return meta;
 		const components = this.#defineFrameComponents();
 		const offset = this.#offsetFrame();
 
-		meta = this.#setAllParts(meta, components, offset);
-		return meta;
+		this.#meta = this.#setAllParts(this.#meta, components, offset);
+		return this.#meta;
 	}
 
 	get setFrame() {

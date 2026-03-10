@@ -8,16 +8,17 @@ export default class PaddingCrate {
 	#crate;
 	#pad;
 	#baseSize
+	#feet;
 
 	constructor(crate, material, meta, baseSize) {
 		const available = JSON.parse(localStorage.getItem("crating"));
 		const used = available.map((opt) => material.usedMaterials.get(opt));
-
 		this.#baseSize = baseSize;
 		this.#crate = crate;
 		this.#data = meta;
 		this.#pine = used.find((list) => list.at(-1) === "Pinewood");
 		this.#ply = used.find((list) => list.at(-1) === "Plywood");
+		this.#feet = used.find((list) => list.at(-1) === "Wooden Post");
 		this.#pad = used.find(
 			(list) => list.at(-1) === "Foam Sheet" && list[2] > 2.5,
 		);
@@ -26,11 +27,164 @@ export default class PaddingCrate {
 		this.#pad[3] = +this.#pad[3];
 	}
 
-	#cratePaddingTubes() {
-		const pineDepth = this.#ply[2] + this.#pine[2];
+	#offSetHugeWalls(){
+		const structure = 3 * +this.#ply[2] + +this.#feet[3];
+		const allOffSet = {
+			faceBack: {
+				type: "backFace",
+				x: this.#pine[2] + this.#ply[2] + this.#pad[2],
+				y: 2 * this.#pad[2] + structure + +this.#pine[2],
+				z: this.#pine[2] + this.#ply[2] + this.#pad[2],
+				width: this.#crate[0] - (2 * this.#pine[2] + 2 * this.#ply[2] + 2 * this.#pad[2]),
+				depth: this.#pad[2],
+				height: this.#crate[2] - structure - 5 * this.#ply[2] - 2 * this.#pad[2],
+				offsetX: this.#pine[2] + this.#ply[2] + this.#pad[2],
+				offsetY: this.#pad[2],
+				offsetZ: structure + this.#pine[2] + 4 * this.#ply[2],
+			},
+			faceFront: {
+				type: "frontFace",
+				x: this.#pine[2] + this.#ply[2] + this.#pad[2],
+				y: 2 * this.#pad[2] + structure + +this.#pine[2],
+				z: this.#crate[1] - this.#pine[2] - this.#ply[2] - this.#pad[2],
+				width: this.#crate[0] - (2 * this.#pine[2] + 2 * this.#ply[2] + 2 * this.#pad[2]),
+				depth: this.#pad[2],
+				height: this.#crate[2] - structure - 5 * this.#ply[2] - 2 * this.#pad[2],
+				offsetX: this.#pine[2] + this.#ply[2] + this.#pad[2],
+				offsetY: this.#crate[1] - 2 * this.#pad[2],
+				offsetZ: structure + this.#pine[2] + 4 * this.#ply[2],
+			},
+			faceRight: {
+				type: "sideRight",
+				x: this.#pine[2] + this.#ply[2],
+				y: 2 * this.#pad[2] + structure + +this.#pine[2],
+				z: this.#pine[2] + this.#ply[2],
+				width: this.#pad[2],
+				depth: this.#crate[1] - 2 * this.#pine[2] - 2 * this.#pine[2],
+				height: this.#crate[2] - structure - 5 * this.#ply[2] - 2 * this.#pad[2],
+				offsetX: this.#pine[2] + this.#ply[2],
+				offsetY: 2 * this.#pine[2],
+				offsetZ: structure + this.#pine[2] + 4 * this.#ply[2],
+			},
+			faceLeft: {
+				type: "sideLeft",
+				x: this.#crate[0] - this.#pine[2] - this.#ply[2] - this.#pad[2],
+				y: 2 * this.#pad[2] + structure + +this.#pine[2],
+				z: this.#pine[2] + this.#ply[2],
+				width: this.#pad[2],
+				depth: this.#crate[1] - 2 * this.#pine[2] - 2 * this.#pine[2],
+				height: this.#crate[2] - structure - 5 * this.#ply[2] - 2 * this.#pad[2],
+				offsetX: this.#crate[0] - this.#ply[2] - this.#pine[2] - this.#pad[2],
+				offsetY: 2 * this.#pine[2],
+				offsetZ: structure + this.#pine[2] + 4 * this.#ply[2],
+			},
+			top: {
+				type: "top",
+				x: this.#pine[2] + this.#ply[2],
+				y: this.#crate[2] - this.#pine[2] - this.#ply[2],
+				z: this.#pine[2] + this.#ply[2],
+				width: this.#crate[0] - (2 * this.#pine[2] + 2 * this.#ply[2]),
+				depth: this.#crate[1] - (this.#pine[2] + this.#ply[2] + this.#pad[2]),
+				height: this.#pad[2],
+				offsetX: this.#pine[2] + this.#ply[2],
+				offsetY: this.#pine[2] + this.#ply[2],
+				offsetZ: this.#crate[2] - (2 * this.#ply[2] + this.#pad[2]),
+			},
+			bottom: {
+				type: "bottom",
+				x: this.#pine[2] + this.#ply[2],
+				y: 2 * this.#pad[2] + structure + +this.#pine[2],
+				z: this.#pine[2] + this.#ply[2],
+				width: this.#crate[0] - (2 * this.#pine[2] + 2 * this.#ply[2]),
+				depth: this.#crate[1] - (2 * this.#pine[2] + 2 * this.#ply[2]),
+				height: this.#pad[2],
+				offsetX: this.#pine[2] + this.#ply[2],
+				offsetY: this.#pine[2] + this.#ply[2],
+				offsetZ: +this.#feet[3] + structure + +this.#pine[2],
+			},
+		};
+		return allOffSet;
+	}
+
+	#cratePaddingHugeTrace() {
+		const pineDepth = this.#ply[2] + +this.#pine[2];
 		const facesLength =
-			this.#crate[0] - (this.#pine[2] + this.#ply[2] + 2 * this.#ply[2]);
-		const facesHeight = this.#crate[2] - pineDepth - 2 * this.#pad[2];
+			this.#crate[0] - (+this.#pine[2] + +this.#ply[2] + 2 * +this.#ply[2]);
+		const facesHeight = this.#crate[2] - pineDepth - this.#pad[2];
+		const sideLength = this.#crate[1] - pineDepth;
+		const faceLeftLen = this.#crate[0] - pineDepth;
+		const side = +this.#pine[2] + +this.#ply[2] + this.#pad[2];
+		const height = +this.#feet[3] + 2 * this.#ply[2] + 2 * this.#pad[2];
+		const thick = this.#crate[1] - this.#pine[2] - +this.#ply[2];
+		const walls = {
+			backFace: [
+				{ x: 0, y: 0, z: 0 }, // Vertex 0
+				{ x: facesLength, y: 0, z: 0 }, // Vertex 1
+				{ x: facesLength, y: facesHeight, z: 0 }, // Vertex 2
+				{ x: 0, y: facesHeight, z: 0 }, // Vertex 3
+				{ x: 0, y: 0, z: this.#pad[2] }, // Vertex 4
+				{ x: facesLength, y: 0, z: this.#pad[2] }, // Vertex 5
+				{ x: facesLength, y: facesHeight, z: this.#pad[2] }, // Vertex 6
+				{ x: 0, y: facesHeight, z: this.#pad[2] }, // Vertex 7
+			],
+			frontFace: [
+				{ x: 0, y: 0, z: 0 }, // Vertex 0
+				{ x: facesLength, y: 0, z: 0 }, // Vertex 1
+				{ x: facesLength, y: facesHeight, z: 0 }, // Vertex 2
+				{ x: 0, y: facesHeight, z: 0 }, // Vertex 3
+				{ x: 0, y: 0, z: sideLength }, // Vertex 4
+				{ x: facesLength, y: 0, z: sideLength }, // Vertex 5
+				{ x: facesLength, y: facesHeight, z: sideLength }, // Vertex 6
+				{ x: 0, y: facesHeight, z: sideLength }, // Vertex 7
+			],
+			sideRight: [
+				{ x: 0, y: 0, z: 0 }, // Vertex 0
+				{ x: side, y: 0, z: 0 }, // Vertex 1
+				{ x: side, y: facesHeight, z: 0 }, // Vertex 2
+				{ x: 0, y: facesHeight, z: 0 }, // Vertex 3
+				{ x: 0, y: 0, z: sideLength }, // Vertex 4
+				{ x: side, y: 0, z: sideLength }, // Vertex 5
+				{ x: side, y: facesHeight, z: sideLength }, // Vertex 6
+				{ x: 0, y: facesHeight, z: sideLength }, // Vertex 7
+			],
+			sideLeft: [
+				{ x: 0, y: 0, z: 0 }, // Vertex 0
+				{ x: faceLeftLen, y: 0, z: 0 }, // Vertex 1
+				{ x: faceLeftLen, y: facesHeight, z: 0 }, // Vertex 2
+				{ x: 0, y: facesHeight, z: 0 }, // Vertex 3
+				{ x: 0, y: 0, z: sideLength }, // Vertex 4
+				{ x: faceLeftLen, y: 0, z: sideLength }, // Vertex 5
+				{ x: faceLeftLen, y: facesHeight, z: sideLength }, // Vertex 6
+				{ x: 0, y: facesHeight, z: sideLength }, // Vertex 7
+			],
+			top: [
+				{ x: 0, y: 0, z: 0 }, // Vertex 0
+				{ x: faceLeftLen, y: 0, z: 0 }, // Vertex 1
+				{ x: faceLeftLen, y: facesHeight, z: 0 }, // Vertex 2
+				{ x: 0, y: facesHeight, z: 0 }, // Vertex 3
+				{ x: 0, y: 0, z: thick }, // Vertex 4
+				{ x: faceLeftLen, y: 0, z: thick }, // Vertex 5
+				{ x: faceLeftLen, y: facesHeight, z: thick }, // Vertex 6
+				{ x: 0, y: facesHeight, z: thick }, // Vertex 7
+			],
+			bottom: [
+				{ x: 0, y: 0, z: 0 }, // Vertex 0
+				{ x: faceLeftLen, y: 0, z: 0 }, // Vertex 1
+				{ x: faceLeftLen, y: height, z: 0 }, // Vertex 2
+				{ x: 0, y: height, z: 0 }, // Vertex 3
+				{ x: 0, y: 0, z: thick }, // Vertex 4
+				{ x: faceLeftLen, y: 0, z: thick }, // Vertex 5
+				{ x: faceLeftLen, y: height, z: thick }, // Vertex 6
+				{ x: 0, y: height, z: thick }, // Vertex 7
+			],
+		};
+		return walls;
+	}
+
+	#cratePaddingTubes() {
+		const pineDepth = +this.#ply[2] + +this.#pine[2];
+		const facesLength = this.#crate[0] - (this.#pine[2] + +this.#ply[2] + 2 * +this.#ply[2]);
+		const facesHeight = this.#crate[2] - pineDepth - 2 * +this.#pad[2] + +this.#feet[3];
 		const sideLength = this.#crate[1] - pineDepth;
 		const faceLeftLen = this.#crate[0] - pineDepth;
 		const side = this.#pine[2] + this.#ply[2] + this.#pad[2];
@@ -103,8 +257,7 @@ export default class PaddingCrate {
 
 	#cratePaddingTrace() {
 		const pineDepth = this.#ply[2] + this.#pine[2];
-		const facesLength =
-			this.#crate[0] - (this.#pine[2] + this.#ply[2] + 2 * this.#ply[2]);
+		const facesLength = this.#crate[0] - (this.#pine[2] + this.#ply[2] + 2 * this.#ply[2]);
 		const facesHeight = this.#crate[2] - pineDepth - this.#pad[2];
 		const sideLength = this.#crate[1] - pineDepth;
 		const faceLeftLen = this.#crate[0] - pineDepth;
@@ -385,8 +538,8 @@ export default class PaddingCrate {
 	#defineHugeCratePadding() {
 		const trace = new TraceMaker();
 		const fill = new DesignWalls();
-		const padding = this.#cratePaddingTrace();
-		const offsets = this.#offsetWalls();
+		const padding = this.#cratePaddingHugeTrace();
+		const offsets = this.#offSetHugeWalls();
 		const sizes = { dep: this.#baseSize[1], high: this.#baseSize[2] };
 		let meta = structuredClone(this.#data);
 		let show = true;

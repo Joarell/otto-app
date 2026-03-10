@@ -31,7 +31,7 @@ export default class TraceMaker {
 	}
 
 	#defineHugeShape() {
-		const { info, coordinates, name, show, sizes } = this.#data;
+		const { align, info, coordinates, name, show, sizes } = this.#data;
 		const color = this.#colors.get(name.color ?? name) ?? name.color;
 		const { dep, high } = sizes;
 
@@ -40,13 +40,22 @@ export default class TraceMaker {
 			const v2 = coordinates[edge[1]];
 			const cosAngle = Math.cos(dep / high);
 			const sinAngle = Math.sin(high / dep);
-			const rotX = (x, y, z) => [
+			const rotX1 = (x, y, z) => [
 				x,
-				z * sinAngle + y * cosAngle,
+				y * cosAngle + z * sinAngle,
+				(y * sinAngle - z * cosAngle) + align,
+			];
+			const rotX2 = (x, y, z) => [
+				x,
+				z * sinAngle + y * cosAngle + align,
 				z * cosAngle - y * sinAngle,
 			];
-			const first = rotX(v1.x, v1.y, v1.z);
-			const second = rotX(v2.x, v2.y, v2.z);
+			const first = sinAngle > 0
+				? rotX2(v1.x, v1.y, v1.z)
+				: rotX1(v1.x, v1.y, v1.z);
+			const second = sinAngle > 0
+				? rotX2(v2.x, v2.y, v2.z)
+				: rotX1(v2.x, v2.y, v2.z);
 
 			info.push({
 				x: [first[0], second[0]],
@@ -93,13 +102,13 @@ export default class TraceMaker {
 					color,
 					width: 1.5,
 				},
-				showlegend: show && i === 0 ? true : false,
+				showlegend: show && i === 0,
 				hovertext: name.code ?? name,
 				legendgroup: name.name ?? name,
 				hovertemplate:
 					"L: %{x}<br>" + "H: %{z}<br>" + "D: %{y}<br>" + `Code: ${name.code}`,
 				contour: {
-					show: show && i === 0 ? true : false,
+					show: show && i === 0,
 					color: "#BB0056BB",
 					width: 2,
 				},

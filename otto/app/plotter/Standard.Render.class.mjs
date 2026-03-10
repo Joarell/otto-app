@@ -2,6 +2,7 @@ import SetCrateWalls from "./Crate.walls.plotly.class.mjs";
 import CratesFrame from "./Frame.crate.graphic.mjs";
 import PaddingCrate from "./Padding.crate.plotly.mjs";
 import PositionWorksInSideCrate from "./Plotly.layer.position.work.class.mjs";
+import BottomCrate from "./Plotly.bottomCrate.render.mjs";
 
 export default class standardCrateRender {
 	#crates;
@@ -17,8 +18,10 @@ export default class standardCrateRender {
 		const result = crates.map((data, i) => {
 			if (i % 2 === 0) {
 				const { finalSize, innerSize } = data.at(-1)[0];
-				const frame = new CratesFrame(finalSize, data.at(-1)[0]);
-				let meta = frame.setFrame;
+				const bottom = new BottomCrate(finalSize, data.at(-1)[0]);
+				let meta = bottom.commumBottom;
+				const frame = new CratesFrame(meta, finalSize, data.at(-1)[0]);
+				meta = frame.setFrame;
 				const walls = new SetCrateWalls(finalSize, data.at(-1)[0], meta);
 				meta = walls.setWalls;
 				const padding = new PaddingCrate(finalSize, data.at(-1)[0], meta);
@@ -28,8 +31,8 @@ export default class standardCrateRender {
 					data,
 					meta,
 				);
-				meta = position.arrange;
 
+				meta = position.arrange;
 				return meta;
 			}
 			return data;

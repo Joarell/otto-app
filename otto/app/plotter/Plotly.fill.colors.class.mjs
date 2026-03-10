@@ -49,9 +49,8 @@ export default class DesignWalls {
 
 	#createTube() {
 		const segments = 100;
-		const { width, depth, height, offsetX, offsetZ, offsetY, info, name, next } =
-			this.#data;
-		const radius = depth / 1.95;
+		const { width, depth, height, offsetX, offsetZ, offsetY, info, name, next } = this.#data;
+		const radius = depth / 2;
 		const color = "#BB0056BB";
 		const vertices_x = [];
 		const vertices_y = [];
@@ -60,80 +59,22 @@ export default class DesignWalls {
 		const j_arr = [];
 		const k_arr = [];
 
-		// Direction vector
-		const dx = offsetX - width;
-		const dy = offsetZ - depth;
-		const dz = offsetY - height;
-		const len = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
-		// Find two perpendicular vectors
-		let ux;
-		let uy;
-		let uz;
-		if (Math.abs(dx) <= Math.abs(dy) && Math.abs(dx) <= Math.abs(dz)) {
-			ux = 0;
-			uy = -dz;
-			uz = dy;
-		} else if (Math.abs(dy) <= Math.abs(dz)) {
-			ux = dz;
-			uy = 0;
-			uz = -dx;
-		} else {
-			ux = -dy;
-			uy = dx;
-			uz = 0;
-		}
-		const uLen = Math.sqrt(ux * ux + uy * uy + uz * uz);
-		ux /= uLen;
-		uy /= uLen;
-		uz /= uLen;
-
-		// v = cross(d_normalized, u)
-		const dnx = dx / len;
-		const dny = dy / len;
-		const dnz = dz / len;
-		const vx = dny * uz - dnz * uy;
-		const vy = dnz * ux - dnx * uz;
-		const vz = dnx * uy - dny * ux;
-
-		// Generate circle vertices at both ends
 		for (let end = 0; end < 2; end++) {
-			const px = end === 0 ? width : offsetX;
-			const py = end === 0 ? depth : offsetZ;
-			const pz = end === 0 ? height : offsetY;
+			const x = end === 0 ? -width / 2 : width / 2;
 			for (let s = 0; s < segments; s++) {
-				// const angle = 180;
 				const angle = (2 * Math.PI * s) / segments;
-				const cos = Math.cos(angle);
-				const sin = Math.sin(angle);
-
-				vertices_x.push(px + radius * (cos * ux + sin * vx));
-				vertices_y.push(py + radius * (cos * uy + sin * vy))
-				next === 0
-				? vertices_z.push(pz + radius * (cos * uz + sin * vz))
-				: vertices_z.push(pz + radius * (cos * uz + sin * vz) + height - offsetY)
+				vertices_x.push(x - offsetX);
+				vertices_y.push(radius * Math.cos(angle) + offsetY);
+				vertices_z.push(radius * Math.sin(angle) + offsetZ);
 			}
 		}
 
-		// Side faces
 		for (let s = 0; s < segments; s++) {
-			const next = (s + 1) % segments;
-			// Bottom ring: indices 0..segments-1
-			// Top ring: indices segments..2*segments-1
-			i_arr.push(s, s, next);
-			j_arr.push(next, segments + s, segments + s);
-			k_arr.push(segments + next, segments + next, segments + next);
-
-			// Two triangles per quad
-			i_arr.push(s);
-			j_arr.push(segments + s);
-			k_arr.push(segments + next);
-
-			i_arr.push(s);
-			j_arr.push(segments + next);
-			k_arr.push(next);
+			const next = ( s+ 1 ) % segments;
+			i_arr.push(s, s);
+			j_arr.push(segments + s, segments + next)
+			k_arr.push(segments + next, next);
 		}
-
 		info.push({
 			x: vertices_x,
 			y: vertices_y,
@@ -141,16 +82,16 @@ export default class DesignWalls {
 			i: i_arr,
 			j: j_arr,
 			k: k_arr,
-			name: name.name ?? name,
+			name: name.code ?? name,
 			type: "mesh3d",
 			color,
 			hovertext: name.code ?? name,
 			hovertemplate: name.code
 				? "L: %{x}<br>" + "H: %{z}<br>" + "D: %{y}<br>" + `Code: ${name.code}`
 				: "L: %{x}<br>" + "H: %{z}<br>" + "D: %{y}<br>",
-			showlegend: false,
-			legendgroup: name.name ?? name,
-			opacity: 0.2,
+			showlegend: true,
+			legendgroup: name.code ?? name,
+			opacity: 0.5,
 			flatshading: true,
 			showscale: true,
 			contour: {
@@ -226,7 +167,7 @@ export default class DesignWalls {
 	}
 
 	#defineLargestCrate() {
-		const { width, depth, height, offsetX, offsetZ, offsetY, info, name, sizes } =
+		const { align, width, depth, height, offsetX, offsetZ, offsetY, info, name, sizes } =
 			this.#data;
 		const { dep, high } = sizes;
 		const color = this.#colors.get(name.color || name);
@@ -242,15 +183,21 @@ export default class DesignWalls {
 		];
 		const cosAngle = Math.cos(dep / high);
 		const sinAngle = Math.sin(high / dep);
-		const rotX = (x, y, z) => [
-			x, y * cosAngle - z * sinAngle, y * sinAngle + z * cosAngle
+		const rotX1 = (x, y, z) => [
+			x, (z * sinAngle - y * cosAngle) + align, z * cosAngle + y * sinAngle
+		];
+		const rotX2 = (x, y, z) => [
+			x, y * cosAngle - z * sinAngle + align, y * sinAngle + z * cosAngle,
 		];
 		const offsetVertices = vertices.map((v) => [
 			v[0] + offsetX,
 			v[1] + offsetY,
 			v[2] + offsetZ,
 		]);
-		const values = offsetVertices.map((dim) => rotX(dim[0], dim[1], dim[2]));
+		const values = sinAngle > 0
+			? offsetVertices.map((dim) => rotX2(dim[0], dim[1], dim[2]))
+			:  offsetVertices.map((dim) => rotX1(dim[0], dim[1], dim[2]));
+
 		const x = values.map((v) => v[0]);
 		const y = values.map((v) => v[1]);
 		const z = values.map((v) => v[2]);
