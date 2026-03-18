@@ -14,8 +14,8 @@ export default class WorksPosition {
 	}
 
 	#tubes() {
-		let x = +this.#dim[1] + 2 * this.#threshold[0] - this.#pad[2];
-		let y = +this.#dim[3] + this.#threshold[2];
+		const x = +this.#dim[1] + 2 * this.#threshold[0];
+		const y = +this.#dim[3] + this.#threshold[2];
 		const z = this.#depth + this.#threshold[2];
 		const { coordinates, code } = this.#local;
 		const fillX = 0;
@@ -35,12 +35,12 @@ export default class WorksPosition {
 				{ x, y, z }, // Vertex 6
 				{ x: fillX, y, z }, // Vertex 7
 			],
-			width: x - this.#threshold[0] - this.#pad[2],
+			width: x - this.#threshold[1],
 			depth: coordinates.z,
 			height: y - this.#pad[2] - this.#threshold[2],
 			offsetX: - x / 2,
-			offsetY: this.#threshold[1] + this.#pad[2],
-			offsetZ: this.#threshold[2] + this.#depth,
+			offsetY: this.#threshold[1],
+			offsetZ: this.#depth + this.#threshold[2],
 		};
 		return work;
 	}

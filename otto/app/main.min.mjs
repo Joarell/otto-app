@@ -1,1 +1,11010 @@
-class DesignWalls{#t;#e=new Map;#s;constructor(){[["frame","yellow"],["walls","#BF5E30"],["padding","#222725"],["div","#EFECBBBE"],["fill","#2DD751"]].map(t=>this.#e.set(t[0],t[1])),this.#s=[[[0,1,2],[0,2,3]],[[4,7,6],[4,6,5]],[[0,3,7],[0,7,4]],[[1,5,6],[1,6,2]],[[0,4,5],[0,5,1]],[[3,2,6],[3,6,7]]]}#i(){const t=100,{width:e,depth:s,height:i,offsetX:a,offsetZ:r,offsetY:n,info:h,name:o,next:c}=this.#t,d=s/2,l=[],p=[],u=[],f=[],y=[],m=[];for(let s=0;s<2;s++){const i=0===s?-e/2:e/2;for(let e=0;e<t;e++){const s=2*Math.PI*e/t;l.push(i-a),p.push(d*Math.cos(s)+n),u.push(d*Math.sin(s)+r)}}for(let e=0;e<t;e++){const s=(e+1)%t;f.push(e,e),y.push(t+e,t+s),m.push(t+s,s)}return h.push({x:l,y:p,z:u,i:f,j:y,k:m,name:o.code??o,type:"mesh3d",color:"#BB0056BB",hovertext:o.code??o,hovertemplate:o.code?`L: %{x}<br>H: %{z}<br>D: %{y}<br>Code: ${o.code}`:"L: %{x}<br>H: %{z}<br>D: %{y}<br>",showlegend:!0,legendgroup:o.code??o,opacity:.5,flatshading:!0,showscale:!0,contour:{show:!0,color:"white",width:2}}),h}#a(){const{width:t,depth:e,height:s,offsetX:i,offsetZ:a,offsetY:r,info:n,name:h}=this.#t,o=this.#e.get(h.color||h),c=[[0,0,0],[t,0,0],[t,e,0],[0,e,0],[0,0,s],[t,0,s],[t,e,s],[0,e,s]].map(t=>[t[0]+i,t[1]+r,t[2]+a]),d=c.map(t=>t[0]),l=c.map(t=>t[1]),p=c.map(t=>t[2]),u=[],f=[],y=[];return this.#s.map(t=>(t.map(t=>(u.push(t[0]),f.push(t[1]),y.push(t[2]),t)),t)),n.push({x:d,y:l,z:p,i:u,j:f,k:y,name:h.name??h,type:"mesh3d",color:o,hovertext:h.code??h,hovertemplate:h.code?`L: %{x}<br>H: %{z}<br>D: %{y}<br>Code: ${h.code}`:"L: %{x}<br>H: %{z}<br>D: %{y}<br>",showlegend:!1,legendgroup:h.name??h,opacity:.2,flatshading:!0,showscale:!0,contour:{show:!0,color:"white",width:2}}),n}#r(){const{align:t,width:e,depth:s,height:i,offsetX:a,offsetZ:r,offsetY:n,info:h,name:o,sizes:c}=this.#t,{dep:d,high:l}=c,p=this.#e.get(o.color||o),u=[[0,0,0],[e,0,0],[e,s,0],[0,s,0],[0,0,i],[e,0,i],[e,s,i],[0,s,i]],f=Math.cos(d/l),y=Math.sin(l/d),m=u.map(t=>[t[0]+a,t[1]+n,t[2]+r]),z=y>0?m.map(e=>((e,s,i)=>[e,s*f-i*y+t,s*y+i*f])(e[0],e[1],e[2])):m.map(e=>((e,s,i)=>[e,i*y-s*f+t,i*f+s*y])(e[0],e[1],e[2])),g=z.map(t=>t[0]),x=z.map(t=>t[1]),w=z.map(t=>t[2]),k=[],C=[],b=[];return this.#s.map(t=>(t.map(t=>(k.push(t[0]),C.push(t[1]),b.push(t[2]),t)),t)),h.push({x:g,y:x,z:w,i:k,j:C,k:b,name:o.name??o,type:"mesh3d",color:p,hovertext:o.code??o,hovertemplate:o.code?`L: %{x}<br>H: %{z}<br>D: %{y}<br>Code: ${o.code}`:"L: %{x}<br>H: %{z}<br>D: %{y}<br>",showlegend:!1,legendgroup:o.name??o,opacity:.2,flatshading:!0,showscale:!0,contour:{show:!0,color:"white",width:2}}),h}set objectData(t){this.#t=t}get designSides(){return this.#a()}get designTubes(){return this.#i()}get largestCanvas(){return this.#r()}}class TraceMaker{#n;#t;#e=new Map;constructor(){[["fill","#BF5E30"],["frame","#002A3D"],["walls","yellow"],["padding","#FFFFF0"],["div","#002A3D"]].map(t=>this.#e.set(t[0],t[1])),this.#n=[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]]}#h(){const{align:t,info:e,coordinates:s,name:i,show:a,sizes:r}=this.#t,n=this.#e.get(i.color??i)??i.color,{dep:h,high:o}=r;return this.#n.forEach((r,c)=>{const d=s[r[0]],l=s[r[1]],p=Math.cos(h/o),u=Math.sin(o/h),f=(e,s,i)=>[e,s*p+i*u,s*u-i*p+t],y=(e,s,i)=>[e,i*u+s*p+t,i*p-s*u],m=u>0?y(d.x,d.y,d.z):f(d.x,d.y,d.z),z=u>0?y(l.x,l.y,l.z):f(l.x,l.y,l.z);e.push({x:[m[0],z[0]],z:[m[1],z[1]],y:[m[2],z[2]],name:i.name??i,mode:"lines",type:"scatter3d",line:{color:n,width:1.5},showlegend:!(!a||0!==c),hovertext:i.code??i,legendgroup:i.name??i,hovertemplate:`L: %{x}<br>H: %{z}<br>D: %{y}<br>Code: ${i.code}`,contour:{show:!(!a||0!==c),color:"#BB0056BB",width:2}})}),e}#o(){const{info:t,coordinates:e,name:s,show:i}=this.#t,a=this.#e.get(s.color??s)??s.color;return this.#n.forEach((r,n)=>{const h=e[r[0]],o=e[r[1]];t.push({x:[h.x,o.x],z:[h.y,o.y],y:[h.z,o.z],name:s.name??s,mode:"lines",type:"scatter3d",line:{color:a,width:1.5},showlegend:i&&0===n,hovertext:s.code??s,legendgroup:s.name??s,hovertemplate:`L: %{x}<br>H: %{z}<br>D: %{y}<br>Code: ${s.code}`,contour:{show:i&&0===n,color:"#BB0056BB",width:2}})}),t}set data(t){this.#t=t}get defineTrace(){return this.#o()}get defineHugeTrace(){return this.#h()}}class SetCrateWalls{#t;#c;#d;#l;constructor(t,e,s){const i=JSON.parse(localStorage.getItem("crating")).map(t=>e.usedMaterials.get(t));this.#c=i.find(t=>"Pinewood"===t.at(-1)),this.#d=i.find(t=>"Plywood"===t.at(-1)),this.#l=t,this.#t=s,this.#d[1]=+this.#d[1],this.#d[2]=+this.#d[2],this.#d[3]=+this.#d[3]}#p(){const t=this.#c[2]+this.#d[2],e=this.#l[0]-this.#c[2],s=this.#l[2]-t,i=this.#l[1]-t,a=this.#l[0]-t,r=this.#c[2]+this.#d[2],n=2*this.#c[2]+this.#d[2],h=this.#l[1]-this.#c[2];return{backFace:[{x:0,y:0,z:0},{x:e,y:0,z:0},{x:e,y:s,z:0},{x:0,y:s,z:0},{x:0,y:0,z:this.#d[2]},{x:e,y:0,z:this.#d[2]},{x:e,y:s,z:this.#d[2]},{x:0,y:s,z:this.#d[2]}],frontFace:[{x:0,y:0,z:0},{x:e,y:0,z:0},{x:e,y:s,z:0},{x:0,y:s,z:0},{x:0,y:0,z:i},{x:e,y:0,z:i},{x:e,y:s,z:i},{x:0,y:s,z:i}],sideRight:[{x:0,y:0,z:0},{x:r,y:0,z:0},{x:r,y:s,z:0},{x:0,y:s,z:0},{x:0,y:0,z:i},{x:r,y:0,z:i},{x:r,y:s,z:i},{x:0,y:s,z:i}],sideLeft:[{x:0,y:0,z:0},{x:a,y:0,z:0},{x:a,y:s,z:0},{x:0,y:s,z:0},{x:0,y:0,z:i},{x:a,y:0,z:i},{x:a,y:s,z:i},{x:0,y:s,z:i}],top:[{x:0,y:0,z:0},{x:e,y:0,z:0},{x:e,y:s,z:0},{x:0,y:s,z:0},{x:0,y:0,z:h},{x:e,y:0,z:h},{x:e,y:s,z:h},{x:0,y:s,z:h}],bottom:[{x:0,y:0,z:0},{x:e,y:0,z:0},{x:e,y:n,z:0},{x:0,y:n,z:0},{x:0,y:0,z:h},{x:e,y:0,z:h},{x:e,y:n,z:h},{x:0,y:n,z:h}]}}#u(t,e){const{x:s,y:i,z:a}=t,r=structuredClone(e);return Object.entries(r).map((t,e)=>{switch(e){case 0:return 0===t[1].x&&(t[1].x=s),0===t[1].y&&(t[1].y=i),0===t[1].z&&(t[1].z=a),t;case 1:return 0===t[1].y&&(t[1].y=i),0===t[1].z&&(t[1].z=a),t;case 2:return 0===t[1].z&&(t[1].z=a),t;case 3:return 0===t[1].x&&(t[1].x=s),0===t[1].z&&(t[1].z=a),t;case 4:return 0===t[1].x&&(t[1].x=s),0===t[1].y&&(t[1].y=i),t;case 5:return 0===t[1].y&&(t[1].y=i),t;case 7:return 0===t[1].x&&(t[1].x=s),t}}),r}#f(){return{faceBack:{type:"backFace",x:this.#c[2],y:3*this.#c[2],z:2*this.#c[2],width:this.#l[0]-2*this.#c[2],depth:this.#c[2],height:this.#l[2]-(3*this.#c[2]+2*this.#d[2]),offsetX:this.#c[2],offsetY:this.#c[2],offsetZ:3*this.#c[2]},faceFront:{type:"frontFace",x:this.#c[2],y:3*this.#c[2],z:this.#l[1]-this.#c[2],width:this.#l[0]-2*this.#c[2],depth:this.#c[2],height:this.#l[2]-(3*this.#c[2]+2*this.#d[2]),offsetX:this.#c[2],offsetY:this.#l[1]-2*this.#c[2],offsetZ:3*this.#c[2]},faceRight:{type:"sideRight",x:this.#c[2],y:3*this.#c[2],z:2*this.#c[2],width:this.#c[2],depth:this.#l[1]-4*this.#c[2],height:this.#l[2]-(3*this.#c[2]+2*this.#d[2]),offsetX:this.#c[2],offsetY:2*this.#c[2],offsetZ:3*this.#c[2]},faceLeft:{type:"sideLeft",x:this.#l[0]-this.#c[2],y:3*this.#c[2],z:2*this.#c[2],width:this.#c[2],depth:this.#l[1]-(2*this.#c[2]+2*this.#d[2]),height:this.#l[2]-(3*this.#c[2]+2*this.#d[2]),offsetX:this.#l[0]-2*this.#c[2],offsetY:2*this.#c[2],offsetZ:3*this.#c[2]},top:{type:"top",x:this.#c[2],y:this.#l[2]-this.#c[2],z:this.#c[2],width:this.#l[0]-2*this.#c[2],depth:this.#l[1]-2*this.#c[2],height:this.#c[2],offsetX:this.#c[2],offsetY:this.#c[2],offsetZ:this.#l[2]-2*this.#c[2]},bottom:{type:"bottom",x:this.#c[2],y:2*this.#c[2],z:this.#c[2],width:this.#l[0]-2*this.#c[2],depth:this.#l[1]-2*this.#c[2],height:this.#c[2],offsetX:this.#c[2],offsetY:this.#c[2],offsetZ:2*this.#c[2]}}}#y(){const t=new TraceMaker,e=new DesignWalls,s=this.#p(),i=this.#f();let a=structuredClone(this.#t),r=!0;return this.#d?(Object.entries(i).map(i=>{const{type:n,offsetX:h,offsetY:o,offsetZ:c,width:d,depth:l,height:p}=i[1],u=s[n],f=this.#u(i[1],u);t.data={info:a,coordinates:f,name:"walls",show:r},a=t.defineTrace,e.objectData={width:d,depth:l,height:p,info:a,name:"walls",offsetX:h,offsetY:o,offsetZ:c},a=this.#t=e.designSides,r=!1}),a):this.#t}get setWalls(){return this.#y()}}class LargeCratesFrame{#m;#c;#z;#g;#x;#d;#w;constructor(t,e,s,i,a){const r=JSON.parse(localStorage.getItem("crating")).map(t=>s.usedMaterials.get(t)),n=t=>t.map((e,s)=>(1!==s&&2!==s&&3!==s||(t[s]=+t[s]),e));this.#g=t,this.#z=[i[0],i[1]-e[1],i[2]],this.#c=r.find(t=>"Pinewood"===t.at(-1)),this.#x=r.find(t=>"Wooden Post"===t.at(-1)),this.#d=r.find(t=>"Plywood"===t.at(-1)),this.#m=e,n(this.#x),n(this.#d),n(this.#c),this.#w=a+this.#c[2]}#k(){const t=this.#w-2*this.#c[2]+ +this.#x[3];return{offsetFacesRightBackV:{type:"faceV",x:this.#c[2],y:this.#c[3]+t,z:0,width:this.#c[3],depth:this.#c[2],height:this.#m[2]-t-2*this.#c[3]-this.#c[2],offsetX:this.#c[2],offsetY:0,offsetZ:t+this.#c[3]},offsetFacesLeftBackV:{type:"faceVR",x:this.#m[0]-this.#c[2],y:this.#c[3]+t,z:0,width:this.#c[3],depth:this.#c[2],height:this.#m[2]-t-2*this.#c[3]-this.#c[2],offsetX:this.#m[0]-(this.#c[3]+this.#c[2]),offsetY:0,offsetZ:t+this.#c[3]},offsetFacesRightFrontV:{type:"faceVB",x:this.#c[2],y:this.#c[3]+t,z:this.#m[1],width:this.#c[3],depth:this.#c[2],height:this.#m[2]-t-2*this.#c[3]-this.#c[2],offsetX:this.#c[2],offsetY:this.#m[1]-this.#c[2],offsetZ:t+this.#c[3]},offsetFacesLeftFrontV:{type:"faceVBR",x:this.#m[0]-this.#c[2],y:this.#c[3]+t,z:this.#m[1],width:this.#c[3],depth:this.#c[2],height:this.#m[2]-t-2*this.#c[3]-this.#c[2],offsetX:this.#m[0]-(this.#c[3]+this.#c[2]),offsetY:this.#m[1]-this.#c[2],offsetZ:t+this.#c[3]},offsetSidesRightVUp:{type:"sideHUp",x:0,y:this.#m[2]-this.#c[2],z:this.#c[2],width:this.#c[2],depth:this.#m[1]-2*this.#c[2],height:this.#c[3],offsetX:0,offsetY:this.#c[2],offsetZ:this.#m[2]-(this.#c[3]+this.#c[2])},offsetSidesLeftVUp:{type:"sideLeftHUp",x:this.#m[0],y:this.#m[2]-this.#c[2],z:this.#c[2],width:this.#c[2],depth:this.#m[1]-2*this.#c[2],height:this.#c[3],offsetX:this.#m[0]-this.#c[2],offsetY:this.#c[2],offsetZ:this.#m[2]-(this.#c[3]+this.#c[2])},offsetSidesRightHDown:{type:"sideHDown",x:0,y:t,z:this.#c[2],width:this.#c[2],depth:this.#m[1]-2*this.#c[2],height:this.#c[3],offsetX:0,offsetY:this.#c[2],offsetZ:t},offsetSidesLeftHDown:{type:"sideLeftHDown",x:this.#m[0],y:t,z:this.#c[2],width:this.#c[2],depth:this.#m[1]-2*this.#c[2],height:this.#c[3],offsetX:this.#m[0]-this.#c[2],offsetY:this.#c[2],offsetZ:t},offsetFacesBackUpH:{type:"faceHUp",x:0,y:this.#m[2]-this.#c[2],z:0,width:this.#m[0],depth:this.#c[2],height:this.#c[3],offsetX:0,offsetY:0,offsetZ:this.#m[2]-(this.#c[2]+this.#c[3])},offsetFacesBackDownH:{type:"faceH",x:0,y:t,z:0,width:this.#m[0],depth:this.#c[2],height:this.#c[3],offsetX:0,offsetY:0,offsetZ:t},offsetFacesFrontUpH:{type:"faceHBackUp",x:0,y:this.#m[2]-this.#c[2],z:this.#m[1],width:this.#m[0],depth:this.#c[2],height:this.#c[3],offsetX:0,offsetY:this.#m[1]-this.#c[2],offsetZ:this.#m[2]-(this.#c[2]+this.#c[3])},offsetFacesFrontDownH:{type:"faceHBackDown",x:0,y:t,z:this.#m[1],width:this.#m[0],depth:this.#c[2],height:this.#c[3],offsetX:0,offsetY:this.#m[1]-this.#c[2],offsetZ:t},offsetSidesRightVBack:{type:"sideV",x:0,y:t+this.#c[3],z:0,width:this.#c[2],depth:this.#c[3],height:this.#m[2]-t-2*this.#c[3]-this.#c[2],offsetX:0,offsetY:0,offsetZ:t+this.#c[3]},offsetSidesRightVFront:{type:"sideRightFrontV",x:0,y:t+this.#c[3],z:this.#m[1]-this.#c[3],width:this.#c[2],depth:this.#c[3],height:this.#m[2]-t-2*this.#c[3]-this.#c[2],offsetX:0,offsetY:this.#m[1]-this.#c[3],offsetZ:t+this.#c[3]},offsetSidesLeftVBack:{type:"sideLeftV",x:this.#m[0],y:t+this.#c[3],z:0,width:this.#c[2],depth:this.#c[3],height:this.#m[2]-t-2*this.#c[3]-this.#c[2],offsetX:this.#m[0]-this.#c[2],offsetY:0,offsetZ:t+this.#c[3]},offsetSidesLeftVFront:{type:"sideLeftFrontV",x:this.#m[0],y:t+this.#c[3],z:this.#m[1]-this.#c[3],width:this.#c[2],depth:this.#c[3],height:this.#m[2]-t-2*this.#c[3]-this.#c[2],offsetX:this.#m[0]-this.#c[2],offsetY:this.#m[1]-this.#c[3],offsetZ:t+this.#c[3]},offsetTopFrontH:{type:"topFace",x:this.#c[3],y:this.#m[2]-this.#c[2],z:0,width:this.#m[0]-2*this.#c[3],depth:this.#c[3],height:this.#c[2],offsetX:this.#c[3],offsetY:0,offsetZ:this.#m[2]-this.#c[2]},offsetTopBackH:{type:"topComp",x:this.#c[3],y:this.#m[2]-this.#c[2],z:this.#m[1],width:this.#m[0]-2*this.#c[3],depth:this.#c[3],height:this.#c[2],offsetX:this.#c[3],offsetY:this.#m[1]-this.#c[3],offsetZ:this.#m[2]-this.#c[2]},offsetTopRight:{type:"topFeet",x:0,y:this.#m[2]-this.#c[2],z:0,width:this.#c[3],depth:this.#m[1],height:this.#c[2],offsetX:0,offsetY:0,offsetZ:this.#m[2]-this.#c[2]},offsetTopLeft:{type:"topLeftFeet",x:this.#m[0],y:this.#m[2]-this.#c[2],z:0,width:this.#c[3],depth:this.#m[1],height:this.#c[2],offsetX:this.#m[0]-this.#c[3],offsetY:0,offsetZ:this.#m[2]-this.#c[2]}}}#C(){const t=this.#w-2*this.#d[2]+this.#x[3],e=this.#m[2]-this.#c[3]-this.#c[2],s=this.#m[0]-this.#c[3],i=this.#m[1]-this.#c[2],a=this.#m[2]-this.#c[3]-this.#c[2],r=this.#m[1]-this.#c[2],n=this.#m[0]-this.#c[2],h=this.#c[3]+this.#c[2],o=this.#m[0]-this.#c[3]-this.#c[2],c=this.#m[2],d=this.#m[1]-this.#c[3];return{faceV:[{x:0,y:0,z:0},{x:h,y:0,z:0},{x:h,y:e,z:0},{x:0,y:e,z:0},{x:0,y:0,z:this.#c[2]},{x:h,y:0,z:this.#c[2]},{x:h,y:e,z:this.#c[2]},{x:0,y:e,z:this.#c[2]}],faceVR:[{x:0,y:0,z:0},{x:o,y:0,z:0},{x:o,y:e,z:0},{x:0,y:e,z:0},{x:0,y:0,z:this.#c[2]},{x:o,y:0,z:this.#c[2]},{x:o,y:e,z:this.#c[2]},{x:0,y:e,z:this.#c[2]}],faceVB:[{x:0,y:0,z:0},{x:h,y:0,z:0},{x:h,y:e,z:0},{x:0,y:e,z:0},{x:0,y:0,z:i},{x:h,y:0,z:i},{x:h,y:e,z:i},{x:0,y:e,z:i}],faceVBR:[{x:0,y:0,z:0},{x:o,y:0,z:0},{x:o,y:e,z:0},{x:0,y:e,z:0},{x:0,y:0,z:i},{x:o,y:0,z:i},{x:o,y:e,z:i},{x:0,y:e,z:i}],faceH:[{x:0,y:0,z:0},{x:this.#m[0],y:0,z:0},{x:this.#m[0],y:this.#c[3]+t,z:0},{x:0,y:this.#c[3]+t,z:0},{x:0,y:0,z:this.#c[2]},{x:this.#m[0],y:0,z:this.#c[2]},{x:this.#m[0],y:this.#c[3]+t,z:this.#c[2]},{x:0,y:this.#c[3]+t,z:this.#c[2]}],faceHUp:[{x:0,y:0,z:0},{x:this.#m[0],y:0,z:0},{x:this.#m[0],y:a,z:0},{x:0,y:a,z:0},{x:0,y:0,z:this.#c[2]},{x:this.#m[0],y:0,z:this.#c[2]},{x:this.#m[0],y:a,z:this.#c[2]},{x:0,y:a,z:this.#c[2]}],faceHBackUp:[{x:0,y:0,z:0},{x:this.#m[0],y:0,z:0},{x:this.#m[0],y:a,z:0},{x:0,y:a,z:0},{x:0,y:0,z:i},{x:this.#m[0],y:0,z:i},{x:this.#m[0],y:a,z:i},{x:0,y:a,z:i}],faceHBackDown:[{x:0,y:0,z:0},{x:this.#m[0],y:0,z:0},{x:this.#m[0],y:this.#c[3]+t,z:0},{x:0,y:this.#c[3]+t,z:0},{x:0,y:0,z:i},{x:this.#m[0],y:0,z:i},{x:this.#m[0],y:this.#c[3]+t,z:i},{x:0,y:this.#c[3]+t,z:i}],sideHUp:[{x:0,y:0,z:0},{x:this.#c[2],y:0,z:0},{x:this.#c[2],y:e,z:0},{x:0,y:e,z:0},{x:0,y:0,z:r},{x:this.#c[2],y:0,z:r},{x:this.#c[2],y:e,z:r},{x:0,y:e,z:r}],sideLeftHUp:[{x:0,y:0,z:0},{x:n,y:0,z:0},{x:n,y:e,z:0},{x:0,y:e,z:0},{x:0,y:0,z:r},{x:n,y:0,z:r},{x:n,y:e,z:r},{x:0,y:e,z:r}],sideHDown:[{x:0,y:0,z:0},{x:this.#c[2],y:0,z:0},{x:this.#c[2],y:this.#c[3]+t,z:0},{x:0,y:this.#c[3]+t,z:0},{x:0,y:0,z:r},{x:this.#c[2],y:0,z:r},{x:this.#c[2],y:this.#c[3]+t,z:r},{x:0,y:this.#c[3]+t,z:r}],sideLeftHDown:[{x:0,y:0,z:0},{x:n,y:0,z:0},{x:n,y:this.#c[3]+t,z:0},{x:0,y:this.#c[3]+t,z:0},{x:0,y:0,z:r},{x:n,y:0,z:r},{x:n,y:this.#c[3]+t,z:r},{x:0,y:this.#c[3]+t,z:r}],sideV:[{x:0,y:0,z:0},{x:this.#c[2],y:0,z:0},{x:this.#c[2],y:a,z:0},{x:0,y:a,z:0},{x:0,y:0,z:this.#c[3]},{x:this.#c[2],y:0,z:this.#c[3]},{x:this.#c[2],y:a,z:this.#c[3]},{x:0,y:a,z:this.#c[3]}],sideRightFrontV:[{x:0,y:0,z:0},{x:this.#c[2],y:0,z:0},{x:this.#c[2],y:a,z:0},{x:0,y:a,z:0},{x:0,y:0,z:this.#m[1]},{x:this.#c[2],y:0,z:this.#m[1]},{x:this.#c[2],y:a,z:this.#m[1]},{x:0,y:a,z:this.#m[1]}],sideLeftV:[{x:0,y:0,z:0},{x:n,y:0,z:0},{x:n,y:a,z:0},{x:0,y:a,z:0},{x:0,y:0,z:this.#c[3]},{x:n,y:0,z:this.#c[3]},{x:n,y:a,z:this.#c[3]},{x:0,y:a,z:this.#c[3]}],sideLeftFrontV:[{x:0,y:0,z:0},{x:n,y:0,z:0},{x:n,y:a,z:0},{x:0,y:a,z:0},{x:0,y:0,z:this.#m[1]},{x:n,y:0,z:this.#m[1]},{x:n,y:a,z:this.#m[1]},{x:0,y:a,z:this.#m[1]}],topFace:[{x:0,y:0,z:0},{x:s,y:0,z:0},{x:s,y:c,z:0},{x:0,y:c,z:0},{x:0,y:0,z:this.#c[3]},{x:s,y:0,z:this.#c[3]},{x:s,y:c,z:this.#c[3]},{x:0,y:c,z:this.#c[3]}],topComp:[{x:0,y:0,z:0},{x:s,y:0,z:0},{x:s,y:c,z:0},{x:0,y:c,z:0},{x:0,y:0,z:d},{x:s,y:0,z:d},{x:s,y:c,z:d},{x:0,y:c,z:d}],topFeet:[{x:0,y:0,z:0},{x:this.#c[3],y:0,z:0},{x:this.#c[3],y:c,z:0},{x:0,y:c,z:0},{x:0,y:0,z:this.#m[1]},{x:this.#c[3],y:0,z:this.#m[1]},{x:this.#c[3],y:c,z:this.#m[1]},{x:0,y:c,z:this.#m[1]}],topLeftFeet:[{x:0,y:0,z:0},{x:s,y:0,z:0},{x:s,y:c,z:0},{x:0,y:c,z:0},{x:0,y:0,z:this.#m[1]},{x:s,y:0,z:this.#m[1]},{x:s,y:c,z:this.#m[1]},{x:0,y:c,z:this.#m[1]}]}}#b(t,e){const{x:s,y:i,z:a}=t,r=structuredClone(e);return Object.entries(r).map((t,e)=>{switch(e){case 0:0===t[1].x&&(t[1].x=+s),0===t[1].y&&(t[1].y=+i),0===t[1].z&&(t[1].z=+a);break;case 1:0===t[1].y&&(t[1].y=+i),0===t[1].z&&(t[1].z=+a);break;case 2:0===t[1].z&&(t[1].z=+a);break;case 3:0===t[1].x&&(t[1].x=+s),0===t[1].z&&(t[1].z=+a);break;case 4:0===t[1].x&&(t[1].x=+s),0===t[1].y&&(t[1].y=+i);break;case 5:0===t[1].y&&(t[1].y=+i);break;case 7:0===t[1].x&&(t[1].x=+s)}return t}),r}#S(t,e,s){const i=new TraceMaker,a=new DesignWalls,r=this.#x[3],n={dep:this.#m[1]-this.#w,high:this.#z[2]};let h=!0;return Object.entries(s).map(s=>{const{type:o,offsetX:c,offsetY:d,offsetZ:l,width:p,depth:u,height:f}=s[1],y=e[o],m=this.#b(s[1],y);return i.data={info:t,coordinates:m,name:"frame",show:h,sizes:n,align:r},t=i.defineHugeTrace,a.objectData={align:r,width:p,depth:u,height:f,info:t,name:"frame",offsetX:c,offsetY:d,offsetZ:l,sizes:n},t=a.largestCanvas,h=!1,s}),t}#v(){const t=this.#C(),e=this.#k();return this.#g=this.#S(this.#g,t,e),this.#g}get setFrame(){return this.#v()}}class PaddingCrate{#t;#c;#d;#l;#A;#T;#x;constructor(t,e,s,i){const a=JSON.parse(localStorage.getItem("crating")).map(t=>e.usedMaterials.get(t));this.#T=i,this.#l=t,this.#t=s,this.#c=a.find(t=>"Pinewood"===t.at(-1)),this.#d=a.find(t=>"Plywood"===t.at(-1)),this.#x=a.find(t=>"Wooden Post"===t.at(-1)),this.#A=a.find(t=>"Foam Sheet"===t.at(-1)&&t[2]>2.5),this.#A[1]=+this.#A[1],this.#A[2]=+this.#A[2],this.#A[3]=+this.#A[3]}#L(){const t=3*+this.#d[2]+ +this.#x[3];return{faceBack:{type:"backFace",x:this.#c[2]+this.#d[2]+this.#A[2],y:2*this.#A[2]+t+ +this.#c[2],z:this.#c[2]+this.#d[2]+this.#A[2],width:this.#l[0]-(2*this.#c[2]+2*this.#d[2]+2*this.#A[2]),depth:this.#A[2],height:this.#l[2]-t-5*this.#d[2]-2*this.#A[2],offsetX:this.#c[2]+this.#d[2]+this.#A[2],offsetY:this.#A[2],offsetZ:t+this.#c[2]+4*this.#d[2]},faceFront:{type:"frontFace",x:this.#c[2]+this.#d[2]+this.#A[2],y:2*this.#A[2]+t+ +this.#c[2],z:this.#l[1]-this.#c[2]-this.#d[2]-this.#A[2],width:this.#l[0]-(2*this.#c[2]+2*this.#d[2]+2*this.#A[2]),depth:this.#A[2],height:this.#l[2]-t-5*this.#d[2]-2*this.#A[2],offsetX:this.#c[2]+this.#d[2]+this.#A[2],offsetY:this.#l[1]-2*this.#A[2],offsetZ:t+this.#c[2]+4*this.#d[2]},faceRight:{type:"sideRight",x:this.#c[2]+this.#d[2],y:2*this.#A[2]+t+ +this.#c[2],z:this.#c[2]+this.#d[2],width:this.#A[2],depth:this.#l[1]-2*this.#c[2]-2*this.#c[2],height:this.#l[2]-t-5*this.#d[2]-2*this.#A[2],offsetX:this.#c[2]+this.#d[2],offsetY:2*this.#c[2],offsetZ:t+this.#c[2]+4*this.#d[2]},faceLeft:{type:"sideLeft",x:this.#l[0]-this.#c[2]-this.#d[2]-this.#A[2],y:2*this.#A[2]+t+ +this.#c[2],z:this.#c[2]+this.#d[2],width:this.#A[2],depth:this.#l[1]-2*this.#c[2]-2*this.#c[2],height:this.#l[2]-t-5*this.#d[2]-2*this.#A[2],offsetX:this.#l[0]-this.#d[2]-this.#c[2]-this.#A[2],offsetY:2*this.#c[2],offsetZ:t+this.#c[2]+4*this.#d[2]},top:{type:"top",x:this.#c[2]+this.#d[2],y:this.#l[2]-this.#c[2]-this.#d[2],z:this.#c[2]+this.#d[2],width:this.#l[0]-(2*this.#c[2]+2*this.#d[2]),depth:this.#l[1]-(this.#c[2]+this.#d[2]+this.#A[2]),height:this.#A[2],offsetX:this.#c[2]+this.#d[2],offsetY:this.#c[2]+this.#d[2],offsetZ:this.#l[2]-(2*this.#d[2]+this.#A[2])},bottom:{type:"bottom",x:this.#c[2]+this.#d[2],y:2*this.#A[2]+t+ +this.#c[2],z:this.#c[2]+this.#d[2],width:this.#l[0]-(2*this.#c[2]+2*this.#d[2]),depth:this.#l[1]-(2*this.#c[2]+2*this.#d[2]),height:this.#A[2],offsetX:this.#c[2]+this.#d[2],offsetY:this.#c[2]+this.#d[2],offsetZ:+this.#x[3]+t+ +this.#c[2]}}}#F(){const t=this.#d[2]+ +this.#c[2],e=this.#l[0]-(+this.#c[2]+ +this.#d[2]+2*+this.#d[2]),s=this.#l[2]-t-this.#A[2],i=this.#l[1]-t,a=this.#l[0]-t,r=+this.#c[2]+ +this.#d[2]+this.#A[2],n=+this.#x[3]+2*this.#d[2]+2*this.#A[2],h=this.#l[1]-this.#c[2]-+this.#d[2];return{backFace:[{x:0,y:0,z:0},{x:e,y:0,z:0},{x:e,y:s,z:0},{x:0,y:s,z:0},{x:0,y:0,z:this.#A[2]},{x:e,y:0,z:this.#A[2]},{x:e,y:s,z:this.#A[2]},{x:0,y:s,z:this.#A[2]}],frontFace:[{x:0,y:0,z:0},{x:e,y:0,z:0},{x:e,y:s,z:0},{x:0,y:s,z:0},{x:0,y:0,z:i},{x:e,y:0,z:i},{x:e,y:s,z:i},{x:0,y:s,z:i}],sideRight:[{x:0,y:0,z:0},{x:r,y:0,z:0},{x:r,y:s,z:0},{x:0,y:s,z:0},{x:0,y:0,z:i},{x:r,y:0,z:i},{x:r,y:s,z:i},{x:0,y:s,z:i}],sideLeft:[{x:0,y:0,z:0},{x:a,y:0,z:0},{x:a,y:s,z:0},{x:0,y:s,z:0},{x:0,y:0,z:i},{x:a,y:0,z:i},{x:a,y:s,z:i},{x:0,y:s,z:i}],top:[{x:0,y:0,z:0},{x:a,y:0,z:0},{x:a,y:s,z:0},{x:0,y:s,z:0},{x:0,y:0,z:h},{x:a,y:0,z:h},{x:a,y:s,z:h},{x:0,y:s,z:h}],bottom:[{x:0,y:0,z:0},{x:a,y:0,z:0},{x:a,y:n,z:0},{x:0,y:n,z:0},{x:0,y:0,z:h},{x:a,y:0,z:h},{x:a,y:n,z:h},{x:0,y:n,z:h}]}}#I(){const t=+this.#d[2]+ +this.#c[2],e=this.#l[0]-(this.#c[2]+ +this.#d[2]+2*+this.#d[2]),s=this.#l[2]-t-2*+this.#A[2]+ +this.#x[3],i=this.#l[1]-t,a=this.#l[0]-t,r=this.#c[2]+this.#d[2]+this.#A[2],n=2*this.#c[2]+this.#d[2]+this.#A[2],h=this.#l[1]-this.#c[2]-this.#d[2];return{backFace:[{x:0,y:0,z:0},{x:e,y:0,z:0},{x:e,y:s,z:0},{x:0,y:s,z:0},{x:0,y:0,z:this.#A[2]},{x:e,y:0,z:this.#A[2]},{x:e,y:s,z:this.#A[2]},{x:0,y:s,z:this.#A[2]}],frontFace:[{x:0,y:0,z:0},{x:e,y:0,z:0},{x:e,y:s,z:0},{x:0,y:s,z:0},{x:0,y:0,z:i},{x:e,y:0,z:i},{x:e,y:s,z:i},{x:0,y:s,z:i}],sideRight:[{x:0,y:0,z:0},{x:r,y:0,z:0},{x:r,y:s,z:0},{x:0,y:s,z:0},{x:0,y:0,z:i},{x:r,y:0,z:i},{x:r,y:s,z:i},{x:0,y:s,z:i}],sideLeft:[{x:0,y:0,z:0},{x:a,y:0,z:0},{x:a,y:s,z:0},{x:0,y:s,z:0},{x:0,y:0,z:i},{x:a,y:0,z:i},{x:a,y:s,z:i},{x:0,y:s,z:i}],top:[{x:0,y:0,z:0},{x:a,y:0,z:0},{x:a,y:s,z:0},{x:0,y:s,z:0},{x:0,y:0,z:h},{x:a,y:0,z:h},{x:a,y:s,z:h},{x:0,y:s,z:h}],bottom:[{x:0,y:0,z:0},{x:a,y:0,z:0},{x:a,y:n,z:0},{x:0,y:n,z:0},{x:0,y:0,z:h},{x:a,y:0,z:h},{x:a,y:n,z:h},{x:0,y:n,z:h}]}}#P(){const t=this.#d[2]+this.#c[2],e=this.#l[0]-(this.#c[2]+this.#d[2]+2*this.#d[2]),s=this.#l[2]-t-this.#A[2],i=this.#l[1]-t,a=this.#l[0]-t,r=this.#c[2]+this.#d[2]+this.#A[2],n=2*this.#c[2]+this.#d[2]+this.#A[2],h=this.#l[1]-this.#c[2]-this.#d[2];return{backFace:[{x:0,y:0,z:0},{x:e,y:0,z:0},{x:e,y:s,z:0},{x:0,y:s,z:0},{x:0,y:0,z:this.#A[2]},{x:e,y:0,z:this.#A[2]},{x:e,y:s,z:this.#A[2]},{x:0,y:s,z:this.#A[2]}],frontFace:[{x:0,y:0,z:0},{x:e,y:0,z:0},{x:e,y:s,z:0},{x:0,y:s,z:0},{x:0,y:0,z:i},{x:e,y:0,z:i},{x:e,y:s,z:i},{x:0,y:s,z:i}],sideRight:[{x:0,y:0,z:0},{x:r,y:0,z:0},{x:r,y:s,z:0},{x:0,y:s,z:0},{x:0,y:0,z:i},{x:r,y:0,z:i},{x:r,y:s,z:i},{x:0,y:s,z:i}],sideLeft:[{x:0,y:0,z:0},{x:a,y:0,z:0},{x:a,y:s,z:0},{x:0,y:s,z:0},{x:0,y:0,z:i},{x:a,y:0,z:i},{x:a,y:s,z:i},{x:0,y:s,z:i}],top:[{x:0,y:0,z:0},{x:a,y:0,z:0},{x:a,y:s,z:0},{x:0,y:s,z:0},{x:0,y:0,z:h},{x:a,y:0,z:h},{x:a,y:s,z:h},{x:0,y:s,z:h}],bottom:[{x:0,y:0,z:0},{x:a,y:0,z:0},{x:a,y:n,z:0},{x:0,y:n,z:0},{x:0,y:0,z:h},{x:a,y:0,z:h},{x:a,y:n,z:h},{x:0,y:n,z:h}]}}#u(t,e){const{x:s,y:i,z:a}=t,r=structuredClone(e);return Object.entries(r).map((t,e)=>{switch(e){case 0:return 0===t[1].x&&(t[1].x=s),0===t[1].y&&(t[1].y=i),0===t[1].z&&(t[1].z=a),t;case 1:return 0===t[1].y&&(t[1].y=i),0===t[1].z&&(t[1].z=a),t;case 2:return 0===t[1].z&&(t[1].z=a),t;case 3:return 0===t[1].x&&(t[1].x=s),0===t[1].z&&(t[1].z=a),t;case 4:return 0===t[1].x&&(t[1].x=s),0===t[1].y&&(t[1].y=i),t;case 5:return 0===t[1].y&&(t[1].y=i),t;case 7:return 0===t[1].x&&(t[1].x=s),t}return t}),r}#f(){return{faceBack:{type:"backFace",x:this.#c[2]+this.#d[2]+this.#A[2],y:2*this.#c[2]+this.#d[2]+this.#A[2],z:this.#c[2]+this.#d[2]+this.#A[2],width:this.#l[0]-(2*this.#c[2]+2*this.#d[2]+2*this.#A[2]),depth:this.#A[2],height:this.#l[2]-2*this.#c[2]-3*this.#d[2]-2*this.#A[2],offsetX:this.#c[2]+this.#d[2]+this.#A[2],offsetY:this.#A[2],offsetZ:3*this.#c[2]+2*this.#d[2]},faceFront:{type:"frontFace",x:this.#c[2]+this.#d[2]+this.#A[2],y:2*this.#c[2]+this.#d[2]+this.#A[2],z:this.#l[1]-this.#c[2]-this.#d[2]-this.#A[2],width:this.#l[0]-(2*this.#c[2]+2*this.#d[2]+2*this.#A[2]),depth:this.#A[2],height:this.#l[2]-2*this.#c[2]-3*this.#d[2]-2*this.#A[2],offsetX:this.#c[2]+this.#d[2]+this.#A[2],offsetY:this.#l[1]-2*this.#A[2],offsetZ:3*this.#c[2]+2*this.#d[2]},faceRight:{type:"sideRight",x:this.#c[2]+this.#d[2],y:2*this.#c[2]+this.#d[2]+this.#A[2],z:this.#c[2]+this.#d[2],width:this.#A[2],depth:this.#l[1]-2*this.#c[2]-2*this.#c[2],height:this.#l[2]-this.#c[2]-2*this.#d[2]-3*this.#A[2],offsetX:this.#c[2]+this.#d[2],offsetY:2*this.#c[2],offsetZ:2*this.#c[2]+this.#d[2]+this.#A[2]},faceLeft:{type:"sideLeft",x:this.#l[0]-this.#c[2]-this.#d[2]-this.#A[2],y:2*this.#c[2]+this.#d[2]+this.#A[2],z:this.#c[2]+this.#d[2],width:this.#A[2],depth:this.#l[1]-2*this.#c[2]-2*this.#c[2],height:this.#l[2]-this.#c[2]-2*this.#d[2]-3*this.#A[2],offsetX:this.#l[0]-this.#d[2]-this.#c[2]-this.#A[2],offsetY:2*this.#c[2],offsetZ:2*this.#c[2]+this.#d[2]+this.#A[2]},top:{type:"top",x:this.#c[2]+this.#d[2],y:this.#l[2]-this.#c[2]-this.#d[2],z:this.#c[2]+this.#d[2],width:this.#l[0]-(2*this.#c[2]+2*this.#d[2]),depth:this.#l[1]-(this.#c[2]+this.#d[2]+this.#A[2]),height:this.#A[2],offsetX:this.#c[2]+this.#d[2],offsetY:this.#c[2]+this.#d[2],offsetZ:this.#l[2]-(2*this.#d[2]+this.#A[2])},bottom:{type:"bottom",x:this.#c[2]+this.#d[2],y:2*this.#c[2]+this.#d[2],z:this.#c[2]+this.#d[2],width:this.#l[0]-(2*this.#c[2]+2*this.#d[2]),depth:this.#l[1]-(2*this.#c[2]+2*this.#d[2]),height:this.#A[2],offsetX:this.#c[2]+this.#d[2],offsetY:this.#c[2]+this.#d[2],offsetZ:2*this.#c[2]+this.#d[2]}}}#B(){const t=new TraceMaker,e=new DesignWalls,s=this.#I(),i=this.#f();let a=structuredClone(this.#t),r=!0;return this.#A?(Object.entries(i).map(i=>{const{type:n,offsetX:h,offsetY:o,offsetZ:c,width:d,depth:l,height:p}=i[1],u=s[n],f=this.#u(i[1],u);return t.data={info:a,coordinates:f,name:"padding",show:r},a=t.defineTrace,e.objectData={width:d,depth:l,height:p,info:a,name:"padding",offsetX:h,offsetY:o,offsetZ:c},a=this.#t=e.designSides,r=!1,i}),a):this.#t}#E(){const t=new TraceMaker,e=new DesignWalls,s=this.#P(),i=this.#f();let a=structuredClone(this.#t),r=!0;return this.#A?(Object.entries(i).map(i=>{const{type:n,offsetX:h,offsetY:o,offsetZ:c,width:d,depth:l,height:p}=i[1],u=s[n],f=this.#u(i[1],u);return t.data={info:a,coordinates:f,name:"padding",show:r},a=t.defineTrace,e.objectData={width:d,depth:l,height:p,info:a,name:"padding",offsetX:h,offsetY:o,offsetZ:c},a=this.#t=e.designSides,r=!1,i}),a):this.#t}#D(){const t=new TraceMaker,e=new DesignWalls,s=this.#F(),i=this.#L(),a={dep:this.#T[1],high:this.#T[2]};let r=structuredClone(this.#t),n=!0;return this.#A?(Object.entries(i).map(i=>{const{type:h,offsetX:o,offsetY:c,offsetZ:d,width:l,depth:p,height:u}=i[1],f=s[h],y=this.#u(i[1],f);return t.data={info:r,coordinates:y,name:"padding",show:n,sizes:a},r=t.defineHugeTrace,e.objectData={width:l,depth:p,height:u,info:r,name:"padding",offsetX:o,offsetY:c,offsetZ:d,sizes:a},r=this.#t=e.largestCanvas,n=!1,i}),r):this.#t}get setPadding(){return this.#E()}get setPaddingHuge(){return this.#D()}get setPaddingTubes(){return this.#B()}}class FillGaps{#W;#t;constructor(t,e){this.#W=e,this.#t=t}#O({x:t,y:e,z:s},i){const a=this.#t.offset[0]+i.x,r=this.#t.offZ+s,n=i.y?i.y+e+this.#t.offset[2]-this.#t.pad[2]:e+this.#t.offset[2]-this.#t.pad[2],h=t+this.#t.offset[0]+i.x,o=i.y?this.#t.offset[2]+i.y-this.#t.pad[2]:i.y+this.#t.offset[2];return{div:[{x:a,y:n,z:r},{x:h,y:n,z:r},{x:h,y:o,z:r},{x:a,y:o,z:r},{x:a,y:n,z:this.#t.offZ},{x:h,y:n,z:this.#t.offZ},{x:h,y:o,z:this.#t.offZ},{x:a,y:o,z:this.#t.offZ}],width:t,depth:s,height:i.y?e:e-this.#t.pad[2],offsetX:a,offsetY:this.#t.offZ,offsetZ:i.y?i.y+this.#t.offset[2]-this.#t.pad[2]:this.#t.offset[2]+i.y,layer:{name:`layer-${this.#W}`,color:"padding"}}}#X(t,e){t[2],t[3]}#Z(){const t=[],e=[],s={lastX:[],lastY:[]};let i=0,a=0;const{vacuum:r}=this.#t,n=r.length>2?r.length-1:r.length;r.map((t,e)=>r[e].push(t[0]*t[1]),0),r.sort((t,e)=>t.at(-1)-e.at(-1)),r.reverse().map((t,e)=>{(r.length-1>=e||2===r.length)&&this.#X(t,s)},0);return r.map((s,r)=>{if(s[0]===i&&s[1]===a||n===r)return;t.length?t.push(t.at(-1)-i):t.push(s[0]),e.push(s[1]);const h=+e.reverse().reduce((t,e)=>s[3]-e-t,0).toFixed(3),o={location:{x:t.at(-1)>0?t.at(-1):s[0],y:e.at(-1)>0&&!t.at(-1)?e.at(-1):s[1]},size:{x:+(s[2]-s[0]).toFixed(3),y:s[1]?h:e.at(-1)-s[1],z:this.#t.thickness>this.#t.div[2]?this.#t.pad[2]:this.#t.div[2]}};return i=s[0],a=s[1],o},0).filter(t=>void 0!==t)}#Y(){return this.#Z().map(t=>this.#O(t.size,t.location))}get fill(){return this.#Y()}}class WorksPosition{#R;#N;#w;#M;#A;constructor(t,e,s,i,a){this.#R=t,this.#N=e,this.#w=s,this.#M=i,this.#A=a}#H(){let t=+this.#R[1]+2*this.#M[0]-this.#A[2],e=+this.#R[3]+this.#M[2];const s=this.#w+this.#M[2],{coordinates:i,code:a}=this.#N,r=-this.#A[2];return{coordinates:i,code:a,art:[{x:0,y:0,z:r},{x:t,y:0,z:r},{x:t,y:e,z:r},{x:0,y:e,z:r},{x:0,y:0,z:s},{x:t,y:0,z:s},{x:t,y:e,z:s},{x:0,y:e,z:s}],width:t-this.#M[0]-this.#A[2],depth:i.z,height:e-this.#A[2]-this.#M[2],offsetX:-t/2,offsetY:this.#M[1]+this.#A[2],offsetZ:this.#M[2]+this.#w}}#j(){let t=this.#R.length>4?+this.#R[3]+this.#M[0]-this.#A[2]:+this.#R[1]+this.#M[0]-this.#A[2],e=this.#R.length>4?+this.#R[1]+this.#M[2]:+this.#R[3]+this.#M[2];const s=this.#w+this.#M[1],{coordinates:i,code:a}=this.#N;i.x?t+=this.#A[2]+i.x:t+=this.#A[2],i.y&&(e+=i.y);return{coordinates:i,code:a,art:[{x:0,y:0,z:0},{x:t,y:0,z:0},{x:t,y:e,z:0},{x:0,y:e,z:0},{x:0,y:0,z:s},{x:t,y:0,z:s},{x:t,y:e,z:s},{x:0,y:e,z:s}],width:t-this.#M[0]-i.x,depth:this.#R[2]+0,height:i.y?e-this.#M[2]-i.y+this.#A[2]:e-this.#M[2]-i.y,offsetX:this.#M[0]+i.x,offsetY:this.#M[1]+this.#w,offsetZ:i.y?this.#M[2]+i.y-this.#A[2]:this.#M[2]}}#U(){let t=this.#R.length>4?+this.#R[3]+this.#M[0]-this.#A[2]:+this.#R[1]+this.#M[0]-this.#A[2],e=this.#R.length>4?+this.#R[1]+this.#M[2]:+this.#R[3]+this.#M[2];const s=this.#w+this.#M[1],{coordinates:i,code:a}=this.#N;i.x?t+=this.#A[2]+i.x:t+=this.#A[2],i.y&&(e+=i.y);return{coordinates:i,code:a,art:[{x:0,y:0,z:0},{x:t,y:0,z:0},{x:t,y:e,z:0},{x:0,y:e,z:0},{x:0,y:0,z:s},{x:t,y:0,z:s},{x:t,y:e,z:s},{x:0,y:e,z:s}],width:t-this.#M[0]-i.x,depth:this.#R[2],height:i.y?e-this.#M[2]-i.y+this.#A[2]:e-this.#M[2]-i.y,offsetX:this.#M[0]+i.x,offsetY:this.#M[1]+this.#w,offsetZ:i.y?this.#M[2]+i.y-this.#A[2]:this.#M[2]}}#_(){let t=this.#R.length>4?+this.#R[3]+this.#M[0]-this.#A[2]:+this.#R[1]+this.#M[0]-this.#A[2],e=this.#R.length>4?+this.#R[1]+this.#M[2]:+this.#R[3]+this.#M[2];const s=this.#w+this.#M[1],{coordinates:i,code:a}=this.#N;i.x?t+=this.#A[2]+i.x:t+=this.#A[2],i.y&&(e+=i.y);return{coordinates:i,code:a,art:[{x:0,y:0,z:0},{x:t,y:0,z:0},{x:t,y:e,z:0},{x:0,y:e,z:0},{x:0,y:0,z:s},{x:t,y:0,z:s},{x:t,y:e,z:s},{x:0,y:e,z:s}],width:t-this.#M[0]-i.x,depth:this.#R[2],height:i.y?e-this.#M[2]-i.y+this.#A[2]:e-this.#M[2]-i.y,offsetX:this.#M[0]+i.x,offsetY:this.#M[1]+this.#w,offsetZ:i.y?this.#M[2]+i.y-this.#A[2]:this.#M[2]}}get standardCanvas(){return this.#_()}get noCanvas(){return this.#j()}get tubes(){return this.#H()}get largestCanvas(){return this.#U()}}class PadDivSizes{#M;#W;#w;#q;#$;#A;constructor(t,e,s,i,a,r){this.#W=s,this.#w=i,this.#q=a,this.#$=r,this.#M=e,this.#A=t}#V(t,e){const s=this.#w+this.#M[2],i=this.#M[0],a=this.#w+this.#M[2]-this.#$[2],r=this.#M[2];let n=structuredClone(this.#W);return{div:[{x:i,y:r,z:a},{x:t+=this.#M[0],y:r,z:a},{x:t,y:e+=this.#M[2],z:a},{x:i,y:e,z:a},{x:i,y:r,z:s},{x:t,y:r,z:s},{x:t,y:e,z:s},{x:i,y:e,z:s}],width:t-this.#M[0],depth:this.#$[2],height:e-2*this.#A[2]-this.#$[2],offsetX:this.#M[0],offsetY:this.#w+this.#M[2]-this.#$[2],offsetZ:this.#M[2],layer:{name:"layer-"+ ++n,color:"div"}}}#J(t=[],e={x:0,y:0,full:0}){if(e.full)return t;let{x:s,y:i}=e;0===s&&(s=this.#$[1]>this.#q[0]?this.#q[0]:this.#$[1]),i=this.#q[2]-i>this.#$[3]?this.#$[3]-2*this.#A[2]:this.#q[2]-i,!e.full&&e.x>0&&(s>=this.#q[0]&&i<this.#q[2]&&(e.x=0,i<this.#q[2]&&s>=this.#q[0]&&(e.y+=i,i=this.#q[2]-i>this.#$[3]?this.#$[3]-2*this.#A[2]:this.#q[2]-i-2*this.#A[2])),s=this.#q[0]-s===0?this.#$[1]:this.#q[0]-s);const a=structuredClone(s);return t.push(this.#V(s,i,e.x,e.y)),e.x+=a,e.x===this.#q[0]&&e.y+i===this.#q[2]&&(e.full=!0),this.#J(t,e)}#G(t,e,s,i){const a=this.#w+this.#M[2],r=0===s?this.#M[0]:s+this.#M[0],n=this.#w+this.#M[2]-this.#$[2],h=this.#M[2]+i;let o=this.#W;return{div:[{x:r,y:h,z:n},{x:t=t+s===this.#q[0]?t+r-this.#M[0]:t+r,y:h,z:n},{x:t,y:e=e+i===this.#q[2]?e+h-2*this.#A[2]:e+h,z:n},{x:r,y:e,z:n},{x:r,y:h,z:a},{x:t,y:h,z:a},{x:t,y:e,z:a},{x:r,y:e,z:a}],width:t-r,depth:this.#$[2],height:e-h,offsetX:r,offsetY:n,offsetZ:h,layer:{name:"layer-"+ ++o,color:"div"}}}#K(t=[],e={x:0,y:0,full:0}){if(e.full)return t;let{x:s,y:i}=e;0===s&&(s=this.#$[1]>this.#q[0]?this.#q[0]:this.#$[1]),i=this.#q[2]-i>this.#$[3]?this.#$[3]-2*this.#A[2]:this.#q[2]-i,!e.full&&e.x>0&&(s>=this.#q[0]&&i<this.#q[2]&&(e.x=0,i<this.#q[2]&&s>=this.#q[0]&&(e.y+=i,i=this.#q[2]-i>this.#$[3]?this.#$[3]-this.#M[2]-2*this.#A[2]:this.#q[2]-i-2*this.#A[2])),s=this.#q[0]-s===0?this.#$[1]:this.#q[0]-s);const a=structuredClone(s);return t.push(this.#G(s,i,e.x,e.y)),e.x+=a,e.x===this.#q[0]&&e.y+i===this.#q[2]&&(e.full=!0),this.#K(t,e)}get standardDiv(){return this.#K()}get sameSizeDiv(){return this.#J()}}class WorksLabel{#t;#Q;constructor(){this.#Q={type:"scatter3d",mode:"text",x:[],y:[],z:[],text:[],textposition:"middle center",showlegend:!1,hoverinfo:"none"}}#tt(){const{x:t,y:e,z:s,info:i,code:a,dep:r,high:n,name:h}=this.#t,o=Math.cos(r/n),c=Math.sin(n/r),d={valY:e*o-s*c,valZ:e*c+s*o};return this.#Q.x.push(t),this.#Q.y.push(d.valY),this.#Q.z.push(d.valZ),this.#Q.text.push(a),this.#Q.legendgroup=h,i.push(this.#Q),i}#et(){const{x:t,y:e,z:s,info:i,code:a,name:r}=this.#t;return this.#Q.x.push(t),this.#Q.y.push(e),this.#Q.z.push(s),this.#Q.text.push(a),this.#Q.legendgroup=r,this.#Q.name=r,i.push(this.#Q),i}get setLabel(){return this.#et()}get setHugeLabel(){return this.#tt()}set data(t){this.#t=t}}class DesignPlotter{#t;#st;#T;constructor(t,e,s){this.#t=e,this.#st=t,this.#T=s}#it(){let t=structuredClone(this.#t);const e=new DesignWalls,s=new WorksLabel;let i;return this.#st.map(a=>(a.map((a,r)=>{const{div:n,layer:h,offsetX:o,offsetY:c,offsetZ:d,width:l,depth:p,height:u,code:f}=a;return e.objectData={width:l,depth:p,height:u,info:t,name:h??n,offsetX:o,offsetY:c,offsetZ:d,next:r},t=e.designTubes,f&&(s.data={info:t,x:o+l/2,y:c+p/6,z:d+u/6,code:f},t=s.setLabel),i=n||h.name===i?i:h.name,a},0),a)),t}#at(){let t=structuredClone(this.#t);const e=new TraceMaker,s=new DesignWalls,i={dep:this.#T[1],high:this.#T[2]},a=new WorksLabel;let r;return this.#st.map(n=>(n.map(n=>{const{div:h,layer:o,art:c,offsetX:d,offsetY:l,offsetZ:p,width:u,depth:f,height:y,code:m}=n;return e.data={info:t,coordinates:c||h,name:o??h,show:!h&&r!==o.name,sizes:i},t=e.defineHugeTrace,m&&(a.data={info:t,x:d+u/2,y:l+f/2,z:p+y/2,dep:f,high:y,code:m},t=a.setHugeLabel),s.objectData={width:u,depth:f,height:y,info:t,name:o??h,offsetX:d,offsetY:l,offsetZ:p,sizes:i},t=s.largestCanvas,r=h||o.name===r?r:o.name,n}),n)),t}#rt(){let t=structuredClone(this.#t);const e=new TraceMaker,s=new DesignWalls;let i;return this.#st.map(a=>(a.map(a=>{const{div:r,layer:n,art:h,offsetX:o,offsetY:c,offsetZ:d,width:l,depth:p,height:u,code:f}=a;if(e.data={info:t,coordinates:h||r,name:n??r,show:!r&&i!==n.name},t=e.defineTrace,f){const e=new WorksLabel;e.data={info:t,x:o+l/2,y:c+p/2,z:d+u/2,name:n.name,code:f},t=e.setLabel}return s.objectData={width:l,depth:p,height:u,info:t,name:n??r,offsetX:o,offsetY:c,offsetZ:d},t=s.designSides,i=r||n.name===i?i:n.name,a}),a)),t}get tubesDesign(){return this.#it()}get squaredDesign(){return this.#rt()}get hugeDesign(){return this.#at()}}class PositionWorksInSideCrate{#l;#t;#nt;#M;#$;#A;#q;#ht;#c;constructor(t,e,s,i="standard"){this.#ht=i,this.#l=t,this.#t=s,this.#nt=e.at(-1)[0],this.#M=[],this.#q=t.innerSize}#ot(t){[t.find(t=>"Pinewood"===t.at(-1)),t.find(t=>"Wooden Post"===t.at(-1)),t.find(t=>"Plywood"===t.at(-1))].map(t=>"Wooden Post"===t.at(-1)?(this.#M[2]+=t[3],t):"Pinewood"===t.at(-1)?(this.#M[0]+=t[2],this.#M[1]+=t[2],this.#c=t,t):(this.#M[0]+=t[2],this.#M[1]+=t[2],this.#M[2]+="huge"===this.#ht&&"Plywood"===t.at(-1)?3*t[2]:t[2],t))}#ct(t){this.#A=t.find(t=>"Foam Sheet"===t.at(-1)&&t[2]>2.5),this.#$=t.find(t=>"Foam Sheet"===t.at(-1)&&t[2]<=2.5),this.#M[0]=this.#A[2],this.#M[1]=this.#A[2],this.#M[2]=this.#A[2],this.#$[1]=+this.#$[1],this.#$[2]=+this.#$[2],this.#$[3]=+this.#$[3],this.#ot(t)}#dt(){let t="#";for(let e=0;e<6;e++)t+="0123456789ABCDEF"[Math.floor(16*Math.random())];return t}#lt(t,e,s){return Object.entries(t).map(t=>{const{coordinates:i,code:a,art:r}=t[1],n=i.y-this.#A[2],h=this.#M[0],o=i.y?this.#M[2]+n:this.#M[2],c=this.#M[1]+i.z+e;return t[1].layer={code:a,name:`layer-${s}`,color:this.#dt()},r.map((t,e)=>{switch(e){case 0:return 0===t.x&&(t.x=h+i.x),0===t.y&&(t.y=o),0===t.z&&(t.z=c),t;case 1:return 0===t.y&&(t.y=o),0===t.z&&(t.z=c),t;case 2:return 0===t.z&&(t.z=c),t;case 3:return 0===t.x&&(t.x=h+i.x),0===t.z&&(t.z=c),t;case 4:return 0===t.x&&(t.x=h+i.x),0===t.y&&(t.y=o),t;case 5:return 0===t.y&&(t.y=o),r;case 7:return 0===t.x&&(t.x=h+i.x),t}return t},0),t}),t}#pt(){const{layers:t,fillGaps:e,artLocation:s}=this.#nt,i=[];let a=0,r=0;this.#M[1]*=2,this.#M[2]=2*this.#M[2]+this.#c[2],t.map((t,n)=>{const{vacuum:h,works:o}=t,c=o.map(t=>{const e=new WorksPosition(t.work,s.get(t.work[0]),a,this.#M,this.#A);return a+=+t.work[3]+10,e.tubes}),d=h.length>1;if(i.push(this.#lt(c,a,n+1)),o.filter(t=>((!r||r<t.work[2])&&(r=t.work[2]),t)),d){const t={vacuum:h,maxZ:e,offZ:+(a+this.#M[2]).toFixed(3),pad:this.#A,div:0,offset:this.#M};new FillGaps(t,n+1).fill}return r=0,t},0);return new DesignPlotter(i,this.#t).tubesDesign}#ut(){const{layers:t,fillGaps:e,artLocation:s}=this.#nt,i=[];let a=0,r=0;t.map((t,n)=>{const{vacuum:h,works:o}=t,c=o.map(t=>new WorksPosition(t.work,s.get(t.work[0]),a,this.#M,this.#A).noCanvas),d=h.length>1;if(i.push(this.#lt(c,a,n+1)),o.filter(t=>((!r||r<t.work[2])&&(r=t.work[2]),t)),d){const t={vacuum:h,maxZ:e,offZ:+(a+this.#M[1]).toFixed(3),pad:this.#A,div:this.#$,offset:this.#M};new FillGaps(t,n+1).fill}return a+=+r.toFixed(3),r=0,t},0);return new DesignPlotter(i,this.#t).squaredDesign}#ft(){const{layers:t,fillGaps:e,artLocation:s,finalSize:i}=this.#nt,a=[];let r=0,n=0;t.map((i,h)=>{const{vacuum:o,works:c}=i,d=c.map(t=>new WorksPosition(t.work,s.get(t.work[0]),r,this.#M,this.#A).largestCanvas),l=o.length>1;if(a.push(this.#lt(d,r,h+1)),c.filter(t=>((!n||n<t.work[2])&&(n=t.work[2]),t)),l){const t={vacuum:o,maxZ:e,offZ:+(r+this.#M[1]).toFixed(3),pad:this.#A,div:this.#$,offset:this.#M};new FillGaps(t,h+1).fill}if(r+=+n.toFixed(3),t.length>1&&t.length-1>h){const t=new PadDivSizes(this.#A,this.#M,h+1,r,structuredClone(this.#q),this.#$);a.push(t.standardDiv),r+=this.#$[2]}return n=0,i},0);return new DesignPlotter(a,this.#t,i).hugeDesign}#yt(){const{layers:t,fillGaps:e,artLocation:s}=this.#nt,i=[];let a=0,r=0;t.map((n,h)=>{const{vacuum:o,works:c}=n,d=c.map(t=>new WorksPosition(t.work,s.get(t.work[0]),a,this.#M,this.#A).standardCanvas),l=o.length>1;if(i.push(this.#lt(d,a,h+1)),c.filter(t=>((!r||r<t.work[2])&&(r=t.work[2]),t)),l){const t={vacuum:o,maxZ:e,offZ:+(a+this.#M[1]).toFixed(3),pad:this.#A,div:this.#$,offset:this.#M};new FillGaps(t,h+1).fill}if(a+=+r.toFixed(3),t.length>1&&t.length-1>h){const t=new PadDivSizes(this.#A,this.#M,h+1,a,structuredClone(this.#q),this.#$);i.push(t.sameSizeDiv),a+=this.#$[2]}return r=0,n},0);return new DesignPlotter(i,this.#t).squaredDesign}#mt(){const{layers:t,fillGaps:e,artLocation:s}=this.#nt,i=[];let a=0,r=0;t.map((n,h)=>{const{vacuum:o,works:c}=n,d=c.map(t=>new WorksPosition(t.work,s.get(t.work[0]),a,this.#M,this.#A).standardCanvas),l=o.length>1;if(i.push(this.#lt(d,a,h+1)),c.filter(t=>((!r||r<t.work[2])&&(r=t.work[2]),t)),l){const t={vacuum:o,maxZ:e,offZ:+(a+this.#M[1]).toFixed(3),pad:this.#A,div:this.#$,offset:this.#M};new FillGaps(t,h+1).fill}if(a+=+r.toFixed(3),t.length>1&&t.length-1>h){const t=new PadDivSizes(this.#A,this.#M,h+1,a,structuredClone(this.#q),this.#$);i.push(t.standardDiv),a+=this.#$[2]}return r=0,n},0);return new DesignPlotter(i,this.#t).squaredDesign}#zt(){switch(this.#l.type){case"tubeCrate":return this.#pt();case"sameSizeCrate":return this.#yt();case"largestCrate":return this.#ft();case"noCanvasCrate":return this.#ut();case"standardCrate":return this.#mt()}}get arrange(){const t=JSON.parse(localStorage.getItem("crating")).map(t=>this.#nt.usedMaterials.get(t));return this.#ct(t),this.#zt()}}class BottomCrate{#m;#gt;#d;#xt;#c;constructor(t,e,s=[0,0,0]){const i=JSON.parse(localStorage.getItem("crating")).map(t=>e.usedMaterials.get(t));this.#xt=s,this.#gt=i.find(t=>"Wooden Post"===t.at(-1)),this.#d=i.find(t=>"Plywood"===t.at(-1)),this.#c=i.find(t=>"Pinewood"===t.at(-1)),this.#m=[t[0],t[1]-s[1],t[2]],this.#gt[1]=+this.#gt[1],this.#gt[2]=+this.#gt[2],this.#gt[3]=+this.#gt[3]}#wt(t){const e=this.#gt[2]+t,s=this.#gt[2],i=this.#m[1]-+this.#gt[2];return{coordinates:[{z:t,y:0,x:0},{z:e,y:0,x:0},{z:e,y:s,x:0},{z:t,y:s,x:0},{z:t,y:0,x:i},{z:e,y:0,x:i},{z:e,y:s,x:i},{z:t,y:s,x:i}],width:i,depth:e-t,height:s,offsetX:0,offsetY:t,offsetZ:0}}#kt(t,e){const s=new TraceMaker,i=new DesignWalls;let a=0;for(;e--;){const{coordinates:e,offsetX:r,offsetY:n,offsetZ:h,width:o,depth:c,height:d}=this.#wt(a);s.data={info:t,coordinates:e,name:"frame",show:!1},t=s.defineTrace,i.objectData={width:o,depth:c,height:d,info:t,name:"frame",offsetX:r,offsetY:n,offsetZ:h},t=i.designSides,a+=this.#m[1]-+this.#gt[2]}return t}#Ct(t){const e=this.#gt[2]+t,s=this.#gt[2],i=this.#m[1];return{coordinates:[{x:t,y:0,z:0},{x:e,y:0,z:0},{x:e,y:s,z:0},{x:t,y:s,z:0},{x:t,y:0,z:i},{x:e,y:0,z:i},{x:e,y:s,z:i},{x:t,y:s,z:i}],width:e-t,depth:i,height:s,offsetX:t,offsetY:0,offsetZ:0}}#bt(t){const e=this.#gt[2]+t,s=this.#gt[2],i=-this.#m[1]-this.#xt[1],a=-this.#xt[1];return{coordinates:[{x:t,y:0,z:i},{x:e,y:0,z:i},{x:e,y:s,z:i},{x:t,y:s,z:i},{x:t,y:0,z:a},{x:e,y:0,z:a},{x:e,y:s,z:a},{x:t,y:s,z:a}],width:e-t,depth:this.#m[1],height:s,offsetX:t,offsetY:-this.#m[1]+a,offsetZ:0}}#St(t){const e=-this.#xt[1],s=2*this.#d[2]+this.#gt[3],i=this.#gt[2]+t,a=this.#gt[2]+s,r=-this.#m[1]-this.#xt[1];return{coordinates:[{x:t,y:s,z:r},{x:i,y:s,z:r},{x:i,y:a,z:r},{x:t,y:a,z:r},{x:t,y:s,z:e},{x:i,y:s,z:e},{x:i,y:a,z:e},{x:t,y:a,z:e}],width:i-t,depth:this.#m[1],height:a-s,offsetX:t,offsetY:-this.#m[1]+e,offsetZ:s}}#vt(t){const e=+this.#gt[3]+2*+this.#d[2],s=-this.#m[1]-this.#xt[1]+ +this.#c[3]+e,i=t>0?t-+this.#c[2]:+this.#c[2],a=this.#m[2]-14*+this.#c[2],r=-this.#m[1]-this.#xt[1]+e;return{coordinates:[{x:t,y:e,z:r},{x:i,y:e,z:r},{x:i,y:a,z:r},{x:t,y:a,z:r},{x:t,y:e,z:s},{x:i,y:e,z:s},{x:i,y:a-4*+this.#c[3],z:s},{x:t,y:a-4*+this.#c[3],z:s}],width:i-t,depth:+this.#c[3],height:0,offsetX:t,offsetY:s-+this.#c[3],offsetZ:e}}#At(t,e){const s=-this.#m[1]-this.#xt[1],i=t>1?+this.#d[2]+ +this.#gt[3]:+this.#gt[3],a=0===e?+this.#d[1]:+(this.#m[0]-e+e).toFixed(3),r=t*+this.#d[2]+ +this.#gt[3],n=-this.#xt[1];return{coordinates:[{x:e,y:i,z:n},{x:a,y:i,z:n},{x:a,y:r,z:n},{x:e,y:r,z:n},{x:e,y:i,z:s},{x:a,y:i,z:s},{x:a,y:r,z:s},{x:e,y:r,z:s}],width:a-e,depth:-this.#m[1],height:+this.#d[2],offsetX:e,offsetY:n,offsetZ:r-+this.#d[2],lastX:a}}#S(t){let e=Math.floor(this.#m[0]/100)+1;const s=new TraceMaker,i=new DesignWalls;let a=0;for(;e--;){const{coordinates:e,offsetX:r,offsetY:n,offsetZ:h,width:o,depth:c,height:d}=this.#Ct(a);s.data={info:t,coordinates:e,name:"frame",show:!1},t=s.defineTrace,i.objectData={width:o,depth:c,height:d,info:t,name:"frame",offsetX:r,offsetY:n,offsetZ:h},t=i.designSides,a+=this.#m[0]>+this.#d[1]?+this.#d[1]:this.#m[0],a>=this.#m[0]&&(a=this.#m[0]-+this.#gt[2])}return t}#Tt(t,e,s,i=0){if(e<0)return t;const a=new TraceMaker,r=new DesignWalls,{coordinates:n,offsetX:h,offsetY:o,offsetZ:c,width:d,depth:l,height:p,lastX:u}=this.#At(s,i);return i=u,a.data={info:t,coordinates:n,name:"frame",show:!1},t=a.defineTrace,r.objectData={width:d,depth:l,height:p,info:t,name:"frame",offsetX:h,offsetY:o,offsetZ:c},t=r.designSides,this.#Tt(t,e-1,s,i)}#Lt(t){let e=2,s=1;const i=this.#m[0]/+this.#d[1];for(;e--;)this.#Tt(t,i,s),s++;return t}#Ft(t){const e=100,s=Math.floor(this.#m[0]/e)+1,i=new TraceMaker,a=new DesignWalls,r=+this.#gt[2]/2;let n=0,h=0;for(;h++<=s;){const{coordinates:s,offsetX:h,offsetY:o,offsetZ:c,width:d,depth:l,height:p}=this.#vt(n);0===n&&(n=+this.#gt[2]+ +this.#c[2]),i.data={info:t,coordinates:s,name:"frame",show:!1},t=i.defineTrace,a.objectData={width:d,depth:l,height:p,info:t,name:"frame",offsetX:h,offsetY:o,offsetZ:c},t=a.designSides,n+=n+e>=+this.#d[1]?e-r:e,n>=this.#m[0]-e&&(n=this.#m[0])}return t}#It(t){const e=100,s=Math.floor(this.#m[0]/e)+1,i=new TraceMaker,a=new DesignWalls,r=+this.#gt[2]/2;let n=+this.#c[2],h=0;for(;h++<=s;){const s=this.#m[0]/(h*e)>=1,{coordinates:o,offsetX:c,offsetY:d,offsetZ:l,width:p,depth:u,height:f}=this.#St(n);n===+this.#c[2]&&(n=0),i.data={info:t,coordinates:o,name:"frame",show:!1},t=i.defineTrace,a.objectData={width:p,depth:u,height:f,info:t,name:"frame",offsetX:c,offsetY:d,offsetZ:l},t=a.designSides,s&&(n+=n+e===+this.#d[1]?e-r:e),n>=this.#m[0]-e&&(n=this.#m[0]-+this.#gt[2]-+this.#c[2])}return t}#Pt(t,e=!1){const s=100,i=Math.floor(this.#m[0]/s)+1,a=new TraceMaker,r=new DesignWalls,n=+this.#gt[2]/2;let h=0,o=0;for(;o++<=i;){const i=e&&this.#m[0]/(o*s)>=1,{coordinates:c,offsetX:d,offsetY:l,offsetZ:p,width:u,depth:f,height:y}=this.#bt(h);a.data={info:t,coordinates:c,name:"frame",show:!1},t=a.defineTrace,r.objectData={width:u,depth:f,height:y,info:t,name:"frame",offsetX:d,offsetY:l,offsetZ:p},t=r.designSides,e?i&&(h+=h+s===+this.#d[1]?s-n:s):h+=this.#m[0]>+this.#d[1]?+this.#d[1]:this.#m[0],h>=this.#m[0]-s&&(h=this.#m[0]-+this.#gt[2])}return t}#Bt(){const t=Math.floor(this.#m[0]/+this.#d[1])+2;return this.#kt([],t)}#Et(){const t=Math.floor(this.#m[0]/+this.#d[1])+2;return this.#S([],t)}#Dt(){const t=this.#Pt([],!0);return this.#Lt(t),this.#It(t),this.#Ft(t),t}get commumSameBottom(){return!(!this.#gt||!this.#m)&&this.#Bt()}get commumBottom(){return!(!this.#gt||!this.#m)&&this.#Et()}get largeBottom(){return!(!this.#gt||!this.#m)&&this.#Dt()}}class largestCrateRender{#Wt;#Ot;constructor(t,e){this.#Wt=t,this.#Ot=e}#Xt(){const{crates:t}=this.#Wt,e=t.map((t,e)=>{if(e%2==0){const{finalSize:e,innerSize:s,baseSize:i,extraDepth:a}=t.at(-1)[0];let r=new BottomCrate(e,t.at(-1)[0],i).largeBottom;return r=new LargeCratesFrame(r,i,t.at(-1)[0],e,a).setFrame,r}return t},0);return!!e.length&&{result:e[0],meta:this.#Ot}}get composeCrate(){return this.#Xt()}}class CratesFrame{#m;#c;#x;#g;constructor(t,e,s){const i=JSON.parse(localStorage.getItem("crating")).map(t=>s.usedMaterials.get(t));this.#g=t,this.#c=i.find(t=>"Pinewood"===t.at(-1)),this.#x=i.find(t=>"Wooden Post"===t.at(-1)),this.#m=e,this.#c[1]=+this.#c[1],this.#c[2]=+this.#c[2],this.#c[3]=+this.#c[3]}#k(){return{offsetFacesRightBackV:{type:"faceV",x:this.#c[2],y:this.#c[3]+2*this.#c[2],z:0,width:this.#c[3],depth:this.#c[2],height:this.#m[2]-(+this.#x[3]+2*this.#c[3]+this.#c[2]),offsetX:this.#c[2],offsetY:0,offsetZ:+this.#x[3]+this.#c[3]},offsetFacesLeftBackV:{type:"faceVR",x:this.#m[0]-this.#c[2],y:this.#c[3]+2*this.#c[2],z:0,width:this.#c[3],depth:this.#c[2],height:this.#m[2]-(+this.#x[3]+2*this.#c[3]+this.#c[2]),offsetX:this.#m[0]-(this.#c[3]+this.#c[2]),offsetY:0,offsetZ:+this.#x[3]+this.#c[3]},offsetFacesRightFrontV:{type:"faceVB",x:this.#c[2],y:this.#c[3]+2*this.#c[2],z:this.#m[1],width:this.#c[3],depth:this.#c[2],height:this.#m[2]-(+this.#x[3]+2*this.#c[3]+this.#c[2]),offsetX:this.#c[2],offsetY:this.#m[1]-this.#c[2],offsetZ:+this.#x[3]+this.#c[3]},offsetFacesLeftFrontV:{type:"faceVBR",x:this.#m[0]-this.#c[2],y:this.#c[3]+2*this.#c[2],z:this.#m[1],width:this.#c[3],depth:this.#c[2],height:this.#m[2]-(+this.#x[3]+2*this.#c[3]+this.#c[2]),offsetX:this.#m[0]-(this.#c[3]+this.#c[2]),offsetY:this.#m[1]-this.#c[2],offsetZ:+this.#x[3]+this.#c[3]},offsetSidesRightVUp:{type:"sideHUp",x:0,y:this.#m[2]-this.#c[2],z:this.#c[2],width:this.#c[2],depth:this.#m[1]-2*this.#c[2],height:this.#c[3],offsetX:0,offsetY:this.#c[2],offsetZ:this.#m[2]-(this.#c[3]+this.#c[2])},offsetSidesLeftVUp:{type:"sideLeftHUp",x:this.#m[0],y:this.#m[2]-this.#c[2],z:this.#c[2],width:this.#c[2],depth:this.#m[1]-2*this.#c[2],height:this.#c[3],offsetX:this.#m[0]-this.#c[2],offsetY:this.#c[2],offsetZ:this.#m[2]-(this.#c[3]+this.#c[2])},offsetSidesRightHDown:{type:"sideHDown",x:0,y:2*this.#c[2],z:this.#c[2],width:this.#c[2],depth:this.#m[1]-2*this.#c[2],height:this.#c[3],offsetX:0,offsetY:this.#c[2],offsetZ:2*this.#c[2]},offsetSidesLeftHDown:{type:"sideLeftHDown",x:this.#m[0],y:2*this.#c[2],z:this.#c[2],width:this.#c[2],depth:this.#m[1]-2*this.#c[2],height:this.#c[3],offsetX:this.#m[0]-this.#c[2],offsetY:this.#c[2],offsetZ:2*this.#c[2]},offsetFacesBackUpH:{type:"faceHUp",x:0,y:this.#m[2]-this.#c[2],z:0,width:this.#m[0],depth:this.#c[2],height:this.#c[3],offsetX:0,offsetY:0,offsetZ:this.#m[2]-(this.#c[2]+this.#c[3])},offsetFacesBackDownH:{type:"faceH",x:0,y:2*this.#c[2],z:0,width:this.#m[0],depth:this.#c[2],height:this.#c[3],offsetX:0,offsetY:0,offsetZ:2*this.#c[2]},offsetFacesFrontUpH:{type:"faceHBackUp",x:0,y:this.#m[2]-this.#c[2],z:this.#m[1],width:this.#m[0],depth:this.#c[2],height:this.#c[3],offsetX:0,offsetY:this.#m[1]-this.#c[2],offsetZ:this.#m[2]-(this.#c[2]+this.#c[3])},offsetFacesFrontDownH:{type:"faceHBackDown",x:0,y:2*this.#c[2],z:this.#m[1],width:this.#m[0],depth:this.#c[2],height:this.#c[3],offsetX:0,offsetY:this.#m[1]-this.#c[2],offsetZ:2*this.#c[2]},offsetSidesRightVBack:{type:"sideV",x:0,y:this.#c[3]+2*this.#c[2],z:0,width:this.#c[2],depth:this.#c[3],height:this.#m[2]-(2*this.#c[3]+3*this.#c[2]),offsetX:0,offsetY:0,offsetZ:2*this.#c[2]+this.#c[3]},offsetSidesRightVFront:{type:"sideRightFrontV",x:0,y:this.#c[3]+2*this.#c[2],z:this.#m[1]-this.#c[3],width:this.#c[2],depth:this.#c[3],height:this.#m[2]-(2*this.#c[3]+3*this.#c[2]),offsetX:0,offsetY:this.#m[1]-this.#c[3],offsetZ:2*this.#c[2]+this.#c[3]},offsetSidesLeftVBack:{type:"sideLeftV",x:this.#m[0],y:this.#c[3]+2*this.#c[2],z:0,width:this.#c[2],depth:this.#c[3],height:this.#m[2]-(2*this.#c[3]+3*this.#c[2]),offsetX:this.#m[0]-this.#c[2],offsetY:0,offsetZ:2*this.#c[2]+this.#c[3]},offsetSidesLeftVFront:{type:"sideLeftFrontV",x:this.#m[0],y:this.#c[3]+2*this.#c[2],z:this.#m[1]-this.#c[3],width:this.#c[2],depth:this.#c[3],height:this.#m[2]-(2*this.#c[3]+3*this.#c[2]),offsetX:this.#m[0]-this.#c[2],offsetY:this.#m[1]-this.#c[3],offsetZ:2*this.#c[2]+this.#c[3]},offsetTopFrontH:{type:"topFace",x:this.#c[3],y:this.#m[2]-this.#c[2],z:0,width:this.#m[0]-2*this.#c[3],depth:this.#c[3],height:this.#c[2],offsetX:this.#c[3],offsetY:0,offsetZ:this.#m[2]-this.#c[2]},offsetTopBackH:{type:"topComp",x:this.#c[3],y:this.#m[2]-this.#c[2],z:this.#m[1],width:this.#m[0]-2*this.#c[3],depth:this.#c[3],height:this.#c[2],offsetX:this.#c[3],offsetY:this.#m[1]-this.#c[3],offsetZ:this.#m[2]-this.#c[2]},offsetTopRight:{type:"topFeet",x:0,y:this.#m[2]-this.#c[2],z:0,width:this.#c[3],depth:this.#m[1],height:this.#c[2],offsetX:0,offsetY:0,offsetZ:this.#m[2]-this.#c[2]},offsetTopLeft:{type:"topLeftFeet",x:this.#m[0],y:this.#m[2]-this.#c[2],z:0,width:this.#c[3],depth:this.#m[1],height:this.#c[2],offsetX:this.#m[0]-this.#c[3],offsetY:0,offsetZ:this.#m[2]-this.#c[2]}}}#C(){const t=2*this.#c[2],e=this.#m[2]-this.#c[3]-this.#c[2],s=this.#m[0]-this.#c[3],i=this.#m[1]-this.#c[2],a=this.#m[2]-this.#c[3]-this.#c[2],r=this.#m[1]-this.#c[2],n=this.#m[0]-this.#c[2],h=this.#c[3]+this.#c[2],o=this.#m[0]-this.#c[3]-this.#c[2],c=this.#m[2],d=this.#m[1]-this.#c[3];return{feet:[{x:0,y:0,z:0},{x:this.#c[3],y:0,z:0},{x:this.#c[3],y:this.#c[2],z:0},{x:0,y:this.#c[2],z:0},{x:0,y:0,z:this.#m[1]},{x:this.#c[3],y:0,z:this.#m[1]},{x:this.#c[3],y:this.#c[2],z:this.#m[1]},{x:0,y:this.#c[2],z:this.#m[1]}],feetR:[{x:0,y:0,z:0},{x:s,y:0,z:0},{x:s,y:this.#c[2],z:0},{x:0,y:this.#c[2],z:0},{x:0,y:0,z:this.#m[1]},{x:s,y:0,z:this.#m[1]},{x:s,y:this.#c[2],z:this.#m[1]},{x:0,y:this.#c[2],z:this.#m[1]}],feetUp:[{x:0,y:0,z:0},{x:this.#c[3],y:0,z:0},{x:this.#c[3],y:t,z:0},{x:0,y:t,z:0},{x:0,y:0,z:this.#m[1]},{x:this.#c[3],y:0,z:this.#m[1]},{x:this.#c[3],y:t,z:this.#m[1]},{x:0,y:t,z:this.#m[1]}],feetUpR:[{x:0,y:0,z:0},{x:s,y:0,z:0},{x:s,y:t,z:0},{x:0,y:t,z:0},{x:0,y:0,z:this.#m[1]},{x:s,y:0,z:this.#m[1]},{x:s,y:t,z:this.#m[1]},{x:0,y:t,z:this.#m[1]}],faceV:[{x:0,y:0,z:0},{x:h,y:0,z:0},{x:h,y:e,z:0},{x:0,y:e,z:0},{x:0,y:0,z:this.#c[2]},{x:h,y:0,z:this.#c[2]},{x:h,y:e,z:this.#c[2]},{x:0,y:e,z:this.#c[2]}],faceVR:[{x:0,y:0,z:0},{x:o,y:0,z:0},{x:o,y:e,z:0},{x:0,y:e,z:0},{x:0,y:0,z:this.#c[2]},{x:o,y:0,z:this.#c[2]},{x:o,y:e,z:this.#c[2]},{x:0,y:e,z:this.#c[2]}],faceVB:[{x:0,y:0,z:0},{x:h,y:0,z:0},{x:h,y:e,z:0},{x:0,y:e,z:0},{x:0,y:0,z:i},{x:h,y:0,z:i},{x:h,y:e,z:i},{x:0,y:e,z:i}],faceVBR:[{x:0,y:0,z:0},{x:o,y:0,z:0},{x:o,y:e,z:0},{x:0,y:e,z:0},{x:0,y:0,z:i},{x:o,y:0,z:i},{x:o,y:e,z:i},{x:0,y:e,z:i}],faceH:[{x:0,y:0,z:0},{x:this.#m[0],y:0,z:0},{x:this.#m[0],y:this.#c[3]+t,z:0},{x:0,y:this.#c[3]+t,z:0},{x:0,y:0,z:this.#c[2]},{x:this.#m[0],y:0,z:this.#c[2]},{x:this.#m[0],y:this.#c[3]+t,z:this.#c[2]},{x:0,y:this.#c[3]+t,z:this.#c[2]}],faceHUp:[{x:0,y:0,z:0},{x:this.#m[0],y:0,z:0},{x:this.#m[0],y:a,z:0},{x:0,y:a,z:0},{x:0,y:0,z:this.#c[2]},{x:this.#m[0],y:0,z:this.#c[2]},{x:this.#m[0],y:a,z:this.#c[2]},{x:0,y:a,z:this.#c[2]}],faceHBackUp:[{x:0,y:0,z:0},{x:this.#m[0],y:0,z:0},{x:this.#m[0],y:a,z:0},{x:0,y:a,z:0},{x:0,y:0,z:i},{x:this.#m[0],y:0,z:i},{x:this.#m[0],y:a,z:i},{x:0,y:a,z:i}],faceHBackDown:[{x:0,y:0,z:0},{x:this.#m[0],y:0,z:0},{x:this.#m[0],y:this.#c[3]+t,z:0},{x:0,y:this.#c[3]+t,z:0},{x:0,y:0,z:i},{x:this.#m[0],y:0,z:i},{x:this.#m[0],y:this.#c[3]+t,z:i},{x:0,y:this.#c[3]+t,z:i}],sideHUp:[{x:0,y:0,z:0},{x:this.#c[2],y:0,z:0},{x:this.#c[2],y:e,z:0},{x:0,y:e,z:0},{x:0,y:0,z:r},{x:this.#c[2],y:0,z:r},{x:this.#c[2],y:e,z:r},{x:0,y:e,z:r}],sideLeftHUp:[{x:0,y:0,z:0},{x:n,y:0,z:0},{x:n,y:e,z:0},{x:0,y:e,z:0},{x:0,y:0,z:r},{x:n,y:0,z:r},{x:n,y:e,z:r},{x:0,y:e,z:r}],sideHDown:[{x:0,y:0,z:0},{x:this.#c[2],y:0,z:0},{x:this.#c[2],y:this.#c[3]+t,z:0},{x:0,y:this.#c[3]+t,z:0},{x:0,y:0,z:r},{x:this.#c[2],y:0,z:r},{x:this.#c[2],y:this.#c[3]+t,z:r},{x:0,y:this.#c[3]+t,z:r}],sideLeftHDown:[{x:0,y:0,z:0},{x:n,y:0,z:0},{x:n,y:this.#c[3]+t,z:0},{x:0,y:this.#c[3]+t,z:0},{x:0,y:0,z:r},{x:n,y:0,z:r},{x:n,y:this.#c[3]+t,z:r},{x:0,y:this.#c[3]+t,z:r}],sideV:[{x:0,y:0,z:0},{x:this.#c[2],y:0,z:0},{x:this.#c[2],y:a,z:0},{x:0,y:a,z:0},{x:0,y:0,z:this.#c[3]},{x:this.#c[2],y:0,z:this.#c[3]},{x:this.#c[2],y:a,z:this.#c[3]},{x:0,y:a,z:this.#c[3]}],sideRightFrontV:[{x:0,y:0,z:0},{x:this.#c[2],y:0,z:0},{x:this.#c[2],y:a,z:0},{x:0,y:a,z:0},{x:0,y:0,z:this.#m[1]},{x:this.#c[2],y:0,z:this.#m[1]},{x:this.#c[2],y:a,z:this.#m[1]},{x:0,y:a,z:this.#m[1]}],sideLeftV:[{x:0,y:0,z:0},{x:n,y:0,z:0},{x:n,y:a,z:0},{x:0,y:a,z:0},{x:0,y:0,z:this.#c[3]},{x:n,y:0,z:this.#c[3]},{x:n,y:a,z:this.#c[3]},{x:0,y:a,z:this.#c[3]}],sideLeftFrontV:[{x:0,y:0,z:0},{x:n,y:0,z:0},{x:n,y:a,z:0},{x:0,y:a,z:0},{x:0,y:0,z:this.#m[1]},{x:n,y:0,z:this.#m[1]},{x:n,y:a,z:this.#m[1]},{x:0,y:a,z:this.#m[1]}],topFace:[{x:0,y:0,z:0},{x:s,y:0,z:0},{x:s,y:c,z:0},{x:0,y:c,z:0},{x:0,y:0,z:this.#c[3]},{x:s,y:0,z:this.#c[3]},{x:s,y:c,z:this.#c[3]},{x:0,y:c,z:this.#c[3]}],topComp:[{x:0,y:0,z:0},{x:s,y:0,z:0},{x:s,y:c,z:0},{x:0,y:c,z:0},{x:0,y:0,z:d},{x:s,y:0,z:d},{x:s,y:c,z:d},{x:0,y:c,z:d}],topFeet:[{x:0,y:0,z:0},{x:this.#c[3],y:0,z:0},{x:this.#c[3],y:c,z:0},{x:0,y:c,z:0},{x:0,y:0,z:this.#m[1]},{x:this.#c[3],y:0,z:this.#m[1]},{x:this.#c[3],y:c,z:this.#m[1]},{x:0,y:c,z:this.#m[1]}],topLeftFeet:[{x:0,y:0,z:0},{x:s,y:0,z:0},{x:s,y:c,z:0},{x:0,y:c,z:0},{x:0,y:0,z:this.#m[1]},{x:s,y:0,z:this.#m[1]},{x:s,y:c,z:this.#m[1]},{x:0,y:c,z:this.#m[1]}]}}#b(t,e){const{x:s,y:i,z:a}=t,r=structuredClone(e);return Object.entries(r).map((t,e)=>{switch(e){case 0:return 0===t[1].x&&(t[1].x=s),0===t[1].y&&(t[1].y=i),0===t[1].z&&(t[1].z=a),t;case 1:return 0===t[1].y&&(t[1].y=i),0===t[1].z&&(t[1].z=a),t;case 2:return 0===t[1].z&&(t[1].z=a),t;case 3:return 0===t[1].x&&(t[1].x=s),0===t[1].z&&(t[1].z=a),t;case 4:return 0===t[1].x&&(t[1].x=s),0===t[1].y&&(t[1].y=i),t;case 5:return 0===t[1].y&&(t[1].y=i),t;case 7:return 0===t[1].x&&(t[1].x=s),t}return t}),r}#S(t,e,s){const i=new TraceMaker,a=new DesignWalls;let r=!0;return Object.entries(s).map(s=>{const{type:n,offsetX:h,offsetY:o,offsetZ:c,width:d,depth:l,height:p}=s[1],u=e[n],f=this.#b(s[1],u);return i.data={info:t,coordinates:f,name:"frame",show:r},t=i.defineTrace,a.objectData={width:d,depth:l,height:p,info:t,name:"frame",offsetX:h,offsetY:o,offsetZ:c},t=a.designSides,r=!1,s}),t}#v(){const t=this.#C(),e=this.#k();return this.#g=this.#S(this.#g,t,e),this.#g}get setFrame(){return this.#v()}}class notCanvasCrateRender{#Wt;#Ot;constructor(t,e){this.#Wt=t,this.#Ot=e}#Xt(){const{crates:t}=this.#Wt,e=t.map((t,e)=>{if(e%2==0){const{finalSize:e,innerSize:s}=t.at(-1)[0];let i=new BottomCrate(e,t.at(-1)[0]).commumBottom;i=new CratesFrame(i,e,t.at(-1)[0]).setFrame;i=new SetCrateWalls(e,t.at(-1)[0],i).setWalls;i=new PaddingCrate(e,t.at(-1)[0],i).setPadding;return i=new PositionWorksInSideCrate({sized:e,innerSize:s,type:"noCanvasCrate"},t,i).arrange,i}return t},0);return!!e.length&&{result:e[0],meta:this.#Ot}}get composeCrate(){return this.#Xt()}}const t={showlegend:!0,legend:{title:{text:"Proto crate:",font:{family:"Mitr, sans-serif",size:14}},font:{family:"Mitr, sans-serif",sizes:14,color:"#FFFFFFAA"},x:.02,xanchor:"left",y:.99,yanchor:"top",orientation:"v",groupclick:"sides"},margin:{t:0,l:0,b:0,r:0,pad:10},scene:{aspectmode:"data",xaxis:{title:{text:"Length - (cm)",family:"Mitr, sans-serif"},color:"white",thickcolor:"white",ticks:"outside"},yaxis:{title:{text:"Depth - (cm)",family:"Mitr, sans-serif"},color:"white",thickcolor:"white",tick:"outside"},zaxis:{title:{text:"Height - (cm)",family:"Mitr, sans-serif"},color:"white",thickcolor:"white",tick:"outside"},camera:{eye:{x:0,y:3,z:1}}},paper_bgcolor:"#96979C"};class sameSizeCrateRender{#Wt;#Ot;constructor(t,e){this.#Wt=t,this.#Ot=e}#Xt(){const{crates:t}=this.#Wt,e=t.map((t,e)=>{if(e%2==0){const{finalSize:e,innerSize:s}=t.at(-1)[0];let i=new BottomCrate(e,t.at(-1)[0]).commumSameBottom;i=new CratesFrame(i,e,t.at(-1)[0]).setFrame;i=new SetCrateWalls(e,t.at(-1)[0],i).setWalls;i=new PaddingCrate(e,t.at(-1)[0],i).setPadding;return i=new PositionWorksInSideCrate({sized:e,innerSize:s,type:"sameSizeCrate"},t,i).arrange,i}return t},0);return!!e.length&&{result:e[0],meta:this.#Ot}}get composeCrate(){return this.#Xt()}}class standardCrateRender{#Wt;#Ot;constructor(t,e){this.#Wt=t,this.#Ot=e}#Xt(){const{crates:t}=this.#Wt,e=t.map((t,e)=>{if(e%2==0){const{finalSize:e,innerSize:s}=t.at(-1)[0];let i=new BottomCrate(e,t.at(-1)[0]).commumBottom;i=new CratesFrame(i,e,t.at(-1)[0]).setFrame;i=new SetCrateWalls(e,t.at(-1)[0],i).setWalls;i=new PaddingCrate(e,t.at(-1)[0],i).setPadding;return i=new PositionWorksInSideCrate({sized:e,innerSize:s,type:"standardCrate"},t,i).arrange,i}return t},0);return!!e.length&&{result:e[0],meta:this.#Ot}}get composeCrate(){return this.#Xt()}}class tubeCrateRender{#Wt;#Ot;constructor(t,e){this.#Wt=t,this.#Ot=e}#Xt(){const{crates:t}=this.#Wt,e=t.map((t,e)=>{if(e%2==0){const{finalSize:e,innerSize:s}=t.at(-1)[0];let i=new BottomCrate(e,t.at(-1)[0]).commumBottom;i=new CratesFrame(i,e,t.at(-1)[0]).setFrame;i=new SetCrateWalls(e,t.at(-1)[0],i).setWalls;i=new PaddingCrate(e,t.at(-1)[0],i).setPaddingTubes;return i=new PositionWorksInSideCrate({sized:e,innerSize:s,type:"tubeCrate"},t,i).arrange,i}return t},0);return!!e.length&&{result:e[0],meta:this.#Ot}}get composeCrate(){return this.#Xt()}}class GraphicCrates{#Zt;#n;#Wt;constructor(){const{Plotly:t}=globalThis;this.#Wt=["tubeCrate","largestCrate","sameSizeCrate","noCanvasCrate","standardCrate"],this.#n=[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]],this.#Zt=t}async#Yt(){const t=localStorage.getItem("refNumb"),e=new Worker(new URL("../panels/worker.IDB.crates.mjs",import.meta.url),{type:"module"});e.postMessage(t);return await new Promise((s,i)=>{e.onmessage=e=>{const{data:a}=e;a?.reference===t?s(a):i(e)}})}#Rt(e){let s=structuredClone(t);const i=this.#Wt.map(t=>{const i=e.get(t),a=new Map([["tubeCrate",new tubeCrateRender(i,s)],["largestCrate",new largestCrateRender(i,s)],["sameSizeCrate",new sameSizeCrateRender(i,s)],["noCanvasCrate",new notCanvasCrateRender(i,s)],["standardCrate",new standardCrateRender(i,s)]]).get(t);if(i){const{result:t,meta:e}=a.composeCrate;return s=e,t}return t});return{result:i.filter(t=>Array.isArray(t)).flat(),alterLayout:s}}async#Nt(){const{crates:t}=await this.#Yt()||!1,e=new Map,s=sessionStorage.getItem("graphics")||!1;if(s){return JSON.parse(s)[sessionStorage.getItem("crate").split("/")[0]]}if(t){Object.entries(t).map(t=>(this.#Wt.includes(t[0])&&e.set(t[0],t[1]),t));const s=this.#Rt(e);return globalThis.sessionStorage.setItem("crate",`1/${t.allCrates.length}`),globalThis.sessionStorage.setItem("graphics",JSON.stringify(s.designs)),document.getElementById("layer-count").innerText=`Courrent crate: 1 / ${t.allCrates.length}`,s}return!0}async#Mt(){const{result:t,alterLayout:e}=await this.#Nt();this.#Zt.newPlot("plotter-display",t,e,{displaylogo:!1})}get show(){return this.#Mt()}}async function e(){const t=new GraphicCrates,e=document.querySelectorAll(".toggle__plotter"),s=document.getElementById("layers");let i;for(i of e)"true"===i.ariaHidden?(i.ariaHidden="false",s.ariaHidden="true"):"false"===i.ariaHidden&&(i.ariaHidden="true",s.ariaHidden="false",sessionStorage.getItem("plotter")||(t.show,sessionStorage.setItem("plotter","true")))}class Converter{#Ht;constructor(...t){this.#Ht=[...t]}get cmConvert(){return a.call(this.#Ht)}get inConvert(){return i.call(this.#Ht)}}function s(){const t=this.filter(t=>Number(t)?t:"string"==typeof t&&t?+t.trim():void 0);try{if(!t||t.length<1){throw new TypeError("Please, provide a value to be converted.")}}catch(t){return t}return t}function i(){const t=s.call(this);if(Array.isArray(t)){const t=2.54;return this.map(e=>+(e/t).toFixed(3))}return t}function a(){const t=s.call(this);if(Array.isArray(t)){const t=2.54;return this.map(e=>+(e*t).toFixed(0))}return t}class RegexChecker{#Ht;constructor(...t){this.#Ht=[...t]}get regexSizes(){return r.call(this.#Ht)}}function r(){try{const t=this.map(t=>{const e=/[0-9]{1,3}/.test(t);return!Number.isNaN(t)&&e}),e="Not a valid entry to RegexChecker!";if(t.includes(!1))throw new TypeError(e)}catch(t){return console.error(t),t}}class CubCalc{#jt;#Ut;#_t;constructor(t,e,s){this.#jt=+t,this.#Ut=+e,this.#_t=+s}get cubCalcAir(){return function(t,e,s){const i=new RegexChecker(t,e,s).regexSizes;if("object"==typeof i)return i;return+(t*e*s/6e3).toFixed(3)}(this.#jt,this.#Ut,this.#_t)}get cubArea(){return function(t,e,s){const i=new RegexChecker(t,e,s).regexSizes;if("object"==typeof i)return i;return+(t*e*s/1e6).toFixed(3)}(this.#jt,this.#Ut,this.#_t)}}class Hexaedro{constructor(t,e,s){try{if(!t||!e||!s)throw new TypeError("Please, provide a correct x, z or y value.")}catch(t){return t}this.x=+t,this.z=+e,this.y=+s}}class ArtWork extends Hexaedro{coordinates;packMaterials;code;#jt;#Ut;#_t;constructor(t,e,s,i,a){super(e,s,i);try{if(!t||t.trim()<=0){const e=`Please, provide a valid code. Current: ${t}`;throw new TypeError(e)}}catch(t){return t}this.code=""+t,this.#jt=+e,this.#Ut=+s,this.#_t=+i,this.packMaterials=a}#qt(){const t={x:structuredClone(this.#jt),z:structuredClone(this.#Ut),y:structuredClone(this.#_t)},{packMaterials:e}=structuredClone(this);return e?.length&&e.map(e=>(t.x+=2*e[2],t.z+=2*e[2],t.y+=2*e[2],e)),[this.code,+t.x.toFixed(3),+t.z.toFixed(3),+t.y.toFixed(3)]}#$t(t,e){const{packMaterials:s}=structuredClone(this);return t.map((t,i)=>{const a=[s[i][0]];return a.push(+(100*e/t).toFixed(0)),a},0)}#Vt(t){const{packMaterials:e}=structuredClone(this);return t.map((t,s)=>"Roll"===e[s][5]?[t[0],+(t[1]/100).toFixed(2)]:[t[0],Math.ceil(t[1]/100)],0)}#Jt(t){return t.map(t=>1-+(t[1]/100).toFixed(3)%1)}#Gt(){const t=this.packingDemanded,{packMaterials:e}=structuredClone(this),s=e.map(t=>t[1]*t[3]/100),i=this.#$t(s,t),a=s.map((e,s)=>[i[s][0],e>t],0),r=this.#Jt(i),n=e.map(t=>t[4]),h=e.map((t,e)=>[t[5],s[e],t[0]],0),o=n.map((t,e)=>{const s=+(i[e][1]/100*t).toFixed(2);return[i[e][0],s,+t]},0),c=this.#Vt(i,r);return{demand:t,percent:i,reuse:a,residual:r,types:h,cost:o,quantity:c}}get arr(){return[this.code,this.#jt,this.#Ut,this.#_t]}get cAir(){return new CubCalc(this.#jt,this.#Ut,this.#_t).cubCalcAir}get cubed(){return new CubCalc(this.#jt,this.#Ut,this.#_t).cubArea}get autoConvert(){let{x:t,z:e,y:s}=this;const i=new Converter(t,e,s).cmConvert;return t=i[0],e=i[1],s=i[2],[this.code,t,e,s]}get data(){return{code:this.code,x:this.#jt,z:this.#Ut,y:this.#_t,packing:this.packMaterials}}get packingDemanded(){const{x:t,z:e,y:s}=this;return+(2*(t*s+t*e+s*e)/100).toFixed(5)}get cratePosition(){return this.coordinates}get packedSized(){return this.#qt()}get packInfo(){return this.#Gt()}set defCoordinate(t){this.coordinates=t}}class ArrangerLargestCanvas{#st;constructor(t){this.#st=t}#Kt(){const t=this.filter(t=>t.x>=217.5&&t.y>=217.5?t:0);return!!t.length&&t}#Qt(){const{sorted:t}=this.#st,e=this.#Kt.call(t);return e&&e.map(t=>(t&&this.#st.sorted.splice(this.#st.sorted.indexOf(t),1),t)),e&&(this.#st.largest=e),this.#st}get makeArrange(){return this.#Qt()}}class ArrangerNoCanvas{#te;constructor(t){this.#te=t}#ee(t){t.map(t=>(this.sorted.splice(this.sorted.indexOf(t),1),t))}#se(){let{sorted:t,sameSize:e}=this.#te;let s=t.filter(t=>t.z>15),i=e.filter(t=>t.z>15);const a=[];return s.map(t=>a.push(t)),this.#ee.call(this.#te,s),i.map(t=>a.push(t)),this.#ee.call(this.#te,i),t=null,e=null,s=null,i=null,this.#te.noCanvas=a,this.#te}#ie(){return this.#se()}get makeArrange(){return this.#ie()}}class ArrangerSameSize{#st;constructor({sorted:t}){this.#st=t}#ae(){const t=[],e=(t,e)=>t.cubed<=e.cubed&&t.code!==e.code;return this.map(s=>{let i,a=0;if(s.z<=10)for(a in this)i=e(this[a],s),!t.includes(this[a])&&i&&t.push(this[a]);return s}),t}#re(t,e){const s=e.x,i=e.y,a=e.cubed;return t.x===s&&t.y===i&&t.cubed<=a}#ne(t){const e=[];return t.map(s=>{let i=[],a=0;for(a in t)this.#re(t[a],s)&&!e.includes(t[a])&&i.push(t[a]);return i.length>=4&&i.map(t=>(e.push(t),t)),i=null,s}),e}#he(){const t=this.#ae.call(this.#st),e=this.#ne(t);return e.map(t=>(this.#st.splice(this.#st.indexOf(t),1),t)),{sorted:this.#st,sameSize:e}}get makeArrange(){return this.#he()}}class ArrangerStarter{#st;constructor(t){this.#st=t}#oe(){return this.#st.map(t=>{const e=t.arr;return e.push(t.cubed),e})}#ce(t,e){if(t.length<=1)return t;const s=[],i=t.splice(0,1),a=[];return t.map(t=>(t[e]<=i[0][e]?s.push(t):a.push(t),t)),this.#ce(s,e).concat(i,this.#ce(a,e))}#de(){const t=this.#oe(),e=this.#ce(t,4),s=[];return e.map(t=>(this.#st.find(e=>t[0]===e.code?s.push(e):0),t)),{sorted:s}}get prepare(){return this.#de()}}class ArrangerTube{#st;constructor(t){this.#st=t}#le(){const{noCanvas:t}=this.#st,e=[];return t.filter(t=>{const s=t.z<35&&t.y<35,i=t.z===t.y;return s&&i&&t.x!==t.y&&i&&e.push(t),t}),e.map(t=>(this.#st.noCanvas.splice(this.#st.noCanvas.indexOf(t),1),t)),this.#st.tubes=e,this.#st}get makeArrange(){return this.#le()}}class Arranger{#pe;constructor(t){this.#pe=t}#ue(){this.#fe(),this.#he(),this.#ye(),this.#me(),this.#ze()}#ge(){try{const t=t=>0===t.length||!t;if(!Array.isArray(this.#pe)||t(this.#pe)){throw new TypeError("Please, provide a type of 'ArtWork' object.")}if(this.#pe.map(t=>"ArtWork"===t.constructor.name).includes(!1)){throw new TypeError("Some work is not of the type 'ArtWork' object.")}}catch(t){return t}}#fe(){this.#pe=new ArrangerStarter(this.#pe).prepare}#he(){this.#pe=new ArrangerSameSize(this.#pe).makeArrange}#ye(){this.#pe=new ArrangerNoCanvas(this.#pe).makeArrange}#me(){this.#pe=new ArrangerLargestCanvas(this.#pe).makeArrange}#ze(){this.#pe=new ArrangerTube(this.#pe).makeArrange}get start(){const t=this.#ge();return t&&"TypeError"===t.constructor.name?t:(this.#ue(),Object.assign(Arranger,{list:this.#pe}))}}class CrateMaker{#xe;#we;#ke;constructor(t,e,s=!1){t&&(this.#ke=e,this.#xe=t,this.#we=s)}#Ce(t){const e=["Pinewood","Plywood","Wooden Post"],s=t.filter(t=>e.includes(t[5])),i=t.filter(t=>"Foam Sheet"===t[5]),a=i.find(t=>t[2]<5).flat();let r=0,n=0,h=0,o=0,c=0;return s.map(t=>("Wooden Post"!==t.at(-1)&&(r+=2*+t[2],n+=2*+t[2]),h+="Pinewood"===t.at(-1)||"Wooden Post"===t.at(-1)?+t[2]:2*+t[2],t)),i?.length&&i.map(t=>this.#xe>1&&+t[2]<=+a[2]?(this.#we&&(this.#we=!1,h+=+t[2]),o=+t[2],n+=+t[2]*(this.#xe-1),t):(1===this.#xe&&+t[2]<=+a[2]||(r+=2*+t[2],n+=2*+t[2],h+=2*+t[2],+t[2]>+a[2]&&(c=2*t[2])),t)),{x:r,z:n,y:h,div:o,pad:c}}#be(){const{materials:t,cratesOnly:e}=this.#ke,s=[];return e.map(e=>{const i=t.find(t=>t[0]===e);return i&&s.push(i),e}),s.length?this.#Ce(s):{x:0,z:0,y:0}}get outSizes(){return!!this.#xe&&this.#be()}}class WorksCoordinates{#nt;#Se;#ve;#Ae;#Te;#Le;#Fe;#Ie;#Pe;constructor(t=!1,e){t&&e&&(this.#Ie=[],this.#Se=[+t[0].toFixed(3),+t[1].toFixed(3),+t[2].toFixed(3)],this.#Fe=e,this.#Be(),this.#Ae=this.#Ee())}#Ee(){const{materials:t,cratesOnly:e}=this.#Fe,s={emptyArea:[],artLocation:new Map,baseSize:this.#Se,usedMaterials:new Map,innerSize:[],finalSize:[],layers:[],get reset(){return this.emptyArea=[[0,0,this.baseSize[0],this.baseSize[2]]],this.emptyArea},get fillGaps(){const t=[];return this.layers.map(e=>{const{vacuum:s,works:i}=e,a=((t,e=0)=>(t.map(t=>(e||(e=[t.work[0],t.work[2]]),e)),e))(i),{total:r,sizes:n}=((t,e=0,s=[])=>(t.map(t=>{if(t[0]===t[2]&&t[1]===t[3])return t;let i=t[2]-t[0],a=t[3]-t[1];return!i&&a&&(i=t[0]),i&&!a&&(a=t[1]),s.push([+i.toFixed(2),+a.toFixed(2)]),e+=+(i*a).toFixed(3),t}),{total:e,sizes:s}))(s);return t.push({highestZ:a,total:r,sizes:n}),t}),t},set defineLayer(t){const e=structuredClone(this.emptyArea),s=structuredClone(t[1]);this.layers.push({vacuum:e,works:s}),this.reset},get fillMaterials(){return t.map(t=>e.includes(t[0])?this.usedMaterials.set(t[0],t):0),t}};return s.reset,s.fillMaterials,s}async#De(t){const e=[];return t.map((t,s)=>{const i=t[2]-t[0]<10||t[3]-t[1]<10;return t&&i?e.push(s):this.#ve.map(i=>{if(i?.coordinates){const{x:a,y:r}=i.coordinates;t[0]===a&&t[1]===r&&e.push(s)}return i}),t}),e.map((e,s)=>t.splice(e+s,1),0),t}async#We(t){if(!this.#Le?.center)return t;const{x:e,y:s,center:i}=this.#Le,a=i.length>4?i[3]:i[1],r=i.length>4?i[1]:i[3],n=e.get(i[0]).sum>=a&&s.get(i[0]).sum>=r,h=e=>{let s;for(s of e){const e=i?Math.floor(Math.random()*i[1]):Math.floor(1e4*Math.random());if(i[0]===s[0]&&n){let s,i=0,a=0;for(s of t){const t=s[0]>0&&s[1]>0&&s[0]<s[2],r=s[1]>0&&s[0]>0&&s[1]<s[3];!s[4]&&t&&a<s[1]&&(a=s[1]),!s[4]&&t&&a>s[1]&&s.splice(5,1,`${e}-y`),s[4]&&r&&i<s[0]&&(i=s[0]),s[4]&&r&&i>s[0]&&s.splice(5,1,`${e}-x`)}this.#Le.center=!1}}};return h(e),h(s),await this.#De(t)}#Oe(t){const{prevWork:e,local:s,onAxis:i,x:a,y:r}=t,n=this.#Le.x.get(e[0]),h=this.#Le.y.get(e[0]),o=this.#Le?.center?this.#Le?.center:e,c=s[2],d=s[3],l=+(s[0]+a).toFixed(3)<=c?+(s[0]+a).toFixed(3):4===e.length?e[1]+s[0]:e[3]+s[0],p=+(s[1]+r).toFixed(3)<=d?+(s[1]+r).toFixed(3):4===e.length?e[3]+s[1]:e[1]+s[1],u=p>=o[3]&&i?l:n.sum,f=l>=o[1]&&!i?p:h.sum,y=(n.sum<s[2]||h.sum<s[3])&&~~(Math.random()*a);let m,z,g=!!y&&(h.sum<s[3]?{x:s[0],y:p,random:`${y}-y`}:{x:l,y:s[1],random:`${y}-x`}),x=0,w=0;return i?(m=p>=o[3]?l:u,z=l>=o[1]?f:p,x=l<c?m:e[1],w=p<d?s[1]>0?p:z:e[3]):(m=0===s[0]&&p<d?0:l,z=0===s[1]&&l<c?0:p,x=l<c&&a>=e[1]||!m?s[0]>0?l:m:s[0],w=p<d&&r>=e[3]||!z?z:e[3]),g?.x===x&&g?.y===w&&(g=void 0),g?.x===x&&g?.y===w&&(g=void 0),{newX:x,newY:w,extra:g}}#Xe(t,e,s,i,a){const r=i[2],n=i[3],h=+(i[0]+e).toFixed(3)<=r?+(i[0]+e).toFixed(3):a[1],o=+(i[1]+s).toFixed(3)<=n?+(i[1]+s).toFixed(3):a[3],{newX:c,newY:d,extra:l}=this.#Oe({prevWork:a,local:i,onAxis:t,x:e,y:s});return{newX:c,newY:d,sumX:h,sumY:o,extra:l}}#Ze(t,e,{x:s,y:i},a,r){const n=8===e.length?e.at(-2):e.at(-1),h=this.#Te.find(t=>t[0]===n),o=a[0][2],c=a[0][3],d=t&&i<c?0:1,{newX:l,newY:p,sumX:u,sumY:f,extra:y}=this.#Xe(t,s,i,e,h);let m,z=t&&0===e[1]?[u,0,o,c,d,!1,e.at(-1),r]:[u,p,o,c,d,!1,e.at(-1),r],g=t||0!==e[0]?[l,f,o,c,d,!1,e.at(-1),r]:[0,f,o,c,d,!1,e.at(-1),r];const x=10;if(y&&y.x<o&&y.y<c){const t=y.random.split("-")[1];m=[y.x,y.y,o,c,d,y.random,e.at(-1),r],"x"===t?z.splice(5,1,y.random):g.splice(5,1,y.random),o-m[0]>x&&c-m[1]>x&&(z[0]!==m[0]&&z[1]!==m[1]||(z=m,m=!1),g[0]!==m[0]&&g[1]!==m[1]||(g=m,m=!1))}return(z[0]>=o||z[1]>=c||o-z[0]<x||c-z[1]<x)&&(z=!1),g[0]>=o||g[1]>=c?g=!1:(o-g[0]<x||c-g[1]<x)&&(z=!1),z[0]===g[0]&&z[1]===g[1]&&(g=!1),{nextX:z,nextY:g,plus:m}}async#Ye({nextX:t,nextY:e,plus:s},i){if(!t&&!e&&!s)return i;const a=i.some(e=>e[0]===t[0]&&e[1]===t[1]),r=i.some(t=>t[0]===e[0]&&t[1]===e[1]),n=!a&&t&&t[3]>t[1],h=!r&&e&&e[2]>e[0],o=t[0]+t[1],c=e[0]+e[1];let d=0,l=0;const p=t=>i.some(e=>e[0]===t[0]&&e[1]===t[1]);return n&&h?(o<c?(i.push(t),d++):!l&&c>o&&(i.push(e),l++),d||i.push(t),l||i.push(e)):!n||d||p(t)?!h||l||p(e)||i.push(e):i.push(t),s&&!p(s)&&i.push(s),this.#Le?.center?await this.#We(i):i}#Re(t,e,s){if(t===e[0])return;const{center:i}=this.#Le,a=this.#Le.x.get(t),r=this.#Le.y.get(t),n=e.length>4?e[3]:e[1],h=e.length>4?e[1]:e[3],o=i.length>4;s&&a&&r?o&&!a.codes.includes(e[0])?(r.sum+=n,r.codes.push(e[0])):r.codes.includes(e[0])||(a.sum+=n,a.codes.push(e[0])):o&&!r.codes.includes(e[0])?(a.sum+=h,a.codes.push(e[0])):a.codes.includes(e[0])||(r.sum+=h,r.codes.push(e[0])),a&&r&&(this.#Le.x.set(t,a),this.#Le.y.set(t,r))}#Ne(t,e){const s=this.#Te.find(e=>e[0]===t),i=s.length>4?s[3]:s[1],a=s.length>4?s[1]:s[3],r=a>=e[3]||a===e[2]?i:0,n=i>=e[2]||i===e[3]?a:0;this.#Le.center=s,this.#Le.x.set(t,{sum:r,codes:[]}),this.#Le.y.set(t,{sum:n,codes:[]})}#Me(t,e,s){const{x:i,y:a,center:r}=this.#Le,n=[],h=(i,a)=>{let h;for(h of i){const{sum:i,codes:o}=h[1],c=this.#Te.find(t=>t[0]===h[0]),d=c.length>4?c[3]:c[1],l=c.length>4?c[1]:c[3],p=o?.includes(t.at(-1))&&h[0]===t.at(-2)&&!o?.includes(e),u=!!n.length&&(n.some(t=>o.includes(t))&&!o?.includes(e));a!==s&&(0===a?i<d:i<l)&&(p&&!n.includes(h[0])&&(n.push(h[0]),this.#Re(h[0],e,a)),u&&!n.includes(h[0])&&(n.push(h[0]),this.#Re(r[0],e,a)))}};h(i,0),h(a,1)}#He(t,e,s,i){const a=this.#Te.find(t=>t[0]===s);this.#Re(e,a,t),this.#Ne(s,i),this.#Le.works.includes(e)||this.#Le.works.push(e),i&&i.length>7&&this.#Me(i,a,t)}#je(t,e,s,i){const a=this.#Te.find(t=>t[0]===i),r=a.length>4?a[3]:a[1],n=a.length>4?a[1]:a[3],h=10,o=t[0][2],c=t[0][3],d=t[0].length>4,l=e===o||o-(e+t[0][0])<h,p=s===c||c-(s+t[0][1])<h;let u,f;t[0][0]||t[(0)[0]]?(u=e+r<o?e+r:e,f=s+n<c?s+n:s):(u=e+r<o?e+r:0,f=s+n<c?s+n:0);const y=d?[u,t[0][1],o,c,0,!1,t[0].at(-1),i]:[t[0][0]+e,t[0][1],o,c,0,!1,i],m=d?[t[0][0],f,o,c,1,!1,t[0].at(-1),i]:[u,t[0][1]+s,o,c,1,!1,i];return l&&p?(t[0]=[o,c,o,c],t):(s>=c&&(y[4]=1),e>=o&&(m[4]=0),e<o&&o-y[0]>h&&c-y[1]>h&&t.push(y),s<c&&o-m[0]>h&&c-m[1]>h&&t.push(m),t.length>1&&!t[0][0]&&!t[0][1]&&t.splice(0,1),d&&t.splice(0,1),t)}async#Ue(t,{x:e,y:s},i){const{emptyArea:a}=this.#Ae,r=a[t].length>4?a[t].at(-1):i,n=a[t][4];if(this.#He(n,r,i,a[t]),a.length>1){const r=this.#Ze(n,a[t],{x:e,y:s},a,i);return a.splice(t,1),await this.#Ye(r,a)}this.#je(a,e,s,i),await this.#We(a)}#_e(t,e,s){if(!s.check01&&!s.check02)return s;const i=!!e[5]&&e[5]?.split("-")[1];if("x"===i||"y"===i){this.#Le?.center&&this.#He(0,e.at(-1),t[0],e);const{center:a}=this.#Le,r="x"===i?a[1]-e[0]:a[3]-e[1],n=e[0]===a[1]||e[1]===a[3];s.check01=s.check01&&n&&r>0?"x"===i?r>=t[1]:r>=t[3]:s.check01,s.check02=s.check02&&n&&r>0?"x"===i?r>=t[1]:r>=t[3]:s.check02}return s}#qe(t,e){const s=e[2],i=e[3],a=t[1]+e[0]<=s&&e[0]<s,r=t[3]+e[1]<=i&&e[1]<i,n=t[3]+e[0]<=s&&e[0]<s,h=t[1]+e[1]<=i&&e[1]<i,o=a&&r,c=n&&h;return this.#_e(t,e,{check01:o,check02:c})}#$e(t,e){const s=10,i=e[2]<=285?285:585,a=e[3]<=145?145:225,r=+(t[1]+e[0]).toFixed(3),n=+(t[3]+e[1]).toFixed(3),h=0===e[0]||(r<=e[2]||Math.abs(+(r-e[2]).toFixed(3))<=s),o=0===e[1]||(n<=e[3]||Math.abs(+(n-e[3]).toFixed(3))<=s),c=r<=e[2]||r<=e[2]+s,d=n<=e[3]||n<=e[3]+s,l=r<=e[3]||r<=e[3]+s,p=n<=e[2]||n<=e[2]+s,u=r<=i&&n<=a,f=c&&d&&u,y=l&&p&&u,m=e[2]<=r&&h&&o?r:0,z=e[3]<=n&&o&&h?n:0;return this.#_e(t,e,{check01:f,check02:y,extraX:m,extraY:z})}#Ve(t,e,s,i){const{check01:a,check02:r,extraX:n,extraY:h}=t,o=this.#ve.findIndex(t=>t.code===e[0]),c='<i class="nf nf-oct-sync"></i>';let d,l,p=!1;const u=(t,a,r)=>{if(p=!0,t&&a!==r&&e[2]<=14&&(e.push(c),this.#Te.find(t=>t[0]===e[0]?t.push(c):0)),this.#ve[o].defCoordinate={x:structuredClone(s[i][0]),z:e[2],y:structuredClone(s[i][1])},n||h){const t=n>this.#Pe[2]||h>this.#Pe[3];s.map(t=>(n>0&&(t[2]=n),h>0&&(t[3]=h),t)),t&&(n>this.#Pe[2]&&this.#Pe.splice(2,1,n),h>this.#Pe[3]&&this.#Pe.push(n),this.#Pe.splice(3,1,n))}};return a&&!r?(d=e[1],l=e[3],u(!1,d,l)):r&&(d=e[3],l=e[1],u(!0,d,l)),p&&(this.#Ue(i,{x:d,y:l},e[0]),this.#Ie=null,this.#Ie=[]),p}async#Je(t,e,s,i){if(i||e<0)return i;const a=s[e],r=this.#$e(t,a);return(i=this.#Ve(r,t,s,e))||e--,this.#Je(t,e,s,i)}#Ge({emptyArea:t,found:e,art:s,pos:i}){const a=t.length&&t[0][0]===t[0][2]&&t[0][1]===t[0][3];if(e||i<0||a)return e;const r=t[i],n=this.#qe(s,r);return(n.check01||n.check02)&&(e=this.#Ve(n,s,t,i)),e||i--,this.#Ge({emptyArea:t,found:e,art:s,pos:i})}#Ke(t,e){const s={x:null,y:null};let i,a,r=!1,n=0,h=0;for(a of t){const i=a[0]<a[2]&&a[2]-a[0],o=a[1]<a[3]&&a[3]-a[1],c=i&&i>=e[1]&&o&&o>=e[3]||i&&i>=e[3]&&o&&o>=e[1],d=this.#Ie.includes(n),l=t[h][0]+t[h][1];c&&(r=n),a[0]||(s.x=n),a[1]||(s.y=n),l>a[0]+a[1]&&!d&&(h=n),n++}return i=r&&!this.#Ie.includes(r)?r:null!==s.y?s.y:null!==s.x?s.x:r||void 0===h?t.length-1:h,this.#Ie.push(i),i}#Be(){let t;if(this.#Le?.center){const{x:e,y:s,center:i}=this.#Le,a=i.length>4?i[3]:i[1],r=i.length>4?i[1]:i[3],n=e.get(i[0]),h=s.get(i[0]);t=!(n?.sum>=a||h?.sum>=r)&&i}this.#Le=null,this.#Le={center:t,works:[],linked:[],x:new Map,y:new Map}}#Qe(t,e,s){const i=void 0===t.emptyArea[0]&&void 0===t.emptyArea[1],a=!t.emptyArea.length||t.emptyArea[0][0]===t.emptyArea[0][2],r=!t.emptyArea.length||t.emptyArea[0][1]===t.emptyArea[0][3];if(i||!e[s]||a&&r)return this.#Be(),t;const{emptyArea:n,feat:h}=t,o=e[s],c=this.#Ke(n,o),d={emptyArea:n,found:!1,art:o,pos:c};let l,p=this.#Ge(d);if(p||(p=this.#Je(o,c,n,p)),p){const t=this.#ve.findIndex(t=>t.code===o[0]);l=e.splice(s,1).flat(),h.push({work:l,list:s,raw:t})}return this.#Qe(t,e,s-1)}get bluePrintCoordinates(){return this.#Ae}get fillLayer(){const{info:t,list:e,len:s,raw:i}=this.#nt;this.#Pe=t.newBase,this.#ve=i,this.#Te=structuredClone(e);const a=this.#Qe(t,e,s);return a.newBase=this.#Pe,a}set fillPreparing(t){this.#nt=t}}class CraterPythagoras{#st;#Qt;#ve;#Ae;#ke;constructor(t,e){t&&t.length>0&&(this.#ke=e,this.#ve=t,this.#Qt=t.map(t=>t.packedSized),this.#st=structuredClone(this.#Qt))}#ts(t,e,s,i=1){if(!t.length&&!s)return this.#Ae;const{emptyArea:a}=this.#Ae,r={emptyArea:a,feat:[]},n=t.length-1;e.fillPreparing={info:r,list:t,len:n,raw:this.#ve};const{feat:h}=e.fillLayer;return this.#Ae.defineLayer=[i,h],this.#ts(t,e,s-1,i+1)}#es(t,e,s,i){const a=new WorksCoordinates(t,this.#ke);this.#Ae=a.bluePrintCoordinates,this.#ts(this.#st,a,e),this.#ve.map(t=>this.#Ae.artLocation.set(t.code,t)),this.#Ae.innerSize=[t[0]+i,s+i,t[2]+i]}#ss(t,e){const s=new CrateMaker(e,this.#ke).outSizes,i=+(t[0]+s.x).toFixed(3),a=+(t[1]+s.z).toFixed(3),r=+(t[2]+s.y).toFixed(3),n=i%1>0?i:i.toFixed(0),h=a%1>0?a:a.toFixed(0),o=r%1>0?r:r.toFixed(0),c=s.div&&e.length>1?t[1]+s.div*(e-1):s.div;return this.#es(t,e,c,s.pad),[+n,+h,+o]}#is(t){const e=this.#ke?.materials.find(t=>"Plywood"===t[5]),s=this.#ke?.materials.find(t=>"Wooden Post"===t[5]),i=+Math.sqrt(t[2]**2+t[1]**2).toFixed(3),a=t[2]-240+t[1],r=+Math.sqrt(a**2-t[1]**2).toFixed(3),n=i+2*+e[2]+ +s[3],h=+(Math.cos(Math.asin(240/n))*n).toFixed(3);return this.#Ae.finalSize=[t[0],h,240],this.#Ae.baseSize=[t[0],t[1],i],this.#Ae.extraDepth=r,[...this.#Ae.finalSize]}#as(t){let e=0,s=0,i=0;t.map(t=>(e<t[1]&&(e=t[1]),s<t[2]&&(s=t[2]),i<t[3]&&(i=t[3]),t));return e>=i?this.#ss([e,s,i],t.length):this.#ss([i,s,e],t.length)}#rs(t){let e;return e=this.#as(t),t.map(t=>(t[1]<=e[2]&&t[3]>e[2]&&t.push('<i class="nf nf-oct-sync"></i>'),t)),this.#is(e)}#ns(){const t=[];let e;for(;this.#Qt.length;)e=this.#Qt.splice(0,3),t.push(this.#rs(e)),t.push({works:e});return t[0].push(this.#Ae),t}#hs(){if(!this.#ve||0===this.#ve.length)return{largest:!1};return{crates:this.#ns()}}get makeCrate(){return this.#hs()}}class CraterStandard{#ve;#st;#os;#Ae;#cs;#ke;#xe=0;#ds;constructor(t,e,s,i){t&&t.length>0&&(this.#ke=e,this.#ve=t,this.#st=t.map(t=>t.packedSized),this.#os=s??4,this.#ds=i)}#ls(t=[]){if(!this.#ve||0===this.#ve.length)return{standard:!1};switch(this.#ds){case!1:return{crates:this.#ps()};case!0:return{crates:this.#us([],1,structuredClone(this.#st))}}}#fs(t,e){let s,i,a,r,n,h=0,o=0;for(n in t)s=t[n][0]>e[n][0],i=t[n][0]!==e[n][0],a=t[n][2]>e[n][2],r=t[n][2]!==e[n][2],s&&i?h+=1:i&&(o+=1),a&&r?h+=1:r&&(o+=1);return{opt1:h,opt2:o}}#ys(t,e){let s=0,i=0,a=0,r=0,n=2;return t.map(t=>t[0]<=300&&t[2]<=160?s++:a++),e.map(t=>t[0]<=300&&t[2]<=160?i++:r++),a===r?n=s<=i?1:2:a<r&&(n=s>=i?1:2),{bestArrange:n}}#ps(){const t=structuredClone(this.#st),e=structuredClone(this.#st),s={opt1:this.#us([],0,t),opt2:this.#us([],1,e)},i=[],a=[],r=new WeakSet;Object.entries(s).map(t=>("opt1"===t[0]?t[1].map((t,e)=>e%2==0?i.push(t):0,0):t[1].map((t,e)=>e%2==0?a.push(t):0,0),t));let n,h;return n=i.length===a.length?this.#fs(i,a):this.#ys(i,a),h=Object.hasOwn(n,"bestArrange")?n.bestArrange:n.opt1<=n.opt2?1:2,r.add(n),1===h?s.opt1:s.opt2}#ms(t){if(t.length<=1)return t;const e=[],s=t.splice(0,1),i=[];return t.map(t=>(t.at(-1)<=s[0].at(-1)?e.push(t):i.push(t),t)),this.#ms(e).concat(s,this.#ms(i))}#zs(t,e){let s=0,i=0,a=0;const r=new CrateMaker(this.#xe,this.#ke).outSizes;if(this.#xe>1)for(i in e)Object.entries(e[i]).map(t=>(t.includes("status")||(t[1].map(t=>(t[2]>a&&(a=t[2]),t)),s+=a,a=0),t));a=r.div*(this.#xe-1)+s,this.#Ae.innerSize=[+(t[0]+r.pad).toFixed(3),+(a+r.pad).toFixed(3),+(t[2]+r.pad).toFixed(3)],r.x+=t[0],r.z+=a||t[1],r.y+=t[2];const n=r.x%1>0?r.x.toFixed(3):r.x.toFixed(0),h=r.z%1>0?r.z.toFixed(3):r.z.toFixed(0),o=r.y%1>0?r.y.toFixed(3):r.y.toFixed(0);return this.#ve.map(t=>this.#Ae.artLocation.set(t.code,t)),this.#Ae.finalSize=[+n,+h,+o],[+n,+h,+o,structuredClone(this.#Ae)]}#gs(t,e){switch(this){case 1:Array.isArray(e[0])?t.push({layer1:e}):t.push({layer1:[e]});break;case 2:Array.isArray(e[0])?t.push({layer2:e}):t.push({layer2:[e]});break;case 3:Array.isArray(e[0])?t.push({layer3:e}):t.push({layer3:[e]});break;case 4:Array.isArray(e[0])?t.push({layer4:e}):t.push({layer4:[e]});break;case 5:Array.isArray(e[0])?t.push({layer5:e}):t.push({layer5:[e]});break;default:return}return t}#xs(t,e){const s=new WorksCoordinates(t,this.#ke);if(this.#Ae=s.bluePrintCoordinates,!this.#Ae)return;const i=[];let a,r,n,h=[],o=0;const c=e=>{const{newBase:s}=e;(s[2]>0||s[3]>0)&&(t[0]=s[2],t[2]=s[3],this.#Ae.baseSize=s)};for(;o++<this.#os&&e.length;){const{emptyArea:t}=this.#Ae;a={emptyArea:t,feat:[],newBase:[0,0,0,0]},s.fillPreparing={info:a,list:e,len:e.length-1,raw:this.#ve},r=s.fillLayer,c(r),n=structuredClone(r),h=n.feat.map(t=>{const e=this.#ve.find(e=>e.code===t.work[0]).arr,s=structuredClone(t.work);return s[1]=e[1],s[2]=e[2],s[3]=e[3],s}),this.#gs.call(o,i,h),this.#Ae.defineLayer=[o,r.feat],h=null,r=null,a=null,h=[]}return this.#xe=o-1,delete this.#Ae.defineLayer,delete this.#Ae.reset,{crate:i,measure:t,list:e}}#ws(t,e,s){if(s<0)return t.x<t.y&&([t.x,t.y]=[t.y,t.x]),t;const i=e[s][1]>e[s][3]?e[s][1]:e[s][3],a=e[s][3]>e[s][1]?e[s][1]:e[s][3],r=t.x>=i,n=t.y>=a;return t.x=r?t.x:e[s][1],t.x=r&&t.x+i<=this.#cs?t.x+i:t.x,t.z=e[s][2]>t.z?e[s][2]:t.z,t.y=n?t.y:a,t.y=n&&t.y+a<=140?t.y+a:t.y,this.#ws(t,e,s-1)}#ks(t){const{x:e,z:s,y:i}=this.#ws({x:0,z:0,y:0},t,t.length-1);return[e,s,i]}#Cs(t){const e=[],s=t.at(-1)[1]*t.at(-1)[3],i=structuredClone(t);let a=0,r=0,n=!1;for(r of(i.pop(),i)){e.push(~~(r[1]*r[3]));const s=r[1]>t.at(-1)[1]||r[3]>t.at(-1)[1],i=r[1]>t.at(-1)[3]||r[3]>t.at(-1)[3];(s||i)&&(n=!0)}return a=e.reduce((t,e)=>t+e,0),a>~~(5*s)||n}#bs(t){if(1===t.length)return t;let e=[];return t.map(t=>(Array.isArray(t)&&e.push([t[0],t[1],t[2],t[3],t[1]+t[3]]),t)),e=this.#ms(e),e.map(t=>t.pop()),e}#us(t,e,s){if(!s.length)return t;s=this.#bs(s);const i=this.#Cs(s);this.#cs=e?600:270;const a=i?this.#ks(s):s.at(-1)[1]>s.at(-1)[3]?[s.at(-1)[1],s.at(-1)[2],s.at(-1)[3]]:[s.at(-1)[3],s.at(-1)[2],s.at(-1)[1]],{crate:r,measure:n,list:h}=this.#xs(a,s);return t.push(this.#zs(n,r)),t.push({works:r}),this.#us(t,e,h)}get makeCrate(){return this.#ls()}}class CraterLastCheckReArranger{#Ss;#ke;constructor(t,e){this.#ke=e,this.#Ss=t}#ms(t,e){if(t.length<=1)return t;const s=[],i=t.splice(0,1),a=[];let r=0;for(r in t)t[r][e]<=i[0][e]?s.push(t[r]):a.push(t[r]);return this.#ms(s,e).concat(i,this.#ms(a,e))}#vs(t,e,s){const i=t[e],{works:a}=i;a.map(t=>(Object.entries(t).map(t=>(t[1].map(t=>(Array.isArray(t[0])?t.map(t=>Array.isArray(t[0])?s.push(t[0]):0):s.push(t),t)),t)),t));return s.map(t=>{const{code:e,x:s,y:i,z:a,packing:r}=JSON.parse(localStorage.getItem(t[0]));return new ArtWork(e,s,a,i,r)})}#As(t,e){const s=new WeakSet,i=e.works.length;let a,r=0,n=!0;for(;r++<t.length&&n;)r%2==1&&(a=1===i?structuredClone(e.works[0]):structuredClone(e.works),a=this.#vs(t,r,a),a=this.#ms(a,4),a=new CraterStandard(a,this.#ke,5,!0).makeCrate,a?.crates?.length===t.length&&(t.splice(r,1,a.crates[1]),t.splice(r-1,1,a.crates[0]),n=!1),s.add(a));return!n}#Ts(t,e,s){return s<0?e:(s%2==1&&this.#As(t,e[s])&&(e.splice(s-1,2),s=e.length),this.#Ts(t,e,s-1))}#Ls(t){let e,s,i=0;for(s in t)if(i++%2==1&&5===t[s].works.length&&(e=t[s].works[4].layer5),e)break;return!!e&&{info:s,works:e}}#Fs(t,e){const s=[];Object.entries(e).map(t=>(t[1].map(t=>{let e;for(e in t)t[e].length>0&&Array.isArray(t[e])&&t[e].map(t=>s.push(t));return t}),t)),t.map(t=>s.push(t));return this.#ms(s,4)}#Is(t,e,s,i){const a=this.#ke.find(t=>"Foam Sheet"===t.at(-1)&&t[2]>2.5);return t[i].works.pop(),t[i-1][1]-=a[2],t.splice(e-1,1,s.crates[0]),t.splice(e,1,s.crates[1]),t}#Ps(){const{crates:t}=this.#Ss.standardCrate,e=this.#Ls(t);let s,i,a,r,n=0;if(e)for(r in t){if(!Array.isArray(t[r])&&n!==+e.info&&(s=this.#Fs(e.works,t[r]),i=new CraterStandard(s,!1,5,!0).makeCrate,a=2===i.crates.length,a)){this.#Is(t,n,i,e.info);break}n++}}#Bs(){if(!this.#Ss)return;const t=this.#Ss?.sameSizeCrate?.crates,e=this.#Ss?.standardCrate?.crates;if(!t||!e)return;const s=t.length;return this.#Ts(e,t,s),this.#Ps(),0===this.#Ss.sameSizeCrate.crates.length&&delete this.#Ss?.sameSizeCrate,this.#Ss}get reduceCrates(){return this.#Bs()}}class CraterNotCanvas{#Es;#ve;#Ae;#ke;#st;constructor(t,e){t&&t.length>0&&(this.#ke=e,this.#ve=t,this.#Es=t.map(t=>t.arr),this.#st=t.map(t=>t.arr))}#ms(t,e){if(t.length<=1)return t;const s=[],i=t.splice(0,1),a=[];return t.map(t=>(t[e]<=i[0][e]?s.push(t):a.push(t),t)),this.#ms(s,e).concat(i,this.#ms(a,e))}#es(t){const e=new WorksCoordinates(t,this.#ke);this.#Ae=e.bluePrintCoordinates;const{emptyArea:s}=this.#Ae,i={emptyArea:s,feat:[]},a=this.#st.length-1,r=this.#ke.materials.filter(t=>"Foam Sheet"===t[5]&&t[2]<5).flat();let n=0;e.fillPreparing={info:i,list:this.#st,len:a,raw:this.#ve};const{feat:h}=e.fillLayer;this.#Ae.defineLayer=[1,h],this.#ve.map((t,e)=>{const s={x:e>0?e*r[2]+n:0,y:0,z:t.z};return t.coordinates=s,this.#Ae.artLocation.set(t.code,t),n+=t.x,t},0)}#ss(t){const e=new CrateMaker(this.#ve.length,this.#ke).outSizes,s=e.div?e.div*(this.#ve.length-1):0,i=+(t[0]+e.x+s).toFixed(3),a=+(t[1]+e.z-e.div).toFixed(3),r=+(t[2]+e.y).toFixed(3),n=i%1>0?i:i.toFixed(3),h=a%1>0?a:a.toFixed(3),o=r%1>0?r:r.toFixed(3);return this.#es(structuredClone([+n,+h,+o])),this.#Ae.innerSize=[i,t[1],t[2]],this.#Ae.finalSize=[+n,+h,+o],[...this.#Ae.finalSize,this.#Ae]}#Ds(t){let e,s=0,i=0,a=0,r=0;return e=t.length/2,t.map(t=>(e-- >0&&(s+=t[1],i<t[2]&&(i=t[2])),a=t[1],r<t[2]&&(r=t[2]),t)),a<s&&(a=s),r+=i,{newX:a,newZ:r}}#Ws(t){const e=t.length>4&&t.length%2==0;let s,i=0,a=0,r=0;return t.map(t=>(i+=t[1],a=t[2]>a?t[2]:a,r=t[3]>r?t[3]:r,t)),(i>277||e)&&(s=this.#Ds(t),i=s.newX,a=s.newZ),this.#ss([i,a,r])}#Os(t,e){const s=t[1]===e[1]&&t[1]<277,i=t[2]===e[2]&&t[2]<177,a=t[3]<=132;return s&&i&&a}#Xs(t,e,s,i){return i.length%2==0&&t>554&&2*e+10<177?i.length:0===s||i[0][1]>554?1:s}#Zs(t){let e=10*t.length,s=0,i=0;const a=t[0];return t.map(t=>{const r=this.#Os(t,a),n=t[2]-a[2],h=a[2]-t[2];return(!0===r||(n>0&&n<=10||h>0&&h<=10))&&(i++,e+=t[1],s+=t[3]),t}),this.#Xs(e,s,i,t)}#Ys(t){if(!Array.isArray(t))return t;let e=t.map(t=>(t.push(t[1]*t[2]),t));e=this.#ms(e,5),e=e.map(t=>(t.pop(),t)),this.#Es=e}#ye(){if(!this.#ve||0===this.#ve.length)return{noCanvas:!1};const t=[];let e;for(this.#Ys(this.#Es);this.#Es.length>0;)e=this.#Zs(this.#Es),e=this.#Es.splice(0,e),e.length>0?(t.push(this.#Ws(e)),t.push({works:e})):(t.push(this.#Ws(this.#Es.splice(0,1))),t.push({works:e}));return{crates:t}}get makeCrate(){return this.#ye()}}class CraterSameSize{#Es;#Rs;#ve;#Ae;#ke;constructor(t,e){t&&t.length>0&&(this.#ke=e,this.#ve=t,this.#Es=t.map(t=>t.packedSized),this.#Rs=t[0].packedSized)}#ts(t,e,s=1){if(!t.length)return this.#Ae;const{emptyArea:i}=this.#Ae,a={emptyArea:i,feat:[]},r=t.length-1;e.fillPreparing={info:a,list:t,len:r,raw:this.#ve};const n=e.fillLayer;return this.#Ae.defineLayer=[s,n.feat],this.#ts(t,e,s+1)}#es(t,e){const{materials:s,cratesOnly:i}=this.#ke;let a;i.map(t=>{const e=s.filter(e=>{return t===(s=e)[0]&&s[2]<5&&"Foam Sheet"===s[5];var s});return e.length&&(a=e.flat()),t}),e&&(t[2]=+a[2]);const r=new WorksCoordinates(t,this.#ke);this.#Ae=r.bluePrintCoordinates;const{emptyArea:n}=this.#Ae,h={emptyArea:n,feat:[]};r.fillPreparing={info:h,list:this.#Es,len:this.#Es.length-1,raw:this.#ve};const{feat:o}=r.fillLayer,c=structuredClone(this.#Es);return this.#Ae.defineLayer=[1,o],this.#ve.map(t=>this.#Ae.artLocation.set(t.code,t)),this.#ts(c,r),this.#ve.map(t=>this.#Ae.artLocation.set(t.code,t)),this.#Ae.innerSize=t,delete this.#Ae.defineLayer,delete this.#Ae.reset,t}#Ns(t,e){const s=new CrateMaker(this.#Es.length,this.#ke,e).outSizes,i=+(t[0]+s.x).toFixed(3),a=+(t[1]+s.z).toFixed(3),r=+(t[2]+s.y).toFixed(3),n=i%1>0?i:i.toFixed(0),h=a%1>0?a:a.toFixed(0),o=r%1>0?r:r.toFixed(0),c=t[1]+s.div*this.#Es.length;return this.#es(t,e),this.#Ae.innerSize=[t[0],c,t[2]],this.#Ae.finalSize=[+n,+h,+o],[...this.#Ae.finalSize,this.#Ae]}#Ms(t,e,s){const i=t.map(t=>{t[0],e[0],s[0],t[1],e[1],s[1],t[2],e[2],s[2];return t});return void 0!==i[0]&&i.map(e=>t.splice(t.indexOf(e),1)),void 0!==i[0]}#Hs(t,e){const s=[];return void 0!==e.map(e=>{const i=e[0]===t[0][0],a=e[2]===t[0][2],r=e[0]===t[0][0]-this.#Rs[1],n=e[2]===t[0][2]-this.#Rs[3];if(i&&a||r&&n)return e;if(s.length>0){if(this.#Ms(s,e,t))return e}else s.push(e);return e})[0]}#js(t,e){const s=t.shift(),i=e.length;let a,r,n,h;return s?(a=i%2+i/2,r=t[0],n=a*this.#Rs[2],h=t[2]):(r=t[0],n=i*this.#Rs[2],h=t[2]),this.#Ns([r,n,h],s)}#Us(t,e){const s=e.length>3?[e[0][1],e[0][2],e[0][3]]:e;let i=t[0];const a=t[1];let r=t[2]+s[2],n=!1;return r>132&&i<132?([r,i]=[i,r],n=!0):r>t[2]&&(n=!0),[n,[i,a,r]]}#_s(t){let e,s=t.splice(0,1).flat(),i=t.splice(0,1).flat();t.length>0&&(e=this.#Hs(s,t)),e?(s=this.#Us(s,t.splice(0,1)),t[0].map(t=>i[0][0].push(t)),t.splice(0,t[0].length)):i[0].length>10&&i[0].length%2==0?s=this.#Us(s,i[0]):s.unshift(!1),Array.isArray(i[0][0])&&(i=i.flat());return{crate:this.#js(s.flat(),i),works:i}}#qs(t){const e=[];let s;for(;t.length;)s=this.#_s(t),e.push(s.crate),e.push({works:s.works});return e}#$s(){let t=this.#Es[0][1],e=this.#Es[0][2],s=this.#Es[0][3];const i=[[t,e,s]];let a=[];return this.#Es.map(r=>(r[2]<=14&&(r[1]!==t&&r[3]!==s&&(i.push([a]),t=r[1],e=r[2],s=r[3],i.push([t,e,s]),a=[]),a.push(r)),r)),i.push(a),i[1][0].length>=4?i:null}#Vs(){if(!this.#ve||0===this.#ve.length)return{sameSize:!1};let t=this.#$s();if(null===t)return null;const e=this.#qs(t);return t=null,{crates:e}}get makeCrate(){return this.#Vs()}}class CraterTube{#H;#Js;#Ae;#ve;#ke;constructor(t,e){t&&t.length>0&&(this.#ke=e,this.#ve=t,this.#H=t.map(t=>t.arr),this.#Js=35)}#Gs(){if(!this.#ve||0===this.#ve.length)return{tube:!1};return this.#H.filter(t=>t[2]<this.#Js&&t).find(t=>!Array.isArray(t))?{tube:!1}:this.#Ks()}#ts(t,e,s=1){if(!t.length)return this.#Ae;const{emptyArea:i}=this.#Ae,a={emptyArea:i,feat:[]},r=t.length-1;e.fillPreparing={info:a,list:t,len:r,raw:this.#ve};const n=e.fillLayer;return this.#Ae.defineLayer=[s,n.feat],this.#ts(t,e,s+1)}#Qs(t,e){const s=new WorksCoordinates(t,this.#ke);this.#Ae=s.bluePrintCoordinates;const{emptyArea:i}=this.#Ae,a={emptyArea:i,feat:[]},r=Array.isArray(e[0])?e.length-1:0;let n=0;s.fillPreparing={info:a,list:e,len:r,raw:this.#ve};const{feat:h}=s.fillLayer;this.#Ae.defineLayer=[1,h],this.#Ae.innerSize=[t[0],t[1],t[2]],this.#ts(e,s),this.#ve.map(t=>(t.y+=n,this.#Ae.artLocation.set(t.code,t),n+=t.y+10,t))}#ti(t){let e=t[0][1],s=t[0][2],i=0;return t.map((t,a)=>(e=t[1]>e?t[1]:e,s=t[2]>s?t[2]:s,i+=a>0?t[3]+10:t[3],t),0),[e,s,i]}#ei(t,e){const s=new CrateMaker(1,this.#ke).outSizes,i=+(t[0]+s.x).toFixed(3),a=+(t[1]+s.z).toFixed(3),r=+(t[2]+s.y).toFixed(3),n=i%1>0?i:i.toFixed(0),h=a%1>0?a:a.toFixed(0),o=r%1>0?r:r.toFixed(0);return this.#Qs(t,structuredClone(e)),this.#Ae.finalSize=[+n,+h,+o],[...this.#Ae.finalSize]}#si(t){const e=this.#ti(t);return this.#ei(e,t)}#ii(t){const e=[];let s;for(;t.length>=3;)s=t.splice(0,3),e.push(this.#si(s.length)),e.push({works:s});return console.log("🗣️",e),e}#ai(){const t=[];return this.#H.filter(e=>(e[2]>this.#Js&&t.push(e),e)),t.map(t=>(this.#H.splice(this.#H.indexOf(t),1),t)),t}#Ks(){let t,e;const s=[],i=this.#ai();for((i.length>0||i.length>3)&&s.push(this.#ii(i));this.#H.length;)e=this.#H.splice(0,3),t=structuredClone(e),s.push(this.#si(t)),s[0].push(this.#Ae),s.push({works:e});return this.#H.length>=1&&(e=this.#H.splice(0,3),t=structuredClone(e),s.push(this.#si(t)),s[0].push(this.#Ae),s.push({works:e})),{crates:s}}get makeCrate(){return this.#Gs()}}class Crater{#ke;#pe;#Wt;constructor(t,e){t===Arranger&&(this.#ke=e,this.#pe=t.list,this.#Wt=[])}#ri(){if(!this.#pe)return!1;let t=0;const e=["tubeCrate","largestCrate","sameSizeCrate","noCanvasCrate","standardCrate"];try{for(t in this.#si(),this.#ni(),this.#hi(),this.#oi(),this.#ci(),this.#di(),this.#Wt)this.#Wt[t]?.hasOwnProperty("crates")&&e.includes(t)||delete this.#Wt[t];return this.#li(),this.#pi(),this.#ui(),this.#fi(),Array.isArray(this.#Wt?.sameSizeCrate?.backUp)&&(this.#yi(),this.#mi(),this.#zi()),{crates:this.#Wt}}catch(t){console.error("Crater Failed:",t)}}#si(){if(this.#pe?.tubes?.length>0){const t=new CraterTube(this.#pe?.tubes,this.#ke);this.#Wt.tubeCrate=t.makeCrate}}#ni(){if(this.#pe?.largest?.length>0){const t=new CraterPythagoras(this.#pe?.largest,this.#ke);this.#Wt.largestCrate=t.makeCrate}}#hi(){if(this.#pe?.sameSize?.length>0){const t=new CraterSameSize(this.#pe?.sameSize,this.#ke);this.#Wt.sameSizeCrate=t.makeCrate}}#oi(){if(this.#pe?.noCanvas?.length>0){const t=new CraterNotCanvas(this.#pe?.noCanvas,this.#ke);this.#Wt.noCanvasCrate=t.makeCrate}}#ci(){if(this.#pe?.sorted?.length>0){const t=new CraterStandard(this.#pe?.sorted,this.#ke,4,!1);this.#Wt.standardCrate=t.makeCrate,console.log("✅",structuredClone(this.#Wt.standardCrate))}}#di(){const t=Object.entries(this.#Wt).some(t=>"sameSizeCrate"===t[0]),e=Object.entries(this.#Wt).some(t=>"standardCrate"===t[0]);t&&e&&(this.#Wt=new CraterLastCheckReArranger(this.#Wt,this.#ke).reduceCrates)}#li(){let t=0;const e=[],s=t=>{Array.isArray(t)&&e.push(t)};for(t in this.#Wt)this.#Wt[t]?.crates?.map(s);this.#Wt.allCrates=e}#zi(){let t,e,s=0;const i=[],a=t=>{Array.isArray(t)&&i.push(t)};for(s in this.#Wt)t="sameSizeCrate"===this.#Wt[s],e="standardCrate"===this.#Wt[s],(t||e)&&this.#Wt[s]?.backUp?.map(a),this.#Wt[s]?.crates?.map(a);this.#Wt.allCratesBackUp=i}#pi(){let t=0;const e=t=>{if(Array.isArray(t)&&t.length>=3){const e=t[0],s=t[1],i=t[2],a=new CubCalc(e,s,i).cubCalcAir,r=4===t.length?t.splice(3,1,a):t.push(a);Array.isArray(r)&&t.push(r)}};for(t in this.#Wt)this.#Wt[t]?.crates?.map(e);Array.isArray(this.#Wt?.sameSizeCrate?.backUp)&&(this.#Wt?.sameSizeCrate?.backUp?.map(e),this.#Wt?.standardCrate?.backUp?.map(e))}#ui(){let t=0,e=[];const s=t=>{Array.isArray(t)&&e.push(t[3])};for(t in this.#Wt)this.#Wt[t]?.crates?.map(s);e=e.reduce((t,e)=>t+e,0),this.#Wt.airCubTotal=e.toFixed(3)}#yi(){let t,e,s=[],i=0;const a=t=>{Array.isArray(t)&&s.push(t[3])};for(i in this.#Wt)t="sameSizeCrate"===this.#Wt[i],e="standardCrate"===this.#Wt[i],t||e?this.#Wt[i]?.backUp?.map(a):t||e||this.#Wt[i]?.crates?.map(a);s=s.reduce((t,e)=>+(t+e).toFixed(3),0),this.#Wt.airCubTotalBackUp=s}#gi(t){if(Array.isArray(t)){const e=t[0],s=t[1],i=t[2];return e>300||s>200||i>160?"CARGO":"PAX"}}#fi(){let t,e=0,s=0,i=0;for(i in this.#Wt)this.#Wt[i]?.crates?.map(i=>{t=this.#gi(i),"PAX"===t?e++:"CARGO"===t&&s++});this.#Wt.whichAirPort=[{PAX:e},{CARGO:s}]}#mi(){let t,e,s,i=0,a=0,r=0;for(i in this.#Wt)t="sameSizeCrate"===this.#Wt[i],e="standardCrate"===this.#Wt[i],t||e?this.#Wt[i]?.backUp?.map(t=>{s=this.#gi(t),"PAX"===s?a++:"CARGO"===s&&r++}):t||e||this.#Wt[i]?.crates?.map(t=>{s=this.#gi(t),"PAX"===s?a++:"CARGO"===s&&r++});this.#Wt.whichAirPortBackUp=[{PAX:a},{CARGO:r}]}get makeCrate(){return this.#ri()}}class UnitAdapter{#st;#xi;#ke;constructor(t,e){const s=JSON.parse(localStorage.getItem("materials")),i=JSON.parse(localStorage.getItem("crating"));return this.#ke={materials:s,cratesOnly:i},this.#st=t,this.#xi=e,this.#wi()}#ki(){try{if(!Array.isArray(this.#st)){throw new TypeError("Please, provide a valid list.")}if(this.#st.some(t=>"ArtWork"!==t.constructor.name)){throw new TypeError("Please, provide a type of 'ArtWork' object list.")}if("cm"!==this.#xi&&"in"!==this.#xi){throw new TypeError("Please, provide a valid unit.")}}catch(t){return t}return"pass"}async#wi(){let t;const e=this.#ki();switch("pass"!==e?"error":"cm"===this.#xi?"cm":"in"){case"error":return e;case"cm":return t=await this.#Ci(),t;case"in":return t=await this.#bi(),t}}#Si(t){const e=t?.hasOwnProperty("crates"),s=t?.hasOwnProperty("backUp");return Array.isArray(t)?t.map(n):t?.hasOwnProperty("crates")?((e||s)&&(t.crates=t.crates.map(t=>4===t.length?n(t):(Array.isArray(t.works[0])?t.works=t.works.map(n):t.works=t.works.map(h),t)),console.log(t.crates)),t):t}#vi(){return this.#st.map(t=>{const e=t.autoConvert,s=e[0],i=e[1],a=e[2],r=e[3];return new ArtWork(s,i,a,r)})}#Ai(t){let e=0;for(e in t)Object.hasOwn(t[e],"crates")&&(t[e]=this.#Si(t[e]));return t.sameSizeCrate?.hasOwnProperty("backUp")&&(t.airCubTotalBackUp=+(.061023*t.airCubTotalBackUp).toFixed(3),t.allCratesBackUp=this.#Si(t.allCratesBackUp)),t.allCrates=this.#Si(t.allCrates),t}async#Ci(){return await Promise.resolve(new Arranger(this.#st).start).then(t=>new Crater(t,this.#ke).makeCrate).then(t=>t.crates).catch(t=>t)}async#bi(){return await Promise.resolve(this.#vi()).then(t=>new Arranger(t).start).then(t=>new Crater(t,this.#ke).makeCrate).then(t=>this.#Ai(t.crates)).catch(t=>t)}}function n(t){const e=.061023;let s,i,a,r;switch(console.log(t),t.length){case 4:return i=t[0],a=t[1],r=t[2],s=Array.from(new Converter(i,a,r).inConvert),s.push(+(t[3]*e).toFixed(3)),t=s;case 5:return i=t[1],a=t[2],r=t[3],s=Array.from(new Converter(i,a,r).inConvert),s.unshift(t[0]),s.push(+(t[3]*e).toFixed(3)),t=s;case 6:return i=t[1],a=t[2],r=t[3],s=Array.from(new Converter(i,a,r).inConvert),s.unshift(t[0]),s.push(+(t[3]*e).toFixed(3)),s.push(t[5]),t=s}}function h(t){let e;for(e in t)Array.isArray(t[e][0][0][0])?t[e][0].map(t=>t.splice(0,1,n(t[0]))):t[e]=[n(t[e][0])];return t}function o(t,e,s,i){switch(t){case 409:!async function(t,e,s){if(confirm("This estimate already exist. Would you like to update it?")){const i="/api/v1/update/estimates";try{const a=await fetch(i,{method:"PUT",body:t,headers:e}).then(t=>t.status).catch(t=>console.error(`ALERT ${t}`));403===a&&o(a,s)}catch(t){alert(`ATTENTION: ${t}`)}}else alert("Not updated!")}(s,i,e);break;case 403:!async function(t){const e={"Content-Type":"application/json; charset=UTF-8"};try{const s=await fetch("/api/v1/shift/tokens",{method:"POST",headers:e}).then(t=>t.status).catch(t=>console.error(`ALERT ${t}`));c(t),console.log(s)}catch(t){alert(`ATTENTION: ${t}`)}}(e)}}async function c(t){const e=JSON.stringify(t),s={"Content-Type":"application/json; charset=UTF-8"};if(globalThis.navigator.onLine)try{o(await fetch("/api/v1/newEstimate",{method:"POST",body:e,headers:s}).then(t=>t.status).catch(t=>console.error(`ALERT ${t}`)),t,e,s)}catch(t){alert(`ATTENTION: ${t}`)}else!function(t){const e=localStorage,s=e.getItem("offResults"),i=void 0!==s&&JSON.parse(s);i?(i.push(t),e.removeItem("offResults"),e.setItem("offResults",JSON.stringify(i))):e.setItem("offResults",JSON.stringify([t]))}(t.reference)}function d(){const t="Results",e=globalThis.indexedDB.open(t);e.onerror=t=>{alert(`ATTENTION! ${t.target.errorCode}`)},e.onupgradeneeded=e=>{let s;s=e.target.result.createObjectStore(t,{keyPath:"reference"}),s.createIndex("reference","reference",{unique:!0})}}function l(t,e=!1){const s=localStorage.getItem("refNumb"),i="Results",a=globalThis.indexedDB.open(i),r=globalThis.navigator.onLine;a.onerror=t=>{alert(`ERROR: ${t.target.errorCode}`)},a.onsuccess=async a=>{const n=a.target.result.transaction(i,"readwrite").objectStore(i),h=n.get(t.reference);h.onsuccess=async()=>{void 0===h.result?n.add(t):await Promise.resolve(n.delete(h.result.reference)).then(n.add(t)),p(s,e)},r||function(t,e){const s="off_line_results",i=document.getElementById("input_estimate").value,a=globalThis.indexedDB.open(s);a.onerror=t=>{alert(`ERROR: ${t.target.errorCode}`)},a.onsuccess=async a=>{const r=a.target.result.transaction(s,"readwrite").objectStore(s),n=r.get(t.reference);n.onsuccess=()=>{(void 0===n.result||r.delete(n.result.reference))&&r.add(t),p(i,e)}}}(t)}}async function p(t,e=!1){const s=globalThis.indexedDB.open("Results");s.onerror=t=>{alert(`WARNING: ${t.target.errorCode}`)},s.onsuccess=()=>{const i=s.result.transaction("Results").objectStore("Results").get(t);i.onsuccess=async()=>{const t=localStorage.getItem("refNumb"),s=i.result;globalThis.sessionStorage.setItem(t,JSON.stringify(s)),!1===e&&await async function(t){const{reference:e,list:s,crates:i}=t,a={reference:e,list:s,crates:Object.assign({},i)};await c(a)}(i.result),"crate"===e&&await async function(t){const e={"Content-Type":"application/json; charset=UTF-8"},{reference:s,list:i,crates:a}=t,r={reference:s,list:i,crates:Object.assign({},a)};try{await fetch("/api/v1/update/estimates",{method:"PUT",body:JSON.stringify(r),headers:e}).then(t=>t.status).catch(t=>console.error(`ALERT ${t}`))}catch(t){alert(`ATTENTION: ${t}`)}finally{return"updated"}}(i.result)}}}async function u(){const t=await g(),e=document.getElementById("count");return t&&t.length>0&&document.getElementById("statusList").setAttribute("content",t.length),e.innerText=t?"Counting: "+t?.length:"Counting 0",e}async function f(){let t;const e=document.getElementById("cub-meter");return t=await g(),t=t?.reduce((t,e)=>t+e.cubed,0)??0,e.innerText="Cub: "+(1e3*t/1e3).toFixed(3)+"m³",e}async function y(){let t,e,s;return s="Air-Cub: ",e=document.getElementById("cub-air"),t=await g(),t=t?.reduce((t,e)=>t+e.cAir,0)??0,e.innerText="Air-Cub: "+(1e3*t/1e3).toFixed(3),e}async function m(t=!1){const e={},s=new WeakSet,i=localStorage.getItem("refNumb")??document.getElementById("input_estimate").value,a=document.cookie.split("=")[1];let r;const n=await async function(){const t="cm - centimeters"===localStorage.getItem("metrica")?"cm":"in",e=await g();let s;return 0===e.length?alert("Oops! Sounds like you do not added any work yet. Please, try again!"):(s=await Promise.resolve(new UnitAdapter(e,t)),s)}(),h=document.querySelector(":root"),o=document.querySelector(".update-materials"),c=document.querySelector(".materials");return(t||confirm("Ready to crate all works?")&&n)&&(!function(){const t=new DocumentFragment,e=new DocumentFragment,s=document.createElement("panel-info"),i=document.createElement("panel-info"),a=document.getElementById("first_pane"),r=document.getElementById("second_pane");for(;a.firstChild;)a.removeChild(a.firstChild);for(;r.firstChild;)r.removeChild(r.firstChild);s.id="first-pane",i.id="second-pane",s.setAttribute("name","pane1"),i.setAttribute("name","pane2"),t.append(s),e.append(i),a.append(t),r.append(e)}(),e.reference=i,r=await g(),e.list=r.map(t=>t.data),e.crates=n,l(e,t),o.setAttribute("name","materials-used"),c.setAttribute("name","packed-works"),c.setAttribute("content","crates"),("FULL"===a||"PLOTTER"===a||!a)&&(document.getElementById("crate-layers").disabled=!1),h.style.setProperty("--layer-state","block"),sessionStorage.removeItem("crate"),sessionStorage.removeItem("plotter"),sessionStorage.removeItem("graphics")),s.add(e),"Crated"}async function z(t=!1){document.getElementById("input_code").value="",document.getElementById("input_length").value="",document.getElementById("input_depth").value="",document.getElementById("input_height").value="";const s=document.getElementById("show-layer"),i=document.querySelectorAll("padding-dialog").length,a=document.querySelector(":root"),r=document.querySelector(".update-materials");let n=document.cookie;n=n.split("=")[1],s&&s.hasChildNodes()&&e(),globalThis.document.getElementById("input_estimate").select(),globalThis.document.getElementById("input_code").select(),"update-materials"!==r.getAttribute("name")&&r.setAttribute("name","update-materials"),u(),f(),y(),i>0&&sessionStorage.setItem("CLOSED","NOW"),a.style.setProperty("--layer-state","none")}async function g(){const t=localStorage,e=[];let s;const i=["doneList","mode","storage","currency","metrica","refNumb","offResults","FETCHED","materials","packing","crating"];return Object.entries(t).map(t=>(!i.includes(t[0])&&e.push(JSON.parse(t[1])),t)),e.length>0&&(s=e.map(t=>{const{code:e,x:s,z:i,y:a,packing:r}=t;return new ArtWork(e,s,i,a,r)})),s||void 0}function x(){const t=new DocumentFragment,e=document.createElement("panel-info");return e.setAttribute("name","status"),e.id="statusList",e.class="addedStatus",e.setAttribute("content",0),t.appendChild(e)}if(globalThis.onstorage=()=>{f(),y(),u()},globalThis.onload=async()=>{const t=localStorage.getItem("mode"),e=document.getElementById("status-frame"),s=document.getElementById("statusList");sessionStorage.removeItem("onCrate"),sessionStorage.removeItem("plotter"),sessionStorage.removeItem("graphics"),sessionStorage.removeItem("crate"),s?s.setAttribute("content","reload"):e.append(x()),b(),null===t&&localStorage.setItem("mode","light"),S(),function(){const t=localStorage.getItem("mode"),e=document.body;switch(t){case"light":document.getElementById("light-mode").checked=!0,e.classList.remove("dark-mode"),e.classList.toggle("light-mode");break;case"dark":document.getElementById("dark-mode").checked=!0,e.classList.remove("light-mode"),e.classList.toggle("dark-mode")}}(),async function(){const t=new DocumentFragment,e=new DocumentFragment,s=document.createElement("pack-up"),i=document.createElement("pack-down"),a=document.getElementById("contents1"),r=document.getElementById("contents2");s.setAttribute("name","select-materials"),s.className="materials",s.ariaHidden="false",i.setAttribute("name","update-materials"),i.setAttribute("content","0"),i.className="update-materials",t.appendChild(s),e.appendChild(i),a.appendChild(t),r.appendChild(e)}()},!localStorage.getItem("metrica")){const t=document.getElementById("cm").value;localStorage.setItem("metrica",t)}function w(){const t=localStorage.getItem("metrica"),e=confirm("Attention! You are going to change the measurement of the works.");t&&void 0!==t?e&&("cm - centimeters"===t?localStorage.setItem("metrica","in - inches"):localStorage.setItem("metrica","cm - centimeters"),sessionStorage.setItem("clean","reload")):localStorage.setItem("metrica",document.getElementById("cm").value),S()}const k=()=>{b(),m();const t=document.querySelector(".result");sessionStorage.getItem("codes")&&(t&&"true"===t.ariaHidden&&e(),setTimeout(()=>globalThis.scroll({top:300,behavior:"smooth"}),1e3))};const C=()=>{const t=document.getElementById("statusList"),e=document.getElementById("status-frame"),s=document.getElementById("first_pane"),i=document.getElementById("second_pane"),a=document.querySelector(".side-menu");confirm("Do you really want to delete the whole list?")&&(!function(){const{mode:t,metrica:e,materials:s}=localStorage;t&&e&&s&&(localStorage.clear(),sessionStorage.clear(),localStorage.setItem("mode",t),localStorage.setItem("metrica",e),localStorage.setItem("materials",s)),u(),f(),y()}(),z(!0),globalThis.document.getElementById("input_estimate").value="",globalThis.document.getElementById("input_estimate").select(),t.setAttribute("content",void 0),e.removeChild(document.getElementById("statusList")),s.firstChild&&s.removeChild(document.getElementById("first-pane")),i.firstChild&&i.removeChild(document.getElementById("second-pane")),e.append(x()),a.getElementsByTagName("panel-info").length>0&&document.querySelector(".side-menu").lastElementChild.setAttribute("name","close"),document.querySelector(".materials").setAttribute("name","select-materials"),sessionStorage.removeItem("plotter"),sessionStorage.removeItem("graphics"),sessionStorage.removeItem("crate"))};function b(){const t=localStorage.getItem("refNumb");let e=document.cookie;return e=e.split("=")[1],t&&(document.getElementById("input_estimate").value=t),d(),function(){const t="Materials",e=globalThis.indexedDB.open(t);e.onerror=t=>{alert(`ATTENTION! ${t.target.errorCode}`)},e.onupgradeneeded=e=>{let s;s=e.target.result.createObjectStore(t,{keyPath:"materials"}),s.createIndex("materials","materials",{unique:!0})}}(),"OFF"!==e&&"FULL"!==e||function(){const t="off_line_results",e=globalThis.indexedDB.open(t);e.onerror=t=>{alert(`ATTENTION! ${t.target.errorCode}`)},e.onupgradeneeded=e=>{let s;s=e.target.result.createObjectStore(t,{keyPath:"reference"}),s.createIndex("reference","reference",{unique:!0})}}(),f()&&y()&&u()}function S(){switch(localStorage.getItem("metrica")){case"cm - centimeters":document.getElementById("cm").checked=!0;break;case"in - inches":document.getElementById("in").checked=!0}}function v(){globalThis.navigator.serviceWorker.ready.then(async t=>{await caches.delete("craterCache_v1"),await caches.delete("status_V1"),await caches.delete("pane1_v1"),await caches.delete("pane2_v1"),await t.unregister()})}async function A(){confirm("Are you sure to logout?")&&await fetch("/api/v1/logout",{method:"GET"}).then(v).then(t=>globalThis.location.assign(t.url)).catch(async()=>{await Promise.resolve(v).then(globalThis.location.replace("https://ottocratesolver.com/login"))})}function T(t){localStorage.setItem("mode",t),function(t){const e=document.body.classList;e.remove("light-mode"),e.remove("dark-mode"),"dark"===t?e.add("dark-mode"):e.add("light-mode")}(t)}function L(t){const e=function(t){let e=2;const s=/^[0-9.0-9]{1,7}$/;for(;--e>=0;)if(!s.test(t[e]))switch(e){case 2:return alert("The provide HEIGHT is not a valid number.\t\t\t\t\tPlease, try again!"),!1;case 1:return alert("The provide DEPTH is not a valid number.\t\t\t\t\tPlease, try again!"),!1;case 0:return alert("The provide LENGTH is not a valid number.\t\t\t\t\tPlease, try again!"),!1}return t}([+t[1],+t[2],+t[3]].map(t=>parseInt(t))),s=/[^-a-z-A-Z-0-9]/g,i=document.getElementById("input_estimate").value,a=function(){const t=JSON.parse(localStorage.getItem("packing")),e=JSON.parse(localStorage.getItem("materials")),s=[];return!(!t||0===t.length)&&(t.filter(t=>(s.push(e.find(e=>e[0]===t).flat()),t)),s)}();let r=0;if(!a)return alert("Please, select some packing material to apply to the artwork."),"material";if(s.test(t[0])||s.test(i))return alert('Found special character NOT allowed on "Work code",\t\tor "Estimate" input. Please, try again!'),!1;for(r in localStorage.key(r))if(t[0]===localStorage.key(r))return alert(`${t[0]} already added to the list. Please, try again`),!1;return function(){const t=localStorage.getItem("refNumb"),e=document.getElementById("input_estimate").value;t&&t!==e&&(confirm("ATTENTION! The refNumb has changed")?(localStorage.removeItem("refNumb"),localStorage.setItem("refNumb",e),document.getElementById("input_estimate").value=e):document.getElementById("input_estimate").value=t);localStorage.setItem("refNumb",e)}(),!!Array.isArray(e)&&new ArtWork(t[0],e[0],e[1],e[2],structuredClone(a))}async function F(){const t=document.getElementById("input_estimate").value,e=document.getElementById("input_code").value,s=document.getElementById("input_length").value,i=document.getElementById("input_depth").value,a=document.getElementById("input_height").value;let r;return t?""===(e&&s&&i&&a)?(alert("Oops! Do not forget to fill each field. Please, try again!"),function(){let t=!1;["input_estimate","input_code","input_length","input_depth","input_height"].find(e=>{const s=document.getElementById(e);return s.value||t?e:(t=!0,s.select())})}()):(r=L([e,s,i,a]),r&&"material"!==r&&(await async function({code:t}){const e=sessionStorage,s=JSON.parse(e.getItem("codes"));let i;return s?(i=Number.parseInt(s[s.length-1]),i+=1,s.push([i,t]),e.setItem("codes",JSON.stringify(s))):e.setItem("codes",JSON.stringify([[0,t]]))}(r.data),localStorage.setItem(r.data.code,JSON.stringify(r.data)),localStorage.setItem("storage","art-work"),u(),y(),f(),z()),r&&"material"!==r?z():0):alert('Attention! Please, add the "Doc:" reference field!')}function I(){const t=prompt("Please enter the work code to be removed split by spaces:","code?"),e=!!t&&t.split(" ");return e?(e.map(e=>{if(localStorage.getItem(e))!function(t){const e=sessionStorage,s=JSON.parse(e.getItem("codes"));let i=0;for(;s[i][1]!==t&&i<=s.length;)i++;s.splice(i,1),e.setItem("codes",JSON.stringify(s))}(e),localStorage.removeItem(t);else{if(!e)return z();alert(`"${e}" was not found in the list. Please, try again!`)}return u(),y(),f(),e}),localStorage.setItem("storage","art-work"),z()):z()}function P({works:t}){const e=[],s=Array.isArray(t[0][0])?t[0]:t;return s?.map(t=>{let s;if(Array.isArray(t))return e.push(t);for(s in t)e.push(s),1===t[s].length?e.push(t[s][0]):Array.isArray(t[0])?t[s][0].map(t=>e.push(t)):t[s].map(t=>e.push(t))}),e}function B(t){if(!t)return"There is no crates. Please, try again!";const e="cm - centimeters"===localStorage.getItem("metrica")?"cm":"in",s=t.map(t=>{let s;return"string"==typeof t?`LAYER layer ${t?.at(-1)}:`:t.length>=5?(s=`CODE: ${t[0]} - ${t[1]} x ${t[2]} x ${t[3]} - ${e}`,s):4===t.length?(s=`CRATE: ${t[0]} x ${t[1]} x ${t[2]} - ${e}`,s):void 0}),i=function(t,e){for(;e--;)t=(t=(t=(t=(t=t.replace("LAYER","\t")).replace("CODE: ","\t\t")).replace('"',"")).replace('"',"")).replace(",","\n");return t=(t=t.replace("[","")).replace("]","")}(JSON.stringify(s),s.length);navigator.clipboard.writeText(i)}function E(){const t=new Worker(new URL("./panels/worker.IDB.crates.mjs",import.meta.url),{type:"module"}),e=document.getElementById("input_estimate").value;if(!sessionStorage.getItem(e))return alert('Please, press the "Crate" button if already added works.');t.postMessage(e),t.onmessage=t=>{(Array.isArray(t.data.crates)||Object.hasOwn(t.data,"crates"))&&function({crates:t}){sessionStorage.setItem("copy1","done!"),B(t.allCrates)}(t.data)}}function D(){const t=new Worker(new URL("./panels/worker.IDB.crates.mjs",import.meta.url),{type:"module"}),e=document.getElementById("input_estimate").value;if(!sessionStorage.getItem(e))return alert('Please, press the "Crate" button if already added works.');t.postMessage(e),t.onmessage=t=>function({crates:t}){const e=[];let s,i;for(s in t)Object.hasOwn(t[s],"crates")&&t[s].crates.map((t,s)=>{switch(s%2){case 0:e.push(t);break;case 1:i=P(t),i.map(t=>e.push(t)),i=null}},0);return sessionStorage.setItem("copy2","done!"),B(e)}(t.data)}function W(t){const e=t.target.closest(".accordion-panel");if("body-app"===t.target.id)return O();e&&function(t){const e=t.parentElement.querySelectorAll("button"),s=t.parentElement.querySelectorAll(".menu__input");e.forEach(t=>{t.setAttribute("aria-expanded",!1)}),s.forEach(t=>{t.setAttribute("aria-hidden",!0)}),function(t){t.querySelector("button").setAttribute("aria-expanded",!0),t.querySelector(".menu__input").setAttribute("aria-hidden",!1),globalThis.document.getElementById("estimate_getter").select()}(t)}(e)}function O(){const t=document.querySelector(".accordion-panel");let e,s,i;for(e in t)s=t.parentElement.querySelectorAll("button"),i=t.parentElement.querySelectorAll(".menu__input"),s.forEach(t=>{t.setAttribute("aria-expanded",!1)}),i.forEach(t=>{t.setAttribute("aria-hidden",!0)})}function X(t){const e=document.createDocumentFragment();return t.map(t=>{const s=document.createElement("option");s.textContent=t,e.appendChild(s)}),e}function Z(t,e,s,i){const a=JSON.parse(sessionStorage.getItem("currency")),r=1e3,n=Number.parseFloat(s.value)===a[t],h=Number.parseFloat(i.value)===a[e];return t===e?n?i.value:s.value:n&&h?~~(a[t]*a[e]*r)/r:a[t]<a[e]?!0===n?~~(i.value/a[e]*a[t]*r)/r:~~(s.value*a[e]/a[t]*r)/r:!0===h?~~(s.value*a[e]/a[t]*r)/r:~~(i.value/a[e]*a[t]*r)/r}async function Y(){const t=await fetch("/api/v1/currencies",{method:"GET"}).then(async t=>await t.json()).catch(t=>alert(`CurrencyError: ${t}!`)),{rates:e}=t.response,s=globalThis.sessionStorage;return e&&s.setItem("currency",JSON.stringify(e))}function R(t,e){const s=JSON.parse(sessionStorage.getItem("currency"));if(!s)return!1;e.value=s[t]}async function N(){await Y(),await async function(){const t=JSON.parse(sessionStorage.getItem("currency")),e=document.getElementById("coin1"),s=document.getElementById("coin2"),i=Object.keys(t);if(!t)return"Error";e.appendChild(X(i)),s.appendChild(X(i))}()}function M(t,e,s,i){return"centimeters"===t?function(t,e,s,i){const a=2.54,r=.01,n=H(t,e);if(t===e)return s.value>i.value?s.value:i.value;if(n.checked1)return j(s,i,a,"in");return j(s,i,r,"m")}(t,e,s,i):"inches"===t?function(t,e,s,i){const a=.393,r=.0254,n=H(t,e);if(t===e)return s.value>i.value?s.value:i.value;if(n.checked2)return j(s,i,a,"cm");return j(s,i,r,"m")}(t,e,s,i):function(t,e,s,i){const a=.01,r=.0254,n=H(t,e);if(t===e)return s.value>i.value?s.value:i.value;if(n.checked3)return j(s,i,a,"cm");return j(s,i,r,"in")}(t,e,s,i)}function H(t,e){return{checked1:"centimeters"===t&&"inches"===e,checked2:"inches"===t&&"centimeters"===e,checked3:"meters"===t&&"centimeters"===e}}function j(t,e,s,i){const a=1e3;return"m"!==i?t.value>e.value?~~(t.value/s*a)/a:~~(e.value*s*a)/a:t.value<e.value?~~(e.value/s*a)/a:~~(t.value*s*a)/a}function U(){const t=document.getElementById("statusList"),e=document.getElementById("status-frame"),s=document.querySelector(".side-menu");e.removeChild(document.getElementById("statusList")),e.append(x()),t.setAttribute("content","FETCHED"),s.getElementsByTagName("panel-info").length>0&&document.querySelector(".side-menu").lastElementChild.setAttribute("name","close"),f(),y(),u()}async function _(t){const e=new Worker(new URL("./panels/worker.IDB.crates.mjs",import.meta.url),{type:"module"}),s=await new Promise((s,i)=>{e.postMessage(t),e.onmessage=t=>{void 0!==t?s(t.data):i(void 0)}});return!!s&&(document.getElementById("input_estimate").value=t,sessionStorage.setItem("FETCHED",JSON.stringify(s)),U(),q([s]),"IDB data Found.")}async function q(t){try{if(t?.hasOwnProperty("crates")){document.getElementById("input_estimate").value=t.reference,globalThis.sessionStorage.clear(),globalThis.sessionStorage.setItem("FETCHED",JSON.stringify(t,null));const{materials:e}=localStorage;return sessionStorage.clear(),sessionStorage.setItem("FETCHED",JSON.stringify(t,null)),localStorage.setItem("materials",e),U()}throw new TypeError("Data not found!")}catch(t){return t}}async function $(t){const e=`/api/v1/estimates/${t}`,s={"Content-Type":"application/json; charset=UTF-8"};if(globalThis.navigator.onLine){return await fetch(e,{method:"GET",headers:s}).then(async t=>await t.json()).then(q).catch(t=>alert(`Search ERROR! \n ${t}`))}}async function V(){const t=document.getElementById("estimate_getter").value,e=(s=document.getElementById("input_estimate").value,async t=>{s&&s!==t&&z(!0)});var s;if(!function(t){switch(/[^-a-z-A-Z-0-9]/g.test(t)){case!0:return alert("Found special character NOT allowed. Please, try again!"),!0;case!1:return!1}}(t)){const s=[_(t),$(t)];await Promise.all(s).then(async s=>{s[0]||0!==s[1]?.length?await Promise.resolve(e(t)).then(async()=>{if(s[1]?.length>0){l({reference:s[1][0].reference_id,crates:s[1][0].crates.crates,list:s[1][0].works.list},!0)}else m(!0)}):alert("Document not found! Please, try again.")})}}globalThis.onkeydown=t=>{const s="Enter"===t.key&&!0===t.ctrlKey,i=!0===t.ctrlKey&&!0===t.altKey&&"c"===t.key,a="Escape"===t.key;s&&k(),i&&e(),a&&O(),t.stopImmediatePropagation()},globalThis.onafterprint=()=>{const{shadowRoot:t}=document.querySelector(".update-materials");[...t.querySelectorAll("[aria-hidden]")].map(t=>t.ariaHidden="false")},globalThis.onbeforeprint=()=>{const{shadowRoot:t}=document.querySelector(".update-materials");[...t.querySelectorAll("[aria-hidden]")].map(t=>t.ariaHidden="false")},globalThis.document.getElementById("main-app").addEventListener("click",t=>{const s=document.querySelector(".materials"),i=document.querySelector(".update-materials"),a=sessionStorage.getItem("crate");let r=a?+a.split("/")[0]:0;const n=a?+a.split("/")[1]:0,h=new GraphicCrates,o=document.getElementById("layer-count");let{id:c,className:d,attributes:l}=t.target;{const{shadowRoot:t}=s,e=t.querySelector(".upPane");e?.addEventListener("click",t=>{const{id:s,className:i,tagName:a}=t.target,r=new CustomEvent("open-crate",{bubbles:!0,composed:!0,detail:{id:s,className:i,tagName:a}});e.dispatchEvent(r)},!0)}{const{shadowRoot:t}=i,e=t.querySelector(".data-update");e?.addEventListener("click",t=>{const{id:s,className:i}=t.target,a=new CustomEvent("update-materials-info",{bubbles:!0,composed:!0,detail:{id:s,className:i}});e.dispatchEvent(a),t.stopImmediatePropagation()})}switch("crates"===l.content&&(d="crates"),c||(c=d)){case"body-app":case"seek-btn":case"search-header":case"units-header":case"button-seek":case"search-btn":case"unit-btn":case"units-btn":W(t);break;case"buttonInstall":!async function(){globalThis.hideInstallPromotion(),globalThis.deferredPrompt.prompt();const{outcome:t}=await deferredPrompt.userChoice;console.log(`User response to the install prompt: ${t}`),globalThis.deferredPrompt=null}();break;case"add-btn":F();break;case"remove-btn":I();break;case"clear-btn":C();break;case"crate-btn":case"crate_btn":k();break;case"copy-pane1":E();break;case"copy-pane2":D();break;case"logout":case"logout-btn":A();break;case"exchange-header":N(),async function(){const t=sessionStorage.getItem("currency"),e=JSON.parse(sessionStorage.getItem("coin1")),s=JSON.parse(sessionStorage.getItem("coin2")),i=document.getElementById("coin1"),a=document.getElementById("coin2");null!==e&&(i.value=e),null!==s&&(a.value=s),null===t&&await Y()}(),W(t);break;case"ex-btn":case"exchange-btn":N(),W(t);break;case"fetch-btn":V();break;case"crate-layers":case"layer-crate":e();break;case"previous":case"layer-prev":r>1&&(r-=1,sessionStorage.setItem("crate",`${r}/${n}`),o.innerText=`Current crate: ${r} / ${n}`,h.show);break;case"next":case"layer-next":r<n&&(r+=1,sessionStorage.setItem("crate",`${r}/${n}`),o.innerText=`Current crate: ${r} / ${n}`,h.show);break;case"settings-content":"update-materials"!==d&&"new-material"!==d&&s.setAttribute("content","settings-content");break;case"packages":"update-materials"!==d&&"select-materials"!==d&&s.setAttribute("content","packages");break;case"select-materials":"update-materials"!==d&&"select-materials"!==d&&s.setAttribute("content","select-materials");break;case"materials":"update-materials"!==d&&"select-materials"!==d&&s.setAttribute("content","confirm-save");break;case"report":case"report":s.setAttribute("name","packages");break;case"pack-opts":case"works-packed":s.setAttribute("name","works-packed");break;case"reset-sizes":s.setAttribute("name","reset-sizes");break;case"reset-szs":s.setAttribute("name","reset-szs");break;case"adding-material":s.setAttribute("name","adding-material");break;case"add__new__field":s.setAttribute("name","add__new__field");break;case"cancel-remove":s.setAttribute("name","cancel-remove");break;case"new-material":s.setAttribute("name","new-material");break;case"confirm-save":s.setAttribute("name","confirm-save");break;case"printer-icon":case"printer-btn":case"printer-svg":case"printer":globalThis.print()}},!0),globalThis.document.getElementById("main-app").addEventListener("change",t=>{switch(t.preventDefault(),t.target.id){case"input_estimate":d();break;case"in":case"cm":w();break;case"dark-mode":T("dark");break;case"light-mode":T("light");break;case"coin1":!function(){const t=document.getElementById("coin1").value,e=document.getElementById("coin1-input");sessionStorage.setItem("coin1",JSON.stringify(t)),R(t,e)}();break;case"coin2":!function(){const t=document.getElementById("coin2").value,e=document.getElementById("coin2-input");sessionStorage.setItem("coin2",JSON.stringify(t)),R(t,e)}();break;case"units1":!function(){const t=globalThis.document.getElementById("input-unit1"),e=globalThis.document.getElementById("input-unit2");t.value=0,e.value=0}();break;case"units2":!function(){const t=globalThis.document.getElementById("input-unit1"),e=globalThis.document.getElementById("input-unit2");t.value=0,e.value=0}();break;case"selected-crate":e()}},!0),globalThis.document.getElementById("main-app").addEventListener("input",t=>{let{id:e,className:s}=t.target;switch(e||(e=s)){case"coin1-input":!function(){const t=document.getElementById("coin1").value,e=document.getElementById("coin2").value,s=document.getElementById("coin1-input"),i=document.getElementById("coin2-input");R(e,i),i.value=`$ ${Z(t,e,s,i)}`}();break;case"coin2-input":!function(){const t=document.getElementById("coin1").value,e=document.getElementById("coin2").value,s=document.getElementById("coin1-input"),i=document.getElementById("coin2-input");R(t,s),s.value=`$ ${Z(t,e,s,i)}`}();break;case"input-unit1":!function(){const t=globalThis.document.getElementById("units1").value,e=globalThis.document.getElementById("units2").value,s=globalThis.document.getElementById("input-unit1"),i=globalThis.document.getElementById("input-unit2");i.value=0,i.value=M(t,e,s,i)}();break;case"input-unit2":!function(){const t=globalThis.document.getElementById("units1").value,e=globalThis.document.getElementById("units2").value,s=globalThis.document.getElementById("input-unit1"),i=globalThis.document.getElementById("input-unit2");s.value=0,s.value=M(t,e,s,i)}()}},!0),globalThis.onsubmit=t=>{t.preventDefault()},globalThis.document.getElementById("main-app").addEventListener("open-crate",t=>{const{id:e,className:s,tagName:i}=t.detail,a=document.querySelector(".materials");"A"===i&&a.setAttribute("content",`${e}-${s}`)},!0),globalThis.document.getElementById("main-app").addEventListener("update-materials-info",t=>{const{id:e}=t.detail,s=document.querySelector(".update-materials");t.stopImmediatePropagation(),"update-info"===e&&s.setAttribute("name","update")},!0),globalThis.document.getElementById("estimate_getter").addEventListener("keypress",t=>{"Enter"===t.key&&V()}),globalThis.addEventListener("beforeinstallprompt",t=>{t.preventDefault(),console.log("👍","beforeinstallprompt",t),globalThis.deferredPrompt=t});
+//#region app/plotter/Plotly.fill.colors.class.mjs
+var DesignWalls = class {
+	#data;
+	#colors = /* @__PURE__ */ new Map();
+	#wallDefinitions;
+	constructor() {
+		[
+			["frame", "yellow"],
+			["walls", "#BF5E30"],
+			["padding", "#222725"],
+			["div", "#EFECBBBE"],
+			["fill", "#2DD751"]
+		].map((col) => this.#colors.set(col[0], col[1]));
+		this.#wallDefinitions = [
+			[[
+				0,
+				1,
+				2
+			], [
+				0,
+				2,
+				3
+			]],
+			[[
+				4,
+				7,
+				6
+			], [
+				4,
+				6,
+				5
+			]],
+			[[
+				0,
+				3,
+				7
+			], [
+				0,
+				7,
+				4
+			]],
+			[[
+				1,
+				5,
+				6
+			], [
+				1,
+				6,
+				2
+			]],
+			[[
+				0,
+				4,
+				5
+			], [
+				0,
+				5,
+				1
+			]],
+			[[
+				3,
+				2,
+				6
+			], [
+				3,
+				6,
+				7
+			]]
+		];
+	}
+	#createTube() {
+		const segments = 100;
+		const { width, depth, height, offsetX, offsetZ, offsetY, info, name } = this.#data;
+		const radius = depth / 2;
+		const color = "#BB0056BB";
+		const vertices_x = [];
+		const vertices_y = [];
+		const vertices_z = [];
+		const i_arr = [];
+		const j_arr = [];
+		const k_arr = [];
+		for (let end = 0; end < 2; end++) {
+			const x = end === 0 ? -width / 2 : width / 2;
+			for (let s = 0; s < segments; s++) {
+				const angle = 2 * Math.PI * s / segments;
+				vertices_x.push(x - offsetX);
+				vertices_y.push(radius * Math.cos(angle) + offsetY);
+				vertices_z.push(radius * Math.sin(angle) + offsetZ);
+			}
+		}
+		for (let s = 0; s < segments; s++) {
+			const next = (s + 1) % segments;
+			i_arr.push(s, s);
+			j_arr.push(segments + s, segments + next);
+			k_arr.push(segments + next, next);
+		}
+		info.push({
+			x: vertices_x,
+			y: vertices_y,
+			z: vertices_z,
+			i: i_arr,
+			j: j_arr,
+			k: k_arr,
+			name: name.code ?? name,
+			type: "mesh3d",
+			color,
+			hovertext: name.code ?? name,
+			hovertemplate: name.code ? `L: %{x}<br>H: %{z}<br>D: %{y}<br>Code: ${name.code}` : "L: %{x}<br>H: %{z}<br>D: %{y}<br>",
+			showlegend: true,
+			legendgroup: name.code ?? name,
+			opacity: .5,
+			flatshading: true,
+			showscale: true,
+			contour: {
+				show: true,
+				color: "white",
+				width: 2
+			}
+		});
+		return info;
+	}
+	#defineSides() {
+		const { width, depth, height, offsetX, offsetZ, offsetY, info, name } = this.#data;
+		const color = this.#colors.get(name.color || name);
+		const offsetVertices = [
+			[
+				0,
+				0,
+				0
+			],
+			[
+				width,
+				0,
+				0
+			],
+			[
+				width,
+				depth,
+				0
+			],
+			[
+				0,
+				depth,
+				0
+			],
+			[
+				0,
+				0,
+				height
+			],
+			[
+				width,
+				0,
+				height
+			],
+			[
+				width,
+				depth,
+				height
+			],
+			[
+				0,
+				depth,
+				height
+			]
+		].map((v) => [
+			v[0] + offsetX,
+			v[1] + offsetY,
+			v[2] + offsetZ
+		]);
+		const x = offsetVertices.map((v) => v[0]);
+		const y = offsetVertices.map((v) => v[1]);
+		const z = offsetVertices.map((v) => v[2]);
+		const i = [], j = [], k = [];
+		this.#wallDefinitions.map((data) => {
+			data.map((coordinate) => {
+				i.push(coordinate[0]);
+				j.push(coordinate[1]);
+				k.push(coordinate[2]);
+				return coordinate;
+			});
+			return data;
+		});
+		info.push({
+			x,
+			y,
+			z,
+			i,
+			j,
+			k,
+			name: name.name ?? name,
+			type: "mesh3d",
+			color,
+			hovertext: name.code ?? name,
+			hovertemplate: name.code ? `L: %{x}<br>H: %{z}<br>D: %{y}<br>Code: ${name.code}` : "L: %{x}<br>H: %{z}<br>D: %{y}<br>",
+			showlegend: false,
+			legendgroup: name.name ?? name,
+			opacity: .2,
+			flatshading: true,
+			showscale: true,
+			contour: {
+				show: true,
+				color: "white",
+				width: 2
+			}
+		});
+		return info;
+	}
+	#defineLargestCrate() {
+		const { align, width, depth, height, offsetX, offsetZ, offsetY, info, name, sizes } = this.#data;
+		const { dep, high } = sizes;
+		const color = this.#colors.get(name.color || name);
+		const vertices = [
+			[
+				0,
+				0,
+				0
+			],
+			[
+				width,
+				0,
+				0
+			],
+			[
+				width,
+				depth,
+				0
+			],
+			[
+				0,
+				depth,
+				0
+			],
+			[
+				0,
+				0,
+				height
+			],
+			[
+				width,
+				0,
+				height
+			],
+			[
+				width,
+				depth,
+				height
+			],
+			[
+				0,
+				depth,
+				height
+			]
+		];
+		const cosAngle = Math.cos(dep / high);
+		const sinAngle = Math.sin(high / dep);
+		const rotX1 = (x, y, z) => [
+			x,
+			z * sinAngle - y * cosAngle,
+			z * cosAngle + y * sinAngle - align
+		];
+		const rotX2 = (x, y, z) => [
+			x,
+			y * cosAngle - z * sinAngle,
+			y * sinAngle + z * cosAngle - align
+		];
+		const offsetVertices = vertices.map((v) => [
+			v[0] + offsetX,
+			v[1] + offsetY,
+			v[2] + offsetZ
+		]);
+		const values = sinAngle > 0 ? offsetVertices.map((dim) => rotX2(dim[0], dim[1], dim[2])) : offsetVertices.map((dim) => rotX1(dim[0], dim[1], dim[2]));
+		const x = values.map((v) => v[0]);
+		const y = values.map((v) => v[1]);
+		const z = values.map((v) => v[2]);
+		const i = [], j = [], k = [];
+		this.#wallDefinitions.map((data) => {
+			data.map((coordinate) => {
+				i.push(coordinate[0]);
+				j.push(coordinate[1]);
+				k.push(coordinate[2]);
+				return coordinate;
+			});
+			return data;
+		});
+		info.push({
+			x,
+			y,
+			z,
+			i,
+			j,
+			k,
+			name: name.name ?? name,
+			type: "mesh3d",
+			color,
+			hovertext: name.code ?? name,
+			hovertemplate: name.code ? `L: %{x}<br>H: %{z}<br>D: %{y}<br>Code: ${name.code}` : "L: %{x}<br>H: %{z}<br>D: %{y}<br>",
+			showlegend: false,
+			legendgroup: name.name ?? name,
+			opacity: .2,
+			flatshading: true,
+			showscale: true,
+			contour: {
+				show: true,
+				color: "white",
+				width: 2
+			}
+		});
+		return info;
+	}
+	/** @param {any} objectData */
+	set objectData(objectData) {
+		this.#data = objectData;
+	}
+	get designSides() {
+		return this.#defineSides();
+	}
+	get designTubes() {
+		return this.#createTube();
+	}
+	get largestCanvas() {
+		return this.#defineLargestCrate();
+	}
+};
+//#endregion
+//#region app/plotter/Plotly.trace.class.mjs
+var TraceMaker = class {
+	#edges;
+	#data;
+	#colors = /* @__PURE__ */ new Map();
+	constructor() {
+		[
+			["fill", "#BF5E30"],
+			["frame", "#002A3D"],
+			["walls", "yellow"],
+			["padding", "#FFFFF0"],
+			["div", "#002A3D"]
+		].map((col) => this.#colors.set(col[0], col[1]));
+		this.#edges = [
+			[0, 1],
+			[1, 2],
+			[2, 3],
+			[3, 0],
+			[4, 5],
+			[5, 6],
+			[6, 7],
+			[7, 4],
+			[0, 4],
+			[1, 5],
+			[2, 6],
+			[3, 7]
+		];
+	}
+	#defineHugeShape() {
+		const { align, info, coordinates, name, show, sizes } = this.#data;
+		const color = this.#colors.get(name.color ?? name) ?? name.color;
+		const { dep, high } = sizes;
+		this.#edges.forEach((edge, i) => {
+			const v1 = coordinates[edge[0]];
+			const v2 = coordinates[edge[1]];
+			const cosAngle = Math.cos(dep / high);
+			const sinAngle = Math.sin(high / dep);
+			const rotX1 = (x, y, z) => [
+				x,
+				y * cosAngle + z * sinAngle - align,
+				y * sinAngle - z * cosAngle
+			];
+			const rotX2 = (x, y, z) => [
+				x,
+				z * sinAngle + y * cosAngle - align,
+				z * cosAngle - y * sinAngle
+			];
+			const first = sinAngle > 0 ? rotX2(v1.x, v1.y, v1.z) : rotX1(v1.x, v1.y, v1.z);
+			const second = sinAngle > 0 ? rotX2(v2.x, v2.y, v2.z) : rotX1(v2.x, v2.y, v2.z);
+			info.push({
+				x: [first[0], second[0]],
+				z: [first[1], second[1]],
+				y: [first[2], second[2]],
+				name: name.name ?? name,
+				mode: "lines",
+				type: "scatter3d",
+				line: {
+					color,
+					width: 1.5
+				},
+				showlegend: show && i === 0 ? true : false,
+				hovertext: name.code ?? name,
+				legendgroup: name.name ?? name,
+				hovertemplate: `L: %{x}<br>H: %{z}<br>D: %{y}<br>Code: ${name.code}`,
+				contour: {
+					show: show && i === 0 ? true : false,
+					color: "#BB0056BB",
+					width: 2
+				}
+			});
+		});
+		return info;
+	}
+	#defineShape() {
+		const { info, coordinates, name, show } = this.#data;
+		const color = this.#colors.get(name.color ?? name) ?? name.color;
+		this.#edges.forEach((edge, i) => {
+			const v1 = coordinates[edge[0]];
+			const v2 = coordinates[edge[1]];
+			info.push({
+				x: [v1.x, v2.x],
+				z: [v1.y, v2.y],
+				y: [v1.z, v2.z],
+				name: name.name ?? name,
+				mode: "lines",
+				type: "scatter3d",
+				line: {
+					color,
+					width: 1.5
+				},
+				showlegend: show && i === 0,
+				hovertext: name.code ?? name,
+				legendgroup: name.name ?? name,
+				hovertemplate: `L: %{x}<br>H: %{z}<br>D: %{y}<br>Code: ${name.code}`,
+				contour: {
+					show: show && i === 0,
+					color: "#BB0056BB",
+					width: 2
+				}
+			});
+		});
+		return info;
+	}
+	set data(info) {
+		this.#data = info;
+	}
+	get defineTrace() {
+		return this.#defineShape();
+	}
+	get defineHugeTrace() {
+		return this.#defineHugeShape();
+	}
+};
+//#endregion
+//#region app/plotter/Crate.walls.plotly.class.mjs
+var SetCrateWalls = class {
+	#data;
+	#pine;
+	#ply;
+	#crate;
+	#feet;
+	#threshold;
+	#inner;
+	constructor(meta, data) {
+		const { finalSize, innerSize } = data;
+		const used = JSON.parse(localStorage.getItem("crating")).map((opt) => data.usedMaterials.get(opt));
+		this.#inner = innerSize;
+		this.#pine = used.find((list) => list.at(-1) === "Pinewood");
+		this.#ply = used.find((list) => list.at(-1) === "Plywood");
+		this.#feet = used.find((list) => list.at(-1) === "Wooden Post");
+		this.#crate = finalSize;
+		this.#data = meta;
+		this.#ply[1] = +this.#ply[1];
+		this.#ply[2] = +this.#ply[2];
+		this.#ply[3] = +this.#ply[3];
+		this.#threshold = [
+			+this.#pine[2],
+			+this.#pine[2],
+			+this.#feet[3]
+		];
+	}
+	#crateWalls() {
+		const pineDepth = this.#pine[2] + this.#ply[2];
+		const facesLength = this.#crate[0] - this.#pine[2];
+		const facesHeight = this.#crate[2] - pineDepth;
+		const sideLength = this.#crate[1] - pineDepth;
+		const faceLeftLen = this.#crate[0] - pineDepth;
+		const side = this.#pine[2] + this.#ply[2];
+		const height = 2 * this.#pine[2] + this.#ply[2];
+		const thick = this.#crate[1] - this.#pine[2];
+		return {
+			backFace: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: facesLength,
+					y: 0,
+					z: 0
+				},
+				{
+					x: facesLength,
+					y: facesHeight,
+					z: 0
+				},
+				{
+					x: 0,
+					y: facesHeight,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#ply[2]
+				},
+				{
+					x: facesLength,
+					y: 0,
+					z: this.#ply[2]
+				},
+				{
+					x: facesLength,
+					y: facesHeight,
+					z: this.#ply[2]
+				},
+				{
+					x: 0,
+					y: facesHeight,
+					z: this.#ply[2]
+				}
+			],
+			frontFace: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: facesLength,
+					y: 0,
+					z: 0
+				},
+				{
+					x: facesLength,
+					y: facesHeight,
+					z: 0
+				},
+				{
+					x: 0,
+					y: facesHeight,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: sideLength
+				},
+				{
+					x: facesLength,
+					y: 0,
+					z: sideLength
+				},
+				{
+					x: facesLength,
+					y: facesHeight,
+					z: sideLength
+				},
+				{
+					x: 0,
+					y: facesHeight,
+					z: sideLength
+				}
+			],
+			sideRight: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: side,
+					y: 0,
+					z: 0
+				},
+				{
+					x: side,
+					y: facesHeight,
+					z: 0
+				},
+				{
+					x: 0,
+					y: facesHeight,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: sideLength
+				},
+				{
+					x: side,
+					y: 0,
+					z: sideLength
+				},
+				{
+					x: side,
+					y: facesHeight,
+					z: sideLength
+				},
+				{
+					x: 0,
+					y: facesHeight,
+					z: sideLength
+				}
+			],
+			sideLeft: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: faceLeftLen,
+					y: 0,
+					z: 0
+				},
+				{
+					x: faceLeftLen,
+					y: facesHeight,
+					z: 0
+				},
+				{
+					x: 0,
+					y: facesHeight,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: sideLength
+				},
+				{
+					x: faceLeftLen,
+					y: 0,
+					z: sideLength
+				},
+				{
+					x: faceLeftLen,
+					y: facesHeight,
+					z: sideLength
+				},
+				{
+					x: 0,
+					y: facesHeight,
+					z: sideLength
+				}
+			],
+			top: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: facesLength,
+					y: 0,
+					z: 0
+				},
+				{
+					x: facesLength,
+					y: facesHeight,
+					z: 0
+				},
+				{
+					x: 0,
+					y: facesHeight,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: thick
+				},
+				{
+					x: facesLength,
+					y: 0,
+					z: thick
+				},
+				{
+					x: facesLength,
+					y: facesHeight,
+					z: thick
+				},
+				{
+					x: 0,
+					y: facesHeight,
+					z: thick
+				}
+			],
+			bottom: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: facesLength,
+					y: 0,
+					z: 0
+				},
+				{
+					x: facesLength,
+					y: height,
+					z: 0
+				},
+				{
+					x: 0,
+					y: height,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: thick
+				},
+				{
+					x: facesLength,
+					y: 0,
+					z: thick
+				},
+				{
+					x: facesLength,
+					y: height,
+					z: thick
+				},
+				{
+					x: 0,
+					y: height,
+					z: thick
+				}
+			]
+		};
+	}
+	#defineWalls(offset, comp) {
+		const { x, y, z } = offset;
+		const change = structuredClone(comp);
+		Object.entries(change).map((data, i) => {
+			switch (i) {
+				case 0:
+					data[1].x === 0 && (data[1].x = x);
+					data[1].y === 0 && (data[1].y = y);
+					data[1].z === 0 && (data[1].z = z);
+					return data;
+				case 1:
+					data[1].y === 0 && (data[1].y = y);
+					data[1].z === 0 && (data[1].z = z);
+					return data;
+				case 2:
+					data[1].z === 0 && (data[1].z = z);
+					return data;
+				case 3:
+					data[1].x === 0 && (data[1].x = x);
+					data[1].z === 0 && (data[1].z = z);
+					return data;
+				case 4:
+					data[1].x === 0 && (data[1].x = x);
+					data[1].y === 0 && (data[1].y = y);
+					return data;
+				case 5:
+					data[1].y === 0 && (data[1].y = y);
+					return data;
+				case 7:
+					data[1].x === 0 && (data[1].x = x);
+					return data;
+			}
+		});
+		return change;
+	}
+	#offsetWalls() {
+		return {
+			faceBack: {
+				type: "backFace",
+				x: this.#pine[2],
+				y: 3 * this.#pine[2],
+				z: 2 * this.#pine[2],
+				width: this.#crate[0] - 2 * this.#pine[2],
+				depth: this.#pine[2],
+				height: this.#crate[2] - (3 * this.#pine[2] + 2 * this.#ply[2]),
+				offsetX: this.#pine[2],
+				offsetY: this.#pine[2],
+				offsetZ: 3 * this.#pine[2]
+			},
+			faceFront: {
+				type: "frontFace",
+				x: this.#pine[2],
+				y: 3 * this.#pine[2],
+				z: this.#crate[1] - this.#pine[2],
+				width: this.#crate[0] - 2 * this.#pine[2],
+				depth: this.#pine[2],
+				height: this.#crate[2] - (3 * this.#pine[2] + 2 * this.#ply[2]),
+				offsetX: this.#pine[2],
+				offsetY: this.#crate[1] - 2 * this.#pine[2],
+				offsetZ: 3 * this.#pine[2]
+			},
+			faceRight: {
+				type: "sideRight",
+				x: this.#pine[2],
+				y: 3 * this.#pine[2],
+				z: 2 * this.#pine[2],
+				width: this.#pine[2],
+				depth: this.#crate[1] - 4 * this.#pine[2],
+				height: this.#crate[2] - (3 * this.#pine[2] + 2 * this.#ply[2]),
+				offsetX: this.#pine[2],
+				offsetY: 2 * this.#pine[2],
+				offsetZ: 3 * this.#pine[2]
+			},
+			faceLeft: {
+				type: "sideLeft",
+				x: this.#crate[0] - this.#pine[2],
+				y: 3 * this.#pine[2],
+				z: 2 * this.#pine[2],
+				width: this.#pine[2],
+				depth: this.#crate[1] - (2 * this.#pine[2] + 2 * this.#ply[2]),
+				height: this.#crate[2] - (3 * this.#pine[2] + 2 * this.#ply[2]),
+				offsetX: this.#crate[0] - 2 * this.#pine[2],
+				offsetY: 2 * this.#pine[2],
+				offsetZ: 3 * this.#pine[2]
+			},
+			top: {
+				type: "top",
+				x: this.#pine[2],
+				y: this.#crate[2] - this.#pine[2],
+				z: this.#pine[2],
+				width: this.#crate[0] - 2 * this.#pine[2],
+				depth: this.#crate[1] - 2 * this.#pine[2],
+				height: this.#pine[2],
+				offsetX: this.#pine[2],
+				offsetY: this.#pine[2],
+				offsetZ: this.#crate[2] - 2 * this.#pine[2]
+			},
+			bottom: {
+				type: "bottom",
+				x: this.#pine[2],
+				y: 2 * this.#pine[2],
+				z: this.#pine[2],
+				width: this.#crate[0] - 2 * this.#pine[2],
+				depth: this.#crate[1] - 2 * this.#pine[2],
+				height: this.#pine[2],
+				offsetX: this.#pine[2],
+				offsetY: this.#pine[2],
+				offsetZ: 2 * this.#pine[2]
+			}
+		};
+	}
+	#bluePrintFacesSchema({ x, y, z }, lastX, lastY) {
+		const offX = lastX === 0 ? this.#threshold[0] : lastX + this.#threshold[0];
+		const offZ = z + this.#threshold[1];
+		const offY = lastY === 0 ? this.#threshold[2] + this.#ply[2] : lastY;
+		if (x <= this.#crate[0]) x += lastX === 0 ? this.#threshold[0] : lastX - this.#ply[2];
+		return {
+			coordinates: [
+				{
+					x: offX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y,
+					z
+				}
+			],
+			width: lastX === 0 ? x - this.#threshold[0] : x - lastX - this.#threshold[0] - this.#ply[2],
+			depth: this.#ply[2],
+			height: lastY === 0 ? y - this.#threshold[2] - this.#ply[2] : y - lastY,
+			offsetX: offX,
+			offsetY: z,
+			offsetZ: lastY === 0 ? this.#threshold[2] + this.#ply[2] : lastY
+		};
+	}
+	#bluePrintSidesSchema({ x, y, z }, lastX, lastY) {
+		const offX = lastX === 0 && this.#crate[0] !== x ? this.#ply[2] + this.#threshold[0] : lastX - 2 * this.#ply[2];
+		const offZ = 2 * this.#threshold[1];
+		const offY = lastY === 0 ? this.#threshold[2] + this.#ply[2] : lastY;
+		return {
+			coordinates: [
+				{
+					x: offX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y,
+					z
+				}
+			],
+			width: lastX === 0 ? x - this.#threshold[0] - this.#ply[2] : x - lastX,
+			depth: z - 2 * this.#ply[2],
+			height: lastY === 0 ? y - this.#threshold[2] - this.#ply[2] : y - offY,
+			offsetX: lastX === 0 ? offX : offX + this.#ply[2],
+			offsetY: offZ,
+			offsetZ: lastY === 0 ? lastY + this.#threshold[2] + this.#ply[2] : offY
+		};
+	}
+	#bluePrintUpDownSchema({ x, y, z }, lastX, lastY) {
+		const offX = lastX === 0 ? this.#threshold[0] : this.#threshold[0] + lastX;
+		const offZ = this.#threshold[1];
+		const offY = lastY === 0 ? this.#threshold[2] + this.#ply[2] : this.#crate[2] - this.#pine[2] - this.#ply[2];
+		x += lastX === 0 ? this.#threshold[0] : lastX + this.#ply[2];
+		return {
+			coordinates: [
+				{
+					x: offX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y,
+					z
+				}
+			],
+			width: lastX === 0 ? x - this.#threshold[0] : x - lastX - this.#threshold[0],
+			depth: z - this.#ply[2],
+			height: lastY === 0 ? y - this.#threshold[2] + this.#ply[2] : y - lastY - this.#threshold[2] - this.#ply[2] - this.#pine[2],
+			offsetX: offX,
+			offsetY: offZ,
+			offsetZ: lastY === 0 ? this.#threshold[2] : lastY + this.#threshold[2] + this.#ply[2] + this.#pine[2]
+		};
+	}
+	#defineSizingPadFaces(filled) {
+		let { x, y, z, faceA } = filled;
+		if (x === 0) x = this.#ply[1] > this.#crate[0] ? this.#crate[0] - this.#threshold[0] - this.#pine[2] : this.#ply[1];
+		y = this.#crate[2] - y > this.#ply[3] ? +this.#ply[3].toFixed(3) : +(this.#crate[2] - 2 * this.#pine[2]).toFixed(3);
+		z = faceA === 0 ? this.#ply[2] : this.#crate[1] - this.#threshold[1] - this.#ply[2];
+		if (filled.x > 0) {
+			if (x >= this.#crate[0] && y < this.#crate[2]) {
+				filled.x = 0;
+				if (y < this.#crate[2] && x >= this.#crate[0]) {
+					filled.y += y;
+					y = this.#crate[2] - filled.y > this.#ply[3] ? this.#crate[2] - this.#ply[3] : +(this.#crate[2] - this.#ply[2] - this.#pine[2]).toFixed(3);
+				}
+			}
+			x = this.#crate[0] - x - this.#threshold[0] + this.#ply[2];
+		}
+		return {
+			x,
+			y,
+			z
+		};
+	}
+	#defineSizingPadSides(filled) {
+		let { x, y, z, sideA } = filled;
+		x = sideA === 0 ? this.#ply[2] : this.#crate[0] - this.#ply[2];
+		if (y === 0) y = this.#crate[2] - y > +this.#ply[3] ? +this.#ply[3] : +(this.#crate[2] - this.#ply[2] - this.#pine[2]).toFixed(3);
+		else y += this.#crate[2] - y > this.#ply[3] ? this.#ply[3] : this.#crate[2] - y - this.#pine[2] - this.#ply[2];
+		z = this.#crate[1] < this.#ply[1] ? this.#crate[1] - 2 * this.#threshold[1] : this.#crate[1] - 2 * this.#ply[1] - z;
+		return {
+			x,
+			y,
+			z
+		};
+	}
+	#defineSizingPadUpDown(filled) {
+		let { x, y, z } = filled;
+		if (x === 0) x = this.#ply[1] > this.#crate[0] ? this.#crate[0] - this.#threshold[0] - this.#ply[2] : this.#ply[1];
+		else x = this.#crate[0] - x - this.#threshold[0] - this.#ply[2];
+		y = y === 0 ? this.#threshold[2] : this.#crate[2] - this.#pine[2];
+		z = this.#crate[1] - this.#threshold[1];
+		return {
+			x,
+			y,
+			z
+		};
+	}
+	#setFrontAndBackFaces(data, filled) {
+		const { faceA, faceB } = filled;
+		if (faceA === 1 && faceB === 1) return data;
+		const sizes = this.#defineSizingPadFaces(filled);
+		data.push(this.#bluePrintFacesSchema(sizes, filled.x, filled.y));
+		filled.x += sizes.x;
+		if (filled.x >= this.#inner[0] && filled.y + sizes.y >= this.#inner[2]) if (faceA === 0) {
+			filled.faceA = 1;
+			filled.x = 0;
+			filled.y = 0;
+		} else filled.faceB = 1;
+		return this.#setFrontAndBackFaces(data, filled);
+	}
+	#setRightAndLeftSides(data, filled) {
+		const { sideA, sideB } = filled;
+		if (sideA === 1 && sideB === 1) return data;
+		const sizes = this.#defineSizingPadSides(filled);
+		data.push(this.#bluePrintSidesSchema(sizes, filled.x, filled.y));
+		filled.y += sizes.y;
+		if (filled.y + this.#pine[2] + this.#ply[2] >= this.#crate[2]) if (sideA === 0) {
+			filled.sideA = 1;
+			filled.x = this.#crate[0];
+			filled.y = 0;
+		} else filled.sideB = 1;
+		return this.#setRightAndLeftSides(data, filled);
+	}
+	#setTopAndBottom(data, filled) {
+		const { top, bottom } = filled;
+		if (top === 1 && bottom === 1) return data;
+		const sizes = this.#defineSizingPadUpDown(filled);
+		const setY = this.#crate[2] - 2 * this.#ply[2] - this.#threshold[2] - this.#ply[2] - this.#pine[2];
+		data.push(this.#bluePrintUpDownSchema(sizes, filled.x, filled.y));
+		filled.x += sizes.x;
+		if (filled.x + this.#ply[2] >= this.#inner[0]) if (bottom === 0) {
+			filled.bottom = 1;
+			filled.x = 0;
+			filled.y = setY;
+		} else filled.top = 1;
+		return this.#setTopAndBottom(data, filled);
+	}
+	#setupFaces() {
+		const faces = [];
+		this.#setFrontAndBackFaces(faces, {
+			x: 0,
+			y: 0,
+			z: 0,
+			faceA: 0,
+			faceB: 0
+		});
+		this.#setRightAndLeftSides(faces, {
+			x: 0,
+			y: 0,
+			z: 0,
+			sideA: 0,
+			sideB: 0
+		});
+		this.#setTopAndBottom(faces, {
+			x: 0,
+			y: 0,
+			z: 0,
+			top: 0,
+			bottom: 0
+		});
+		return faces;
+	}
+	#defineCrateWalls() {
+		const trace = new TraceMaker();
+		const fill = new DesignWalls();
+		this.#crateWalls();
+		this.#offsetWalls();
+		const faces = this.#setupFaces();
+		let meta = structuredClone(this.#data);
+		let show = true;
+		if (!this.#ply) return this.#data;
+		faces.map((face) => {
+			const { coordinates, offsetX, offsetY, offsetZ, width, depth, height } = face;
+			trace.data = {
+				info: meta,
+				coordinates,
+				name: "walls",
+				show
+			};
+			meta = trace.defineTrace;
+			fill.objectData = {
+				width,
+				depth,
+				height,
+				info: meta,
+				name: "walls",
+				offsetX,
+				offsetY,
+				offsetZ
+			};
+			meta = this.#data = fill.designSides;
+			show = false;
+			return face;
+		});
+		return meta;
+	}
+	get setWalls() {
+		return this.#defineCrateWalls();
+	}
+};
+//#endregion
+//#region app/plotter/Plotly.large.crate.frame.mjs
+var LargeCratesFrame = class {
+	#sized;
+	#pine;
+	#meta;
+	#feet;
+	#ply;
+	#depth;
+	#heightExtra;
+	constructor(meta, data) {
+		const { extra } = data;
+		const { extraHeight, baseSize, extraLength } = extra;
+		const used = JSON.parse(localStorage.getItem("crating")).map((opt) => data.usedMaterials.get(opt));
+		const parser = (data) => data.map((info, i) => {
+			if (i === 1 || i === 2 || i === 3) data[i] = +data[i];
+			return info;
+		});
+		this.#heightExtra = extraHeight;
+		this.#meta = meta;
+		this.#pine = used.find((list) => list.at(-1) === "Pinewood");
+		this.#feet = used.find((list) => list.at(-1) === "Wooden Post");
+		this.#ply = used.find((list) => list.at(-1) === "Plywood");
+		this.#sized = baseSize;
+		parser(this.#feet);
+		parser(this.#ply);
+		parser(this.#pine);
+		this.#depth = extraLength;
+	}
+	#offsetFrame() {
+		const structOffset = this.#heightExtra;
+		return {
+			offsetFacesRightBackV: {
+				type: "faceV",
+				x: this.#pine[2],
+				y: this.#pine[3] + structOffset,
+				z: 0,
+				width: this.#pine[3],
+				depth: this.#pine[2],
+				height: this.#sized[2] - structOffset - 2 * this.#pine[3] - this.#pine[2],
+				offsetX: this.#pine[2],
+				offsetY: 0,
+				offsetZ: structOffset + this.#pine[3]
+			},
+			offsetFacesLeftBackV: {
+				type: "faceVR",
+				x: this.#sized[0] - this.#pine[2],
+				y: this.#pine[3] + structOffset,
+				z: 0,
+				width: this.#pine[3],
+				depth: this.#pine[2],
+				height: this.#sized[2] - structOffset - 2 * this.#pine[3] - this.#pine[2],
+				offsetX: this.#sized[0] - (this.#pine[3] + this.#pine[2]),
+				offsetY: 0,
+				offsetZ: structOffset + this.#pine[3]
+			},
+			offsetFacesRightFrontV: {
+				type: "faceVB",
+				x: this.#pine[2],
+				y: this.#pine[3] + structOffset,
+				z: this.#sized[1],
+				width: this.#pine[3],
+				depth: this.#pine[2],
+				height: this.#sized[2] - structOffset - 2 * this.#pine[3] - this.#pine[2],
+				offsetX: this.#pine[2],
+				offsetY: this.#sized[1] - this.#pine[2],
+				offsetZ: structOffset + this.#pine[3]
+			},
+			offsetFacesLeftFrontV: {
+				type: "faceVBR",
+				x: this.#sized[0] - this.#pine[2],
+				y: this.#pine[3] + structOffset,
+				z: this.#sized[1],
+				width: this.#pine[3],
+				depth: this.#pine[2],
+				height: this.#sized[2] - structOffset - 2 * this.#pine[3] - this.#pine[2],
+				offsetX: this.#sized[0] - (this.#pine[3] + this.#pine[2]),
+				offsetY: this.#sized[1] - this.#pine[2],
+				offsetZ: structOffset + this.#pine[3]
+			},
+			offsetSidesRightVUp: {
+				type: "sideHUp",
+				x: 0,
+				y: this.#sized[2] - this.#pine[2],
+				z: this.#pine[2],
+				width: this.#pine[2],
+				depth: this.#sized[1] - 2 * this.#pine[2],
+				height: this.#pine[3],
+				offsetX: 0,
+				offsetY: this.#pine[2],
+				offsetZ: this.#sized[2] - (this.#pine[3] + this.#pine[2])
+			},
+			offsetSidesLeftVUp: {
+				type: "sideLeftHUp",
+				x: this.#sized[0],
+				y: this.#sized[2] - this.#pine[2],
+				z: this.#pine[2],
+				width: this.#pine[2],
+				depth: this.#sized[1] - 2 * this.#pine[2],
+				height: this.#pine[3],
+				offsetX: this.#sized[0] - this.#pine[2],
+				offsetY: this.#pine[2],
+				offsetZ: this.#sized[2] - (this.#pine[3] + this.#pine[2])
+			},
+			offsetSidesRightHDown: {
+				type: "sideHDown",
+				x: 0,
+				y: structOffset,
+				z: this.#pine[2],
+				width: this.#pine[2],
+				depth: this.#sized[1] - 2 * this.#pine[2],
+				height: this.#pine[3],
+				offsetX: 0,
+				offsetY: this.#pine[2],
+				offsetZ: structOffset
+			},
+			offsetSidesLeftHDown: {
+				type: "sideLeftHDown",
+				x: this.#sized[0],
+				y: structOffset,
+				z: this.#pine[2],
+				width: this.#pine[2],
+				depth: this.#sized[1] - 2 * this.#pine[2],
+				height: this.#pine[3],
+				offsetX: this.#sized[0] - this.#pine[2],
+				offsetY: this.#pine[2],
+				offsetZ: structOffset
+			},
+			offsetFacesBackUpH: {
+				type: "faceHUp",
+				x: 0,
+				y: this.#sized[2] - this.#pine[2],
+				z: 0,
+				width: this.#sized[0],
+				depth: this.#pine[2],
+				height: this.#pine[3],
+				offsetX: 0,
+				offsetY: 0,
+				offsetZ: this.#sized[2] - (this.#pine[2] + this.#pine[3])
+			},
+			offsetFacesBackDownH: {
+				type: "faceH",
+				x: 0,
+				y: structOffset,
+				z: 0,
+				width: this.#sized[0],
+				depth: this.#pine[2],
+				height: this.#pine[3],
+				offsetX: 0,
+				offsetY: 0,
+				offsetZ: structOffset
+			},
+			offsetFacesFrontUpH: {
+				type: "faceHBackUp",
+				x: 0,
+				y: this.#sized[2] - this.#pine[2],
+				z: this.#sized[1],
+				width: this.#sized[0],
+				depth: this.#pine[2],
+				height: this.#pine[3],
+				offsetX: 0,
+				offsetY: this.#sized[1] - this.#pine[2],
+				offsetZ: this.#sized[2] - (this.#pine[2] + this.#pine[3])
+			},
+			offsetFacesFrontDownH: {
+				type: "faceHBackDown",
+				x: 0,
+				y: structOffset,
+				z: this.#sized[1],
+				width: this.#sized[0],
+				depth: this.#pine[2],
+				height: this.#pine[3],
+				offsetX: 0,
+				offsetY: this.#sized[1] - this.#pine[2],
+				offsetZ: structOffset
+			},
+			offsetSidesRightVBack: {
+				type: "sideV",
+				x: 0,
+				y: structOffset + this.#pine[3],
+				z: 0,
+				width: this.#pine[2],
+				depth: this.#pine[3],
+				height: this.#sized[2] - structOffset - 2 * this.#pine[3] - this.#pine[2],
+				offsetX: 0,
+				offsetY: 0,
+				offsetZ: structOffset + this.#pine[3]
+			},
+			offsetSidesRightVFront: {
+				type: "sideRightFrontV",
+				x: 0,
+				y: structOffset + this.#pine[3],
+				z: this.#sized[1] - this.#pine[3],
+				width: this.#pine[2],
+				depth: this.#pine[3],
+				height: this.#sized[2] - structOffset - 2 * this.#pine[3] - this.#pine[2],
+				offsetX: 0,
+				offsetY: this.#sized[1] - this.#pine[3],
+				offsetZ: structOffset + this.#pine[3]
+			},
+			offsetSidesLeftVBack: {
+				type: "sideLeftV",
+				x: this.#sized[0],
+				y: structOffset + this.#pine[3],
+				z: 0,
+				width: this.#pine[2],
+				depth: this.#pine[3],
+				height: this.#sized[2] - structOffset - 2 * this.#pine[3] - this.#pine[2],
+				offsetX: this.#sized[0] - this.#pine[2],
+				offsetY: 0,
+				offsetZ: structOffset + this.#pine[3]
+			},
+			offsetSidesLeftVFront: {
+				type: "sideLeftFrontV",
+				x: this.#sized[0],
+				y: structOffset + this.#pine[3],
+				z: this.#sized[1] - this.#pine[3],
+				width: this.#pine[2],
+				depth: this.#pine[3],
+				height: this.#sized[2] - structOffset - 2 * this.#pine[3] - this.#pine[2],
+				offsetX: this.#sized[0] - this.#pine[2],
+				offsetY: this.#sized[1] - this.#pine[3],
+				offsetZ: structOffset + this.#pine[3]
+			},
+			offsetTopFrontH: {
+				type: "topFace",
+				x: this.#pine[3],
+				y: this.#sized[2] - this.#pine[2],
+				z: 0,
+				width: this.#sized[0] - 2 * this.#pine[3],
+				depth: this.#pine[3],
+				height: this.#pine[2],
+				offsetX: this.#pine[3],
+				offsetY: 0,
+				offsetZ: this.#sized[2] - this.#pine[2]
+			},
+			offsetTopBackH: {
+				type: "topComp",
+				x: this.#pine[3],
+				y: this.#sized[2] - this.#pine[2],
+				z: this.#sized[1],
+				width: this.#sized[0] - 2 * this.#pine[3],
+				depth: this.#pine[3],
+				height: this.#pine[2],
+				offsetX: this.#pine[3],
+				offsetY: this.#sized[1] - this.#pine[3],
+				offsetZ: this.#sized[2] - this.#pine[2]
+			},
+			offsetTopRight: {
+				type: "topFeet",
+				x: 0,
+				y: this.#sized[2] - this.#pine[2],
+				z: 0,
+				width: this.#pine[3],
+				depth: this.#sized[1],
+				height: this.#pine[2],
+				offsetX: 0,
+				offsetY: 0,
+				offsetZ: this.#sized[2] - this.#pine[2]
+			},
+			offsetTopLeft: {
+				type: "topLeftFeet",
+				x: this.#sized[0],
+				y: this.#sized[2] - this.#pine[2],
+				z: 0,
+				width: this.#pine[3],
+				depth: this.#sized[1],
+				height: this.#pine[2],
+				offsetX: this.#sized[0] - this.#pine[3],
+				offsetY: 0,
+				offsetZ: this.#sized[2] - this.#pine[2]
+			}
+		};
+	}
+	#defineFrameComponents() {
+		const offSetFeet = this.#heightExtra;
+		const vertical = this.#sized[2] - this.#pine[3] - this.#pine[2];
+		const rightFeet = this.#sized[0] - this.#pine[3];
+		const vDepth = this.#sized[1] - this.#pine[2];
+		const upFace = this.#sized[2] - this.#pine[3] - this.#pine[2];
+		const tinySide = this.#sized[1] - this.#pine[2];
+		const tinyRightSide = this.#sized[0] - this.#pine[2];
+		const sideComp = this.#pine[3] + this.#pine[2];
+		const rightComp = this.#sized[0] - this.#pine[3] - this.#pine[2];
+		const topZ = this.#sized[2];
+		const topzComp = this.#sized[1] - this.#pine[3];
+		return {
+			faceV: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: sideComp,
+					y: 0,
+					z: 0
+				},
+				{
+					x: sideComp,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#pine[2]
+				},
+				{
+					x: sideComp,
+					y: 0,
+					z: this.#pine[2]
+				},
+				{
+					x: sideComp,
+					y: vertical,
+					z: this.#pine[2]
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: this.#pine[2]
+				}
+			],
+			faceVR: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightComp,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightComp,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#pine[2]
+				},
+				{
+					x: rightComp,
+					y: 0,
+					z: this.#pine[2]
+				},
+				{
+					x: rightComp,
+					y: vertical,
+					z: this.#pine[2]
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: this.#pine[2]
+				}
+			],
+			faceVB: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: sideComp,
+					y: 0,
+					z: 0
+				},
+				{
+					x: sideComp,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: vDepth
+				},
+				{
+					x: sideComp,
+					y: 0,
+					z: vDepth
+				},
+				{
+					x: sideComp,
+					y: vertical,
+					z: vDepth
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: vDepth
+				}
+			],
+			faceVBR: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightComp,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightComp,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: vDepth
+				},
+				{
+					x: rightComp,
+					y: 0,
+					z: vDepth
+				},
+				{
+					x: rightComp,
+					y: vertical,
+					z: vDepth
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: vDepth
+				}
+			],
+			faceH: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#sized[0],
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#sized[0],
+					y: this.#pine[3] + offSetFeet,
+					z: 0
+				},
+				{
+					x: 0,
+					y: this.#pine[3] + offSetFeet,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#pine[2]
+				},
+				{
+					x: this.#sized[0],
+					y: 0,
+					z: this.#pine[2]
+				},
+				{
+					x: this.#sized[0],
+					y: this.#pine[3] + offSetFeet,
+					z: this.#pine[2]
+				},
+				{
+					x: 0,
+					y: this.#pine[3] + offSetFeet,
+					z: this.#pine[2]
+				}
+			],
+			faceHUp: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#sized[0],
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#sized[0],
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#pine[2]
+				},
+				{
+					x: this.#sized[0],
+					y: 0,
+					z: this.#pine[2]
+				},
+				{
+					x: this.#sized[0],
+					y: upFace,
+					z: this.#pine[2]
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: this.#pine[2]
+				}
+			],
+			faceHBackUp: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#sized[0],
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#sized[0],
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: vDepth
+				},
+				{
+					x: this.#sized[0],
+					y: 0,
+					z: vDepth
+				},
+				{
+					x: this.#sized[0],
+					y: upFace,
+					z: vDepth
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: vDepth
+				}
+			],
+			faceHBackDown: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#sized[0],
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#sized[0],
+					y: this.#pine[3] + offSetFeet,
+					z: 0
+				},
+				{
+					x: 0,
+					y: this.#pine[3] + offSetFeet,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: vDepth
+				},
+				{
+					x: this.#sized[0],
+					y: 0,
+					z: vDepth
+				},
+				{
+					x: this.#sized[0],
+					y: this.#pine[3] + offSetFeet,
+					z: vDepth
+				},
+				{
+					x: 0,
+					y: this.#pine[3] + offSetFeet,
+					z: vDepth
+				}
+			],
+			sideHUp: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[2],
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[2],
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: tinySide
+				},
+				{
+					x: this.#pine[2],
+					y: 0,
+					z: tinySide
+				},
+				{
+					x: this.#pine[2],
+					y: vertical,
+					z: tinySide
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: tinySide
+				}
+			],
+			sideLeftHUp: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: tinyRightSide,
+					y: 0,
+					z: 0
+				},
+				{
+					x: tinyRightSide,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: tinySide
+				},
+				{
+					x: tinyRightSide,
+					y: 0,
+					z: tinySide
+				},
+				{
+					x: tinyRightSide,
+					y: vertical,
+					z: tinySide
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: tinySide
+				}
+			],
+			sideHDown: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[2],
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[2],
+					y: this.#pine[3] + offSetFeet,
+					z: 0
+				},
+				{
+					x: 0,
+					y: this.#pine[3] + offSetFeet,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: tinySide
+				},
+				{
+					x: this.#pine[2],
+					y: 0,
+					z: tinySide
+				},
+				{
+					x: this.#pine[2],
+					y: this.#pine[3] + offSetFeet,
+					z: tinySide
+				},
+				{
+					x: 0,
+					y: this.#pine[3] + offSetFeet,
+					z: tinySide
+				}
+			],
+			sideLeftHDown: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: tinyRightSide,
+					y: 0,
+					z: 0
+				},
+				{
+					x: tinyRightSide,
+					y: this.#pine[3] + offSetFeet,
+					z: 0
+				},
+				{
+					x: 0,
+					y: this.#pine[3] + offSetFeet,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: tinySide
+				},
+				{
+					x: tinyRightSide,
+					y: 0,
+					z: tinySide
+				},
+				{
+					x: tinyRightSide,
+					y: this.#pine[3] + offSetFeet,
+					z: tinySide
+				},
+				{
+					x: 0,
+					y: this.#pine[3] + offSetFeet,
+					z: tinySide
+				}
+			],
+			sideV: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[2],
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[2],
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#pine[3]
+				},
+				{
+					x: this.#pine[2],
+					y: 0,
+					z: this.#pine[3]
+				},
+				{
+					x: this.#pine[2],
+					y: upFace,
+					z: this.#pine[3]
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: this.#pine[3]
+				}
+			],
+			sideRightFrontV: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[2],
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[2],
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: this.#pine[2],
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: this.#pine[2],
+					y: upFace,
+					z: this.#sized[1]
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: this.#sized[1]
+				}
+			],
+			sideLeftV: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: tinyRightSide,
+					y: 0,
+					z: 0
+				},
+				{
+					x: tinyRightSide,
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#pine[3]
+				},
+				{
+					x: tinyRightSide,
+					y: 0,
+					z: this.#pine[3]
+				},
+				{
+					x: tinyRightSide,
+					y: upFace,
+					z: this.#pine[3]
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: this.#pine[3]
+				}
+			],
+			sideLeftFrontV: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: tinyRightSide,
+					y: 0,
+					z: 0
+				},
+				{
+					x: tinyRightSide,
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: tinyRightSide,
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: tinyRightSide,
+					y: upFace,
+					z: this.#sized[1]
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: this.#sized[1]
+				}
+			],
+			topFace: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: topZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: topZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#pine[3]
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: this.#pine[3]
+				},
+				{
+					x: rightFeet,
+					y: topZ,
+					z: this.#pine[3]
+				},
+				{
+					x: 0,
+					y: topZ,
+					z: this.#pine[3]
+				}
+			],
+			topComp: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: topZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: topZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: topzComp
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: topzComp
+				},
+				{
+					x: rightFeet,
+					y: topZ,
+					z: topzComp
+				},
+				{
+					x: 0,
+					y: topZ,
+					z: topzComp
+				}
+			],
+			topFeet: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[3],
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[3],
+					y: topZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: topZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: this.#pine[3],
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: this.#pine[3],
+					y: topZ,
+					z: this.#sized[1]
+				},
+				{
+					x: 0,
+					y: topZ,
+					z: this.#sized[1]
+				}
+			],
+			topLeftFeet: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: topZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: topZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: rightFeet,
+					y: topZ,
+					z: this.#sized[1]
+				},
+				{
+					x: 0,
+					y: topZ,
+					z: this.#sized[1]
+				}
+			]
+		};
+	}
+	#definePosition(offset, comp) {
+		const { x, y, z } = offset;
+		const change = structuredClone(comp);
+		Object.entries(change).map((data, i) => {
+			switch (i) {
+				case 0:
+					if (data[1].x === 0) data[1].x = +x;
+					if (data[1].y === 0) data[1].y = +y;
+					if (data[1].z === 0) data[1].z = +z;
+					break;
+				case 1:
+					if (data[1].y === 0) data[1].y = +y;
+					if (data[1].z === 0) data[1].z = +z;
+					break;
+				case 2:
+					if (data[1].z === 0) data[1].z = +z;
+					break;
+				case 3:
+					if (data[1].x === 0) data[1].x = +x;
+					if (data[1].z === 0) data[1].z = +z;
+					break;
+				case 4:
+					if (data[1].x === 0) data[1].x = +x;
+					if (data[1].y === 0) data[1].y = +y;
+					break;
+				case 5:
+					if (data[1].y === 0) data[1].y = +y;
+					break;
+				case 7:
+					if (data[1].x === 0) data[1].x = +x;
+					break;
+			}
+			return data;
+		});
+		return change;
+	}
+	extraHoriZontalPinesFrontAndBack() {}
+	#setAllParts(meta, component, offsets) {
+		const trace = new TraceMaker();
+		const fill = new DesignWalls();
+		const align = this.#depth;
+		const sizes = {
+			dep: this.#sized[1],
+			high: this.#sized[2]
+		};
+		let show = true;
+		Object.entries(offsets).map((part) => {
+			const { type, offsetX, offsetY, offsetZ, width, depth, height } = part[1];
+			const design = component[type];
+			const defined = this.#definePosition(part[1], design);
+			trace.data = {
+				info: meta,
+				coordinates: defined,
+				name: "frame",
+				show,
+				sizes,
+				align
+			};
+			meta = trace.defineHugeTrace;
+			fill.objectData = {
+				align,
+				width,
+				depth,
+				height,
+				info: meta,
+				name: "frame",
+				offsetX,
+				offsetY,
+				offsetZ,
+				sizes
+			};
+			meta = fill.largestCanvas;
+			show = false;
+			return part;
+		});
+		return meta;
+	}
+	#designFrame() {
+		const components = this.#defineFrameComponents();
+		const offset = this.#offsetFrame();
+		this.#meta = this.#setAllParts(this.#meta, components, offset);
+		return this.#meta;
+	}
+	get setFrame() {
+		return this.#designFrame();
+	}
+};
+//#endregion
+//#region app/plotter/Padding.crate.plotly.mjs
+var PaddingCrate = class {
+	#data;
+	#pine;
+	#ply;
+	#crate;
+	#pad;
+	#baseSize;
+	#feet;
+	#threshold;
+	#inner;
+	constructor(meta, data) {
+		const { finalSize, baseSize, innerSize } = data;
+		const used = JSON.parse(localStorage.getItem("crating")).map((opt) => data.usedMaterials.get(opt));
+		this.#inner = innerSize;
+		this.#baseSize = baseSize;
+		this.#crate = finalSize;
+		this.#data = meta;
+		this.#pine = used.find((list) => list.at(-1) === "Pinewood");
+		this.#ply = used.find((list) => list.at(-1) === "Plywood");
+		this.#feet = used.find((list) => list.at(-1) === "Wooden Post");
+		this.#pad = used.find((list) => list.at(-1) === "Foam Sheet" && list[2] > 2.5);
+		this.#pad[1] = +this.#pad[1];
+		this.#pad[2] = +this.#pad[2];
+		this.#pad[3] = +this.#pad[3];
+		this.#threshold = [
+			+this.#pine[2] + +this.#ply[2],
+			+this.#pine[2] + +this.#ply[2],
+			+this.#ply[2] + +this.#feet[3]
+		];
+	}
+	#offSetHugeWalls() {
+		const structure = 3 * +this.#ply[2] + +this.#feet[3];
+		return {
+			faceBack: {
+				type: "backFace",
+				x: this.#pine[2] + this.#ply[2] + this.#pad[2],
+				y: 2 * this.#pad[2] + structure + +this.#pine[2],
+				z: this.#pine[2] + this.#ply[2] + this.#pad[2],
+				width: this.#crate[0] - (2 * this.#pine[2] + 2 * this.#ply[2] + 2 * this.#pad[2]),
+				depth: this.#pad[2],
+				height: this.#crate[2] - structure - 5 * this.#ply[2] - 2 * this.#pad[2],
+				offsetX: this.#pine[2] + this.#ply[2] + this.#pad[2],
+				offsetY: this.#pad[2],
+				offsetZ: structure + this.#pine[2] + 4 * this.#ply[2]
+			},
+			faceFront: {
+				type: "frontFace",
+				x: this.#pine[2] + this.#ply[2] + this.#pad[2],
+				y: 2 * this.#pad[2] + structure + +this.#pine[2],
+				z: this.#crate[1] - this.#pine[2] - this.#ply[2] - this.#pad[2],
+				width: this.#crate[0] - (2 * this.#pine[2] + 2 * this.#ply[2] + 2 * this.#pad[2]),
+				depth: this.#pad[2],
+				height: this.#crate[2] - structure - 5 * this.#ply[2] - 2 * this.#pad[2],
+				offsetX: this.#pine[2] + this.#ply[2] + this.#pad[2],
+				offsetY: this.#crate[1] - 2 * this.#pad[2],
+				offsetZ: structure + this.#pine[2] + 4 * this.#ply[2]
+			},
+			faceRight: {
+				type: "sideRight",
+				x: this.#pine[2] + this.#ply[2],
+				y: 2 * this.#pad[2] + structure + +this.#pine[2],
+				z: this.#pine[2] + this.#ply[2],
+				width: this.#pad[2],
+				depth: this.#crate[1] - 2 * this.#pine[2] - 2 * this.#pine[2],
+				height: this.#crate[2] - structure - 5 * this.#ply[2] - 2 * this.#pad[2],
+				offsetX: this.#pine[2] + this.#ply[2],
+				offsetY: 2 * this.#pine[2],
+				offsetZ: structure + this.#pine[2] + 4 * this.#ply[2]
+			},
+			faceLeft: {
+				type: "sideLeft",
+				x: this.#crate[0] - this.#pine[2] - this.#ply[2] - this.#pad[2],
+				y: 2 * this.#pad[2] + structure + +this.#pine[2],
+				z: this.#pine[2] + this.#ply[2],
+				width: this.#pad[2],
+				depth: this.#crate[1] - 2 * this.#pine[2] - 2 * this.#pine[2],
+				height: this.#crate[2] - structure - 5 * this.#ply[2] - 2 * this.#pad[2],
+				offsetX: this.#crate[0] - this.#ply[2] - this.#pine[2] - this.#pad[2],
+				offsetY: 2 * this.#pine[2],
+				offsetZ: structure + this.#pine[2] + 4 * this.#ply[2]
+			},
+			top: {
+				type: "top",
+				x: this.#pine[2] + this.#ply[2],
+				y: this.#crate[2] - this.#pine[2] - this.#ply[2],
+				z: this.#pine[2] + this.#ply[2],
+				width: this.#crate[0] - (2 * this.#pine[2] + 2 * this.#ply[2]),
+				depth: this.#crate[1] - (this.#pine[2] + this.#ply[2] + this.#pad[2]),
+				height: this.#pad[2],
+				offsetX: this.#pine[2] + this.#ply[2],
+				offsetY: this.#pine[2] + this.#ply[2],
+				offsetZ: this.#crate[2] - (2 * this.#ply[2] + this.#pad[2])
+			},
+			bottom: {
+				type: "bottom",
+				x: this.#pine[2] + this.#ply[2],
+				y: 2 * this.#pad[2] + structure + +this.#pine[2],
+				z: this.#pine[2] + this.#ply[2],
+				width: this.#crate[0] - (2 * this.#pine[2] + 2 * this.#ply[2]),
+				depth: this.#crate[1] - (2 * this.#pine[2] + 2 * this.#ply[2]),
+				height: this.#pad[2],
+				offsetX: this.#pine[2] + this.#ply[2],
+				offsetY: this.#pine[2] + this.#ply[2],
+				offsetZ: +this.#feet[3] + structure + +this.#pine[2]
+			}
+		};
+	}
+	#cratePaddingHugeTrace() {
+		const pineDepth = this.#ply[2] + +this.#pine[2];
+		const facesLength = this.#crate[0] - (+this.#pine[2] + +this.#ply[2] + 2 * +this.#ply[2]);
+		const facesHeight = this.#crate[2] - pineDepth - this.#pad[2];
+		const sideLength = this.#crate[1] - pineDepth;
+		const faceLeftLen = this.#crate[0] - pineDepth;
+		const side = +this.#pine[2] + +this.#ply[2] + this.#pad[2];
+		const height = +this.#feet[3] + 2 * this.#ply[2] + 2 * this.#pad[2];
+		const thick = this.#crate[1] - this.#pine[2] - +this.#ply[2];
+		return {
+			backFace: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: facesLength,
+					y: 0,
+					z: 0
+				},
+				{
+					x: facesLength,
+					y: facesHeight,
+					z: 0
+				},
+				{
+					x: 0,
+					y: facesHeight,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#pad[2]
+				},
+				{
+					x: facesLength,
+					y: 0,
+					z: this.#pad[2]
+				},
+				{
+					x: facesLength,
+					y: facesHeight,
+					z: this.#pad[2]
+				},
+				{
+					x: 0,
+					y: facesHeight,
+					z: this.#pad[2]
+				}
+			],
+			frontFace: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: facesLength,
+					y: 0,
+					z: 0
+				},
+				{
+					x: facesLength,
+					y: facesHeight,
+					z: 0
+				},
+				{
+					x: 0,
+					y: facesHeight,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: sideLength
+				},
+				{
+					x: facesLength,
+					y: 0,
+					z: sideLength
+				},
+				{
+					x: facesLength,
+					y: facesHeight,
+					z: sideLength
+				},
+				{
+					x: 0,
+					y: facesHeight,
+					z: sideLength
+				}
+			],
+			sideRight: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: side,
+					y: 0,
+					z: 0
+				},
+				{
+					x: side,
+					y: facesHeight,
+					z: 0
+				},
+				{
+					x: 0,
+					y: facesHeight,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: sideLength
+				},
+				{
+					x: side,
+					y: 0,
+					z: sideLength
+				},
+				{
+					x: side,
+					y: facesHeight,
+					z: sideLength
+				},
+				{
+					x: 0,
+					y: facesHeight,
+					z: sideLength
+				}
+			],
+			sideLeft: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: faceLeftLen,
+					y: 0,
+					z: 0
+				},
+				{
+					x: faceLeftLen,
+					y: facesHeight,
+					z: 0
+				},
+				{
+					x: 0,
+					y: facesHeight,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: sideLength
+				},
+				{
+					x: faceLeftLen,
+					y: 0,
+					z: sideLength
+				},
+				{
+					x: faceLeftLen,
+					y: facesHeight,
+					z: sideLength
+				},
+				{
+					x: 0,
+					y: facesHeight,
+					z: sideLength
+				}
+			],
+			top: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: faceLeftLen,
+					y: 0,
+					z: 0
+				},
+				{
+					x: faceLeftLen,
+					y: facesHeight,
+					z: 0
+				},
+				{
+					x: 0,
+					y: facesHeight,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: thick
+				},
+				{
+					x: faceLeftLen,
+					y: 0,
+					z: thick
+				},
+				{
+					x: faceLeftLen,
+					y: facesHeight,
+					z: thick
+				},
+				{
+					x: 0,
+					y: facesHeight,
+					z: thick
+				}
+			],
+			bottom: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: faceLeftLen,
+					y: 0,
+					z: 0
+				},
+				{
+					x: faceLeftLen,
+					y: height,
+					z: 0
+				},
+				{
+					x: 0,
+					y: height,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: thick
+				},
+				{
+					x: faceLeftLen,
+					y: 0,
+					z: thick
+				},
+				{
+					x: faceLeftLen,
+					y: height,
+					z: thick
+				},
+				{
+					x: 0,
+					y: height,
+					z: thick
+				}
+			]
+		};
+	}
+	#bluePrintFacesSchema({ x, y, z }, lastX, lastY) {
+		const offX = lastX + this.#threshold[0] + this.#pad[2];
+		const offZ = z + this.#threshold[1];
+		const offY = lastY === 0 ? this.#threshold[2] + this.#pad[2] : lastY;
+		if (x <= this.#inner[0]) x += lastX === 0 ? this.#threshold[0] + this.#pad[2] : lastX;
+		return {
+			coordinates: [
+				{
+					x: offX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y,
+					z
+				}
+			],
+			width: lastX === 0 ? x - this.#threshold[0] - this.#pad[2] : x - lastX - this.#threshold[0] - this.#pad[2],
+			depth: this.#pad[2],
+			height: lastY === 0 ? y - this.#threshold[2] - this.#pad[2] : y - lastY,
+			offsetX: offX,
+			offsetY: z,
+			offsetZ: lastY === 0 ? this.#threshold[2] + this.#pad[2] : lastY
+		};
+	}
+	#bluePrintSidesSchema({ x, y, z }, lastX, lastY) {
+		const offX = lastX === 0 && this.#inner[0] !== x ? this.#pad[2] + this.#threshold[0] : lastX - 2 * this.#pad[2];
+		const offZ = this.#threshold[1];
+		const offY = lastY === 0 ? this.#threshold[2] + this.#pad[2] : lastY;
+		return {
+			coordinates: [
+				{
+					x: offX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y,
+					z
+				}
+			],
+			width: lastX === 0 ? x - this.#threshold[0] - this.#pad[2] : x - lastX,
+			depth: z - this.#pad[2],
+			height: lastY === 0 ? y - this.#threshold[2] - this.#pad[2] : y - offY,
+			offsetX: lastX === 0 ? offX : offX + this.#pad[2],
+			offsetY: offZ,
+			offsetZ: lastY === 0 ? this.#threshold[2] + this.#pad[2] : offY
+		};
+	}
+	#bluePrintUpDownSchema({ x, y, z }, lastX, lastY) {
+		const offX = lastX === 0 ? this.#threshold[0] : this.#threshold[0] + lastX;
+		const offZ = this.#threshold[1];
+		const offY = lastY === 0 ? lastY + this.#threshold[2] + this.#pad[2] : this.#crate[2] - this.#pad[2] - this.#pine[2] - this.#ply[2];
+		x += lastX === 0 ? this.#threshold[0] : lastX + this.#pad[2];
+		return {
+			coordinates: [
+				{
+					x: offX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y,
+					z
+				}
+			],
+			width: lastX === 0 ? x - this.#threshold[0] : x - lastX - this.#threshold[0],
+			depth: z - this.#pad[2],
+			height: lastY === 0 ? y - this.#threshold[2] + this.#pad[2] : y - lastY - this.#threshold[2] - this.#pad[2],
+			offsetX: offX,
+			offsetY: offZ,
+			offsetZ: lastY === 0 ? this.#threshold[2] : lastY + this.#threshold[2] + this.#pad[2]
+		};
+	}
+	#defineSizingPadFaces(filled) {
+		let { x, y, z, faceA } = filled;
+		if (x === 0) x = this.#pad[1] > this.#inner[0] ? this.#crate[0] - this.#threshold[0] - this.#pad[2] : this.#pad[1] + this.#pad[2];
+		y = this.#inner[2] - y > this.#pad[3] ? +this.#pad[3].toFixed(3) : +(this.#crate[2] - this.#pad[2] - this.#ply[2] - this.#pine[2]).toFixed(3);
+		z = faceA === 0 ? this.#pad[2] : this.#crate[1] - this.#threshold[1] - this.#pad[2];
+		if (filled.x > 0) {
+			if (x >= this.#inner[0] && y < this.#inner[2]) {
+				filled.x = 0;
+				if (y < this.#inner[2] && x >= this.#inner[0]) {
+					filled.y += y;
+					y = this.#inner[2] - filled.y > this.#pad[3] ? this.#crate[2] - this.#pad[3] : +(this.#crate[2] - this.#pad[2] - this.#pine[2] - this.#ply[2]).toFixed(3);
+				}
+			}
+			x = this.#crate[0] - x - this.#threshold[0] - this.#pad[2];
+		}
+		return {
+			x,
+			y,
+			z
+		};
+	}
+	#defineSizingPadSides(filled) {
+		let { x, y, z, sideA } = filled;
+		x = sideA === 0 ? this.#pad[2] : this.#crate[0] - this.#pad[2];
+		if (y === 0) y = this.#inner[2] - y > this.#pad[3] ? this.#pad[3] : +(this.#crate[2] - this.#ply[2] - this.#pine[2] - this.#pad[2]).toFixed(3);
+		else y += this.#inner[2] - y > this.#pad[3] ? this.#pad[3] : this.#crate[2] - y - this.#pine[2] - 2 * this.#ply[2] - this.#ply[2];
+		z = this.#crate[1] < this.#pad[1] ? this.#crate[1] - this.#threshold[1] : this.#crate[1] - this.#pad[1] - z;
+		return {
+			x,
+			y,
+			z
+		};
+	}
+	#defineSizingPadUpDown(filled) {
+		let { x, y, z } = filled;
+		if (x === 0) x = this.#pad[1] > this.#inner[0] ? this.#crate[0] - this.#threshold[0] - this.#pad[2] : this.#pad[1] + this.#pad[2];
+		else x = this.#crate[0] - x - this.#threshold[0] - this.#pad[2];
+		y = y === 0 ? this.#threshold[2] : this.#crate[2] - this.#pine[2] - this.#ply[2];
+		z = this.#crate[1] - this.#threshold[1];
+		return {
+			x,
+			y,
+			z
+		};
+	}
+	#setFrontAndBackFaces(data, filled) {
+		const { faceA, faceB } = filled;
+		if (faceA === 1 && faceB === 1) return data;
+		const sizes = this.#defineSizingPadFaces(filled);
+		data.push(this.#bluePrintFacesSchema(sizes, filled.x, filled.y));
+		filled.x += sizes.x;
+		if (filled.x >= this.#inner[0] && filled.y + sizes.y >= this.#inner[2]) if (faceA === 0) {
+			filled.faceA = 1;
+			filled.x = 0;
+			filled.y = 0;
+		} else filled.faceB = 1;
+		return this.#setFrontAndBackFaces(data, filled);
+	}
+	#setRightAndLeftSides(data, filled) {
+		const { sideA, sideB } = filled;
+		if (sideA === 1 && sideB === 1) return data;
+		const sizes = this.#defineSizingPadSides(filled);
+		data.push(this.#bluePrintSidesSchema(sizes, filled.x, filled.y));
+		filled.y += sizes.y;
+		if (filled.y >= this.#inner[2]) if (sideA === 0) {
+			filled.sideA = 1;
+			filled.x = this.#crate[0];
+			filled.y = 0;
+		} else filled.sideB = 1;
+		return this.#setRightAndLeftSides(data, filled);
+	}
+	#setTopAndBottom(data, filled) {
+		const { top, bottom } = filled;
+		if (top === 1 && bottom === 1) return data;
+		const sizes = this.#defineSizingPadUpDown(filled);
+		const setY = this.#crate[2] - 2 * this.#pad[2] - this.#threshold[2] - this.#ply[2] - this.#pine[2];
+		data.push(this.#bluePrintUpDownSchema(sizes, filled.x, filled.y));
+		filled.x += sizes.x;
+		if (filled.x >= this.#inner[0]) if (bottom === 0) {
+			filled.bottom = 1;
+			filled.x = 0;
+			filled.y = setY;
+		} else filled.top = 1;
+		return this.#setTopAndBottom(data, filled);
+	}
+	#defineWalls(offset, comp) {
+		const { x, y, z } = offset;
+		const change = structuredClone(comp);
+		Object.entries(change).map((data, i) => {
+			switch (i) {
+				case 0:
+					if (data[1].x === 0) data[1].x = x;
+					if (data[1].y === 0) data[1].y = y;
+					if (data[1].z === 0) data[1].z = z;
+					return data;
+				case 1:
+					if (data[1].y === 0) data[1].y = y;
+					if (data[1].z === 0) data[1].z = z;
+					return data;
+				case 2:
+					if (data[1].z === 0) data[1].z = z;
+					return data;
+				case 3:
+					if (data[1].x === 0) data[1].x = x;
+					if (data[1].z === 0) data[1].z = z;
+					return data;
+				case 4:
+					if (data[1].x === 0) data[1].x = x;
+					if (data[1].y === 0) data[1].y = y;
+					return data;
+				case 5:
+					if (data[1].y === 0) data[1].y = y;
+					return data;
+				case 7:
+					if (data[1].x === 0) data[1].x = x;
+					return data;
+			}
+			return data;
+		});
+		return change;
+	}
+	#setupFaces() {
+		const pads = [];
+		this.#setFrontAndBackFaces(pads, {
+			x: 0,
+			y: 0,
+			z: 0,
+			faceA: 0,
+			faceB: 0
+		});
+		this.#setRightAndLeftSides(pads, {
+			x: 0,
+			y: 0,
+			z: 0,
+			sideA: 0,
+			sideB: 0
+		});
+		this.#setTopAndBottom(pads, {
+			x: 0,
+			y: 0,
+			z: 0,
+			top: 0,
+			bottom: 0
+		});
+		return pads;
+	}
+	#defineCratePaddingTubes() {
+		const trace = new TraceMaker();
+		const fill = new DesignWalls();
+		const faces = this.#setupFaces();
+		let meta = structuredClone(this.#data);
+		let show = true;
+		if (!this.#pad) return this.#data;
+		faces.map((pads) => {
+			const { coordinates, offsetX, offsetY, offsetZ, width, depth, height } = pads;
+			trace.data = {
+				info: this.#data,
+				coordinates,
+				name: "padding",
+				show
+			};
+			meta = trace.defineTrace;
+			fill.objectData = {
+				width,
+				depth,
+				height,
+				info: this.#data,
+				name: "padding",
+				offsetX,
+				offsetY,
+				offsetZ
+			};
+			this.#data = this.#data = fill.designSides;
+			show = false;
+			return pads;
+		});
+		return meta;
+	}
+	#defineCratePadding() {
+		const trace = new TraceMaker();
+		const fill = new DesignWalls();
+		const faces = this.#setupFaces();
+		let meta = structuredClone(this.#data);
+		let show = true;
+		if (!this.#pad) return this.#data;
+		faces.map((pads) => {
+			const { coordinates, offsetX, offsetY, offsetZ, width, depth, height } = pads;
+			trace.data = {
+				info: this.#data,
+				coordinates,
+				name: "padding",
+				show
+			};
+			meta = trace.defineTrace;
+			fill.objectData = {
+				width,
+				depth,
+				height,
+				info: this.#data,
+				name: "padding",
+				offsetX,
+				offsetY,
+				offsetZ
+			};
+			this.#data = this.#data = fill.designSides;
+			show = false;
+			return pads;
+		});
+		return meta;
+	}
+	#defineHugeCratePadding() {
+		const trace = new TraceMaker();
+		const fill = new DesignWalls();
+		const padding = this.#cratePaddingHugeTrace();
+		const offsets = this.#offSetHugeWalls();
+		const sizes = {
+			dep: this.#baseSize[1],
+			high: this.#baseSize[2]
+		};
+		let meta = structuredClone(this.#data);
+		let show = true;
+		if (!this.#pad) return this.#data;
+		Object.entries(offsets).map((part) => {
+			const { type, offsetX, offsetY, offsetZ, width, depth, height } = part[1];
+			const face = padding[type];
+			const defined = this.#defineWalls(part[1], face);
+			trace.data = {
+				info: meta,
+				coordinates: defined,
+				name: "padding",
+				show,
+				sizes
+			};
+			meta = trace.defineHugeTrace;
+			fill.objectData = {
+				width,
+				depth,
+				height,
+				info: meta,
+				name: "padding",
+				offsetX,
+				offsetY,
+				offsetZ,
+				sizes
+			};
+			meta = this.#data = fill.largestCanvas;
+			show = false;
+			return part;
+		});
+		return meta;
+	}
+	get setPadding() {
+		return this.#defineCratePadding();
+	}
+	get setPaddingHuge() {
+		return this.#defineHugeCratePadding();
+	}
+	get setPaddingTubes() {
+		return this.#defineCratePaddingTubes();
+	}
+};
+//#endregion
+//#region app/plotter/Plotly.crate.gaps.mjs
+var FillGaps = class {
+	#layer;
+	#data;
+	constructor(data, layer) {
+		this.#layer = layer;
+		this.#data = data;
+	}
+	#defineFillSize({ x, y, z }, locate) {
+		const offX = this.#data.offset[0] + locate.x;
+		const offZ = this.#data.offZ + z;
+		const offY = !locate.y ? y + this.#data.offset[2] - this.#data.pad[2] : locate.y + y + this.#data.offset[2] - this.#data.pad[2];
+		const setX = x + this.#data.offset[0] + locate.x;
+		const setY = !locate.y ? locate.y + this.#data.offset[2] : this.#data.offset[2] + locate.y - this.#data.pad[2];
+		return {
+			div: [
+				{
+					x: offX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x: setX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x: setX,
+					y: setY,
+					z: offZ
+				},
+				{
+					x: offX,
+					y: setY,
+					z: offZ
+				},
+				{
+					x: offX,
+					y: offY,
+					z: this.#data.offZ
+				},
+				{
+					x: setX,
+					y: offY,
+					z: this.#data.offZ
+				},
+				{
+					x: setX,
+					y: setY,
+					z: this.#data.offZ
+				},
+				{
+					x: offX,
+					y: setY,
+					z: this.#data.offZ
+				}
+			],
+			width: x,
+			depth: z,
+			height: locate.y ? y : y - this.#data.pad[2],
+			offsetX: offX,
+			offsetY: this.#data.offZ,
+			offsetZ: locate.y ? locate.y + this.#data.offset[2] - this.#data.pad[2] : this.#data.offset[2] + locate.y,
+			layer: {
+				name: `layer-${this.#layer}`,
+				color: "padding"
+			}
+		};
+	}
+	#defineGapSize(info, lastValues) {
+		info[2];
+		info[3];
+	}
+	#sizesToFill() {
+		const innerX = [];
+		const innerY = [];
+		const lastValues = {
+			lastX: [],
+			lastY: []
+		};
+		let lastX = 0;
+		let lastY = 0;
+		const { vacuum } = this.#data;
+		const len = vacuum.length > 2 ? vacuum.length - 1 : vacuum.length;
+		vacuum.map((data, i) => vacuum[i].push(data[0] * data[1]), 0);
+		vacuum.sort((a, b) => a.at(-1) - b.at(-1));
+		vacuum.reverse().map((data, i) => {
+			(vacuum.length - 1 >= i || vacuum.length === 2) && this.#defineGapSize(data, lastValues);
+		}, 0);
+		return vacuum.map((gap, i) => {
+			if (gap[0] === lastX && gap[1] === lastY || len === i) return;
+			!innerX.length ? innerX.push(gap[0]) : innerX.push(innerX.at(-1) - lastX);
+			innerY.push(gap[1]);
+			const allLastY = +innerY.reverse().reduce((sum, val) => gap[3] - val - sum, 0).toFixed(3);
+			const fill = {
+				location: {
+					x: innerX.at(-1) > 0 ? innerX.at(-1) : gap[0],
+					y: innerY.at(-1) > 0 && !innerX.at(-1) ? innerY.at(-1) : gap[1]
+				},
+				size: {
+					x: +(gap[2] - gap[0]).toFixed(3),
+					y: gap[1] ? allLastY : innerY.at(-1) - gap[1],
+					z: this.#data.thickness > this.#data.div[2] ? this.#data.pad[2] : this.#data.div[2]
+				}
+			};
+			lastX = gap[0];
+			lastY = gap[1];
+			return fill;
+		}, 0).filter((data) => data !== void 0);
+	}
+	#defineGaps() {
+		return this.#sizesToFill().map((data) => this.#defineFillSize(data.size, data.location));
+	}
+	get fill() {
+		return this.#defineGaps();
+	}
+};
+//#endregion
+//#region app/plotter/Ploty.works.position.mjs
+var WorksPosition = class {
+	#dim;
+	#local;
+	#depth;
+	#threshold;
+	#pad;
+	constructor(dim, local, depth, threshold, pad) {
+		this.#dim = dim;
+		this.#local = local;
+		this.#depth = depth;
+		this.#threshold = threshold;
+		this.#pad = pad;
+	}
+	#tubes() {
+		const x = +this.#dim[1] + 2 * this.#threshold[0];
+		const y = +this.#dim[3] + this.#threshold[2];
+		const z = this.#depth + this.#threshold[2];
+		const { coordinates, code } = this.#local;
+		const fillX = 0;
+		const fillZ = -this.#pad[2];
+		const fillY = 0;
+		return {
+			coordinates,
+			code,
+			art: [
+				{
+					x: fillX,
+					y: fillY,
+					z: fillZ
+				},
+				{
+					x,
+					y: fillY,
+					z: fillZ
+				},
+				{
+					x,
+					y,
+					z: fillZ
+				},
+				{
+					x: fillX,
+					y,
+					z: fillZ
+				},
+				{
+					x: fillX,
+					y: fillY,
+					z
+				},
+				{
+					x,
+					y: fillY,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: fillX,
+					y,
+					z
+				}
+			],
+			width: x - this.#threshold[1],
+			depth: coordinates.z,
+			height: y - this.#pad[2] - this.#threshold[2],
+			offsetX: -x / 2,
+			offsetY: this.#threshold[1],
+			offsetZ: this.#depth + this.#threshold[2]
+		};
+	}
+	#sculptures() {
+		let x = this.#dim.length > 4 ? +this.#dim[3] + this.#threshold[0] - this.#pad[2] : +this.#dim[1] + this.#threshold[0] - this.#pad[2];
+		let y = this.#dim.length > 4 ? +this.#dim[1] + this.#threshold[2] : +this.#dim[3] + this.#threshold[2];
+		const z = this.#depth + this.#threshold[1];
+		const { coordinates, code } = this.#local;
+		const fillX = 0;
+		const fillZ = 0;
+		const fillY = 0;
+		if (!coordinates.x) x += this.#pad[2];
+		else x += this.#pad[2] + coordinates.x;
+		if (coordinates.y) y += coordinates.y;
+		return {
+			coordinates,
+			code,
+			art: [
+				{
+					x: fillX,
+					y: fillY,
+					z: fillZ
+				},
+				{
+					x,
+					y: fillY,
+					z: fillZ
+				},
+				{
+					x,
+					y,
+					z: fillZ
+				},
+				{
+					x: fillX,
+					y,
+					z: fillZ
+				},
+				{
+					x: fillX,
+					y: fillY,
+					z
+				},
+				{
+					x,
+					y: fillY,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: fillX,
+					y,
+					z
+				}
+			],
+			width: x - this.#threshold[0] - coordinates.x,
+			depth: this.#dim[2] + fillZ,
+			height: coordinates.y ? y - this.#threshold[2] - coordinates.y + this.#pad[2] : y - this.#threshold[2] - coordinates.y,
+			offsetX: this.#threshold[0] + coordinates.x,
+			offsetY: this.#threshold[1] + this.#depth,
+			offsetZ: coordinates.y ? this.#threshold[2] + coordinates.y - this.#pad[2] : this.#threshold[2]
+		};
+	}
+	#largestCanvas() {
+		let x = this.#dim.length > 4 ? +this.#dim[3] + this.#threshold[0] - this.#pad[2] : +this.#dim[1] + this.#threshold[0] - this.#pad[2];
+		let y = this.#dim.length > 4 ? +this.#dim[1] + this.#threshold[2] : +this.#dim[3] + this.#threshold[2];
+		const z = this.#depth + this.#threshold[1];
+		const { coordinates, code } = this.#local;
+		if (!coordinates.x) x += this.#pad[2];
+		else x += this.#pad[2] + coordinates.x;
+		if (coordinates.y) y += coordinates.y;
+		return {
+			coordinates,
+			code,
+			art: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x,
+					y: 0,
+					z: 0
+				},
+				{
+					x,
+					y,
+					z: 0
+				},
+				{
+					x: 0,
+					y,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z
+				},
+				{
+					x,
+					y: 0,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: 0,
+					y,
+					z
+				}
+			],
+			width: x - this.#threshold[0] - coordinates.x,
+			depth: this.#dim[2],
+			height: coordinates.y ? y - this.#threshold[2] - coordinates.y + this.#pad[2] : y - this.#threshold[2] - coordinates.y,
+			offsetX: this.#threshold[0] + coordinates.x,
+			offsetY: this.#threshold[1] + this.#depth,
+			offsetZ: coordinates.y ? this.#threshold[2] + coordinates.y - this.#pad[2] : this.#threshold[2]
+		};
+	}
+	#standardCanvas() {
+		let x = this.#dim.length > 4 ? +this.#dim[3] + this.#threshold[0] - this.#pad[2] : +this.#dim[1] + this.#threshold[0] - this.#pad[2];
+		let y = this.#dim.length > 4 ? +this.#dim[1] + this.#threshold[2] : +this.#dim[3] + this.#threshold[2];
+		const z = this.#depth + this.#threshold[1];
+		const { coordinates, code } = this.#local;
+		if (!coordinates.x) x += this.#pad[2];
+		else x += this.#pad[2] + coordinates.x;
+		if (coordinates.y) y += coordinates.y;
+		return {
+			coordinates,
+			code,
+			art: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x,
+					y: 0,
+					z: 0
+				},
+				{
+					x,
+					y,
+					z: 0
+				},
+				{
+					x: 0,
+					y,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z
+				},
+				{
+					x,
+					y: 0,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: 0,
+					y,
+					z
+				}
+			],
+			width: x - this.#threshold[0] - coordinates.x,
+			depth: this.#dim[2],
+			height: coordinates.y ? y - this.#threshold[2] - coordinates.y + this.#pad[2] : y - this.#threshold[2] - coordinates.y,
+			offsetX: this.#threshold[0] + coordinates.x,
+			offsetY: this.#threshold[1] + this.#depth,
+			offsetZ: coordinates.y ? this.#threshold[2] + coordinates.y - this.#pad[2] : this.#threshold[2]
+		};
+	}
+	get standardCanvas() {
+		return this.#standardCanvas();
+	}
+	get noCanvas() {
+		return this.#sculptures();
+	}
+	get tubes() {
+		return this.#tubes();
+	}
+	get largestCanvas() {
+		return this.#largestCanvas();
+	}
+};
+//#endregion
+//#region app/plotter/Plotly.div.sizes.mjs
+var PadDivSizes = class {
+	#threshold;
+	#layer;
+	#depth;
+	#inner;
+	#div;
+	#pad;
+	constructor(pad, threshold, layer, depth, inner, div) {
+		this.#layer = layer;
+		this.#depth = depth;
+		this.#inner = inner;
+		this.#div = div;
+		this.#threshold = threshold;
+		this.#pad = pad;
+	}
+	#defineDivSameSize(x, y) {
+		const z = this.#depth + this.#threshold[2];
+		const offX = this.#threshold[0];
+		const offZ = this.#depth + this.#threshold[2] - this.#div[2];
+		const offY = this.#threshold[2];
+		let div = structuredClone(this.#layer);
+		x += this.#threshold[0];
+		y += this.#threshold[2];
+		return {
+			div: [
+				{
+					x: offX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y,
+					z
+				}
+			],
+			width: x - this.#threshold[0],
+			depth: this.#div[2],
+			height: y - 2 * this.#pad[2] - this.#div[2],
+			offsetX: this.#threshold[0],
+			offsetY: this.#depth + this.#threshold[2] - this.#div[2],
+			offsetZ: this.#threshold[2],
+			layer: {
+				name: `layer-${++div}`,
+				color: "div"
+			}
+		};
+	}
+	#setDivSameSize(data = [], filled = {
+		x: 0,
+		y: 0,
+		full: false
+	}) {
+		if (filled.full) return data;
+		let { x, y } = filled;
+		if (x === 0) x = this.#div[1] > this.#inner[0] ? this.#inner[0] : this.#div[1];
+		y = this.#inner[2] - y > this.#div[3] ? this.#div[3] - 2 * this.#pad[2] : this.#inner[2] - y;
+		if (!filled.full && filled.x > 0) {
+			if (x >= this.#inner[0] && y < this.#inner[2]) {
+				filled.x = 0;
+				if (y < this.#inner[2] && x >= this.#inner[0]) {
+					filled.y += y;
+					y = this.#inner[2] - y > this.#div[3] ? this.#div[3] - 2 * this.#pad[2] : this.#inner[2] - y - 2 * this.#pad[2];
+				}
+			}
+			x = this.#inner[0] - x === 0 ? this.#div[1] : this.#inner[0] - x;
+		}
+		const lastX = structuredClone(x);
+		data.push(this.#defineDivSameSize(x, y, filled.x, filled.y));
+		filled.x += lastX;
+		if (filled.x === this.#inner[0] && filled.y + y === this.#inner[2]) filled.full = true;
+		return this.#setDivSameSize(data, filled);
+	}
+	#defineDivSize(x, y, lastX, lastY) {
+		const z = this.#depth + this.#threshold[2];
+		const offX = lastX === 0 ? this.#threshold[0] : lastX + this.#threshold[0];
+		const offZ = this.#depth + this.#threshold[2] - this.#div[2];
+		const offY = this.#threshold[2] + lastY;
+		let div = this.#layer;
+		x = x + lastX === this.#inner[0] ? x + offX - this.#threshold[0] : x + offX;
+		y = y + lastY === this.#inner[2] ? y + offY - 2 * this.#pad[2] : y + offY;
+		return {
+			div: [
+				{
+					x: offX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y,
+					z
+				}
+			],
+			width: x - offX,
+			depth: this.#div[2],
+			height: y - offY,
+			offsetX: offX,
+			offsetY: offZ,
+			offsetZ: offY,
+			layer: {
+				name: `layer-${++div}`,
+				color: "div"
+			}
+		};
+	}
+	#setDivLayer(data = [], filled = {
+		x: 0,
+		y: 0,
+		full: 0
+	}) {
+		if (filled.full) return data;
+		let { x, y } = filled;
+		if (x === 0) x = this.#div[1] > this.#inner[0] ? this.#inner[0] : this.#div[1];
+		y = this.#inner[2] - y > this.#div[3] ? this.#div[3] - 2 * this.#pad[2] : this.#inner[2] - y;
+		if (!filled.full && filled.x > 0) {
+			if (x >= this.#inner[0] && y < this.#inner[2]) {
+				filled.x = 0;
+				if (y < this.#inner[2] && x >= this.#inner[0]) {
+					filled.y += y;
+					y = this.#inner[2] - y > this.#div[3] ? this.#div[3] - this.#threshold[2] - 2 * this.#pad[2] : this.#inner[2] - y - 2 * this.#pad[2];
+				}
+			}
+			x = this.#inner[0] - x === 0 ? this.#div[1] : this.#inner[0] - x;
+		}
+		const lastX = structuredClone(x);
+		data.push(this.#defineDivSize(x, y, filled.x, filled.y));
+		filled.x += lastX;
+		if (filled.x === this.#inner[0] && filled.y + y === this.#inner[2]) filled.full = true;
+		return this.#setDivLayer(data, filled);
+	}
+	get standardDiv() {
+		return this.#setDivLayer();
+	}
+	get sameSizeDiv() {
+		return this.#setDivSameSize();
+	}
+};
+//#endregion
+//#region app/plotter/Plotly.works.label.mjs
+var WorksLabel = class {
+	#data;
+	#config;
+	constructor() {
+		this.#config = {
+			type: "scatter3d",
+			mode: "text",
+			x: [],
+			y: [],
+			z: [],
+			text: [],
+			textposition: "middle center",
+			showlegend: false,
+			hoverinfo: "none"
+		};
+	}
+	#defineHugeLabel() {
+		const { x, y, z, info, code, dep, high, name } = this.#data;
+		const cosAngle = Math.cos(dep / high);
+		const sinAngle = Math.sin(high / dep);
+		const rotX = {
+			valY: y * cosAngle - z * sinAngle,
+			valZ: y * sinAngle + z * cosAngle
+		};
+		this.#config.x.push(x);
+		this.#config.y.push(rotX.valY);
+		this.#config.z.push(rotX.valZ);
+		this.#config.text.push(code);
+		this.#config.legendgroup = name;
+		info.push(this.#config);
+		return info;
+	}
+	#defineLabel() {
+		const { x, y, z, info, code, name } = this.#data;
+		this.#config.x.push(x);
+		this.#config.y.push(y);
+		this.#config.z.push(z);
+		this.#config.text.push(code);
+		this.#config.legendgroup = name;
+		this.#config.name = name;
+		info.push(this.#config);
+		return info;
+	}
+	get setLabel() {
+		return this.#defineLabel();
+	}
+	get setHugeLabel() {
+		return this.#defineHugeLabel();
+	}
+	set data(info) {
+		this.#data = info;
+	}
+};
+//#endregion
+//#region app/plotter/Plotly.design.works.mjs
+var DesignPlotter = class {
+	#data;
+	#list;
+	#baseSize;
+	constructor(list, data, baseSize) {
+		this.#data = data;
+		this.#list = list;
+		this.#baseSize = baseSize;
+	}
+	#buildTraceAndFillTubes() {
+		let meta = structuredClone(this.#data);
+		const fill = new DesignWalls();
+		const label = new WorksLabel();
+		let tmp;
+		this.#list.map((info) => {
+			info.map((data, i) => {
+				const { div, layer, offsetX, offsetY, offsetZ, width, depth, height, code } = data;
+				fill.objectData = {
+					width,
+					depth,
+					height,
+					info: meta,
+					name: layer ?? div,
+					offsetX,
+					offsetY,
+					offsetZ,
+					next: i
+				};
+				meta = fill.designTubes;
+				if (code) {
+					label.data = {
+						info: meta,
+						x: offsetX + width / 2,
+						y: offsetY + depth / 6,
+						z: offsetZ + height / 6,
+						code
+					};
+					meta = label.setLabel;
+				}
+				tmp = div || layer.name === tmp ? tmp : layer.name;
+				return data;
+			}, 0);
+			return info;
+		});
+		return meta;
+	}
+	#buildTraceAndFillHuge() {
+		let meta = structuredClone(this.#data);
+		const trace = new TraceMaker();
+		const fill = new DesignWalls();
+		const sizes = {
+			dep: this.#baseSize[1],
+			high: this.#baseSize[2]
+		};
+		const label = new WorksLabel();
+		let tmp;
+		this.#list.map((info) => {
+			info.map((data) => {
+				const { div, layer, art, offsetX, offsetY, offsetZ, width, depth, height, code } = data;
+				trace.data = {
+					info: meta,
+					coordinates: art ? art : div,
+					name: layer ?? div,
+					show: div || tmp === layer.name ? false : true,
+					sizes
+				};
+				meta = trace.defineHugeTrace;
+				if (code) {
+					label.data = {
+						info: meta,
+						x: offsetX + width / 2,
+						y: offsetY + depth / 2,
+						z: offsetZ + height / 2,
+						dep: depth,
+						high: height,
+						code
+					};
+					meta = label.setHugeLabel;
+				}
+				fill.objectData = {
+					width,
+					depth,
+					height,
+					info: meta,
+					name: layer ?? div,
+					offsetX,
+					offsetY,
+					offsetZ,
+					sizes
+				};
+				meta = fill.largestCanvas;
+				tmp = div || layer.name === tmp ? tmp : layer.name;
+				return data;
+			});
+			return info;
+		});
+		return meta;
+	}
+	#buildTraceAndFill() {
+		let meta = structuredClone(this.#data);
+		const trace = new TraceMaker();
+		const fill = new DesignWalls();
+		let tmp;
+		this.#list.map((info) => {
+			info.map((data) => {
+				const { div, layer, art, offsetX, offsetY, offsetZ, width, depth, height, code } = data;
+				trace.data = {
+					info: meta,
+					coordinates: art ? art : div,
+					name: layer ?? div,
+					show: div || tmp === layer.name ? false : true
+				};
+				meta = trace.defineTrace;
+				if (code) {
+					const label = new WorksLabel();
+					label.data = {
+						info: meta,
+						x: offsetX + width / 2,
+						y: offsetY + depth / 2,
+						z: offsetZ + height / 2,
+						name: layer.name,
+						code
+					};
+					meta = label.setLabel;
+				}
+				fill.objectData = {
+					width,
+					depth,
+					height,
+					info: meta,
+					name: layer ?? div,
+					offsetX,
+					offsetY,
+					offsetZ
+				};
+				meta = fill.designSides;
+				tmp = div || layer.name === tmp ? tmp : layer.name;
+				return data;
+			});
+			return info;
+		});
+		return meta;
+	}
+	get tubesDesign() {
+		return this.#buildTraceAndFillTubes();
+	}
+	get squaredDesign() {
+		return this.#buildTraceAndFill();
+	}
+	get hugeDesign() {
+		return this.#buildTraceAndFillHuge();
+	}
+};
+//#endregion
+//#region app/plotter/Plotly.layer.position.work.class.mjs
+var PositionWorksInSideCrate = class {
+	#crate;
+	#data;
+	#info;
+	#threshold;
+	#div;
+	#pad;
+	#inner;
+	#type;
+	#pine;
+	constructor(data, meta, type = "standardCrate") {
+		const { finalSize, innerSize } = data;
+		this.#type = type;
+		this.#crate = {
+			sized: finalSize,
+			innerSize,
+			type
+		};
+		this.#data = meta;
+		this.#info = data;
+		this.#threshold = [];
+		this.#inner = innerSize;
+	}
+	/**
+	* @method - selected woods for crating
+	* @param { Array: String: Number } materials all wood types
+	*/
+	#woodUsedMaterials(materials) {
+		[
+			materials.find((list) => list.at(-1) === "Pinewood"),
+			materials.find((list) => list.at(-1) === "Wooden Post"),
+			materials.find((list) => list.at(-1) === "Plywood")
+		].map((wood) => {
+			if (wood.at(-1) === "Wooden Post") {
+				this.#threshold[2] += wood[3];
+				return wood;
+			} else if (wood.at(-1) === "Pinewood") {
+				this.#threshold[0] += wood[2];
+				this.#threshold[1] += wood[2];
+				this.#pine = wood;
+				return wood;
+			}
+			this.#threshold[0] += wood[2];
+			this.#threshold[1] += wood[2];
+			this.#threshold[2] += this.#type === "huge" && wood.at(-1) === "Plywood" ? wood[2] * 3 : wood[2];
+			return wood;
+		});
+	}
+	/**
+	* @method - fill all material used to each crate side
+	* @param { Array:String } used - all selected materials to the crate
+	*/
+	#fillCrateThresholdData(used) {
+		this.#pad = used.find((list) => list.at(-1) === "Foam Sheet" && list[2] > 2.5);
+		this.#div = used.find((list) => list.at(-1) === "Foam Sheet" && list[2] <= 2.5);
+		this.#threshold[0] = this.#pad[2];
+		this.#threshold[1] = this.#pad[2];
+		this.#threshold[2] = this.#pad[2];
+		this.#div[1] = +this.#div[1];
+		this.#div[2] = +this.#div[2];
+		this.#div[3] = +this.#div[3];
+		this.#woodUsedMaterials(used);
+	}
+	#traceColor() {
+		const letters = "0123456789ABCDEF";
+		let color = "#";
+		for (let i = 0; i < 6; i++) color += letters[Math.floor(Math.random() * 16)];
+		return color;
+	}
+	#worksOffset(works, depth, layer) {
+		Object.entries(works).map((data) => {
+			const { coordinates, code, art } = data[1];
+			const offY = coordinates.y - this.#pad[2];
+			const x = this.#threshold[0];
+			const y = coordinates.y ? this.#threshold[2] + offY : this.#threshold[2];
+			const z = this.#threshold[1] + coordinates.z + depth;
+			data[1].layer = {
+				code,
+				name: `layer-${layer}`,
+				color: this.#traceColor()
+			};
+			art.map((info, i) => {
+				switch (i) {
+					case 0:
+						if (info.x === 0) info.x = x + coordinates.x;
+						if (info.y === 0) info.y = y;
+						if (info.z === 0) info.z = z;
+						return info;
+					case 1:
+						if (info.y === 0) info.y = y;
+						if (info.z === 0) info.z = z;
+						return info;
+					case 2:
+						if (info.z === 0) info.z = z;
+						return info;
+					case 3:
+						if (info.x === 0) info.x = x + coordinates.x;
+						if (info.z === 0) info.z = z;
+						return info;
+					case 4:
+						if (info.x === 0) info.x = x + coordinates.x;
+						if (info.y === 0) info.y = y;
+						return info;
+					case 5:
+						if (info.y === 0) info.y = y;
+						return art;
+					case 7:
+						if (info.x === 0) info.x = x + coordinates.x;
+						return info;
+				}
+				return info;
+			}, 0);
+			return data;
+		});
+		return works;
+	}
+	#populateLayerTubeCrate() {
+		const { layers, fillGaps, artLocation } = this.#info;
+		const onLayers = [];
+		const gap = 10;
+		let heightSum = 0;
+		let thickness = 0;
+		switch (layers.length) {
+			case 2:
+				this.#threshold[1] += 3 * this.#pad[2];
+				this.#threshold[2] += 2 * this.#pine[2] + 2 * this.#pad[2];
+				break;
+			case 3:
+				this.#threshold[1] *= 2;
+				this.#threshold[2] = 2 * this.#threshold[2] + this.#pine[2];
+				break;
+			default:
+				this.#threshold[1] += this.#pad[2];
+				this.#threshold[2] += 2 * this.#pine[2] + this.#pad[2];
+		}
+		layers.map((data, i) => {
+			const { vacuum, works } = data;
+			const allWorks = works.map((info) => {
+				const position = new WorksPosition(info.work, artLocation.get(info.work[0]), heightSum, this.#threshold, this.#pad);
+				heightSum += +info.work[3] + gap;
+				return position.tubes;
+			});
+			const checkGap = vacuum.length > 1;
+			onLayers.push(this.#worksOffset(allWorks, heightSum, i + 1));
+			works.filter((info) => {
+				if (!thickness || thickness < info.work[2]) thickness = info.work[2];
+				return info;
+			});
+			if (checkGap) new FillGaps({
+				vacuum,
+				maxZ: fillGaps,
+				offZ: +(heightSum + this.#threshold[2]).toFixed(3),
+				pad: this.#pad,
+				div: 0,
+				offset: this.#threshold
+			}, i + 1).fill;
+			thickness = 0;
+			return data;
+		}, 0);
+		return new DesignPlotter(onLayers, this.#data).tubesDesign;
+	}
+	#populateLayerNotCanvas() {
+		const { layers, fillGaps, artLocation } = this.#info;
+		const onLayers = [];
+		let depthSum = 0;
+		let thickness = 0;
+		layers.map((data, i) => {
+			const { vacuum, works } = data;
+			const allWorks = works.map((info) => {
+				return new WorksPosition(info.work, artLocation.get(info.work[0]), depthSum, this.#threshold, this.#pad).noCanvas;
+			});
+			const checkGap = vacuum.length > 1;
+			onLayers.push(this.#worksOffset(allWorks, depthSum, i + 1));
+			works.filter((info) => {
+				if (!thickness || thickness < info.work[2]) thickness = info.work[2];
+				return info;
+			});
+			if (checkGap) new FillGaps({
+				vacuum,
+				maxZ: fillGaps,
+				offZ: +(depthSum + this.#threshold[1]).toFixed(3),
+				pad: this.#pad,
+				div: this.#div,
+				offset: this.#threshold
+			}, i + 1).fill;
+			depthSum += +thickness.toFixed(3);
+			thickness = 0;
+			return data;
+		}, 0);
+		return new DesignPlotter(onLayers, this.#data).squaredDesign;
+	}
+	#populateLayerHugeCanvas() {
+		const { layers, fillGaps, artLocation, finalSize } = this.#info;
+		const onLayers = [];
+		let depthSum = 0;
+		let thickness = 0;
+		layers.map((data, i) => {
+			const { vacuum, works } = data;
+			const allWorks = works.map((info) => {
+				return new WorksPosition(info.work, artLocation.get(info.work[0]), depthSum, this.#threshold, this.#pad).largestCanvas;
+			});
+			const checkGap = vacuum.length > 1;
+			onLayers.push(this.#worksOffset(allWorks, depthSum, i + 1));
+			works.filter((info) => {
+				if (!thickness || thickness < info.work[2]) thickness = info.work[2];
+				return info;
+			});
+			if (checkGap) new FillGaps({
+				vacuum,
+				maxZ: fillGaps,
+				offZ: +(depthSum + this.#threshold[1]).toFixed(3),
+				pad: this.#pad,
+				div: this.#div,
+				offset: this.#threshold
+			}, i + 1).fill;
+			depthSum += +thickness.toFixed(3);
+			if (layers.length > 1 && layers.length - 1 > i) {
+				const div = new PadDivSizes(this.#pad, this.#threshold, i + 1, depthSum, structuredClone(this.#inner), this.#div);
+				onLayers.push(div.standardDiv);
+				depthSum += this.#div[2];
+			}
+			thickness = 0;
+			return data;
+		}, 0);
+		return new DesignPlotter(onLayers, this.#data, finalSize).hugeDesign;
+	}
+	#populateLayerSameSizes() {
+		const { layers, fillGaps, artLocation } = this.#info;
+		const onLayers = [];
+		let depthSum = 0;
+		let thickness = 0;
+		layers.map((data, i) => {
+			const { vacuum, works } = data;
+			const allWorks = works.map((info) => {
+				return new WorksPosition(info.work, artLocation.get(info.work[0]), depthSum, this.#threshold, this.#pad).standardCanvas;
+			});
+			const checkGap = vacuum.length > 1;
+			onLayers.push(this.#worksOffset(allWorks, depthSum, i + 1));
+			works.filter((info) => {
+				if (!thickness || thickness < info.work[2]) thickness = info.work[2];
+				return info;
+			});
+			if (checkGap) new FillGaps({
+				vacuum,
+				maxZ: fillGaps,
+				offZ: +(depthSum + this.#threshold[1]).toFixed(3),
+				pad: this.#pad,
+				div: this.#div,
+				offset: this.#threshold
+			}, i + 1).fill;
+			depthSum += +thickness.toFixed(3);
+			if (layers.length > 1 && layers.length - 1 > i) {
+				const div = new PadDivSizes(this.#pad, this.#threshold, i + 1, depthSum, structuredClone(this.#inner), this.#div);
+				onLayers.push(div.sameSizeDiv);
+				depthSum += this.#div[2];
+			}
+			thickness = 0;
+			return data;
+		}, 0);
+		return new DesignPlotter(onLayers, this.#data).squaredDesign;
+	}
+	#populateLayerStandard() {
+		const { layers, fillGaps, artLocation } = this.#info;
+		const onLayers = [];
+		let depthSum = 0;
+		let thickness = 0;
+		layers.map((data, i) => {
+			const { vacuum, works } = data;
+			const allWorks = works.map((info) => {
+				return new WorksPosition(info.work, artLocation.get(info.work[0]), depthSum, this.#threshold, this.#pad).standardCanvas;
+			});
+			const checkGap = vacuum.length > 1;
+			onLayers.push(this.#worksOffset(allWorks, depthSum, i + 1));
+			works.filter((info) => {
+				if (!thickness || thickness < info.work[2]) thickness = info.work[2];
+				return info;
+			});
+			if (checkGap) new FillGaps({
+				vacuum,
+				maxZ: fillGaps,
+				offZ: +(depthSum + this.#threshold[1]).toFixed(3),
+				pad: this.#pad,
+				div: this.#div,
+				offset: this.#threshold
+			}, i + 1).fill;
+			depthSum += +thickness.toFixed(3);
+			if (layers.length > 1 && layers.length - 1 > i) {
+				const div = new PadDivSizes(this.#pad, this.#threshold, i + 1, depthSum, structuredClone(this.#inner), this.#div);
+				onLayers.push(div.standardDiv);
+				depthSum += this.#div[2];
+			}
+			thickness = 0;
+			return data;
+		}, 0);
+		return new DesignPlotter(onLayers, this.#data).squaredDesign;
+	}
+	#defineWorksLocation() {
+		switch (this.#crate.type) {
+			case "tubeCrate": return this.#populateLayerTubeCrate();
+			case "sameSizeCrate": return this.#populateLayerSameSizes();
+			case "largestCrate": return this.#populateLayerHugeCanvas();
+			case "noCanvasCrate": return this.#populateLayerNotCanvas();
+			case "standardCrate": return this.#populateLayerStandard();
+		}
+	}
+	get arrange() {
+		const used = JSON.parse(localStorage.getItem("crating")).map((opt) => this.#info.usedMaterials.get(opt));
+		this.#fillCrateThresholdData(used);
+		return this.#defineWorksLocation();
+	}
+};
+//#endregion
+//#region app/plotter/Plotly.large.bottom.mjs
+var LargeBottomCrate = class {
+	#sized;
+	#foot;
+	#ply;
+	#base;
+	#pine;
+	#extraDepth;
+	#leanPines;
+	#angle;
+	constructor(data) {
+		const { finalSize, extra } = data;
+		const { leanSupport, baseSize, extraLength, angle } = extra;
+		const used = JSON.parse(localStorage.getItem("crating")).map((opt) => data.usedMaterials.get(opt));
+		this.#angle = angle;
+		this.#leanPines = leanSupport;
+		this.#extraDepth = extraLength;
+		this.#base = baseSize;
+		this.#foot = used.find((list) => list.at(-1) === "Wooden Post");
+		this.#ply = used.find((list) => list.at(-1) === "Plywood");
+		this.#pine = used.find((list) => list.at(-1) === "Pinewood");
+		this.#sized = [
+			finalSize[0],
+			finalSize[1] - baseSize[1],
+			finalSize[2]
+		];
+		this.#foot[1] = +this.#foot[1];
+		this.#foot[2] = +this.#foot[2];
+		this.#foot[3] = +this.#foot[3];
+	}
+	#setExtraFeet(offX) {
+		const offZ = -this.#extraDepth;
+		const offY = 2 * this.#ply[2] + this.#foot[3];
+		const x = this.#foot[2] + offX;
+		const y = this.#foot[2] + offY;
+		const z = -this.#sized[1] - this.#base[1];
+		const degree = (90 - this.#angle - 2) * Math.PI / 180;
+		const leanCut = -+(+this.#foot[3] / Math.cos(degree)).toFixed(3) - this.#extraDepth + this.#foot[3];
+		return {
+			coordinates: [
+				{
+					x: offX,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y,
+					z: leanCut
+				},
+				{
+					x: offX,
+					y,
+					z: leanCut
+				}
+			],
+			width: x - offX,
+			depth: this.#sized[1],
+			height: y - offY,
+			offsetX: offX,
+			offsetY: -this.#sized[1] + offZ,
+			offsetZ: offY
+		};
+	}
+	#defineVerticalPineStructureSupport(offX) {
+		const offY = +this.#foot[3] + 2 * +this.#ply[2];
+		const offZ = -this.#sized[1] - this.#base[1] + +this.#pine[3];
+		const x = offX > 0 ? offX - +this.#pine[2] : +this.#pine[2];
+		const hipotenusa = +this.#pine[3] / Math.sin(this.#angle);
+		const y = this.#leanPines + offY;
+		const extraY = Math.floor(y + Math.sqrt(hipotenusa ** 2 - this.#pine[3] ** 2));
+		const z = -this.#sized[1] - this.#base[1];
+		return {
+			coordinates: [
+				{
+					x: offX,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y: extraY,
+					z
+				},
+				{
+					x: offX,
+					y: extraY,
+					z
+				},
+				{
+					x: offX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y,
+					z: offZ
+				}
+			],
+			width: x - offX,
+			depth: +this.#pine[3],
+			height: 0,
+			offsetX: offX,
+			offsetY: offZ,
+			offsetZ: offY
+		};
+	}
+	#verticalPines(info) {
+		const pineSpanCm = 100;
+		const counter = Math.floor(this.#sized[0] / pineSpanCm) + 1;
+		const trace = new TraceMaker();
+		const fill = new DesignWalls();
+		const half = +this.#foot[2] / 2;
+		let offX = 0;
+		let addFeet = 0;
+		while (addFeet++ <= counter) {
+			const { coordinates, offsetX, offsetY, offsetZ, width, depth, height } = this.#defineVerticalPineStructureSupport(offX);
+			if (offX === 0) offX = +this.#foot[2] + +this.#pine[2];
+			trace.data = {
+				info,
+				coordinates,
+				name: "frame",
+				show: false
+			};
+			info = trace.defineTrace;
+			fill.objectData = {
+				width,
+				depth,
+				height,
+				info,
+				name: "frame",
+				offsetX,
+				offsetY,
+				offsetZ
+			};
+			info = fill.designSides;
+			offX += offX + pineSpanCm >= +this.#ply[1] ? pineSpanCm - half : pineSpanCm;
+			if (offX >= this.#sized[0] - pineSpanCm) offX = this.#sized[0];
+		}
+		return info;
+	}
+	#extraFeet(info) {
+		const feetSpanCm = 100;
+		const counter = Math.floor(this.#sized[0] / feetSpanCm) + 1;
+		const trace = new TraceMaker();
+		const fill = new DesignWalls();
+		const half = +this.#foot[2] / 2;
+		let offX = +this.#pine[2];
+		let addFeet = 0;
+		while (addFeet++ <= counter) {
+			const newFoot = this.#sized[0] / (addFeet * feetSpanCm) >= 1;
+			const { coordinates, offsetX, offsetY, offsetZ, width, depth, height } = this.#setExtraFeet(offX);
+			if (offX === +this.#pine[2]) offX = 0;
+			trace.data = {
+				info,
+				coordinates,
+				name: "frame",
+				show: false
+			};
+			info = trace.defineTrace;
+			fill.objectData = {
+				width,
+				depth,
+				height,
+				info,
+				name: "frame",
+				offsetX,
+				offsetY,
+				offsetZ
+			};
+			info = fill.designSides;
+			if (newFoot) offX += offX + feetSpanCm === +this.#ply[1] ? feetSpanCm - half : feetSpanCm;
+			if (offX >= this.#sized[0] - feetSpanCm) offX = this.#sized[0] - +this.#foot[2] - +this.#pine[2];
+		}
+		return info;
+	}
+	#defineLargeFeet(offX) {
+		const x = this.#foot[2] + offX;
+		const y = this.#foot[2];
+		const z = -this.#sized[1] - this.#base[1];
+		const offZ = -this.#extraDepth;
+		return {
+			coordinates: [
+				{
+					x: offX,
+					y: 0,
+					z
+				},
+				{
+					x,
+					y: 0,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y: 0,
+					z: offZ
+				},
+				{
+					x,
+					y: 0,
+					z: offZ
+				},
+				{
+					x,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y,
+					z: offZ
+				}
+			],
+			width: x - offX,
+			depth: this.#sized[1],
+			height: y,
+			offsetX: offX,
+			offsetY: -this.#sized[1] - this.#base[1],
+			offsetZ: 0
+		};
+	}
+	#setAllLargeParts(info, large = false) {
+		const feetSpanCm = 100;
+		const counter = Math.floor(this.#sized[0] / feetSpanCm) + 1;
+		const trace = new TraceMaker();
+		const fill = new DesignWalls();
+		const half = +this.#foot[2] / 2;
+		let offX = 0;
+		let addFeet = 0;
+		while (addFeet++ <= counter) {
+			const newFoot = large && this.#sized[0] / (addFeet * feetSpanCm) >= 1;
+			const { coordinates, offsetX, offsetY, offsetZ, width, depth, height } = this.#defineLargeFeet(offX);
+			trace.data = {
+				info,
+				coordinates,
+				name: "frame",
+				show: false
+			};
+			info = trace.defineTrace;
+			fill.objectData = {
+				width,
+				depth,
+				height,
+				info,
+				name: "frame",
+				offsetX,
+				offsetY,
+				offsetZ
+			};
+			info = fill.designSides;
+			if (!large) offX += this.#sized[0] > +this.#ply[1] ? +this.#ply[1] : this.#sized[0];
+			else if (newFoot) offX += offX + feetSpanCm === +this.#ply[1] ? feetSpanCm - half : feetSpanCm;
+			if (offX >= this.#sized[0] - feetSpanCm) offX = this.#sized[0] - +this.#foot[2];
+		}
+		return info;
+	}
+	#defineLargeBaseSheet(counter, offX) {
+		const offZ = -this.#extraDepth;
+		const offY = counter > 1 ? +this.#ply[2] + +this.#foot[3] : +this.#foot[3];
+		const x = offX === 0 ? +this.#ply[1] : +(this.#sized[0] - offX + offX).toFixed(3);
+		const y = counter * +this.#ply[2] + +this.#foot[3];
+		const z = -this.#sized[1] - this.#base[1];
+		return {
+			coordinates: [
+				{
+					x: offX,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y,
+					z: offZ
+				}
+			],
+			width: x - offX,
+			depth: this.#sized[1],
+			height: +this.#ply[2],
+			offsetX: offX,
+			offsetY: -this.#sized[1] - this.#base[1],
+			offsetZ: y - +this.#ply[2],
+			lastX: x
+		};
+	}
+	#setSheets(info, counter, offY, nextX = 0) {
+		if (counter < 0) return info;
+		const trace = new TraceMaker();
+		const fill = new DesignWalls();
+		const { coordinates, offsetX, offsetY, offsetZ, width, depth, height, lastX } = this.#defineLargeBaseSheet(offY, nextX);
+		nextX = lastX;
+		trace.data = {
+			info,
+			coordinates,
+			name: "frame",
+			show: false
+		};
+		info = trace.defineTrace;
+		fill.objectData = {
+			width,
+			depth,
+			height,
+			info,
+			name: "frame",
+			offsetX,
+			offsetY,
+			offsetZ
+		};
+		info = fill.designSides;
+		return this.#setSheets(info, counter - 1, offY, nextX);
+	}
+	#setBaseSheet(meta) {
+		let layers = 2;
+		let offY = 1;
+		const sheets = this.#sized[0] / +this.#ply[1];
+		while (layers--) {
+			this.#setSheets(meta, sheets, offY);
+			offY++;
+		}
+		return meta;
+	}
+	#designLargeBottom() {
+		const meta = this.#setAllLargeParts([], true);
+		this.#setBaseSheet(meta);
+		this.#extraFeet(meta);
+		this.#verticalPines(meta);
+		return meta;
+	}
+	get largeBottom() {
+		if (!this.#foot || !this.#sized) return false;
+		return this.#designLargeBottom();
+	}
+};
+//#endregion
+//#region app/plotter/Largest.Canvas.Render.class.mjs
+var largestCrateRender = class {
+	#crates;
+	#layout;
+	constructor(data, layout) {
+		this.#crates = data;
+		this.#layout = layout;
+	}
+	#startDrawing() {
+		const { crates } = this.#crates;
+		const result = crates.map((data, i) => {
+			if (i % 2 === 0) {
+				const { finalSize, innerSize, baseSize, extraDepth, extraHeight } = data.at(-1)[0];
+				let meta = new LargeBottomCrate(data.at(-1)[0]).largeBottom;
+				meta = new LargeCratesFrame(meta, data.at(-1)[0]).setFrame;
+				return meta;
+			}
+			return data;
+		}, 0);
+		return result.length ? {
+			result: result[0],
+			meta: this.#layout
+		} : false;
+	}
+	get composeCrate() {
+		return this.#startDrawing();
+	}
+};
+//#endregion
+//#region app/plotter/Frame.crate.graphic.mjs
+var CratesFrame = class {
+	#sized;
+	#pine;
+	#feet;
+	#meta;
+	constructor(meta, data) {
+		const { finalSize } = data;
+		const used = JSON.parse(localStorage.getItem("crating")).map((opt) => data.usedMaterials.get(opt));
+		this.#meta = meta;
+		this.#pine = used.find((list) => list.at(-1) === "Pinewood");
+		this.#feet = used.find((list) => list.at(-1) === "Wooden Post");
+		this.#sized = finalSize;
+		this.#pine[1] = +this.#pine[1];
+		this.#pine[2] = +this.#pine[2];
+		this.#pine[3] = +this.#pine[3];
+	}
+	#offsetFrame() {
+		return {
+			offsetFacesRightBackV: {
+				type: "faceV",
+				x: this.#pine[2],
+				y: this.#pine[3] + 2 * this.#pine[2],
+				z: 0,
+				width: this.#pine[3],
+				depth: this.#pine[2],
+				height: this.#sized[2] - (+this.#feet[3] + 2 * this.#pine[3] + this.#pine[2]),
+				offsetX: this.#pine[2],
+				offsetY: 0,
+				offsetZ: +this.#feet[3] + this.#pine[3]
+			},
+			offsetFacesLeftBackV: {
+				type: "faceVR",
+				x: this.#sized[0] - this.#pine[2],
+				y: this.#pine[3] + 2 * this.#pine[2],
+				z: 0,
+				width: this.#pine[3],
+				depth: this.#pine[2],
+				height: this.#sized[2] - (+this.#feet[3] + 2 * this.#pine[3] + this.#pine[2]),
+				offsetX: this.#sized[0] - (this.#pine[3] + this.#pine[2]),
+				offsetY: 0,
+				offsetZ: +this.#feet[3] + this.#pine[3]
+			},
+			offsetFacesRightFrontV: {
+				type: "faceVB",
+				x: this.#pine[2],
+				y: this.#pine[3] + 2 * this.#pine[2],
+				z: this.#sized[1],
+				width: this.#pine[3],
+				depth: this.#pine[2],
+				height: this.#sized[2] - (+this.#feet[3] + 2 * this.#pine[3] + this.#pine[2]),
+				offsetX: this.#pine[2],
+				offsetY: this.#sized[1] - this.#pine[2],
+				offsetZ: +this.#feet[3] + this.#pine[3]
+			},
+			offsetFacesLeftFrontV: {
+				type: "faceVBR",
+				x: this.#sized[0] - this.#pine[2],
+				y: this.#pine[3] + 2 * this.#pine[2],
+				z: this.#sized[1],
+				width: this.#pine[3],
+				depth: this.#pine[2],
+				height: this.#sized[2] - (+this.#feet[3] + 2 * this.#pine[3] + this.#pine[2]),
+				offsetX: this.#sized[0] - (this.#pine[3] + this.#pine[2]),
+				offsetY: this.#sized[1] - this.#pine[2],
+				offsetZ: +this.#feet[3] + this.#pine[3]
+			},
+			offsetSidesRightVUp: {
+				type: "sideHUp",
+				x: 0,
+				y: this.#sized[2] - this.#pine[2],
+				z: this.#pine[2],
+				width: this.#pine[2],
+				depth: this.#sized[1] - 2 * this.#pine[2],
+				height: this.#pine[3],
+				offsetX: 0,
+				offsetY: this.#pine[2],
+				offsetZ: this.#sized[2] - (this.#pine[3] + this.#pine[2])
+			},
+			offsetSidesLeftVUp: {
+				type: "sideLeftHUp",
+				x: this.#sized[0],
+				y: this.#sized[2] - this.#pine[2],
+				z: this.#pine[2],
+				width: this.#pine[2],
+				depth: this.#sized[1] - 2 * this.#pine[2],
+				height: this.#pine[3],
+				offsetX: this.#sized[0] - this.#pine[2],
+				offsetY: this.#pine[2],
+				offsetZ: this.#sized[2] - (this.#pine[3] + this.#pine[2])
+			},
+			offsetSidesRightHDown: {
+				type: "sideHDown",
+				x: 0,
+				y: 2 * this.#pine[2],
+				z: this.#pine[2],
+				width: this.#pine[2],
+				depth: this.#sized[1] - 2 * this.#pine[2],
+				height: this.#pine[3],
+				offsetX: 0,
+				offsetY: this.#pine[2],
+				offsetZ: 2 * this.#pine[2]
+			},
+			offsetSidesLeftHDown: {
+				type: "sideLeftHDown",
+				x: this.#sized[0],
+				y: 2 * this.#pine[2],
+				z: this.#pine[2],
+				width: this.#pine[2],
+				depth: this.#sized[1] - 2 * this.#pine[2],
+				height: this.#pine[3],
+				offsetX: this.#sized[0] - this.#pine[2],
+				offsetY: this.#pine[2],
+				offsetZ: 2 * this.#pine[2]
+			},
+			offsetFacesBackUpH: {
+				type: "faceHUp",
+				x: 0,
+				y: this.#sized[2] - this.#pine[2],
+				z: 0,
+				width: this.#sized[0],
+				depth: this.#pine[2],
+				height: this.#pine[3],
+				offsetX: 0,
+				offsetY: 0,
+				offsetZ: this.#sized[2] - (this.#pine[2] + this.#pine[3])
+			},
+			offsetFacesBackDownH: {
+				type: "faceH",
+				x: 0,
+				y: 2 * this.#pine[2],
+				z: 0,
+				width: this.#sized[0],
+				depth: this.#pine[2],
+				height: this.#pine[3],
+				offsetX: 0,
+				offsetY: 0,
+				offsetZ: 2 * this.#pine[2]
+			},
+			offsetFacesFrontUpH: {
+				type: "faceHBackUp",
+				x: 0,
+				y: this.#sized[2] - this.#pine[2],
+				z: this.#sized[1],
+				width: this.#sized[0],
+				depth: this.#pine[2],
+				height: this.#pine[3],
+				offsetX: 0,
+				offsetY: this.#sized[1] - this.#pine[2],
+				offsetZ: this.#sized[2] - (this.#pine[2] + this.#pine[3])
+			},
+			offsetFacesFrontDownH: {
+				type: "faceHBackDown",
+				x: 0,
+				y: 2 * this.#pine[2],
+				z: this.#sized[1],
+				width: this.#sized[0],
+				depth: this.#pine[2],
+				height: this.#pine[3],
+				offsetX: 0,
+				offsetY: this.#sized[1] - this.#pine[2],
+				offsetZ: 2 * this.#pine[2]
+			},
+			offsetSidesRightVBack: {
+				type: "sideV",
+				x: 0,
+				y: this.#pine[3] + 2 * this.#pine[2],
+				z: 0,
+				width: this.#pine[2],
+				depth: this.#pine[3],
+				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				offsetX: 0,
+				offsetY: 0,
+				offsetZ: 2 * this.#pine[2] + this.#pine[3]
+			},
+			offsetSidesRightVFront: {
+				type: "sideRightFrontV",
+				x: 0,
+				y: this.#pine[3] + 2 * this.#pine[2],
+				z: this.#sized[1] - this.#pine[3],
+				width: this.#pine[2],
+				depth: this.#pine[3],
+				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				offsetX: 0,
+				offsetY: this.#sized[1] - this.#pine[3],
+				offsetZ: 2 * this.#pine[2] + this.#pine[3]
+			},
+			offsetSidesLeftVBack: {
+				type: "sideLeftV",
+				x: this.#sized[0],
+				y: this.#pine[3] + 2 * this.#pine[2],
+				z: 0,
+				width: this.#pine[2],
+				depth: this.#pine[3],
+				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				offsetX: this.#sized[0] - this.#pine[2],
+				offsetY: 0,
+				offsetZ: 2 * this.#pine[2] + this.#pine[3]
+			},
+			offsetSidesLeftVFront: {
+				type: "sideLeftFrontV",
+				x: this.#sized[0],
+				y: this.#pine[3] + 2 * this.#pine[2],
+				z: this.#sized[1] - this.#pine[3],
+				width: this.#pine[2],
+				depth: this.#pine[3],
+				height: this.#sized[2] - (2 * this.#pine[3] + 3 * this.#pine[2]),
+				offsetX: this.#sized[0] - this.#pine[2],
+				offsetY: this.#sized[1] - this.#pine[3],
+				offsetZ: 2 * this.#pine[2] + this.#pine[3]
+			},
+			offsetTopFrontH: {
+				type: "topFace",
+				x: this.#pine[3],
+				y: this.#sized[2] - this.#pine[2],
+				z: 0,
+				width: this.#sized[0] - 2 * this.#pine[3],
+				depth: this.#pine[3],
+				height: this.#pine[2],
+				offsetX: this.#pine[3],
+				offsetY: 0,
+				offsetZ: this.#sized[2] - this.#pine[2]
+			},
+			offsetTopBackH: {
+				type: "topComp",
+				x: this.#pine[3],
+				y: this.#sized[2] - this.#pine[2],
+				z: this.#sized[1],
+				width: this.#sized[0] - 2 * this.#pine[3],
+				depth: this.#pine[3],
+				height: this.#pine[2],
+				offsetX: this.#pine[3],
+				offsetY: this.#sized[1] - this.#pine[3],
+				offsetZ: this.#sized[2] - this.#pine[2]
+			},
+			offsetTopRight: {
+				type: "topFeet",
+				x: 0,
+				y: this.#sized[2] - this.#pine[2],
+				z: 0,
+				width: this.#pine[3],
+				depth: this.#sized[1],
+				height: this.#pine[2],
+				offsetX: 0,
+				offsetY: 0,
+				offsetZ: this.#sized[2] - this.#pine[2]
+			},
+			offsetTopLeft: {
+				type: "topLeftFeet",
+				x: this.#sized[0],
+				y: this.#sized[2] - this.#pine[2],
+				z: 0,
+				width: this.#pine[3],
+				depth: this.#sized[1],
+				height: this.#pine[2],
+				offsetX: this.#sized[0] - this.#pine[3],
+				offsetY: 0,
+				offsetZ: this.#sized[2] - this.#pine[2]
+			}
+		};
+	}
+	#defineFrameComponents() {
+		const upFeet = 2 * this.#pine[2];
+		const vertical = this.#sized[2] - this.#pine[3] - this.#pine[2];
+		const rightFeet = this.#sized[0] - this.#pine[3];
+		const vDepth = this.#sized[1] - this.#pine[2];
+		const upFace = this.#sized[2] - this.#pine[3] - this.#pine[2];
+		const tinySide = this.#sized[1] - this.#pine[2];
+		const tinyRightSide = this.#sized[0] - this.#pine[2];
+		const sideComp = this.#pine[3] + this.#pine[2];
+		const rightComp = this.#sized[0] - this.#pine[3] - this.#pine[2];
+		const topZ = this.#sized[2];
+		const topzComp = this.#sized[1] - this.#pine[3];
+		return {
+			feet: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[3],
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[3],
+					y: this.#pine[2],
+					z: 0
+				},
+				{
+					x: 0,
+					y: this.#pine[2],
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: this.#pine[3],
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: this.#pine[3],
+					y: this.#pine[2],
+					z: this.#sized[1]
+				},
+				{
+					x: 0,
+					y: this.#pine[2],
+					z: this.#sized[1]
+				}
+			],
+			feetR: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: this.#pine[2],
+					z: 0
+				},
+				{
+					x: 0,
+					y: this.#pine[2],
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: rightFeet,
+					y: this.#pine[2],
+					z: this.#sized[1]
+				},
+				{
+					x: 0,
+					y: this.#pine[2],
+					z: this.#sized[1]
+				}
+			],
+			feetUp: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[3],
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[3],
+					y: upFeet,
+					z: 0
+				},
+				{
+					x: 0,
+					y: upFeet,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: this.#pine[3],
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: this.#pine[3],
+					y: upFeet,
+					z: this.#sized[1]
+				},
+				{
+					x: 0,
+					y: upFeet,
+					z: this.#sized[1]
+				}
+			],
+			feetUpR: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: upFeet,
+					z: 0
+				},
+				{
+					x: 0,
+					y: upFeet,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: rightFeet,
+					y: upFeet,
+					z: this.#sized[1]
+				},
+				{
+					x: 0,
+					y: upFeet,
+					z: this.#sized[1]
+				}
+			],
+			faceV: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: sideComp,
+					y: 0,
+					z: 0
+				},
+				{
+					x: sideComp,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#pine[2]
+				},
+				{
+					x: sideComp,
+					y: 0,
+					z: this.#pine[2]
+				},
+				{
+					x: sideComp,
+					y: vertical,
+					z: this.#pine[2]
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: this.#pine[2]
+				}
+			],
+			faceVR: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightComp,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightComp,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#pine[2]
+				},
+				{
+					x: rightComp,
+					y: 0,
+					z: this.#pine[2]
+				},
+				{
+					x: rightComp,
+					y: vertical,
+					z: this.#pine[2]
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: this.#pine[2]
+				}
+			],
+			faceVB: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: sideComp,
+					y: 0,
+					z: 0
+				},
+				{
+					x: sideComp,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: vDepth
+				},
+				{
+					x: sideComp,
+					y: 0,
+					z: vDepth
+				},
+				{
+					x: sideComp,
+					y: vertical,
+					z: vDepth
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: vDepth
+				}
+			],
+			faceVBR: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightComp,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightComp,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: vDepth
+				},
+				{
+					x: rightComp,
+					y: 0,
+					z: vDepth
+				},
+				{
+					x: rightComp,
+					y: vertical,
+					z: vDepth
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: vDepth
+				}
+			],
+			faceH: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#sized[0],
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#sized[0],
+					y: this.#pine[3] + upFeet,
+					z: 0
+				},
+				{
+					x: 0,
+					y: this.#pine[3] + upFeet,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#pine[2]
+				},
+				{
+					x: this.#sized[0],
+					y: 0,
+					z: this.#pine[2]
+				},
+				{
+					x: this.#sized[0],
+					y: this.#pine[3] + upFeet,
+					z: this.#pine[2]
+				},
+				{
+					x: 0,
+					y: this.#pine[3] + upFeet,
+					z: this.#pine[2]
+				}
+			],
+			faceHUp: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#sized[0],
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#sized[0],
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#pine[2]
+				},
+				{
+					x: this.#sized[0],
+					y: 0,
+					z: this.#pine[2]
+				},
+				{
+					x: this.#sized[0],
+					y: upFace,
+					z: this.#pine[2]
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: this.#pine[2]
+				}
+			],
+			faceHBackUp: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#sized[0],
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#sized[0],
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: vDepth
+				},
+				{
+					x: this.#sized[0],
+					y: 0,
+					z: vDepth
+				},
+				{
+					x: this.#sized[0],
+					y: upFace,
+					z: vDepth
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: vDepth
+				}
+			],
+			faceHBackDown: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#sized[0],
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#sized[0],
+					y: this.#pine[3] + upFeet,
+					z: 0
+				},
+				{
+					x: 0,
+					y: this.#pine[3] + upFeet,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: vDepth
+				},
+				{
+					x: this.#sized[0],
+					y: 0,
+					z: vDepth
+				},
+				{
+					x: this.#sized[0],
+					y: this.#pine[3] + upFeet,
+					z: vDepth
+				},
+				{
+					x: 0,
+					y: this.#pine[3] + upFeet,
+					z: vDepth
+				}
+			],
+			sideHUp: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[2],
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[2],
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: tinySide
+				},
+				{
+					x: this.#pine[2],
+					y: 0,
+					z: tinySide
+				},
+				{
+					x: this.#pine[2],
+					y: vertical,
+					z: tinySide
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: tinySide
+				}
+			],
+			sideLeftHUp: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: tinyRightSide,
+					y: 0,
+					z: 0
+				},
+				{
+					x: tinyRightSide,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: tinySide
+				},
+				{
+					x: tinyRightSide,
+					y: 0,
+					z: tinySide
+				},
+				{
+					x: tinyRightSide,
+					y: vertical,
+					z: tinySide
+				},
+				{
+					x: 0,
+					y: vertical,
+					z: tinySide
+				}
+			],
+			sideHDown: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[2],
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[2],
+					y: this.#pine[3] + upFeet,
+					z: 0
+				},
+				{
+					x: 0,
+					y: this.#pine[3] + upFeet,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: tinySide
+				},
+				{
+					x: this.#pine[2],
+					y: 0,
+					z: tinySide
+				},
+				{
+					x: this.#pine[2],
+					y: this.#pine[3] + upFeet,
+					z: tinySide
+				},
+				{
+					x: 0,
+					y: this.#pine[3] + upFeet,
+					z: tinySide
+				}
+			],
+			sideLeftHDown: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: tinyRightSide,
+					y: 0,
+					z: 0
+				},
+				{
+					x: tinyRightSide,
+					y: this.#pine[3] + upFeet,
+					z: 0
+				},
+				{
+					x: 0,
+					y: this.#pine[3] + upFeet,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: tinySide
+				},
+				{
+					x: tinyRightSide,
+					y: 0,
+					z: tinySide
+				},
+				{
+					x: tinyRightSide,
+					y: this.#pine[3] + upFeet,
+					z: tinySide
+				},
+				{
+					x: 0,
+					y: this.#pine[3] + upFeet,
+					z: tinySide
+				}
+			],
+			sideV: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[2],
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[2],
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#pine[3]
+				},
+				{
+					x: this.#pine[2],
+					y: 0,
+					z: this.#pine[3]
+				},
+				{
+					x: this.#pine[2],
+					y: upFace,
+					z: this.#pine[3]
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: this.#pine[3]
+				}
+			],
+			sideRightFrontV: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[2],
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[2],
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: this.#pine[2],
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: this.#pine[2],
+					y: upFace,
+					z: this.#sized[1]
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: this.#sized[1]
+				}
+			],
+			sideLeftV: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: tinyRightSide,
+					y: 0,
+					z: 0
+				},
+				{
+					x: tinyRightSide,
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#pine[3]
+				},
+				{
+					x: tinyRightSide,
+					y: 0,
+					z: this.#pine[3]
+				},
+				{
+					x: tinyRightSide,
+					y: upFace,
+					z: this.#pine[3]
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: this.#pine[3]
+				}
+			],
+			sideLeftFrontV: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: tinyRightSide,
+					y: 0,
+					z: 0
+				},
+				{
+					x: tinyRightSide,
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: tinyRightSide,
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: tinyRightSide,
+					y: upFace,
+					z: this.#sized[1]
+				},
+				{
+					x: 0,
+					y: upFace,
+					z: this.#sized[1]
+				}
+			],
+			topFace: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: topZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: topZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#pine[3]
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: this.#pine[3]
+				},
+				{
+					x: rightFeet,
+					y: topZ,
+					z: this.#pine[3]
+				},
+				{
+					x: 0,
+					y: topZ,
+					z: this.#pine[3]
+				}
+			],
+			topComp: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: topZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: topZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: topzComp
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: topzComp
+				},
+				{
+					x: rightFeet,
+					y: topZ,
+					z: topzComp
+				},
+				{
+					x: 0,
+					y: topZ,
+					z: topzComp
+				}
+			],
+			topFeet: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[3],
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[3],
+					y: topZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: topZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: this.#pine[3],
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: this.#pine[3],
+					y: topZ,
+					z: this.#sized[1]
+				},
+				{
+					x: 0,
+					y: topZ,
+					z: this.#sized[1]
+				}
+			],
+			topLeftFeet: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: topZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: topZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: rightFeet,
+					y: topZ,
+					z: this.#sized[1]
+				},
+				{
+					x: 0,
+					y: topZ,
+					z: this.#sized[1]
+				}
+			]
+		};
+	}
+	#definePosition(offset, comp) {
+		const { x, y, z } = offset;
+		const change = structuredClone(comp);
+		Object.entries(change).map((data, i) => {
+			switch (i) {
+				case 0:
+					if (data[1].x === 0) data[1].x = x;
+					if (data[1].y === 0) data[1].y = y;
+					if (data[1].z === 0) data[1].z = z;
+					return data;
+				case 1:
+					if (data[1].y === 0) data[1].y = y;
+					if (data[1].z === 0) data[1].z = z;
+					return data;
+				case 2:
+					if (data[1].z === 0) data[1].z = z;
+					return data;
+				case 3:
+					if (data[1].x === 0) data[1].x = x;
+					if (data[1].z === 0) data[1].z = z;
+					return data;
+				case 4:
+					if (data[1].x === 0) data[1].x = x;
+					if (data[1].y === 0) data[1].y = y;
+					return data;
+				case 5:
+					if (data[1].y === 0) data[1].y = y;
+					return data;
+				case 7:
+					if (data[1].x === 0) data[1].x = x;
+					return data;
+			}
+			return data;
+		});
+		return change;
+	}
+	#setAllParts(meta, component, offsets) {
+		const trace = new TraceMaker();
+		const fill = new DesignWalls();
+		let show = true;
+		Object.entries(offsets).map((part) => {
+			const { type, offsetX, offsetY, offsetZ, width, depth, height } = part[1];
+			const design = component[type];
+			const defined = this.#definePosition(part[1], design);
+			trace.data = {
+				info: meta,
+				coordinates: defined,
+				name: "frame",
+				show
+			};
+			meta = trace.defineTrace;
+			fill.objectData = {
+				width,
+				depth,
+				height,
+				info: meta,
+				name: "frame",
+				offsetX,
+				offsetY,
+				offsetZ
+			};
+			meta = fill.designSides;
+			show = false;
+			return part;
+		});
+		return meta;
+	}
+	#designFrame() {
+		const components = this.#defineFrameComponents();
+		const offset = this.#offsetFrame();
+		this.#meta = this.#setAllParts(this.#meta, components, offset);
+		return this.#meta;
+	}
+	get setFrame() {
+		return this.#designFrame();
+	}
+};
+//#endregion
+//#region app/plotter/Plotly.bottomCrate.render.mjs
+var BottomCrate = class {
+	#sized;
+	#foot;
+	#ply;
+	constructor(data) {
+		const { finalSize } = data;
+		const used = JSON.parse(localStorage.getItem("crating")).map((opt) => data.usedMaterials.get(opt));
+		this.#foot = used.find((list) => list.at(-1) === "Wooden Post");
+		this.#ply = used.find((list) => list.at(-1) === "Plywood");
+		this.#sized = finalSize;
+		this.#foot[1] = +this.#foot[1];
+		this.#foot[2] = +this.#foot[2];
+		this.#foot[3] = +this.#foot[3];
+	}
+	#defineFeetSameSize(offZ) {
+		const z = this.#foot[2] + offZ;
+		const y = this.#foot[3];
+		const x = this.#sized[0];
+		return {
+			coordinates: [
+				{
+					z: offZ,
+					y: 0,
+					x: 0
+				},
+				{
+					z,
+					y: 0,
+					x: 0
+				},
+				{
+					z,
+					y,
+					x: 0
+				},
+				{
+					z: offZ,
+					y,
+					x: 0
+				},
+				{
+					z: offZ,
+					y: 0,
+					x
+				},
+				{
+					z,
+					y: 0,
+					x
+				},
+				{
+					z,
+					y,
+					x
+				},
+				{
+					z: offZ,
+					y,
+					x
+				}
+			],
+			width: x,
+			depth: z - offZ,
+			height: y,
+			offsetX: 0,
+			offsetY: offZ,
+			offsetZ: 0
+		};
+	}
+	#setSameAllParts(info, counter) {
+		const trace = new TraceMaker();
+		const fill = new DesignWalls();
+		let offZ = 0;
+		while (counter--) {
+			const { coordinates, offsetX, offsetY, offsetZ, width, depth, height } = this.#defineFeetSameSize(offZ);
+			trace.data = {
+				info,
+				coordinates,
+				name: "frame",
+				show: false
+			};
+			info = trace.defineTrace;
+			fill.objectData = {
+				width,
+				depth,
+				height,
+				info,
+				name: "frame",
+				offsetX,
+				offsetY,
+				offsetZ
+			};
+			info = fill.designSides;
+			offZ += this.#sized[1] - +this.#foot[2];
+		}
+		return info;
+	}
+	#defineFeet(offX) {
+		const x = this.#foot[2] + offX;
+		const y = this.#foot[2];
+		const z = this.#sized[1];
+		return {
+			coordinates: [
+				{
+					x: offX,
+					y: 0,
+					z: 0
+				},
+				{
+					x,
+					y: 0,
+					z: 0
+				},
+				{
+					x,
+					y,
+					z: 0
+				},
+				{
+					x: offX,
+					y,
+					z: 0
+				},
+				{
+					x: offX,
+					y: 0,
+					z
+				},
+				{
+					x,
+					y: 0,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y,
+					z
+				}
+			],
+			width: x - offX,
+			depth: z,
+			height: y,
+			offsetX: offX,
+			offsetY: 0,
+			offsetZ: 0
+		};
+	}
+	#setAllParts(info) {
+		let counter = Math.floor(this.#sized[0] / 100) + 1;
+		const trace = new TraceMaker();
+		const fill = new DesignWalls();
+		let offX = 0;
+		if (counter === 1) counter++;
+		while (counter--) {
+			const { coordinates, offsetX, offsetY, offsetZ, width, depth, height } = this.#defineFeet(offX);
+			trace.data = {
+				info,
+				coordinates,
+				name: "frame",
+				show: false
+			};
+			info = trace.defineTrace;
+			fill.objectData = {
+				width,
+				depth,
+				height,
+				info,
+				name: "frame",
+				offsetX,
+				offsetY,
+				offsetZ
+			};
+			info = fill.designSides;
+			offX += this.#sized[0] > +this.#ply[1] ? +this.#ply[1] : this.#sized[0];
+			if (offX >= this.#sized[0]) offX = this.#sized[0] - +this.#foot[2];
+		}
+		return info;
+	}
+	#designBottomSameSize() {
+		const countFeet = Math.floor(this.#sized[0] / +this.#ply[1]) + 2;
+		return this.#setSameAllParts([], countFeet);
+	}
+	#designBottom() {
+		const countFeet = Math.floor(this.#sized[0] / +this.#ply[1]) + 2;
+		return this.#setAllParts([], countFeet);
+	}
+	get commumSameBottom() {
+		if (!this.#foot || !this.#sized) return false;
+		return this.#designBottomSameSize();
+	}
+	get commumBottom() {
+		if (!this.#foot || !this.#sized) return false;
+		return this.#designBottom();
+	}
+};
+//#endregion
+//#region app/plotter/Not.Canvas.Render.class.mjs
+var notCanvasCrateRender = class {
+	#crates;
+	#layout;
+	constructor(data, layout) {
+		this.#crates = data;
+		this.#layout = layout;
+	}
+	#startDrawing() {
+		const { crates } = this.#crates;
+		const result = crates.map((data, i) => {
+			if (i % 2 === 0) {
+				let meta = new BottomCrate(data.at(-1)[0]).commumBottom;
+				meta = new CratesFrame(meta, data.at(-1)[0]).setFrame;
+				meta = new SetCrateWalls(meta, data.at(-1)[0]).setWalls;
+				meta = new PaddingCrate(meta, data.at(-1)[0]).setPadding;
+				meta = new PositionWorksInSideCrate(data.at(-1)[0], meta, "noCanvasCrate").arrange;
+				return meta;
+			}
+			return data;
+		}, 0);
+		return result.length ? {
+			result: result[0],
+			meta: this.#layout
+		} : false;
+	}
+	get composeCrate() {
+		return this.#startDrawing();
+	}
+};
+//#endregion
+//#region app/plotter/plotly.layout.mjs
+const layout = {
+	showlegend: true,
+	legend: {
+		title: {
+			text: "Proto crate:",
+			font: {
+				family: "Mitr, sans-serif",
+				size: 14
+			}
+		},
+		font: {
+			family: "Mitr, sans-serif",
+			sizes: 14,
+			color: "#FFFFFFAA"
+		},
+		x: .02,
+		xanchor: "left",
+		y: .99,
+		yanchor: "top",
+		orientation: "v",
+		groupclick: "sides"
+	},
+	margin: {
+		t: 0,
+		l: 0,
+		b: 0,
+		r: 0,
+		pad: 10
+	},
+	scene: {
+		aspectmode: "data",
+		xaxis: {
+			title: {
+				text: "Length - (cm)",
+				family: "Mitr, sans-serif"
+			},
+			color: "white",
+			thickcolor: "white",
+			ticks: "outside"
+		},
+		yaxis: {
+			title: {
+				text: "Depth - (cm)",
+				family: "Mitr, sans-serif"
+			},
+			color: "white",
+			thickcolor: "white",
+			tick: "outside"
+		},
+		zaxis: {
+			title: {
+				text: "Height - (cm)",
+				family: "Mitr, sans-serif"
+			},
+			color: "white",
+			thickcolor: "white",
+			tick: "outside"
+		},
+		camera: { eye: {
+			x: 0,
+			y: 3,
+			z: 1
+		} }
+	},
+	paper_bgcolor: "#96979C"
+};
+//#endregion
+//#region app/plotter/Same.Size.Render.class.mjs
+var sameSizeCrateRender = class {
+	#crates;
+	#layout;
+	constructor(data, layout) {
+		this.#crates = data;
+		this.#layout = layout;
+	}
+	#startDrawing() {
+		const { crates } = this.#crates;
+		const result = crates.map((data, i) => {
+			if (i % 2 === 0) {
+				let meta = new BottomCrate(data.at(-1)[0]).commumSameBottom;
+				meta = new CratesFrame(meta, data.at(-1)[0]).setFrame;
+				meta = new SetCrateWalls(meta, data.at(-1)[0]).setWalls;
+				meta = new PaddingCrate(meta, data.at(-1)[0]).setPadding;
+				meta = new PositionWorksInSideCrate(data.at(-1)[0], meta, "sameSizeCrate").arrange;
+				return meta;
+			}
+			return data;
+		}, 0);
+		return result.length ? {
+			result: result[0],
+			meta: this.#layout
+		} : false;
+	}
+	get composeCrate() {
+		return this.#startDrawing();
+	}
+};
+//#endregion
+//#region app/plotter/Standard.Render.class.mjs
+var standardCrateRender = class {
+	#crates;
+	#layout;
+	constructor(data, setup) {
+		this.#crates = data;
+		this.#layout = setup;
+	}
+	#startDrawing() {
+		const { crates } = this.#crates;
+		const result = crates.map((data, i) => {
+			if (i % 2 === 0) {
+				let meta = new BottomCrate(data.at(-1)[0]).commumBottom;
+				meta = new CratesFrame(meta, data.at(-1)[0]).setFrame;
+				meta = new SetCrateWalls(meta, data.at(-1)[0]).setWalls;
+				meta = new PaddingCrate(meta, data.at(-1)[0]).setPadding;
+				meta = new PositionWorksInSideCrate(data.at(-1)[0], meta, "standardCrate").arrange;
+				return meta;
+			}
+			return data;
+		}, 0);
+		return result.length ? {
+			result: result[0],
+			meta: this.#layout
+		} : false;
+	}
+	get composeCrate() {
+		return this.#startDrawing();
+	}
+};
+//#endregion
+//#region app/plotter/Tube.Render.class.mjs
+var tubeCrateRender = class {
+	#crates;
+	#layout;
+	constructor(data, layout) {
+		this.#crates = data;
+		this.#layout = layout;
+	}
+	#startDrawing() {
+		const { crates } = this.#crates;
+		const result = crates.map((data, i) => {
+			if (i % 2 === 0) {
+				let meta = new BottomCrate(data.at(-1)[0]).commumBottom;
+				meta = new CratesFrame(meta, data.at(-1)[0]).setFrame;
+				meta = new SetCrateWalls(meta, data.at(-1)[0]).setWalls;
+				meta = new PaddingCrate(meta, data.at(-1)[0]).setPaddingTubes;
+				meta = new PositionWorksInSideCrate(data.at(-1)[0], meta, "tubeCrate").arrange;
+				return meta;
+			}
+			return data;
+		}, 0);
+		return result.length ? {
+			result: result[0],
+			meta: this.#layout
+		} : false;
+	}
+	get composeCrate() {
+		return this.#startDrawing();
+	}
+};
+//#endregion
+//#region app/plotter/Plotly.Renderer.Crates.mjs
+var GraphicCrates = class {
+	#plotly;
+	#edges;
+	#crates;
+	constructor() {
+		const { Plotly } = globalThis;
+		this.#crates = [
+			"tubeCrate",
+			"largestCrate",
+			"sameSizeCrate",
+			"noCanvasCrate",
+			"standardCrate"
+		];
+		this.#edges = [
+			[0, 1],
+			[1, 2],
+			[2, 3],
+			[3, 0],
+			[4, 5],
+			[5, 6],
+			[6, 7],
+			[7, 4],
+			[0, 4],
+			[1, 5],
+			[2, 6],
+			[3, 7]
+		];
+		this.#plotly = Plotly;
+	}
+	/**
+	* @method - catch the solved results.
+	*/
+	async #grabArtWorksOnIDB() {
+		const ref = localStorage.getItem("refNumb");
+		const WORKER = new Worker(new URL("../panels/worker.IDB.crates.mjs", import.meta.url), { type: "module" });
+		WORKER.postMessage(ref);
+		return await new Promise((resolve, reject) => {
+			WORKER.onmessage = (res) => {
+				const { data } = res;
+				data?.reference === ref ? resolve(data) : reject(res);
+			};
+		});
+	}
+	#populatePlotter(list) {
+		let alterLayout = structuredClone(layout);
+		return {
+			result: this.#crates.map((crate) => {
+				const data = list.get(crate);
+				const draw = new Map([
+					["tubeCrate", new tubeCrateRender(data, alterLayout)],
+					["largestCrate", new largestCrateRender(data, alterLayout)],
+					["sameSizeCrate", new sameSizeCrateRender(data, alterLayout)],
+					["noCanvasCrate", new notCanvasCrateRender(data, alterLayout)],
+					["standardCrate", new standardCrateRender(data, alterLayout)]
+				]).get(crate);
+				if (data) {
+					const { result, meta } = draw.composeCrate;
+					alterLayout = meta;
+					return result;
+				}
+				return crate;
+			}).filter((info) => Array.isArray(info)).flat(),
+			alterLayout
+		};
+	}
+	async #cratesTriage() {
+		const { crates } = await this.#grabArtWorksOnIDB() || false;
+		const allCrates = /* @__PURE__ */ new Map();
+		const designs = sessionStorage.getItem("graphics") || false;
+		if (designs) return JSON.parse(designs)[sessionStorage.getItem("crate").split("/")[0]];
+		if (crates) {
+			Object.entries(crates).map((data) => {
+				if (this.#crates.includes(data[0])) allCrates.set(data[0], data[1]);
+				return data;
+			});
+			const finished = this.#populatePlotter(allCrates);
+			globalThis.sessionStorage.setItem("crate", `1/${crates.allCrates.length}`);
+			globalThis.sessionStorage.setItem("graphics", JSON.stringify(finished.designs));
+			document.getElementById("layer-count").innerText = `Courrent crate: 1 / ${crates.allCrates.length}`;
+			return finished;
+		}
+		return true;
+	}
+	/**
+	* @method starts the drawing all graphic crates.
+	*/
+	async #moutingCrates() {
+		const { result, alterLayout } = await this.#cratesTriage();
+		this.#plotly.newPlot("plotter-display", result, alterLayout, { displaylogo: false });
+	}
+	get show() {
+		return this.#moutingCrates();
+	}
+};
+//#endregion
+//#region app/plotter/layer.controller.mjs
+async function openDisplay() {
+	const design = new GraphicCrates();
+	const layout = document.querySelectorAll(".toggle__plotter");
+	const plotter = document.getElementById("layers");
+	let node;
+	for (node of layout) if (node.ariaHidden === "true") {
+		node.ariaHidden = "false";
+		plotter.ariaHidden = "true";
+	} else if (node.ariaHidden === "false") {
+		node.ariaHidden = "true";
+		plotter.ariaHidden = "false";
+		if (!sessionStorage.getItem("plotter")) {
+			design.show;
+			sessionStorage.setItem("plotter", "true");
+		}
+	}
+}
+//#endregion
+//#region app/core2/Converter.class.mjs
+var Converter = class {
+	#values;
+	constructor(...args) {
+		this.#values = [...args];
+	}
+	get cmConvert() {
+		return inConvert.call(this.#values);
+	}
+	get inConvert() {
+		return cmConvert.call(this.#values);
+	}
+};
+function checkValues() {
+	const checker = this.filter((val) => {
+		if (Number(val)) return val;
+		else if (typeof val === "string" && val) return +val.trim();
+		else return;
+	});
+	try {
+		if (!checker || checker.length < 1) throw new TypeError("Please, provide a value to be converted.");
+	} catch (err) {
+		return err;
+	}
+	return checker;
+}
+function cmConvert() {
+	const trimmer = checkValues.call(this);
+	if (Array.isArray(trimmer)) {
+		const INCH = 2.54;
+		return this.map((val) => {
+			return +(val / INCH).toFixed(3);
+		});
+	}
+	return trimmer;
+}
+function inConvert() {
+	const trimmer = checkValues.call(this);
+	if (Array.isArray(trimmer)) {
+		const INCH = 2.54;
+		return this.map((val) => {
+			return +(val * INCH).toFixed(0);
+		});
+	}
+	return trimmer;
+}
+//#endregion
+//#region app/core2/Regex.class.mjs
+var RegexChecker = class {
+	#values;
+	constructor(...args) {
+		this.#values = [...args];
+	}
+	get regexSizes() {
+		return regexWorks.call(this.#values);
+	}
+};
+function regexWorks() {
+	try {
+		const regx = this.map((val) => {
+			const reg = /[0-9]{1,3}/.test(val);
+			return Number.isNaN(val) ? false : reg;
+		});
+		const error = "Not a valid entry to RegexChecker!";
+		if (regx.includes(false)) throw new TypeError(error);
+	} catch (err) {
+		console.error(err);
+		return err;
+	}
+}
+//#endregion
+//#region app/core2/CubCalc.class.mjs
+var CubCalc = class {
+	#x;
+	#z;
+	#y;
+	constructor(x, z, y) {
+		this.#x = +x;
+		this.#z = +z;
+		this.#y = +y;
+	}
+	get cubCalcAir() {
+		return CubCalcAir(this.#x, this.#z, this.#y);
+	}
+	get cubArea() {
+		return CubArea(this.#x, this.#z, this.#y);
+	}
+};
+function CubCalcAir(x, z, y) {
+	const regex = new RegexChecker(x, z, y).regexSizes;
+	if (typeof regex === "object") return regex;
+	return +(x * z * y / 6e3).toFixed(3);
+}
+function CubArea(x, z, y) {
+	const regex = new RegexChecker(x, z, y).regexSizes;
+	if (typeof regex === "object") return regex;
+	return +(x * z * y / 1e6).toFixed(3);
+}
+//#endregion
+//#region app/core2/Hexaedro.class.mjs
+var Hexaedro = class {
+	constructor(x, z, y) {
+		try {
+			const error = "Please, provide a correct x, z or y value.";
+			if (!x || !z || !y) throw new TypeError(error);
+		} catch (err) {
+			return err;
+		}
+		this.x = +x;
+		this.z = +z;
+		this.y = +y;
+	}
+};
+//#endregion
+//#region app/core2/ArtWork.class.mjs
+var ArtWork = class extends Hexaedro {
+	coordinates;
+	packMaterials;
+	code;
+	#x;
+	#z;
+	#y;
+	/**
+	* @param { String } code
+	* @param { Number } x
+	* @param { Number } z
+	* @param { Number } y
+	* @typedef { [Array: Number | String] } Materials
+	* @param { Materials } pack
+	*/
+	constructor(code, x, z, y, pack) {
+		super(x, z, y);
+		try {
+			if (!code || code.trim() <= 0) {
+				const error = `Please, provide a valid code. Current: ${code}`;
+				throw new TypeError(error);
+			}
+		} catch (err) {
+			return err;
+		}
+		this.code = "" + code;
+		this.#x = +x;
+		this.#z = +z;
+		this.#y = +y;
+		this.packMaterials = pack;
+	}
+	/**
+	* @method - returns the artworks plus the packing materials
+	*/
+	#packedWorkSizes() {
+		const dimensions = {
+			x: structuredClone(this.#x),
+			z: structuredClone(this.#z),
+			y: structuredClone(this.#y)
+		};
+		const { packMaterials } = structuredClone(this);
+		if (packMaterials?.length) packMaterials.map((item) => {
+			dimensions.x += item[2] * 2;
+			dimensions.z += item[2] * 2;
+			dimensions.y += item[2] * 2;
+			return item;
+		});
+		return [
+			this.code,
+			+dimensions.x.toFixed(3),
+			+dimensions.z.toFixed(3),
+			+dimensions.y.toFixed(3)
+		];
+	}
+	/**
+	* @method - returns the packing material percent needed to wrap the artwork.
+	* @param { Array } area the material total area in meters.
+	* @param { number } demand the artworks total area in meters.
+	*/
+	#packingTypeMaterial(area, demand) {
+		const { packMaterials } = structuredClone(this);
+		return area.map((info, i) => {
+			const result = [packMaterials[i][0]];
+			result.push(+(demand * 100 / info).toFixed(0));
+			return result;
+		}, 0);
+	}
+	/**
+	* @method - returns the packing material units needed to wrap the artwork.
+	* @param { Array } percent the material total area in percentile.
+	*/
+	#materialQuantityApplied(percent) {
+		const { packMaterials } = structuredClone(this);
+		return percent.map((val, i) => {
+			if (packMaterials[i][5] === "Roll") return [val[0], +(val[1] / 100).toFixed(2)];
+			return [val[0], Math.ceil(val[1] / 100)];
+		}, 0);
+	}
+	/**
+	* @method - returns the rest of the percent used material.
+	* @param { Array } percent the material total area in percentile.
+	*/
+	#residualPacking(percent) {
+		return percent.map((percent) => {
+			return 1 - +(percent[1] / 100).toFixed(3) % 1;
+		});
+	}
+	/**
+	* @method - returns the quantity needed of all materials applied to the artwork.
+	*/
+	#packingData() {
+		const demand = this.packingDemanded;
+		const { packMaterials } = structuredClone(this);
+		const packArea = packMaterials.map((item) => item[1] * item[3] / 100);
+		const percent = this.#packingTypeMaterial(packArea, demand);
+		const reuse = packArea.map((data, i) => [percent[i][0], data > demand], 0);
+		const residual = this.#residualPacking(percent);
+		const prices = packMaterials.map((values) => values[4]);
+		return {
+			demand,
+			percent,
+			reuse,
+			residual,
+			types: packMaterials.map((kind, i) => [
+				kind[5],
+				packArea[i],
+				kind[0]
+			], 0),
+			cost: prices.map((val, i) => {
+				const value = +(percent[i][1] / 100 * val).toFixed(2);
+				return [
+					percent[i][0],
+					value,
+					+val
+				];
+			}, 0),
+			quantity: this.#materialQuantityApplied(percent, residual)
+		};
+	}
+	/**
+	* @field - returns the artworks info as an Array.
+	*/
+	get arr() {
+		return [
+			this.code,
+			this.#x,
+			this.#z,
+			this.#y
+		];
+	}
+	/**
+	* @field - returns the cube area as the air companies does the calculation.
+	*/
+	get cAir() {
+		return new CubCalc(this.#x, this.#z, this.#y).cubCalcAir;
+	}
+	/**
+	* @field - returns the cube area as normal math calculation
+	*/
+	get cubed() {
+		return new CubCalc(this.#x, this.#z, this.#y).cubArea;
+	}
+	/**
+	* @field - convert the art work sizes to inches from centimeters.
+	*/
+	get autoConvert() {
+		let { x, z, y } = this;
+		const CMVALUES = new Converter(x, z, y).cmConvert;
+		x = CMVALUES[0];
+		z = CMVALUES[1];
+		y = CMVALUES[2];
+		return [
+			this.code,
+			x,
+			z,
+			y
+		];
+	}
+	/**
+	* @field - returns all materials and artworks data.
+	*/
+	get data() {
+		return {
+			code: this.code,
+			x: this.#x,
+			z: this.#z,
+			y: this.#y,
+			packing: this.packMaterials
+		};
+	}
+	/**
+	* @field - returns the total area needed to cover packing.
+	*/
+	get packingDemanded() {
+		const { x, z, y } = this;
+		return +(2 * (x * y + x * z + y * z) / 100).toFixed(5);
+	}
+	/**
+	* @field - store the crate position of the artwork.
+	*/
+	get cratePosition() {
+		return this.coordinates;
+	}
+	/**
+	* @field - returns the artwork sizes after all packing applied.
+	*/
+	get packedSized() {
+		return this.#packedWorkSizes();
+	}
+	/**
+	* @field - returns all packing materials data applied to the artwork.
+	*/
+	get packInfo() {
+		return this.#packingData();
+	}
+	/**
+	*  @param { Object } values
+	*/
+	set defCoordinate(values) {
+		this.coordinates = values;
+	}
+};
+//#endregion
+//#region app/core2/Arranger.largest.works.mjs
+var ArrangerLargestCanvas = class {
+	#list;
+	constructor(list) {
+		this.#list = list;
+	}
+	#finder() {
+		const MAXHEIGHT = 217.5;
+		const largestCanvas = this.filter((work) => {
+			return work.x >= MAXHEIGHT && work.y >= MAXHEIGHT ? work : 0;
+		});
+		return largestCanvas.length ? largestCanvas : false;
+	}
+	#largest() {
+		const { sorted } = this.#list;
+		const finder = this.#finder.call(sorted);
+		finder && finder.map((canvas) => {
+			canvas && this.#list.sorted.splice(this.#list.sorted.indexOf(canvas), 1);
+			return canvas;
+		});
+		if (finder) this.#list.largest = finder;
+		return this.#list;
+	}
+	get makeArrange() {
+		return this.#largest();
+	}
+};
+//#endregion
+//#region app/core2/Arranger.no.canvas.mjs
+var ArrangerNoCanvas = class {
+	#peces;
+	constructor(list) {
+		this.#peces = list;
+	}
+	#removePeces(peces) {
+		peces.map((element) => {
+			this.sorted.splice(this.sorted.indexOf(element), 1);
+			return element;
+		});
+	}
+	#noCanvasOut() {
+		let { sorted, sameSize } = this.#peces;
+		const MAXDEPTH = 15;
+		let checkerOne = sorted.filter((pece) => pece.z > MAXDEPTH);
+		let checkerTwo = sameSize.filter((pece) => pece.z > MAXDEPTH);
+		const found = [];
+		checkerOne.map((pece) => found.push(pece));
+		this.#removePeces.call(this.#peces, checkerOne);
+		checkerTwo.map((pece) => found.push(pece));
+		this.#removePeces.call(this.#peces, checkerTwo);
+		sorted = null;
+		sameSize = null;
+		checkerOne = null;
+		checkerTwo = null;
+		this.#peces.noCanvas = found;
+		return this.#peces;
+	}
+	#noCanvas() {
+		return this.#noCanvasOut();
+	}
+	get makeArrange() {
+		return this.#noCanvas();
+	}
+};
+//#endregion
+//#region app/core2/Arranger.same.size.class.mjs
+var ArrangerSameSize = class {
+	#list;
+	constructor({ sorted }) {
+		this.#list = sorted;
+	}
+	#trailOne() {
+		const MAXDEPTH = 10;
+		const getter = [];
+		const checker = (a, b) => a.cubed <= b.cubed && a.code !== b.code;
+		let sameSized;
+		this.map((work) => {
+			let i = 0;
+			let checked;
+			if (work.z <= MAXDEPTH) for (i in this) {
+				sameSized = this[i].x === work.x && this[i].y === work.y;
+				checked = checker(this[i], work);
+				if (!getter.includes(this[i]) && checked) getter.push(this[i]);
+				else if (!checked && sameSized && !getter.includes(this[i])) getter.push(this[i]);
+			}
+			return work;
+		});
+		return getter;
+	}
+	#checker(art, work) {
+		const x = work.x;
+		const y = work.y;
+		const cub = work.cubed;
+		return art.x === x && art.y === y && art.cubed <= cub;
+	}
+	#trailTwo(list) {
+		const sameSize = [];
+		list.map((work) => {
+			let getter = [];
+			let i = 0;
+			for (i in list) if (this.#checker(list[i], work) && !sameSize.includes(list[i])) getter.push(list[i]);
+			if (getter.length >= 4) getter.map((element) => {
+				sameSize.push(element);
+				return element;
+			});
+			getter = null;
+			return work;
+		});
+		return sameSize;
+	}
+	#sameSizeTrail() {
+		const pathOne = this.#trailOne.call(this.#list);
+		const pathTwo = this.#trailTwo(pathOne);
+		pathTwo.map((art) => {
+			this.#list.splice(this.#list.indexOf(art), 1);
+			return art;
+		});
+		return {
+			sorted: this.#list,
+			sameSize: pathTwo
+		};
+	}
+	get makeArrange() {
+		return this.#sameSizeTrail();
+	}
+};
+//#endregion
+//#region app/core2/Arranger.starter.class.mjs
+var ArrangerStarter = class {
+	#list;
+	constructor(works) {
+		this.#list = works;
+	}
+	#addCubValueToEachWork() {
+		return this.#list.map((work) => {
+			const arrWork = work.arr;
+			arrWork.push(work.cubed);
+			return arrWork;
+		});
+	}
+	#quickS(list, pos) {
+		if (list.length <= 1) return list;
+		const left = [];
+		const pivot = list.splice(0, 1);
+		const right = [];
+		list.map((work) => {
+			work[pos] <= pivot[0][pos] ? left.push(work) : right.push(work);
+			return work;
+		});
+		return this.#quickS(left, pos).concat(pivot, this.#quickS(right, pos));
+	}
+	#starter() {
+		const arrCubedList = this.#addCubValueToEachWork();
+		const inOrder = this.#quickS(arrCubedList, 4);
+		const sorted = [];
+		inOrder.map((work) => {
+			this.#list.find((art) => work[0] === art.code ? sorted.push(art) : 0);
+			return work;
+		});
+		return { sorted };
+	}
+	get prepare() {
+		return this.#starter();
+	}
+};
+//#endregion
+//#region app/core2/Arranger.tube.class.mjs
+var ArrangerTube = class {
+	#list;
+	constructor(list) {
+		this.#list = list;
+	}
+	#findTubesOnTheList() {
+		const { noCanvas } = this.#list;
+		const tubes = [];
+		noCanvas.filter((piece) => {
+			const MAXDIM = 35;
+			const LIMIT = piece.z < MAXDIM && piece.y < MAXDIM;
+			const CHECK = piece.z === piece.y;
+			if (LIMIT && CHECK) {
+				if (piece.x !== piece.y && CHECK) tubes.push(piece);
+			}
+			return piece;
+		});
+		tubes.map((art) => {
+			this.#list.noCanvas.splice(this.#list.noCanvas.indexOf(art), 1);
+			return art;
+		});
+		this.#list.tubes = tubes;
+		return this.#list;
+	}
+	get makeArrange() {
+		return this.#findTubesOnTheList();
+	}
+};
+//#endregion
+//#region app/core2/Arranger.class.mjs
+var Arranger = class Arranger {
+	#works;
+	constructor(list) {
+		this.#works = list;
+	}
+	#solver() {
+		this.#manySizes();
+		this.#sameSizeTrail();
+		this.#noCanvasTrail();
+		this.#largestCanvasTrail();
+		this.#findTubes();
+	}
+	#checkData() {
+		try {
+			const check = (val) => val.length === 0 || !val;
+			if (!Array.isArray(this.#works) || check(this.#works)) throw new TypeError(`Please, provide a type of 'ArtWork' object.`);
+			if (this.#works.map((work) => {
+				return work.constructor.name === "ArtWork";
+			}).includes(false)) throw new TypeError(`Some work is not of the type 'ArtWork' object.`);
+		} catch (err) {
+			return err;
+		}
+	}
+	#manySizes() {
+		this.#works = new ArrangerStarter(this.#works).prepare;
+	}
+	#sameSizeTrail() {
+		this.#works = new ArrangerSameSize(this.#works).makeArrange;
+	}
+	#noCanvasTrail() {
+		this.#works = new ArrangerNoCanvas(this.#works).makeArrange;
+	}
+	#largestCanvasTrail() {
+		this.#works = new ArrangerLargestCanvas(this.#works).makeArrange;
+	}
+	#findTubes() {
+		this.#works = new ArrangerTube(this.#works).makeArrange;
+	}
+	get start() {
+		const dataChecker = this.#checkData();
+		if (dataChecker && dataChecker.constructor.name === "TypeError") return dataChecker;
+		this.#solver();
+		return Object.assign(Arranger, { list: this.#works });
+	}
+};
+//#endregion
+//#region app/core2/Crate.maker.mjs
+var CrateMaker = class {
+	#layers;
+	#workStack;
+	#materials;
+	constructor(layers, materials, opt = false) {
+		if (layers) {
+			this.#materials = materials;
+			this.#layers = layers;
+			this.#workStack = opt;
+		}
+	}
+	/**
+	* @method - sums all materials to each crate side.
+	* @param { Array } materials - all materials available to the crate.
+	*/
+	#stablishCrateSizes(materials) {
+		const wood = [
+			"Pinewood",
+			"Plywood",
+			"Wooden Post"
+		];
+		const woods = materials.filter((item) => wood.includes(item[5]));
+		const separator = materials.filter((foam) => foam[5] === "Foam Sheet");
+		const DIVISION = separator.find((sep) => sep[2] < 5).flat();
+		let x = 0;
+		let z = 0;
+		let y = 0;
+		let div = 0;
+		let pad = 0;
+		woods.map((item) => {
+			if (item.at(-1) !== "Wooden Post") {
+				x += +item[2] * 2;
+				z += +item[2] * 2;
+			}
+			y += item.at(-1) === "Pinewood" || item.at(-1) === "Wooden Post" ? +item[2] : +item[2] * 2;
+			return item;
+		});
+		if (separator?.length) separator.map((foam) => {
+			if (this.#layers > 1 && +foam[2] <= +DIVISION[2]) {
+				if (this.#workStack) {
+					this.#workStack = false;
+					y += +foam[2];
+				}
+				div = +foam[2];
+				z += +foam[2] * (this.#layers - 1);
+				return foam;
+			}
+			if (this.#layers === 1 && +foam[2] <= +DIVISION[2]) return foam;
+			x += +foam[2] * 2;
+			z += +foam[2] * 2;
+			y += +foam[2] * 2;
+			if (+foam[2] > +DIVISION[2]) pad = 2 * foam[2];
+			return foam;
+		});
+		return {
+			x,
+			z,
+			y,
+			div,
+			pad
+		};
+	}
+	/**
+	* @method - take all materials to apply to the crate.
+	*/
+	#crateMaterialsDefined() {
+		const { materials, cratesOnly } = this.#materials;
+		const crateMaterials = [];
+		cratesOnly.map((item) => {
+			const material = materials.find((opts) => opts[0] === item);
+			material && crateMaterials.push(material);
+			return item;
+		});
+		if (!crateMaterials.length) return {
+			x: 0,
+			z: 0,
+			y: 0
+		};
+		return this.#stablishCrateSizes(crateMaterials);
+	}
+	get outSizes() {
+		if (!this.#layers) return false;
+		return this.#crateMaterialsDefined();
+	}
+};
+//#endregion
+//#region app/core2/Crater.coordinates.mjs
+var WorksCoordinates = class {
+	#info;
+	#sizes;
+	#rawList;
+	#coordinates;
+	#packedList;
+	#centerWork;
+	#packing;
+	#lastTry;
+	#newBaseSize;
+	constructor(size = false, materials) {
+		if (size && materials) {
+			this.#lastTry = [];
+			this.#sizes = [
+				+size[0].toFixed(3),
+				+size[1].toFixed(3),
+				+size[2].toFixed(3)
+			];
+			this.#packing = materials;
+			this.#layerMapObject();
+			this.#coordinates = this.#crateTemplate();
+		}
+	}
+	#crateTemplate() {
+		const { materials, cratesOnly } = this.#packing;
+		const template = {
+			emptyArea: [],
+			artLocation: /* @__PURE__ */ new Map(),
+			baseSize: this.#sizes,
+			usedMaterials: /* @__PURE__ */ new Map(),
+			innerSize: [],
+			finalSize: [],
+			layers: [],
+			get reset() {
+				this.emptyArea = [[
+					0,
+					0,
+					this.baseSize[0],
+					this.baseSize[2]
+				]];
+				return this.emptyArea;
+			},
+			get fillGaps() {
+				const data = [];
+				const highZ = (works, thick = 0) => {
+					works.map((art) => {
+						if (!thick) thick = [art.work[0], art.work[2]];
+						return thick;
+					});
+					return thick;
+				};
+				const calc = (gaps, total = 0, sizes = []) => {
+					gaps.map((pos) => {
+						if (pos[0] === pos[2] && pos[1] === pos[3]) return pos;
+						let gapX = pos[2] - pos[0];
+						let gapY = pos[3] - pos[1];
+						if (!gapX && gapY) gapX = pos[0];
+						if (gapX && !gapY) gapY = pos[1];
+						sizes.push([+gapX.toFixed(2), +gapY.toFixed(2)]);
+						total += +(gapX * gapY).toFixed(3);
+						return pos;
+					});
+					return {
+						total,
+						sizes
+					};
+				};
+				this.layers.map((info) => {
+					const { vacuum, works } = info;
+					const Z = highZ(works);
+					const { total, sizes } = calc(vacuum);
+					data.push({
+						highestZ: Z,
+						total,
+						sizes
+					});
+					return data;
+				});
+				return data;
+			},
+			set defineLayer(info) {
+				const vacuum = structuredClone(this.emptyArea);
+				const works = structuredClone(info[1]);
+				this.layers.push({
+					vacuum,
+					works
+				});
+				this.reset;
+			},
+			get fillMaterials() {
+				materials.map((info) => cratesOnly.includes(info[0]) ? this.usedMaterials.set(info[0], info) : 0);
+				return materials;
+			}
+		};
+		template.reset;
+		template.fillMaterials;
+		return template;
+	}
+	/**
+	* @method removes the obsolete locations
+	* @param { Array:Number:String } gaps possible locations
+	*/
+	async #cleanObsoleteLocations(gaps) {
+		const minGap = 10;
+		const removes = [];
+		gaps.map((data, i) => {
+			const check = data[2] - data[0] < minGap || data[3] - data[1] < minGap;
+			if (data && check) removes.push(i);
+			else this.#rawList.map((info) => {
+				if (info?.coordinates) {
+					const { x, y } = info.coordinates;
+					if (data[0] === x && data[1] === y) removes.push(i);
+				}
+				return info;
+			});
+			return data;
+		});
+		removes.map((index, i) => gaps.splice(index + i, 1), 0);
+		return gaps;
+	}
+	/**
+	* @method - update all coordinates based on the gap size.
+	* @param { Array:Array:number } gaps
+	*/
+	async #updateAllLocations(gaps) {
+		if (!this.#centerWork?.center) return gaps;
+		const { x, y, center } = this.#centerWork;
+		const X = center.length > 4 ? center[3] : center[1];
+		const Y = center.length > 4 ? center[1] : center[3];
+		const shiftCenter = x.get(center[0]).sum >= X && y.get(center[0]).sum >= Y;
+		const updater = (axis) => {
+			let art;
+			for (art of axis) {
+				const rand = center ? Math.floor(Math.random() * center[1]) : Math.floor(Math.random() * 1e4);
+				if (center[0] === art[0] && shiftCenter) {
+					let pos;
+					let properX = 0;
+					let properY = 0;
+					for (pos of gaps) {
+						const valX = pos[0] > 0 && pos[1] > 0 && pos[0] < pos[2];
+						const valY = pos[1] > 0 && pos[0] > 0 && pos[1] < pos[3];
+						if (!pos[4] && valX && properY < pos[1]) properY = pos[1];
+						if (!pos[4] && valX && properY > pos[1]) pos.splice(5, 1, `${rand}-y`);
+						if (pos[4] && valY && properX < pos[0]) properX = pos[0];
+						if (pos[4] && valY && properX > pos[0]) pos.splice(5, 1, `${rand}-x`);
+					}
+					this.#centerWork.center = false;
+				}
+			}
+		};
+		updater(x);
+		updater(y);
+		return await this.#cleanObsoleteLocations(gaps);
+	}
+	/**
+	* @method - define the inner location.
+	* @param { object } data all information needed to define new coordinates.
+	*/
+	#theEdgeLocations(data) {
+		const { prevWork, local, onAxis, x, y } = data;
+		const xThread = this.#centerWork.x.get(prevWork[0]);
+		const yThread = this.#centerWork.y.get(prevWork[0]);
+		const onCenter = this.#centerWork?.center ? this.#centerWork?.center : prevWork;
+		const X = local[2];
+		const Y = local[3];
+		const sumX = +(local[0] + x).toFixed(3) <= X ? +(local[0] + x).toFixed(3) : prevWork.length === 4 ? prevWork[1] + local[0] : prevWork[3] + local[0];
+		const sumY = +(local[1] + y).toFixed(3) <= Y ? +(local[1] + y).toFixed(3) : prevWork.length === 4 ? prevWork[3] + local[1] : prevWork[1] + local[1];
+		const properX = sumY >= onCenter[3] && onAxis ? sumX : xThread.sum;
+		const properY = sumX >= onCenter[1] && !onAxis ? sumY : yThread.sum;
+		const random = xThread.sum < local[2] || yThread.sum < local[3] ? ~~(Math.random() * x) : false;
+		let extra = random ? yThread.sum < local[3] ? {
+			x: local[0],
+			y: sumY,
+			random: `${random}-y`
+		} : {
+			x: sumX,
+			y: local[1],
+			random: `${random}-x`
+		} : false;
+		let postX;
+		let postY;
+		let newX = 0;
+		let newY = 0;
+		if (onAxis) {
+			postX = sumY >= onCenter[3] ? sumX : properX;
+			postY = sumX >= onCenter[1] ? properY : sumY;
+			newX = sumX < X ? postX : prevWork[1];
+			newY = sumY < Y ? local[1] > 0 ? sumY : postY : prevWork[3];
+		} else {
+			postX = local[0] === 0 && sumY < Y ? 0 : sumX;
+			postY = local[1] === 0 && sumX < X ? 0 : sumY;
+			newX = sumX < X && x >= prevWork[1] || !postX ? local[0] > 0 ? sumX : postX : local[0];
+			newY = sumY < Y && y >= prevWork[3] || !postY ? postY : prevWork[3];
+		}
+		if (extra?.x === newX && extra?.y === newY) extra = void 0;
+		if (extra?.x === newX && extra?.y === newY) extra = void 0;
+		return {
+			newX,
+			newY,
+			extra
+		};
+	}
+	/**
+	* @param { boolean } onAxis
+	* @param { number } x
+	* @param { number } y
+	* @param { Array:Number } local
+	* @param { Array:Array:Number } emptyArea
+	* @param { Object } prevWork
+	*/
+	#nextLocationGap(onAxis, x, y, local, prevWork) {
+		const X = local[2];
+		const Y = local[3];
+		const sumX = +(local[0] + x).toFixed(3) <= X ? +(local[0] + x).toFixed(3) : prevWork[1];
+		const sumY = +(local[1] + y).toFixed(3) <= Y ? +(local[1] + y).toFixed(3) : prevWork[3];
+		const { newX, newY, extra } = this.#theEdgeLocations({
+			prevWork,
+			local,
+			onAxis,
+			x,
+			y
+		});
+		return {
+			newX,
+			newY,
+			sumX,
+			sumY,
+			extra
+		};
+	}
+	/**
+	* @param { boolean } axisXorY
+	* @param { Array:Number } local
+	* @param { Array: Number } emptyArea
+	* @param { string } code
+	*/
+	#defineNewCoordinates(axisXorY, local, { x, y }, emptyArea, code) {
+		const astro = local.length === 8 ? local.at(-2) : local.at(-1);
+		const prevWork = this.#packedList.find((work) => work[0] === astro);
+		const X = emptyArea[0][2];
+		const Y = emptyArea[0][3];
+		const axis = axisXorY && y < Y ? 0 : 1;
+		const { newX, newY, sumX, sumY, extra } = this.#nextLocationGap(axisXorY, x, y, local, prevWork);
+		let plus;
+		let nextX = axisXorY && local[1] === 0 ? [
+			sumX,
+			0,
+			X,
+			Y,
+			axis,
+			false,
+			local.at(-1),
+			code
+		] : [
+			sumX,
+			newY,
+			X,
+			Y,
+			axis,
+			false,
+			local.at(-1),
+			code
+		];
+		let nextY = !axisXorY && local[0] === 0 ? [
+			0,
+			sumY,
+			X,
+			Y,
+			axis,
+			false,
+			local.at(-1),
+			code
+		] : [
+			newX,
+			sumY,
+			X,
+			Y,
+			axis,
+			false,
+			local.at(-1),
+			code
+		];
+		const minGap = 10;
+		if (extra && extra.x < X && extra.y < Y) {
+			const extraAxis = extra.random.split("-")[1];
+			plus = [
+				extra.x,
+				extra.y,
+				X,
+				Y,
+				axis,
+				extra.random,
+				local.at(-1),
+				code
+			];
+			extraAxis === "x" ? nextX.splice(5, 1, extra.random) : nextY.splice(5, 1, extra.random);
+			if (X - plus[0] > minGap && Y - plus[1] > minGap) {
+				if (nextX[0] === plus[0] || nextX[1] === plus[1]) {
+					nextX = plus;
+					plus = false;
+				}
+				if (nextY[0] === plus[0] || nextY[1] === plus[1]) {
+					nextY = plus;
+					plus = false;
+				}
+			}
+		}
+		if (nextX[0] >= X || nextX[1] >= Y) nextX = false;
+		else if (X - nextX[0] < minGap || Y - nextX[1] < minGap) nextX = false;
+		if (nextY[0] >= X || nextY[1] >= Y) nextY = false;
+		else if (X - nextY[0] < minGap || Y - nextY[1] < minGap) nextX = false;
+		if (nextX[0] === nextY[0] && nextX[1] === nextY[1]) nextY = false;
+		return {
+			nextX,
+			nextY,
+			plus
+		};
+	}
+	/**
+	* @param { boolean } axisXorY
+	* @param { Array:Number } emptyArea
+	* @@param { Object } opts
+	*/
+	async #addingNewCoordinates({ nextX, nextY, plus }, emptyArea) {
+		if (!nextX && !nextY && !plus) return emptyArea;
+		const existX = emptyArea.some((data) => data[0] === nextX[0] && data[1] === nextX[1]);
+		const existY = emptyArea.some((data) => data[0] === nextY[0] && data[1] === nextY[1]);
+		const addX = !existX && nextX && nextX[3] > nextX[1];
+		const addY = !existY && nextY && nextY[2] > nextY[0];
+		const totalX = nextX[0] + nextX[1];
+		const totalY = nextY[0] + nextY[1];
+		let includedX = 0;
+		let includedY = 0;
+		const existGap = (setup) => emptyArea.some((gap) => gap[0] === setup[0] && gap[1] === setup[1]);
+		if (addX && addY) {
+			if (totalX < totalY) {
+				emptyArea.push(nextX);
+				includedX++;
+			} else if (!includedY && totalY > totalX) {
+				emptyArea.push(nextY);
+				includedY++;
+			}
+			if (!includedX) emptyArea.push(nextX);
+			if (!includedY) emptyArea.push(nextY);
+		} else if (addX && !includedX && !existGap(nextX)) emptyArea.push(nextX);
+		else if (addY && !includedY && !existGap(nextY)) emptyArea.push(nextY);
+		if (plus && !existGap(plus)) emptyArea.push(plus);
+		return this.#centerWork?.center ? await this.#updateAllLocations(emptyArea) : emptyArea;
+	}
+	/**
+	* @method - updates the axis of the work attached to.
+	* @param { boolean } onAxis
+	* @param { string } newWork
+	* @param { string } lastWork
+	*/
+	#setLastWorkAxis(attached, newWork, onAxis) {
+		if (attached === newWork[0]) return;
+		const { center } = this.#centerWork;
+		const x = this.#centerWork.x.get(attached);
+		const y = this.#centerWork.y.get(attached);
+		const newX = newWork.length > 4 ? newWork[3] : newWork[1];
+		const newY = newWork.length > 4 ? newWork[1] : newWork[3];
+		const artFlip = center.length > 4;
+		if (onAxis && x && y) {
+			if (artFlip && !x.codes.includes(newWork[0])) {
+				y.sum += newX;
+				y.codes.push(newWork[0]);
+			} else if (!y.codes.includes(newWork[0])) {
+				x.sum += newX;
+				x.codes.push(newWork[0]);
+			}
+		} else if (artFlip && !y.codes.includes(newWork[0])) {
+			x.sum += newY;
+			x.codes.push(newWork[0]);
+		} else if (!x.codes.includes(newWork[0])) {
+			y.sum += newY;
+			y.codes.push(newWork[0]);
+		}
+		if (x && y) {
+			this.#centerWork.x.set(attached, x);
+			this.#centerWork.y.set(attached, y);
+		}
+	}
+	/**
+	* @method - adds a new work to the thread sequence.
+	* @param { string } work
+	* @param { Array:Number:String } local
+	*/
+	#newAttachedWork(work, local) {
+		const art = this.#packedList.find((info) => info[0] === work);
+		const X = art.length > 4 ? art[3] : art[1];
+		const Y = art.length > 4 ? art[1] : art[3];
+		const sumX = Y >= local[3] || Y === local[2] ? X : 0;
+		const sumY = X >= local[2] || X === local[3] ? Y : 0;
+		this.#centerWork.center = art;
+		this.#centerWork.x.set(work, {
+			sum: sumX,
+			codes: []
+		});
+		this.#centerWork.y.set(work, {
+			sum: sumY,
+			codes: []
+		});
+	}
+	/**
+	* @method - updates the adjacent previous work.
+	* @param { boolean } onAxis
+	* @param { string } newWork
+	* @param { string } thread
+	*/
+	#upDateLatestWork(thread, newArt, onAxis) {
+		const { x, y, center } = this.#centerWork;
+		const updateLinkedWorks = [];
+		const updating = (axis, pos) => {
+			let info;
+			for (info of axis) {
+				const { sum, codes } = info[1];
+				const work = this.#packedList.find((data) => data[0] === info[0]);
+				const X = work.length > 4 ? work[3] : work[1];
+				const Y = work.length > 4 ? work[1] : work[3];
+				const checkBeforeLast = codes?.includes(thread.at(-1)) && info[0] === thread.at(-2) && !codes?.includes(newArt);
+				const foundOnCenter = updateLinkedWorks.length ? updateLinkedWorks.some((data) => codes.includes(data)) && !codes?.includes(newArt) : false;
+				if (pos !== onAxis ? pos === 0 ? sum < X : sum < Y : false) {
+					if (checkBeforeLast && !updateLinkedWorks.includes(info[0])) {
+						updateLinkedWorks.push(info[0]);
+						this.#setLastWorkAxis(info[0], newArt, pos);
+					}
+					if (foundOnCenter && !updateLinkedWorks.includes(info[0])) {
+						updateLinkedWorks.push(info[0]);
+						this.#setLastWorkAxis(center[0], newArt, pos);
+					}
+				}
+			}
+		};
+		updating(x, 0);
+		updating(y, 1);
+	}
+	/**
+	* @method - updates the x and y axis thread with works attached to its own axis.
+	* @param { string } code
+	* @param { Object } work
+	* @param { boolean } onAxis
+	* @param { string } center
+	* @param { string } newWork
+	* @param { String } closeTo
+	*/
+	#attachingWorksOrder(onAxis, closeTo, newWork, local) {
+		const newArt = this.#packedList.find((art) => art[0] === newWork);
+		this.#setLastWorkAxis(closeTo, newArt, onAxis);
+		this.#newAttachedWork(newWork, local);
+		if (!this.#centerWork.works.includes(closeTo)) this.#centerWork.works.push(closeTo);
+		if (local && local.length > 7) this.#upDateLatestWork(local, newArt, onAxis);
+	}
+	/**
+	* @method - used when there is only one option to select.
+	* @param { number } x axis.
+	* @param { number } y axis.
+	* @param { string } prev last art work code.
+	* @param { Array:Number:String } emptyArea available positions.
+	*/
+	#onOnePosition(emptyArea, x, y, prev) {
+		const lastWork = this.#packedList.find((work) => work[0] === prev);
+		const lastX = lastWork.length > 4 ? lastWork[3] : lastWork[1];
+		const lastY = lastWork.length > 4 ? lastWork[1] : lastWork[3];
+		const minGap = 10;
+		const X = emptyArea[0][2];
+		const Y = emptyArea[0][3];
+		const firstWork = emptyArea[0].length > 4;
+		const fullX = x === X || X - (x + emptyArea[0][0]) < minGap;
+		const fullY = y === Y || Y - (y + emptyArea[0][1]) < minGap;
+		let nextX;
+		let nextY;
+		if (!emptyArea[0][0] && !emptyArea[0[0]]) {
+			nextX = x + lastX < X ? x + lastX : 0;
+			nextY = y + lastY < Y ? y + lastY : 0;
+		} else {
+			nextX = x + lastX < X ? x + lastX : x;
+			nextY = y + lastY < Y ? y + lastY : y;
+		}
+		const firstX = firstWork ? [
+			nextX,
+			emptyArea[0][1],
+			X,
+			Y,
+			0,
+			false,
+			emptyArea[0].at(-1),
+			prev
+		] : [
+			emptyArea[0][0] + x,
+			emptyArea[0][1],
+			X,
+			Y,
+			0,
+			false,
+			prev
+		];
+		const firstY = firstWork ? [
+			emptyArea[0][0],
+			nextY,
+			X,
+			Y,
+			1,
+			false,
+			emptyArea[0].at(-1),
+			prev
+		] : [
+			nextX,
+			emptyArea[0][1] + y,
+			X,
+			Y,
+			1,
+			false,
+			prev
+		];
+		if (fullX && fullY) {
+			emptyArea[0] = [
+				X,
+				Y,
+				X,
+				Y
+			];
+			return emptyArea;
+		}
+		if (y >= Y) firstX[4] = 1;
+		if (x >= X) firstY[4] = 0;
+		if (x < X && X - firstX[0] > minGap && Y - firstX[1] > minGap) emptyArea.push(firstX);
+		if (y < Y && X - firstY[0] > minGap && Y - firstY[1] > minGap) emptyArea.push(firstY);
+		if (emptyArea.length > 1 && !emptyArea[0][0] && !emptyArea[0][1]) emptyArea.splice(0, 1);
+		if (firstWork) emptyArea.splice(0, 1);
+		return emptyArea;
+	}
+	/**
+	* @method - update the available coordinates possible to feat the work
+	* @param { Number } pos the array index to be removed from the possibilities.
+	* @param { Array } local the position with the coordinates to place the work.
+	*/
+	async #updateLayerAvailableCoordinates(pos, { x, y }, code) {
+		const { emptyArea } = this.#coordinates;
+		const closeTo = emptyArea[pos].length > 4 ? emptyArea[pos].at(-1) : code;
+		const onAxis = emptyArea[pos][4];
+		this.#attachingWorksOrder(onAxis, closeTo, code, emptyArea[pos]);
+		if (emptyArea.length > 1) {
+			const options = this.#defineNewCoordinates(onAxis, emptyArea[pos], {
+				x,
+				y
+			}, emptyArea, code);
+			emptyArea.splice(pos, 1);
+			return await this.#addingNewCoordinates(options, emptyArea);
+		}
+		this.#onOnePosition(emptyArea, x, y, code);
+		await this.#updateAllLocations(emptyArea);
+	}
+	/**
+	* @method - find the feasible position to the work into the crate.
+	* @param { Array } art the artwork dimensions and ID.
+	* @param { Array } coordinate the empty possibilities to feat the work in.
+	* @param { Object: boolean } values for match position of the work in side the crate.
+	*/
+	#checkLimitSet(art, coordinate, values) {
+		if (!values.check01 && !values.check02) return values;
+		const limit = coordinate[5] ? coordinate[5]?.split("-")[1] : false;
+		if (limit === "x" || limit === "y") {
+			if (this.#centerWork?.center) this.#attachingWorksOrder(0, coordinate.at(-1), art[0], coordinate);
+			const { center } = this.#centerWork;
+			const featness = limit === "x" ? center[1] - coordinate[0] : center[3] - coordinate[1];
+			const avoidPos = coordinate[0] === center[1] || coordinate[1] === center[3];
+			values.check01 = values.check01 && avoidPos && featness > 0 ? limit === "x" ? featness >= art[1] : featness >= art[3] : values.check01;
+			values.check02 = values.check02 && avoidPos && featness > 0 ? limit === "x" ? featness >= art[1] : featness >= art[3] : values.check02;
+		}
+		return values;
+	}
+	/**
+	* @method - find the feasible position to the work into the crate.
+	* @param { Array } art the artwork dimensions and ID.
+	* @param { Array } coordinate the empty possibilities to feat the work in.
+	*/
+	#workMatchLayer(art, coordinate) {
+		const X = coordinate[2];
+		const Y = coordinate[3];
+		const x1 = art[1] + coordinate[0] <= X && coordinate[0] < X;
+		const y1 = art[3] + coordinate[1] <= Y && coordinate[1] < Y;
+		const x2 = art[3] + coordinate[0] <= X && coordinate[0] < X;
+		const y2 = art[1] + coordinate[1] <= Y && coordinate[1] < Y;
+		const check01 = x1 && y1;
+		const check02 = x2 && y2;
+		return this.#checkLimitSet(art, coordinate, {
+			check01,
+			check02
+		});
+	}
+	/**
+	* @method - find the feasible position to the work into the crate.
+	* @param { Array } art the artwork dimensions and ID.
+	* @param { Array } coordinate the empty possibilities to feat the work in.
+	*/
+	#checkExtendSizeToFeatWork(art, coordinate) {
+		const EXPAND = 10;
+		const limitX = coordinate[2] <= 285 ? 285 : 585;
+		const limitY = coordinate[3] <= 145 ? 145 : 225;
+		const sumX = +(art[1] + coordinate[0]).toFixed(3);
+		const sumY = +(art[3] + coordinate[1]).toFixed(3);
+		const diffX = coordinate[0] === 0 ? true : sumX <= coordinate[2] ? true : Math.abs(+(sumX - coordinate[2]).toFixed(3)) <= EXPAND;
+		const diffY = coordinate[1] === 0 ? true : sumY <= coordinate[3] ? true : Math.abs(+(sumY - coordinate[3]).toFixed(3)) <= EXPAND;
+		const pointX1 = sumX <= coordinate[2] || sumX <= coordinate[2] + EXPAND;
+		const pointY1 = sumY <= coordinate[3] || sumY <= coordinate[3] + EXPAND;
+		const pointX2 = sumX <= coordinate[3] || sumX <= coordinate[3] + EXPAND;
+		const pointY2 = sumY <= coordinate[2] || sumY <= coordinate[2] + EXPAND;
+		const checkX = coordinate[2] <= sumX && diffX && diffY;
+		const checkY = coordinate[3] <= sumY && diffY && diffX;
+		const edge = sumX <= limitX && sumY <= limitY;
+		const check01 = pointX1 && pointY1 && edge;
+		const check02 = pointX2 && pointY2 && edge;
+		const extraX = checkX ? sumX : 0;
+		const extraY = checkY ? sumY : 0;
+		return this.#checkLimitSet(art, coordinate, {
+			check01,
+			check02,
+			extraX,
+			extraY
+		});
+	}
+	/**
+	* @method - analyses all empty and available positions/coordinates to each work.
+	* @param { Array } emptyArea - available empty coordinates.
+	* @param { boolean } found - changes when a space is matched to the work.
+	* @param { Array } art - the work sizes and code.
+	* @param { Number } ind - the rawList location to the work.
+	* @param { Number } pos the @emptyArea index.
+	*/
+	#onFoundDefineLocation(data, art, emptyArea, pos) {
+		const { check01, check02, extraX, extraY } = data;
+		const ind = this.#rawList.findIndex((data) => data.code === art[0]);
+		const ICON = `<i class="nf nf-oct-sync"></i>`;
+		const thickness = 14;
+		let found = false;
+		let x;
+		let y;
+		const fillSpace = (turn, x, y) => {
+			found = true;
+			if (turn && x !== y && art[2] <= thickness) {
+				art.push(ICON);
+				this.#packedList.find((work) => work[0] === art[0] ? work.push(ICON) : 0);
+			}
+			this.#rawList[ind].defCoordinate = {
+				x: structuredClone(emptyArea[pos][0]),
+				z: art[2],
+				y: structuredClone(emptyArea[pos][1])
+			};
+			if (extraX || extraY) {
+				const checkSizes = extraX > this.#newBaseSize[2] || extraY > this.#newBaseSize[3];
+				emptyArea.map((info) => {
+					if (extraX > 0) info[2] = extraX;
+					if (extraY > 0) info[3] = extraY;
+					return info;
+				});
+				if (checkSizes) {
+					if (extraX > this.#newBaseSize[2]) this.#newBaseSize.splice(2, 1, extraX);
+					if (extraY > this.#newBaseSize[3]) this.#newBaseSize.push(extraX);
+					this.#newBaseSize.splice(3, 1, extraX);
+				}
+			}
+		};
+		if (check01 && !check02) {
+			x = art[1];
+			y = art[3];
+			fillSpace(false, x, y);
+		} else if (check02) {
+			x = art[3];
+			y = art[1];
+			fillSpace(true, x, y);
+		}
+		if (found) {
+			this.#updateLayerAvailableCoordinates(pos, {
+				x,
+				y
+			}, art[0]);
+			this.#lastTry = null;
+			this.#lastTry = [];
+		}
+		return found;
+	}
+	/**
+	* @method - analyses all empty and available positions/coordinates to each work.
+	* @param { Array } emptyArea - available empty coordinates.
+	* @param { boolean } found - changes when a space is matched to the work.
+	* @param { Array } art - the work sizes and code.
+	* @param { Number } ind - the rawList location to the work.
+	* @param { Number } pos the @emptyArea index.
+	*/
+	async #secondCheckExtension(art, pos, emptyArea, found) {
+		if (found || pos < 0) return found;
+		const coordinate = emptyArea[pos];
+		const checker = this.#checkExtendSizeToFeatWork(art, coordinate);
+		found = this.#onFoundDefineLocation(checker, art, emptyArea, pos);
+		if (!found) pos--;
+		return this.#secondCheckExtension(art, pos, emptyArea, found);
+	}
+	/**
+	* @method - analyses all empty and available positions/coordinates to each work.
+	* @param { Array } param0.emptyArea - available empty coordinates.
+	* @param { boolean } param0.found - changes when a space is matched to the work.
+	* @param { Array } param0.art - the work sizes and code.
+	* @param { Number } param0.ind - the rawList location to the work.
+	* @param { Number } param0.pos the @emptyArea index.
+	*/
+	#featRecursionLayer({ emptyArea, found, art, pos }) {
+		const filled = emptyArea.length && emptyArea[0][0] === emptyArea[0][2] && emptyArea[0][1] === emptyArea[0][3];
+		if (found || pos < 0 || filled) return found;
+		const coordinates = emptyArea[pos];
+		const checker = this.#workMatchLayer(art, coordinates);
+		if (checker.check01 || checker.check02) found = this.#onFoundDefineLocation(checker, art, emptyArea, pos);
+		if (!found) pos--;
+		return this.#featRecursionLayer({
+			emptyArea,
+			found,
+			art,
+			pos
+		});
+	}
+	/**
+	* @method - select the best candidate for match to the art work.
+	* @param { Array:Array: Number | String } emptyArea
+	*/
+	#selectPositionCandidate(emptyArea, art) {
+		const zerOption = {
+			x: null,
+			y: null
+		};
+		let location = false;
+		let position;
+		let pos;
+		let index = 0;
+		let posCandidate = 0;
+		for (pos of emptyArea) {
+			const gapX = pos[0] < pos[2] ? pos[2] - pos[0] : false;
+			const gapY = pos[1] < pos[3] ? pos[3] - pos[1] : false;
+			const validLocation = gapX && gapX >= art[1] && gapY && gapY >= art[3] || gapX && gapX >= art[3] && gapY && gapY >= art[1];
+			const checkValidIndex = this.#lastTry.includes(index);
+			const checker = emptyArea[posCandidate][0] + emptyArea[posCandidate][1];
+			if (validLocation) location = index;
+			if (!pos[0]) zerOption.x = index;
+			if (!pos[1]) zerOption.y = index;
+			if (checker > pos[0] + pos[1] && !checkValidIndex) posCandidate = index;
+			index++;
+		}
+		if (location && !this.#lastTry.includes(location)) position = location;
+		else if (zerOption.y !== null) position = zerOption.y;
+		else if (zerOption.x !== null) position = zerOption.x;
+		else if (!location && posCandidate !== void 0) position = posCandidate;
+		else position = emptyArea.length - 1;
+		this.#lastTry.push(position);
+		return position;
+	}
+	#layerMapObject() {
+		let onCenter;
+		if (this.#centerWork?.center) {
+			const { x, y, center } = this.#centerWork;
+			const X = center.length > 4 ? center[3] : center[1];
+			const Y = center.length > 4 ? center[1] : center[3];
+			const sumX = x.get(center[0]);
+			const sumY = y.get(center[0]);
+			onCenter = sumX?.sum >= X || sumY?.sum >= Y ? false : center;
+		}
+		this.#centerWork = null;
+		this.#centerWork = {
+			center: onCenter,
+			works: [],
+			linked: [],
+			x: /* @__PURE__ */ new Map(),
+			y: /* @__PURE__ */ new Map()
+		};
+	}
+	/**
+	* @method - the recursion caller to find a match empty space into the crate.
+	* @param { Number } len - the list index.
+	* @param { Object } info - the crate base size and saver to crate layers arrangement.
+	* @param { Array } list - the artworks relation.
+	*/
+	#fillCrateRecursion(info, list, len) {
+		const check = info.emptyArea[0] === void 0 && info.emptyArea[1] === void 0;
+		const filledX = info.emptyArea.length ? info.emptyArea[0][0] === info.emptyArea[0][2] : true;
+		const filledY = info.emptyArea.length ? info.emptyArea[0][1] === info.emptyArea[0][3] : true;
+		if (check || !list[len] || filledX && filledY) {
+			this.#layerMapObject();
+			return info;
+		}
+		const { emptyArea, feat } = info;
+		const art = list[len];
+		const pos = this.#selectPositionCandidate(emptyArea, art);
+		const baseObject = {
+			emptyArea,
+			found: false,
+			art,
+			pos
+		};
+		let result = this.#featRecursionLayer(baseObject);
+		let tmp;
+		if (!result) result = this.#secondCheckExtension(art, pos, emptyArea, result);
+		if (result) {
+			const raw = this.#rawList.findIndex((data) => data.code === art[0]);
+			tmp = list.splice(len, 1).flat();
+			feat.push({
+				work: tmp,
+				list: len,
+				raw
+			});
+		}
+		return this.#fillCrateRecursion(info, list, len - 1);
+	}
+	/**
+	* @field - returns the crate template to be fulfilled
+	*/
+	get bluePrintCoordinates() {
+		return this.#coordinates;
+	}
+	/**
+	* @field - Call the fulfillment of the crate.
+	*/
+	get fillLayer() {
+		const { info, list, len, raw } = this.#info;
+		this.#newBaseSize = info.newBase;
+		this.#rawList = raw;
+		this.#packedList = structuredClone(list);
+		const arrange = this.#fillCrateRecursion(info, list, len);
+		arrange.newBase = this.#newBaseSize;
+		return arrange;
+	}
+	/** @param { Object } data  */
+	set fillPreparing(data) {
+		this.#info = data;
+	}
+};
+//#endregion
+//#region app/core2/Crater.largest.canvas.mjs
+var CraterPythagoras = class {
+	#list;
+	#largest;
+	#rawList;
+	#coordinates;
+	#materials;
+	constructor(canvas, materials) {
+		if (canvas && canvas.length > 0) {
+			this.#materials = materials;
+			this.#rawList = canvas;
+			this.#largest = canvas.map((art) => art.packedSized);
+			this.#list = structuredClone(this.#largest);
+		}
+	}
+	#worksInPlace(list, arranger, layers, i = 1) {
+		if (!list.length && !layers) return this.#coordinates;
+		const { emptyArea } = this.#coordinates;
+		arranger.fillPreparing = {
+			info: {
+				emptyArea,
+				feat: []
+			},
+			list,
+			len: list.length - 1,
+			raw: this.#rawList
+		};
+		const { feat } = arranger.fillLayer;
+		this.#coordinates.defineLayer = [i, feat];
+		return this.#worksInPlace(list, arranger, layers - 1, i + 1);
+	}
+	#setWorksCoordinates(base, layers, div, pad) {
+		const coordinates = new WorksCoordinates(base, this.#materials);
+		this.#coordinates = coordinates.bluePrintCoordinates;
+		this.#worksInPlace(this.#list, coordinates, layers);
+		this.#rawList.map((work) => this.#coordinates.artLocation.set(work.code, work));
+		this.#coordinates.innerSize = [
+			base[0] + pad,
+			div + pad,
+			base[2] + pad
+		];
+	}
+	#setPadding(innerCrate, layers) {
+		const crate = new CrateMaker(layers, this.#materials).outSizes;
+		const x = +(innerCrate[0] + crate.x).toFixed(3);
+		const z = +(innerCrate[1] + crate.z).toFixed(3);
+		const y = +(innerCrate[2] + crate.y).toFixed(3);
+		const X = x % 1 > 0 ? x : +x.toFixed(3);
+		const Z = z % 1 > 0 ? z : +z.toFixed(3);
+		const Y = y % 1 > 0 ? y : +y.toFixed(3);
+		const div = crate.div && layers.length > 1 ? innerCrate[1] + crate.div * (layers - 1) : crate.div;
+		this.#setWorksCoordinates(innerCrate, layers, div, crate.pad);
+		return [
+			+X,
+			+Z,
+			+Y
+		];
+	}
+	#extraStructureData(baseSize, crate, hypotenusa) {
+		const MAXHEIGHT = 240;
+		const straightAngle = 180;
+		const degrees = straightAngle / Math.PI;
+		const angle1 = Math.ceil(straightAngle - (straightAngle / 2 + Math.acos(baseSize / hypotenusa) * degrees));
+		const angle2 = straightAngle / 2 - angle1;
+		const degree1 = angle1 * Math.PI / straightAngle;
+		const degree2 = angle2 * Math.PI / straightAngle;
+		const extraHeight = +(crate[1] / Math.sin(degree2)).toFixed(3);
+		const extraLength = Math.cos(degree1) * crate[1];
+		const leanSupport = +Math.sqrt(crate[2] ** 2 - baseSize ** 2).toFixed(3);
+		const totalDepth = +(baseSize + extraLength).toFixed(3);
+		this.#coordinates.finalSize = [
+			crate[0],
+			totalDepth,
+			MAXHEIGHT
+		];
+		this.#coordinates.extra = {
+			extraHeight: +extraHeight.toFixed(3),
+			leanSupport,
+			extraLength: +extraLength.toFixed(3),
+			baseSize: crate,
+			angle: angle1
+		};
+	}
+	#pitagorasTheorem(crate) {
+		const ply = this.#materials?.materials.find((opts) => opts[5] === "Plywood");
+		const feet = this.#materials?.materials.find((opts) => opts[5] === "Wooden Post");
+		const baseStructure = 2 * +ply[2] + +feet[3];
+		const MAXHEIGHT = 240;
+		const realHeightDiagonal = Math.sqrt(crate[1] ** 2) + Math.sqrt((crate[2] + baseStructure) ** 2);
+		const z = +(Math.cos(Math.asin(MAXHEIGHT / realHeightDiagonal)) * realHeightDiagonal).toFixed(3);
+		this.#extraStructureData(z, crate, realHeightDiagonal);
+		return [...this.#coordinates.finalSize];
+	}
+	#defineCrate(canvas) {
+		let x = 0;
+		let z = 0;
+		let y = 0;
+		canvas.map((work) => {
+			if (x < work[1]) x = work[1];
+			if (z < work[2]) z = work[2];
+			if (y < work[3]) y = work[3];
+			return work;
+		});
+		return x >= y ? this.#setPadding([
+			x,
+			z,
+			y
+		], canvas.length) : this.#setPadding([
+			y,
+			z,
+			x
+		], canvas.length);
+	}
+	#crateInterface(works) {
+		let crate;
+		const FLIP = `<i class="nf nf-oct-sync"></i>`;
+		crate = this.#defineCrate(works);
+		works.map((art) => {
+			art[1] <= crate[2] && art[3] > crate[2] && art.push(FLIP);
+			return art;
+		});
+		return this.#pitagorasTheorem(crate);
+	}
+	#largestCrateTrail() {
+		const MAXCANVAS = 3;
+		const crates = [];
+		let canvas;
+		while (this.#largest.length) {
+			canvas = this.#largest.splice(0, MAXCANVAS);
+			crates.push(this.#crateInterface(canvas));
+			crates.push({ works: canvas });
+		}
+		crates[0].push(this.#coordinates);
+		return crates;
+	}
+	#pitagorasCrater() {
+		if (!this.#rawList || this.#rawList.length === 0) return { largest: false };
+		return { crates: this.#largestCrateTrail() };
+	}
+	get makeCrate() {
+		return this.#pitagorasCrater();
+	}
+};
+//#endregion
+//#region app/core2/Crater.standard.crate.mjs
+/**
+* @class Class to comping the Crater class as a method towards solve canvas with different sizes.
+*/
+var CraterStandard = class {
+	#rawList;
+	#list;
+	#maxLayers;
+	#coordinates;
+	#thresholdX;
+	#materials;
+	#layers = 0;
+	#recheck;
+	/**
+	* @param {Array} canvas - The list to be solved.
+	* @param {Array} backUp - The backUp from the first solved tried.
+	* @param {Number} maxLayer - The max number of layers to the crate.
+	* @param {Boolean} recheck - The option reset crates sizes.
+	*/
+	constructor(canvas, materials, maxLayer, recheck) {
+		if (canvas && canvas.length > 0) {
+			this.#materials = materials;
+			this.#rawList = canvas;
+			this.#list = canvas.map((work) => work.packedSized);
+			this.#maxLayers = maxLayer ?? 4;
+			this.#recheck = recheck;
+		}
+	}
+	#startCrate(ARTS = []) {
+		if (!this.#rawList || this.#rawList.length === 0) return { standard: false };
+		switch (this.#recheck) {
+			case false:
+				ARTS = this.#selectTheBestSolution();
+				return { crates: ARTS };
+			case true:
+				ARTS = this.#provideCrate([], 1, structuredClone(this.#list));
+				return { crates: ARTS };
+		}
+	}
+	#checkEqualLengths(list1, list2) {
+		let check1;
+		let check2;
+		let check3;
+		let check4;
+		let opt1 = 0;
+		let opt2 = 0;
+		let pos;
+		for (pos in list1) {
+			check1 = list1[pos][0] > list2[pos][0];
+			check2 = list1[pos][0] !== list2[pos][0];
+			check3 = list1[pos][2] > list2[pos][2];
+			check4 = list1[pos][2] !== list2[pos][2];
+			if (check1 && check2) {
+				const quarterSize = list1[pos][0] * .25;
+				if (list1[pos][0] - list2[pos][0] > quarterSize) opt1 += 1;
+			} else if (check2) opt2 += 1;
+			if (check3 && check4) {
+				const quarterSize = list1[pos][2] * .25;
+				if (list1[pos][2] - list2[pos][2] > quarterSize) opt1 += 1;
+			} else if (check4) opt2 += 1;
+		}
+		return {
+			opt1,
+			opt2
+		};
+	}
+	#checkBestAirportOptions(list1, list2) {
+		const MAXx = 300;
+		const MAXy = 160;
+		let pax1 = 0;
+		let pax2 = 0;
+		let cargo1 = 0;
+		let cargo2 = 0;
+		let bestArrange = 2;
+		list1.map((crate) => crate[0] <= MAXx && crate[2] <= MAXy ? pax1++ : cargo1++);
+		list2.map((crate) => crate[0] <= MAXx && crate[2] <= MAXy ? pax2++ : cargo2++);
+		if (cargo1 === cargo2) bestArrange = pax1 <= pax2 ? 1 : 2;
+		else if (cargo1 < cargo2) bestArrange = pax1 >= pax2 ? 1 : 2;
+		return { bestArrange };
+	}
+	#selectTheBestSolution() {
+		const copy1 = structuredClone(this.#list);
+		const copy2 = structuredClone(this.#list);
+		const results = {
+			opt1: this.#provideCrate([], 0, copy1),
+			opt2: this.#provideCrate([], 1, copy2)
+		};
+		const crates1 = [];
+		const crates2 = [];
+		const GC = /* @__PURE__ */ new WeakSet();
+		Object.entries(results).map((solution) => {
+			solution[0] === "opt1" ? solution[1].map((crate, i) => i % 2 === 0 ? crates1.push(crate) : 0, 0) : solution[1].map((crate, i) => i % 2 === 0 ? crates2.push(crate) : 0, 0);
+			return solution;
+		});
+		const equalCrates = crates1.length === crates2.length;
+		let count;
+		let bestOne;
+		if (equalCrates) count = this.#checkEqualLengths(crates1, crates2);
+		else count = this.#checkBestAirportOptions(crates1, crates2);
+		if (Object.hasOwn(count, "bestArrange")) bestOne = count.bestArrange;
+		else bestOne = count.opt1 <= count.opt2 ? 1 : 2;
+		GC.add(count);
+		return bestOne === 1 ? results.opt1 : results.opt2;
+	}
+	#quickSort(arts) {
+		if (arts.length <= 1) return arts;
+		const left = [];
+		const pivot = arts.splice(0, 1);
+		const right = [];
+		arts.map((work) => {
+			work.at(-1) <= pivot[0].at(-1) ? left.push(work) : right.push(work);
+			return work;
+		});
+		return this.#quickSort(left).concat(pivot, this.#quickSort(right));
+	}
+	#defineFinalSize(innerSize, works) {
+		let z = 0;
+		let i = 0;
+		let tmp = 0;
+		const crate = new CrateMaker(this.#layers, this.#materials).outSizes;
+		if (this.#layers > 1) for (i in works) Object.entries(works[i]).map((canvas) => {
+			if (canvas.includes("status")) return canvas;
+			canvas[1].map((art) => {
+				if (art[2] > tmp) tmp = art[2];
+				return art;
+			});
+			z += tmp;
+			tmp = 0;
+			return canvas;
+		});
+		tmp = crate.div * (this.#layers - 1) + z;
+		this.#coordinates.innerSize = [
+			innerSize[0],
+			+tmp.toFixed(3),
+			innerSize[2]
+		];
+		crate.x += innerSize[0];
+		crate.z += !tmp ? innerSize[1] : tmp;
+		crate.y += innerSize[2];
+		const X = crate.x % 1 > 0 ? crate.x.toFixed(3) : crate.x.toFixed(0);
+		const Z = crate.z % 1 > 0 ? crate.z.toFixed(3) : crate.z.toFixed(0);
+		const Y = crate.y % 1 > 0 ? crate.y.toFixed(3) : crate.y.toFixed(0);
+		this.#rawList.map((work) => this.#coordinates.artLocation.set(work.code, work));
+		this.#coordinates.finalSize = [
+			+X,
+			+Z,
+			+Y
+		];
+		return [
+			+X,
+			+Z,
+			+Y,
+			structuredClone(this.#coordinates)
+		];
+	}
+	#setLayer(crate, works) {
+		switch (this) {
+			case 1:
+				Array.isArray(works[0]) ? crate.push({ layer1: works }) : crate.push({ layer1: [works] });
+				break;
+			case 2:
+				Array.isArray(works[0]) ? crate.push({ layer2: works }) : crate.push({ layer2: [works] });
+				break;
+			case 3:
+				Array.isArray(works[0]) ? crate.push({ layer3: works }) : crate.push({ layer3: [works] });
+				break;
+			case 4:
+				Array.isArray(works[0]) ? crate.push({ layer4: works }) : crate.push({ layer4: [works] });
+				break;
+			case 5:
+				Array.isArray(works[0]) ? crate.push({ layer5: works }) : crate.push({ layer5: [works] });
+				break;
+			default: return;
+		}
+		return crate;
+	}
+	#fillCrate(measure, list) {
+		const coordinates = new WorksCoordinates(measure, this.#materials);
+		this.#coordinates = coordinates.bluePrintCoordinates;
+		if (!this.#coordinates) return;
+		const crate = [];
+		let greb = [];
+		let info;
+		let i = 0;
+		let getter;
+		let copy;
+		const updateSize = (filled) => {
+			const { newBase } = filled;
+			if (newBase[2] > 0 || newBase[3] > 0) {
+				measure[0] = newBase[2];
+				measure[2] = newBase[3];
+				this.#coordinates.baseSize = newBase;
+			}
+		};
+		while (i++ < this.#maxLayers && list.length) {
+			const { emptyArea } = this.#coordinates;
+			info = {
+				emptyArea,
+				feat: [],
+				newBase: [
+					0,
+					0,
+					0,
+					0
+				]
+			};
+			coordinates.fillPreparing = {
+				info,
+				list,
+				len: list.length - 1,
+				raw: this.#rawList
+			};
+			getter = coordinates.fillLayer;
+			updateSize(getter);
+			copy = structuredClone(getter);
+			greb = copy.feat.map((info) => {
+				const art = this.#rawList.find((item) => item.code === info.work[0]).arr;
+				const work = structuredClone(info.work);
+				work[1] = art[1];
+				work[2] = art[2];
+				work[3] = art[3];
+				return work;
+			});
+			this.#setLayer.call(i, crate, greb);
+			this.#coordinates.defineLayer = [i, getter.feat];
+			greb = null;
+			getter = null;
+			info = null;
+			greb = [];
+		}
+		this.#layers = i - 1;
+		delete this.#coordinates.defineLayer;
+		delete this.#coordinates.reset;
+		return {
+			crate,
+			measure,
+			list
+		};
+	}
+	#composeCrateSizes(crate, list, len) {
+		if (len < 0) {
+			if (crate.x < crate.y) [crate.x, crate.y] = [crate.y, crate.x];
+			return crate;
+		}
+		const THRESHOLDY = 140;
+		const x = list[len][1] > list[len][3] ? list[len][1] : list[len][3];
+		const y = list[len][3] > list[len][1] ? list[len][1] : list[len][3];
+		const pos1 = crate.x >= x;
+		const pos2 = crate.y >= y;
+		crate.x = pos1 ? crate.x : list[len][1];
+		crate.x = pos1 && crate.x + x <= this.#thresholdX ? crate.x + x : crate.x;
+		crate.z = list[len][2] > crate.z ? list[len][2] : crate.z;
+		crate.y = pos2 ? crate.y : y;
+		crate.y = pos2 && crate.y + y <= THRESHOLDY ? crate.y + y : crate.y;
+		return this.#composeCrateSizes(crate, list, len - 1);
+	}
+	#defineSizeBaseCrate(list) {
+		const { x, z, y } = this.#composeCrateSizes({
+			x: 0,
+			z: 0,
+			y: 0
+		}, list, list.length - 1);
+		return [
+			x,
+			z,
+			y
+		];
+	}
+	/**
+	* @method - check all sizes to define the best crate size.
+	* @param { Array } works
+	*/
+	#weightSizesToThreshold(list) {
+		const weights = [];
+		const THEWEIGHT = list.at(-1)[1] * list.at(-1)[3];
+		const TIMESIZE = 5;
+		const copyList = structuredClone(list);
+		let sum = 0;
+		let art = 0;
+		let extraSize = false;
+		copyList.pop();
+		for (art of copyList) {
+			weights.push(~~(art[1] * art[3]));
+			const check1 = art[1] > list.at(-1)[1] || art[3] > list.at(-1)[1];
+			const check2 = art[1] > list.at(-1)[3] || art[3] > list.at(-1)[3];
+			if (check1 || check2) extraSize = true;
+		}
+		sum = weights.reduce((add, val) => add + val, 0);
+		return sum > ~~(THEWEIGHT * TIMESIZE) || extraSize;
+	}
+	#addXandYtimes(list) {
+		if (list.length === 1) return list;
+		let procList = [];
+		list.map((art) => {
+			if (Array.isArray(art)) procList.push([
+				art[0],
+				art[1],
+				art[2],
+				art[3],
+				art[1] + art[3]
+			]);
+			return art;
+		});
+		procList = this.#quickSort(procList);
+		procList.map((data) => data.pop());
+		return procList;
+	}
+	/**
+	* @method - start solver procedures.
+	*/
+	#provideCrate(crates, setup, works) {
+		if (!works.length) return crates;
+		works = this.#addXandYtimes(works);
+		const extension = this.#weightSizesToThreshold(works);
+		this.#thresholdX = !setup ? 270 : 600;
+		const size = extension ? this.#defineSizeBaseCrate(works) : works.at(-1)[1] > works.at(-1)[3] ? [
+			works.at(-1)[1],
+			works.at(-1)[2],
+			works.at(-1)[3]
+		] : [
+			works.at(-1)[3],
+			works.at(-1)[2],
+			works.at(-1)[1]
+		];
+		const { crate, measure, list } = this.#fillCrate(size, works);
+		crates.push(this.#defineFinalSize(measure, crate));
+		crates.push({ works: crate });
+		return this.#provideCrate(crates, setup, list);
+	}
+	get makeCrate() {
+		return this.#startCrate();
+	}
+};
+//#endregion
+//#region app/core2/Crater.last.check.mjs
+var CraterLastCheckReArranger = class {
+	#cratesDone;
+	#materials;
+	constructor(crates, materials) {
+		this.#materials = materials;
+		this.#cratesDone = crates;
+	}
+	#quickSort(arts, pos) {
+		if (arts.length <= 1) return arts;
+		const left = [];
+		const pivot = arts.splice(0, 1);
+		const right = [];
+		let j = 0;
+		for (j in arts) arts[j][pos] <= pivot[0][pos] ? left.push(arts[j]) : right.push(arts[j]);
+		return this.#quickSort(left, pos).concat(pivot, this.#quickSort(right, pos));
+	}
+	#removeCrate(crate, pos, list) {
+		const { works } = crate[pos];
+		works.map((layer) => {
+			Object.entries(layer).map((arts) => {
+				arts[1].map((data) => {
+					!Array.isArray(data[0]) ? list.push(data) : data.map((work) => Array.isArray(work[0]) ? list.push(work[0]) : 0);
+					return data;
+				});
+				return arts;
+			});
+			return layer;
+		});
+		return list.map((canvas) => {
+			const { code, x, y, z, packing } = JSON.parse(localStorage.getItem(canvas[0]));
+			return new ArtWork(code, x, z, y, packing);
+		});
+	}
+	#processingCratesList(listCrates, attCrate) {
+		const GC = /* @__PURE__ */ new WeakSet();
+		const LEN = attCrate.works.length;
+		const CUBPOS = 4;
+		const MAXLAYER = 5;
+		let i = 0;
+		let bool = true;
+		let result;
+		while (i++ < listCrates.length && bool) if (i % 2 === 1) {
+			result = LEN === 1 ? structuredClone(attCrate.works[0]) : structuredClone(attCrate.works);
+			result = this.#removeCrate(listCrates, i, result);
+			result = this.#quickSort(result, CUBPOS);
+			result = new CraterStandard(result, this.#materials, MAXLAYER, true).makeCrate;
+			if (result?.crates?.length === listCrates.length) {
+				listCrates.splice(i, 1, result.crates[1]);
+				listCrates.splice(i - 1, 1, result.crates[0]);
+				bool = false;
+			}
+			GC.add(result);
+		}
+		return !bool;
+	}
+	#consolidationTrail(standard, sameSizes, pos) {
+		if (pos < 0) return sameSizes;
+		if (pos % 2 === 1) {
+			if (this.#processingCratesList(standard, sameSizes[pos])) {
+				sameSizes.splice(pos - 1, 2);
+				pos = sameSizes.length;
+			}
+		}
+		return this.#consolidationTrail(standard, sameSizes, pos - 1);
+	}
+	#extractTheFifthLayer(data) {
+		let works;
+		let info;
+		let i = 0;
+		for (info in data) {
+			if (i++ % 2 === 1) {
+				if (data[info].works.length === 5) works = data[info].works[4].layer5;
+			}
+			if (works) break;
+		}
+		return works ? {
+			info,
+			works
+		} : false;
+	}
+	#newCrateSet(works, layers) {
+		const CUBPOS = 4;
+		const newList = [];
+		Object.entries(layers).map((arr) => {
+			arr[1].map((data) => {
+				let info;
+				for (info in data) if (data[info].length > 0 && Array.isArray(data[info])) data[info].map((art) => newList.push(art));
+				return data;
+			});
+			return arr;
+		});
+		works.map((art) => newList.push(art));
+		return this.#quickSort(newList, CUBPOS);
+	}
+	#updatesCrates(crates, pos, newCrate, target) {
+		const PAD = this.#materials.find((opt) => opt.at(-1) === "Foam Sheet" && opt[2] > 2.5);
+		crates[target].works.pop();
+		crates[target - 1][1] -= PAD[2];
+		crates.splice(pos - 1, 1, newCrate.crates[0]);
+		crates.splice(pos, 1, newCrate.crates[1]);
+		return crates;
+	}
+	#removeTheFifthLayer() {
+		const { crates } = this.#cratesDone.standardCrate;
+		const list = this.#extractTheFifthLayer(crates);
+		const LIMITLAYER = 5;
+		let count = 0;
+		let newList;
+		let newCrate;
+		let check;
+		let layers;
+		if (!list) return;
+		for (layers in crates) {
+			if (!Array.isArray(crates[layers]) && count !== +list.info) {
+				newList = this.#newCrateSet(list.works, crates[layers]);
+				newCrate = new CraterStandard(newList, false, LIMITLAYER, true).makeCrate;
+				check = newCrate.crates.length === 2;
+				if (check) {
+					this.#updatesCrates(crates, count, newCrate, list.info);
+					break;
+				}
+			}
+			count++;
+		}
+	}
+	#consolidationStarted() {
+		if (!this.#cratesDone) return;
+		const sameSize = this.#cratesDone?.sameSizeCrate?.crates;
+		const standard = this.#cratesDone?.standardCrate?.crates;
+		if (!sameSize || !standard) return;
+		const sameLen = sameSize.length;
+		this.#consolidationTrail(standard, sameSize, sameLen);
+		this.#removeTheFifthLayer();
+		if (this.#cratesDone.sameSizeCrate.crates.length === 0) delete this.#cratesDone?.sameSizeCrate;
+		return this.#cratesDone;
+	}
+	get reduceCrates() {
+		return this.#consolidationStarted();
+	}
+};
+//#endregion
+//#region app/core2/Crater.no.canvas.mjs
+var CraterNotCanvas = class {
+	#pieces;
+	#rawList;
+	#coordinates;
+	#materials;
+	#list;
+	constructor(list, materials) {
+		if (list && list.length > 0) {
+			this.#materials = materials;
+			this.#rawList = list;
+			this.#pieces = list.map((art) => art.arr);
+			this.#list = list.map((art) => art.arr);
+		}
+	}
+	#quickSort(arts, pos) {
+		if (arts.length <= 1) return arts;
+		const left = [];
+		const pivot = arts.splice(0, 1);
+		const right = [];
+		arts.map((work) => {
+			work[pos] <= pivot[0][pos] ? left.push(work) : right.push(work);
+			return work;
+		});
+		return this.#quickSort(left, pos).concat(pivot, this.#quickSort(right, pos));
+	}
+	#setWorksCoordinates(base) {
+		const coordinates = new WorksCoordinates(base, this.#materials);
+		this.#coordinates = coordinates.bluePrintCoordinates;
+		const { emptyArea } = this.#coordinates;
+		const info = {
+			emptyArea,
+			feat: []
+		};
+		const len = this.#list.length - 1;
+		const separator = this.#materials.materials.filter((foam) => foam[5] === "Foam Sheet" && foam[2] < 5).flat();
+		let lastX = 0;
+		coordinates.fillPreparing = {
+			info,
+			list: this.#list,
+			len,
+			raw: this.#rawList
+		};
+		const { feat } = coordinates.fillLayer;
+		this.#coordinates.defineLayer = [1, feat];
+		this.#rawList.map((work, i) => {
+			work.coordinates = {
+				x: i > 0 ? i * separator[2] + lastX : 0,
+				y: 0,
+				z: work.z
+			};
+			this.#coordinates.artLocation.set(work.code, work);
+			lastX += work.x;
+			return work;
+		}, 0);
+	}
+	#setPadding(innerCrate) {
+		const crate = new CrateMaker(this.#rawList.length, this.#materials).outSizes;
+		const div = crate.div ? crate.div * (this.#rawList.length - 1) : 0;
+		const x = +(innerCrate[0] + crate.x + div).toFixed(3);
+		const z = +(innerCrate[1] + crate.z - crate.div).toFixed(3);
+		const y = +(innerCrate[2] + crate.y).toFixed(3);
+		const X = x % 1 > 0 ? x : x.toFixed(3);
+		const Z = z % 1 > 0 ? z : z.toFixed(3);
+		const Y = y % 1 > 0 ? y : y.toFixed(3);
+		this.#setWorksCoordinates(structuredClone([
+			+X,
+			+Z,
+			+Y
+		]));
+		this.#coordinates.innerSize = innerCrate;
+		this.#coordinates.finalSize = [
+			+X,
+			+Z,
+			+Y
+		];
+		return [...this.#coordinates.finalSize, this.#coordinates];
+	}
+	#splitCrate(works) {
+		let x = 0;
+		let z = 0;
+		let newX = 0;
+		let newZ = 0;
+		let aux;
+		aux = works.length / 2;
+		works.map((item) => {
+			if (aux-- > 0) {
+				x += item[1];
+				if (z < item[2]) z = item[2];
+			}
+			newX = item[1];
+			if (newZ < item[2]) newZ = item[2];
+			return item;
+		});
+		if (newX < x) newX = x;
+		newZ += z;
+		return {
+			newX,
+			newZ
+		};
+	}
+	#defCrate(pieces) {
+		const LENLIMIT = 277;
+		const SPLIT = pieces.length > 4 && pieces.length % 2 === 0;
+		let x = 0;
+		let z = 0;
+		let y = 0;
+		let split;
+		pieces.map((item) => {
+			x += item[1];
+			z = item[2] > z ? item[2] : z;
+			y = item[3] > y ? item[3] : y;
+			return item;
+		});
+		if (x > LENLIMIT || SPLIT) {
+			split = this.#splitCrate(pieces);
+			x = split.newX;
+			z = split.newZ;
+		}
+		return this.#setPadding([
+			x,
+			z,
+			y
+		]);
+	}
+	#validationComp(val1, val2) {
+		const MAXLEN = 277;
+		const MAXDEPTH = 177;
+		const MAXHEIGHT = 132;
+		const compareX = val1[1] === val2[1] && val1[1] < MAXLEN;
+		const compareZ = val1[2] === val2[2] && val1[2] < MAXDEPTH;
+		const compareY = val1[3] <= MAXHEIGHT;
+		return compareX && compareZ && compareY;
+	}
+	#validationSizes(x, z, equals, items) {
+		const MAXLEN = 554;
+		const MAXDEPTH = 177;
+		if (items.length % 2 === 0) {
+			if (x > MAXLEN && z * 2 < MAXDEPTH) return items.length;
+		}
+		return equals === 0 || items[0][1] > MAXLEN ? 1 : equals;
+	}
+	#defineMaxPeces(items) {
+		let x = items.length;
+		let z = 0;
+		let equals = 0;
+		const workRef = items[0];
+		items.map((art) => {
+			const compare = this.#validationComp(art, workRef);
+			const bool1 = art[2] - workRef[2];
+			const bool2 = workRef[2] - art[2];
+			if (compare === true || bool1 > 0 || bool2 > 0) {
+				equals++;
+				x += art[1];
+				z += art[3];
+			}
+			return art;
+		});
+		return this.#validationSizes(x, z, equals, items);
+	}
+	#addXandZtimes(canvas) {
+		if (!Array.isArray(canvas)) return canvas;
+		let procList = canvas.map((art) => {
+			art.push(art[1] * art[2]);
+			return art;
+		});
+		procList = this.#quickSort(procList, 5);
+		procList = procList.map((art) => {
+			art.pop();
+			return art;
+		});
+		this.#pieces = procList;
+	}
+	#noCanvasTrail() {
+		if (!this.#rawList || this.#rawList.length === 0) return { noCanvas: false };
+		const crate = [];
+		let peces;
+		this.#addXandZtimes(this.#pieces);
+		while (this.#pieces.length > 0) {
+			peces = this.#defineMaxPeces(this.#pieces);
+			peces = this.#pieces.splice(0, peces);
+			if (peces.length > 0) {
+				crate.push(this.#defCrate(peces));
+				crate.push({ works: peces });
+			} else {
+				crate.push(this.#defCrate(this.#pieces.splice(0, 1)));
+				crate.push({ works: peces });
+			}
+		}
+		return { crates: crate };
+	}
+	get makeCrate() {
+		return this.#noCanvasTrail();
+	}
+};
+//#endregion
+//#region app/core2/Crater.same.size.mjs
+var CraterSameSize = class {
+	#pieces;
+	#packageSize;
+	#rawList;
+	#coordinates;
+	#materials;
+	constructor(list, materials) {
+		if (list && list.length > 0) {
+			this.#materials = materials;
+			this.#rawList = list;
+			this.#pieces = list.map((art) => art.packedSized);
+			this.#packageSize = list[0].packedSized;
+		}
+	}
+	#worksInPlace(list, arranger, i = 1) {
+		if (!list.length) return this.#coordinates;
+		const { emptyArea } = this.#coordinates;
+		arranger.fillPreparing = {
+			info: {
+				emptyArea,
+				feat: []
+			},
+			list,
+			len: list.length - 1,
+			raw: this.#rawList
+		};
+		const result = arranger.fillLayer;
+		this.#coordinates.defineLayer = [i, result.feat];
+		return this.#worksInPlace(list, arranger, i + 1);
+	}
+	#setWorksCoordinates(base, stack) {
+		const { materials, cratesOnly } = this.#materials;
+		const check = (a, b) => a === b[0] && b[2] < 5 && b[5] === "Foam Sheet";
+		let padLayer;
+		cratesOnly.map((item) => {
+			const padding = materials.filter((opt) => check(item, opt));
+			if (padding.length) padLayer = padding.flat();
+			return item;
+		});
+		if (stack) base[2] = +padLayer[2];
+		const coordinates = new WorksCoordinates(base, this.#materials);
+		this.#coordinates = coordinates.bluePrintCoordinates;
+		const { emptyArea } = this.#coordinates;
+		coordinates.fillPreparing = {
+			info: {
+				emptyArea,
+				feat: []
+			},
+			list: this.#pieces,
+			len: this.#pieces.length - 1,
+			raw: this.#rawList
+		};
+		const { feat } = coordinates.fillLayer;
+		const list = structuredClone(this.#pieces);
+		this.#coordinates.defineLayer = [1, feat];
+		this.#rawList.map((work) => this.#coordinates.artLocation.set(work.code, work));
+		this.#worksInPlace(list, coordinates);
+		this.#rawList.map((work) => this.#coordinates.artLocation.set(work.code, work));
+		delete this.#coordinates.defineLayer;
+		delete this.#coordinates.reset;
+		return base;
+	}
+	#setPad(innerCrate, layersUp) {
+		const crater = new CrateMaker(this.#pieces.length, this.#materials, layersUp).outSizes;
+		const x = +(innerCrate[0] + crater.x).toFixed(3);
+		const z = innerCrate[1] + crater.z;
+		const y = +(innerCrate[2] + crater.y).toFixed(3);
+		const X = x % 1 > 0 ? x : x.toFixed(0);
+		const Z = z + 1;
+		const Y = y % 1 > 0 ? y : y.toFixed(0);
+		this.#setWorksCoordinates(innerCrate, layersUp);
+		this.#coordinates.innerSize = [
+			innerCrate[0],
+			crater.z,
+			innerCrate[2]
+		];
+		this.#coordinates.finalSize = [
+			+X,
+			+Z,
+			+Y
+		];
+		return [...this.#coordinates.finalSize, this.#coordinates];
+	}
+	#checkComp(getter, test, baseLayer) {
+		const checker = getter.map((value) => {
+			const checkX = value[0] + test[0] <= baseLayer[0];
+			const checkZ = value[1] + test[1] <= baseLayer[1];
+			const checkY = value[2] + test[2] <= baseLayer[2];
+			if (checkX && checkZ && checkY) return value;
+			return value;
+		});
+		if (checker[0] !== void 0) checker.map((size) => getter.splice(getter.indexOf(size), 1));
+		return checker[0] !== void 0;
+	}
+	#composeLayer(baseSize, list) {
+		const getter = [];
+		return list.map((size) => {
+			const X = size[0] === baseSize[0][0];
+			const Y = size[2] === baseSize[0][2];
+			const secondX = size[0] === baseSize[0][0] - this.#packageSize[1];
+			const secondY = size[2] === baseSize[0][2] - this.#packageSize[3];
+			if (X && Y || secondX && secondY) return size;
+			if (getter.length > 0) {
+				if (this.#checkComp(getter, size, baseSize)) return size;
+			} else getter.push(size);
+			return size;
+		})[0] !== void 0;
+	}
+	#orderSizes(base, art) {
+		const STACK = base.shift();
+		const LEN = art.length;
+		let DEPTH;
+		let x;
+		let z;
+		let y;
+		if (STACK) {
+			DEPTH = LEN % 2 + LEN / 2;
+			x = base[0];
+			z = DEPTH * this.#packageSize[2];
+			y = base[2];
+		} else {
+			x = base[0];
+			z = LEN * this.#packageSize[2];
+			y = base[2];
+		}
+		return this.#setPad([
+			x,
+			z,
+			y
+		], STACK);
+	}
+	#sizeStacking(base, newBase) {
+		const extraSizes = newBase.length > 3 ? [
+			newBase[0][1],
+			newBase[0][2],
+			newBase[0][3]
+		] : newBase;
+		const LIMIT = 132;
+		let x = base[0];
+		const z = base[1];
+		let y = base[2] + extraSizes[2];
+		let stack = false;
+		if (y > LIMIT && x < LIMIT) {
+			[y, x] = [x, y];
+			stack = true;
+		} else if (y > base[2]) stack = true;
+		return [stack, [
+			x,
+			z,
+			y
+		]];
+	}
+	#solveList(list) {
+		const LIMITWORKS = 10;
+		let comp;
+		let baseCrate = list.splice(0, 1).flat();
+		let works = list.splice(0, 1).flat();
+		if (list.length > 0) comp = this.#composeLayer(baseCrate, list);
+		if (comp) {
+			baseCrate = this.#sizeStacking(baseCrate, list.splice(0, 1));
+			list[0].map((val) => works[0][0].push(val));
+			list.splice(0, list[0].length);
+		} else if (works[0].length > LIMITWORKS && works[0].length % 2 === 0) baseCrate = this.#sizeStacking(baseCrate, works[0]);
+		else baseCrate.unshift(false);
+		if (Array.isArray(works[0][0])) works = works.flat();
+		return {
+			crate: this.#orderSizes(baseCrate.flat(), works),
+			works
+		};
+	}
+	#compCrate(list) {
+		const crate = [];
+		let solver;
+		while (list.length) {
+			solver = this.#solveList(list);
+			crate.push(solver.crate);
+			crate.push({ works: solver.works });
+		}
+		return crate;
+	}
+	#countWorks() {
+		const MAXDEPTH = 14;
+		let x = this.#pieces[0][1];
+		let z = this.#pieces[0][2];
+		let y = this.#pieces[0][3];
+		const sizes = [[
+			x,
+			z,
+			y
+		]];
+		let works = [];
+		this.#pieces.map((work) => {
+			if (work[2] <= MAXDEPTH) {
+				if (work[1] !== x && work[3] !== y) {
+					sizes.push([works]);
+					x = work[1];
+					z = work[2];
+					y = work[3];
+					sizes.push([
+						x,
+						z,
+						y
+					]);
+					works = [];
+				}
+				works.push(work);
+			}
+			return work;
+		});
+		sizes.push(works);
+		return sizes[1][0].length >= 4 ? sizes : null;
+	}
+	#startCrateTrail() {
+		if (!this.#rawList || this.#rawList.length === 0) return { sameSize: false };
+		let countDiffSizes = this.#countWorks();
+		if (countDiffSizes === null) return null;
+		const crates = this.#compCrate(countDiffSizes);
+		countDiffSizes = null;
+		return { crates };
+	}
+	get makeCrate() {
+		return this.#startCrateTrail();
+	}
+};
+//#endregion
+//#region app/core2/Crater.tube.crate.mjs
+var CraterTube = class {
+	#tubes;
+	#DIAMETER;
+	#coordinates;
+	#rawList;
+	#materials;
+	constructor(list, materials) {
+		if (list && list.length > 0) {
+			this.#materials = materials;
+			this.#rawList = list;
+			this.#tubes = list.map((art) => art.arr);
+			this.#DIAMETER = 35;
+		}
+	}
+	#crateMaker() {
+		if (!this.#rawList || this.#rawList.length === 0) return { tube: false };
+		if (this.#tubes.filter((item) => {
+			return item[2] < this.#DIAMETER ? item : false;
+		}).find((data) => !Array.isArray(data))) return { tube: false };
+		return this.#possibleCrates();
+	}
+	#worksInPlace(list, arranger, i = 1) {
+		if (!list.length) return this.#coordinates;
+		const { emptyArea } = this.#coordinates;
+		arranger.fillPreparing = {
+			info: {
+				emptyArea,
+				feat: []
+			},
+			list,
+			len: list.length - 1,
+			raw: this.#rawList
+		};
+		const result = arranger.fillLayer;
+		this.#coordinates.defineLayer = [i, result.feat];
+		return this.#worksInPlace(list, arranger, i + 1);
+	}
+	#setWokdCoordinates(innerSize, list) {
+		const coordinates = new WorksCoordinates(innerSize, this.#materials);
+		this.#coordinates = coordinates.bluePrintCoordinates;
+		const { emptyArea } = this.#coordinates;
+		const info = {
+			emptyArea,
+			feat: []
+		};
+		const len = Array.isArray(list[0]) ? list.length - 1 : 0;
+		const spanPad = 10;
+		let sumY = 0;
+		coordinates.fillPreparing = {
+			info,
+			list,
+			len,
+			raw: this.#rawList
+		};
+		const { feat } = coordinates.fillLayer;
+		this.#coordinates.defineLayer = [1, feat];
+		this.#worksInPlace(list, coordinates);
+		this.#rawList.map((work, i) => {
+			if (i > 0) sumY += spanPad;
+			this.#coordinates.artLocation.set(work.code, work);
+			return work;
+		}, 0);
+		this.#coordinates.innerSize = [
+			innerSize[0],
+			innerSize[1],
+			innerSize[2] + sumY
+		];
+	}
+	#sizeComposer(list) {
+		let x = list[0][1];
+		let z = list[0][2];
+		let y = 0;
+		list.map((tube, i) => {
+			x = tube[1] > x ? tube[1] : x;
+			z = tube[2] > z ? tube[2] : z;
+			y += i > 0 ? tube[3] + 10 : tube[3];
+			return tube;
+		}, 0);
+		return [
+			x,
+			z,
+			y
+		];
+	}
+	#setPaddings(base, list) {
+		const outSizes = new CrateMaker(1, this.#materials).outSizes;
+		const x = +(base[0] + outSizes.x).toFixed(3);
+		const z = +(base[1] + outSizes.z).toFixed(3);
+		const y = +(base[2] + outSizes.y).toFixed(3);
+		const X = x % 1 > 0 ? x : x.toFixed(0);
+		const Z = z % 1 > 0 ? z : z.toFixed(0);
+		const Y = y % 1 > 0 ? y : y.toFixed(0);
+		this.#setWokdCoordinates(base, structuredClone(list));
+		this.#coordinates.finalSize = [
+			+X,
+			+Z,
+			+Y
+		];
+		return [...this.#coordinates.finalSize];
+	}
+	#tubeCrate(works) {
+		const baseSize = this.#sizeComposer(works);
+		return this.#setPaddings(baseSize, works);
+	}
+	#hugeTubes(tubes) {
+		const result = [];
+		const MAXCONTENT = 3;
+		let getter;
+		while (tubes.length >= MAXCONTENT) {
+			getter = tubes.splice(0, MAXCONTENT);
+			result.push(this.#tubeCrate(getter.length));
+			result.push({ works: getter });
+		}
+		console.log("🗣️", result);
+		return result;
+	}
+	#checkHugeTubes() {
+		const getter = [];
+		this.#tubes.filter((tube) => {
+			if (tube[2] > this.#DIAMETER) getter.push(tube);
+			return tube;
+		});
+		getter.map((roll) => {
+			this.#tubes.splice(this.#tubes.indexOf(roll), 1);
+			return roll;
+		});
+		return getter;
+	}
+	#possibleCrates() {
+		let reduce;
+		let tubes;
+		const crates = [];
+		const MAXCONTENT = 3;
+		const biggest = this.#checkHugeTubes();
+		if (biggest.length > 0 || biggest.length > MAXCONTENT) crates.push(this.#hugeTubes(biggest));
+		while (this.#tubes.length) {
+			tubes = this.#tubes.splice(0, MAXCONTENT);
+			reduce = structuredClone(tubes);
+			crates.push(this.#tubeCrate(reduce));
+			crates[0].push(this.#coordinates);
+			crates.push({ works: tubes });
+		}
+		if (this.#tubes.length >= 1) {
+			tubes = this.#tubes.splice(0, MAXCONTENT);
+			reduce = structuredClone(tubes);
+			crates.push(this.#tubeCrate(reduce));
+			crates[0].push(this.#coordinates);
+			crates.push({ works: tubes });
+		}
+		return { crates };
+	}
+	get makeCrate() {
+		return this.#crateMaker();
+	}
+};
+//#endregion
+//#region app/core2/Crater.class.mjs
+var Crater = class {
+	#materials;
+	#works;
+	#crates;
+	constructor(procList, materials) {
+		if (procList === Arranger) {
+			this.#materials = materials;
+			this.#works = procList.list;
+			this.#crates = [];
+		}
+	}
+	#startCrateList() {
+		if (!this.#works) return false;
+		let key = 0;
+		const CRATES = [
+			"tubeCrate",
+			"largestCrate",
+			"sameSizeCrate",
+			"noCanvasCrate",
+			"standardCrate"
+		];
+		try {
+			this.#tubeCrate();
+			this.#LargestCanvas();
+			this.#sameSizeCrate();
+			this.#noCanvasCrate();
+			this.#standardCrates();
+			this.#lastCheckArrangerSameSizeToStandard();
+			for (key in this.#crates) if (!(this.#crates[key]?.hasOwnProperty("crates") && CRATES.includes(key))) delete this.#crates[key];
+			this.#allCrates();
+			this.#cubAir();
+			this.#totalCub();
+			this.#whichAirPort();
+			if (Array.isArray(this.#crates?.sameSizeCrate?.backUp)) {
+				this.#totalCubBackUp();
+				this.#whichAirPortBackUp();
+				this.#allCratesBackUp();
+			}
+			return { crates: this.#crates };
+		} catch (e) {
+			console.error("Crater Failed:", e);
+		}
+	}
+	#tubeCrate() {
+		if (this.#works?.tubes?.length > 0) {
+			const tubeCrate = new CraterTube(this.#works?.tubes, this.#materials);
+			this.#crates.tubeCrate = tubeCrate.makeCrate;
+		}
+	}
+	#LargestCanvas() {
+		if (this.#works?.largest?.length > 0) {
+			const largestcrates = new CraterPythagoras(this.#works?.largest, this.#materials);
+			this.#crates.largestCrate = largestcrates.makeCrate;
+		}
+	}
+	#sameSizeCrate() {
+		if (this.#works?.sameSize?.length > 0) {
+			const sameMeasure = new CraterSameSize(this.#works?.sameSize, this.#materials);
+			this.#crates.sameSizeCrate = sameMeasure.makeCrate;
+		}
+	}
+	#noCanvasCrate() {
+		if (this.#works?.noCanvas?.length > 0) {
+			const noCanvas = new CraterNotCanvas(this.#works?.noCanvas, this.#materials);
+			this.#crates.noCanvasCrate = noCanvas.makeCrate;
+		}
+	}
+	#standardCrates() {
+		if (this.#works?.sorted?.length > 0) {
+			const std = new CraterStandard(this.#works?.sorted, this.#materials, 4, false);
+			this.#crates.standardCrate = std.makeCrate;
+		}
+	}
+	#lastCheckArrangerSameSizeToStandard() {
+		const check1 = Object.entries(this.#crates).some((data) => data[0] === "sameSizeCrate");
+		const check2 = Object.entries(this.#crates).some((data) => data[0] === "standardCrate");
+		if (check1 && check2) this.#crates = new CraterLastCheckReArranger(this.#crates, this.#materials).reduceCrates;
+	}
+	#allCrates() {
+		let key = 0;
+		const CRATES = [];
+		const filterCrates = (data) => {
+			Array.isArray(data) && CRATES.push(data);
+		};
+		for (key in this.#crates) this.#crates[key]?.crates?.map(filterCrates);
+		this.#crates.allCrates = CRATES;
+	}
+	#allCratesBackUp() {
+		let check1;
+		let check2;
+		let key = 0;
+		const CRATES = [];
+		const filterCrates = (data) => {
+			Array.isArray(data) && CRATES.push(data);
+		};
+		for (key in this.#crates) {
+			check1 = this.#crates[key] === "sameSizeCrate";
+			check2 = this.#crates[key] === "standardCrate";
+			if (check1 || check2) this.#crates[key]?.backUp?.map(filterCrates);
+			this.#crates[key]?.crates?.map(filterCrates);
+		}
+		this.#crates.allCratesBackUp = CRATES;
+	}
+	#cubAir() {
+		let key = 0;
+		const setCub = (sizes) => {
+			if (Array.isArray(sizes) && sizes.length >= 3) {
+				const X = sizes[0];
+				const Z = sizes[1];
+				const Y = sizes[2];
+				const cubCrate = new CubCalc(X, Z, Y).cubCalcAir;
+				const data = sizes.length === 4 ? sizes.splice(3, 1, cubCrate) : sizes.push(cubCrate);
+				Array.isArray(data) && sizes.push(data);
+			}
+		};
+		for (key in this.#crates) this.#crates[key]?.crates?.map(setCub);
+		if (Array.isArray(this.#crates?.sameSizeCrate?.backUp)) {
+			this.#crates?.sameSizeCrate?.backUp?.map(setCub);
+			this.#crates?.standardCrate?.backUp?.map(setCub);
+		}
+	}
+	#totalCub() {
+		let key = 0;
+		let total = [];
+		const setTotalCub = (crate) => {
+			Array.isArray(crate) && total.push(crate[3]);
+		};
+		for (key in this.#crates) this.#crates[key]?.crates?.map(setTotalCub);
+		total = total.reduce((sum, val) => sum + val, 0);
+		this.#crates.airCubTotal = total.toFixed(3);
+	}
+	#totalCubBackUp() {
+		let check1;
+		let check2;
+		let total = [];
+		let key = 0;
+		const setTotalCub = (crate) => {
+			if (Array.isArray(crate)) total.push(crate[3]);
+		};
+		for (key in this.#crates) {
+			check1 = this.#crates[key] === "sameSizeCrate";
+			check2 = this.#crates[key] === "standardCrate";
+			if (check1 || check2) this.#crates[key]?.backUp?.map(setTotalCub);
+			else if (!(check1 || check2)) this.#crates[key]?.crates?.map(setTotalCub);
+		}
+		total = total.reduce((sum, val) => +(sum + val).toFixed(3), 0);
+		this.#crates.airCubTotalBackUp = total;
+	}
+	#airPortOptions(crate) {
+		const MAXX = 300;
+		const MAXZ = 200;
+		const MAXY = 160;
+		if (Array.isArray(crate)) {
+			const X = crate[0];
+			const Z = crate[1];
+			const Y = crate[2];
+			return !(X > MAXX || Z > MAXZ || Y > MAXY) ? "PAX" : "CARGO";
+		}
+	}
+	#whichAirPort() {
+		let pax = 0;
+		let cargo = 0;
+		let key = 0;
+		let tmp;
+		for (key in this.#crates) this.#crates[key]?.crates?.map((crate) => {
+			tmp = this.#airPortOptions(crate);
+			tmp === "PAX" ? pax++ : tmp === "CARGO" && cargo++;
+		});
+		this.#crates.whichAirPort = [{ PAX: pax }, { CARGO: cargo }];
+	}
+	#whichAirPortBackUp() {
+		let check1;
+		let check2;
+		let tmp;
+		let key = 0;
+		let pax = 0;
+		let cargo = 0;
+		for (key in this.#crates) {
+			check1 = this.#crates[key] === "sameSizeCrate";
+			check2 = this.#crates[key] === "standardCrate";
+			if (check1 || check2) this.#crates[key]?.backUp?.map((crate) => {
+				tmp = this.#airPortOptions(crate);
+				tmp === "PAX" ? pax++ : tmp === "CARGO" && cargo++;
+			});
+			else if (!(check1 || check2)) this.#crates[key]?.crates?.map((crate) => {
+				tmp = this.#airPortOptions(crate);
+				tmp === "PAX" ? pax++ : tmp === "CARGO" && cargo++;
+			});
+		}
+		this.#crates.whichAirPortBackUp = [{ PAX: pax }, { CARGO: cargo }];
+	}
+	get makeCrate() {
+		return this.#startCrateList();
+	}
+};
+//#endregion
+//#region app/core2/Unit.Adapter.class.mjs
+var UnitAdapter = class {
+	#list;
+	#unit;
+	#materials;
+	constructor(works, unit) {
+		this.#materials = {
+			materials: JSON.parse(localStorage.getItem("materials")),
+			cratesOnly: JSON.parse(localStorage.getItem("crating"))
+		};
+		this.#list = works;
+		this.#unit = unit;
+		return this.#definePath();
+	}
+	#checkInput() {
+		try {
+			if (!Array.isArray(this.#list)) throw new TypeError(`Please, provide a valid list.`);
+			if (this.#list.some((art) => {
+				return art.constructor.name !== "ArtWork";
+			})) throw new TypeError(`Please, provide a type of 'ArtWork' object list.`);
+			if (this.#unit !== "cm" && this.#unit !== "in") throw new TypeError(`Please, provide a valid unit.`);
+		} catch (err) {
+			return err;
+		}
+		return "pass";
+	}
+	async #definePath() {
+		let result;
+		const checker = this.#checkInput();
+		switch (checker !== "pass" ? "error" : this.#unit === "cm" ? "cm" : "in") {
+			case "error": return checker;
+			case "cm":
+				result = await this.#cmPath();
+				return result;
+			case "in":
+				result = await this.#inPath();
+				return result;
+		}
+	}
+	#reversionUnit(data) {
+		const CHECK1 = data?.hasOwnProperty("crates");
+		const CHECK2 = data?.hasOwnProperty("backUp");
+		if (Array.isArray(data)) return data = data.map(swapUnitReversion);
+		else if (!data?.hasOwnProperty("crates")) return data;
+		else if (CHECK1 || CHECK2) {
+			data.crates = data.crates.map((info) => {
+				if (info.length === 4) return info = swapUnitReversion(info);
+				Array.isArray(info.works[0]) ? info.works = info.works.map(swapUnitReversion) : info.works = info.works.map(layerInterface);
+				return info;
+			});
+			console.log(data.crates);
+		}
+		return data;
+	}
+	#convertToCM() {
+		return this.#list.map((art) => {
+			const converted = art.autoConvert;
+			const code = converted[0];
+			const x = converted[1];
+			const z = converted[2];
+			const y = converted[3];
+			return new ArtWork(code, x, z, y);
+		});
+	}
+	#convertToIN(crates) {
+		const CUBCONST = .061023;
+		let key = 0;
+		for (key in crates) if (Object.hasOwn(crates[key], "crates")) crates[key] = this.#reversionUnit(crates[key]);
+		if (crates.sameSizeCrate?.hasOwnProperty("backUp")) {
+			crates.airCubTotalBackUp = +(crates.airCubTotalBackUp * CUBCONST).toFixed(3);
+			crates.allCratesBackUp = this.#reversionUnit(crates.allCratesBackUp);
+		}
+		crates.allCrates = this.#reversionUnit(crates.allCrates);
+		return crates;
+	}
+	async #cmPath() {
+		return await Promise.resolve(new Arranger(this.#list).start).then((procList) => new Crater(procList, this.#materials).makeCrate).then((cratesDone) => cratesDone.crates).catch((err) => err);
+	}
+	async #inPath() {
+		return await Promise.resolve(this.#convertToCM()).then((list) => new Arranger(list).start).then((procList) => new Crater(procList, this.#materials).makeCrate).then((cratesDone) => this.#convertToIN(cratesDone.crates)).catch((err) => err);
+	}
+};
+function swapUnitReversion(sizes) {
+	const CUBCONST = .061023;
+	let tmp;
+	let x;
+	let z;
+	let y;
+	console.log(sizes);
+	switch (sizes.length) {
+		case 4:
+			x = sizes[0];
+			z = sizes[1];
+			y = sizes[2];
+			tmp = Array.from(new Converter(x, z, y).inConvert);
+			tmp.push(+(sizes[3] * CUBCONST).toFixed(3));
+			sizes = tmp;
+			return sizes;
+		case 5:
+			x = sizes[1];
+			z = sizes[2];
+			y = sizes[3];
+			tmp = Array.from(new Converter(x, z, y).inConvert);
+			tmp.unshift(sizes[0]);
+			tmp.push(+(sizes[3] * CUBCONST).toFixed(3));
+			sizes = tmp;
+			return sizes;
+		case 6:
+			x = sizes[1];
+			z = sizes[2];
+			y = sizes[3];
+			tmp = Array.from(new Converter(x, z, y).inConvert);
+			tmp.unshift(sizes[0]);
+			tmp.push(+(sizes[3] * CUBCONST).toFixed(3));
+			tmp.push(sizes[5]);
+			sizes = tmp;
+			return sizes;
+	}
+}
+function layerInterface(layer) {
+	let key;
+	for (key in layer) Array.isArray(layer[key][0][0][0]) ? layer[key][0].map((work) => work.splice(0, 1, swapUnitReversion(work[0]))) : layer[key] = [swapUnitReversion(layer[key][0])];
+	return layer;
+}
+//#endregion
+//#region app/front-modules/bridge.link.web.db.mjs
+/**
+* @param {String} doc The reference/document code estimate when the page is offline.
+*/
+function setOfflineRef(doc) {
+	const STORAGE = localStorage;
+	const offList = STORAGE.getItem("offResults");
+	const list = offList !== void 0 ? JSON.parse(offList) : false;
+	if (list) {
+		list.push(doc);
+		STORAGE.removeItem("offResults");
+		STORAGE.setItem("offResults", JSON.stringify(list));
+	} else STORAGE.setItem("offResults", JSON.stringify([doc]));
+}
+/**
+* @param {Crater} content The solved list result from the algorithm.
+*/
+async function getNewTokens(content) {
+	const url = "/api/v1/shift/tokens";
+	const HEADER = { "Content-Type": "application/json; charset=UTF-8" };
+	try {
+		const result = await fetch(url, {
+			method: "POST",
+			headers: HEADER
+		}).then((code) => code.status).catch((err) => console.error(`ALERT ${err}`));
+		postDataFromClientSide(content);
+		console.log(result);
+	} catch (err) {
+		alert(`ATTENTION: ${err}`);
+	}
+}
+/**
+* @param {Number} code HTTP code.
+* @param {String} info The server answer about the user access token.
+* @param {Crater} data The crater object result serialized.
+* @param {Object} header Object header to HTTP request.
+*/
+function checkStatusCode(code, info, data, header) {
+	switch (code) {
+		case 409:
+			upDateEstimateClient(data, header, info);
+			break;
+		case 403:
+			getNewTokens(info);
+			break;
+	}
+}
+/**
+* @param {Object} solve the solved list with new crates sizes
+*/
+async function upDateCrateSizes(solved) {
+	const HEADER = { "Content-Type": "application/json; charset=UTF-8" };
+	const url = "/api/v1/update/estimates";
+	const { reference, list, crates } = solved;
+	const INFO = {
+		reference,
+		list,
+		crates: Object.assign({}, crates)
+	};
+	try {
+		await fetch(url, {
+			method: "PUT",
+			body: JSON.stringify(INFO),
+			headers: HEADER
+		}).then((code) => code.status).catch((err) => console.error(`ALERT ${err}`));
+	} catch (err) {
+		alert(`ATTENTION: ${err}`);
+	} finally {
+		return "updated";
+	}
+}
+/**
+* @param {String} content The server answer about the user access token.
+* @param {Crater} data The crater object result serialized.
+* @param {Object} header Object header to HTTP request.
+*/
+async function upDateEstimateClient(data, header, content) {
+	if (confirm("This estimate already exist. Would you like to update it?")) {
+		const url = "/api/v1/update/estimates";
+		try {
+			const result = await fetch(url, {
+				method: "PUT",
+				body: data,
+				headers: header
+			}).then((code) => code.status).catch((err) => console.error(`ALERT ${err}`));
+			result === 403 && checkStatusCode(result, content);
+		} catch (err) {
+			alert(`ATTENTION: ${err}`);
+		}
+	} else alert(`Not updated!`);
+}
+/**
+* @param {Crater} content The solved list result from the algorithm.
+*/
+async function postDataFromClientSide(content) {
+	const DATA = JSON.stringify(content);
+	const url = `/api/v1/newEstimate`;
+	const HEADER = { "Content-Type": "application/json; charset=UTF-8" };
+	if (globalThis.navigator.onLine) try {
+		checkStatusCode(await fetch(url, {
+			method: "POST",
+			body: DATA,
+			headers: HEADER
+		}).then((code) => code.status).catch((err) => console.error(`ALERT ${err}`)), content, DATA, HEADER);
+	} catch (err) {
+		alert(`ATTENTION: ${err}`);
+	}
+	else setOfflineRef(content.reference);
+}
+/**
+* @param {String} estimate The algorithm solved result.
+*/
+async function saveTheCurrentEstimate(estimate) {
+	const { reference, list, crates } = estimate;
+	await postDataFromClientSide({
+		reference,
+		list,
+		crates: Object.assign({}, crates)
+	});
+}
+//#endregion
+//#region app/front-modules/link.storage.mjs
+/**
+* @function Creates a new indexedDB table in the browser for all crate results.
+*/
+function createIDB() {
+	const dataName = "Results";
+	const request = globalThis.indexedDB.open(dataName);
+	request.onerror = (event) => {
+		alert(`ATTENTION! ${event.target.errorCode}`);
+	};
+	request.onupgradeneeded = (event) => {
+		const db = event.target.result;
+		let object;
+		object = db.createObjectStore(dataName, { keyPath: "reference" });
+		object.createIndex("reference", "reference", { unique: true });
+	};
+}
+/**
+* @function Creates a new indexedDB table in the browser for all Materials results.
+*/
+function createIDBMaterials() {
+	const dataName = "Materials";
+	const request = globalThis.indexedDB.open(dataName);
+	request.onerror = (event) => {
+		alert(`ATTENTION! ${event.target.errorCode}`);
+	};
+	request.onupgradeneeded = (event) => {
+		const db = event.target.result;
+		let object;
+		object = db.createObjectStore(dataName, { keyPath: "materials" });
+		object.createIndex("materials", "materials", { unique: true });
+	};
+}
+/**
+* @function Creates a new indexedDB table in the browser for all off-line results.
+*/
+function createOffLineIDB() {
+	const dataName = "off_line_results";
+	const request = globalThis.indexedDB.open(dataName);
+	request.onerror = (event) => {
+		alert(`ATTENTION! ${event.target.errorCode}`);
+	};
+	request.onupgradeneeded = (event) => {
+		const db = event.target.result;
+		let object;
+		object = db.createObjectStore(dataName, { keyPath: "reference" });
+		object.createIndex("reference", "reference", { unique: true });
+	};
+}
+/**
+* @param {Crater} works The list to add in indexed DB when the page is off-line.
+*/
+function addNewWorksToIndexedDBOffLine(works, fetched) {
+	const dataName = "off_line_results";
+	const list = document.getElementById("input_estimate").value;
+	const request = globalThis.indexedDB.open(dataName);
+	request.onerror = (event) => {
+		alert(`ERROR: ${event.target.errorCode}`);
+	};
+	request.onsuccess = async (event) => {
+		const object = event.target.result.transaction(dataName, "readwrite").objectStore(dataName);
+		const existsInIDB = object.get(works.reference);
+		existsInIDB.onsuccess = () => {
+			existsInIDB.result === void 0 ? object.add(works) : object.delete(existsInIDB.result.reference) && object.add(works);
+			movingDataToSesseionStorage(list, fetched);
+		};
+	};
+}
+/**
+* @param {Crater} works The list to add in indexedDB when all crates is done.
+*/
+function addNewWorksToIndexedDB(works, fetched = false) {
+	const reference = localStorage.getItem("refNumb");
+	const dataName = "Results";
+	const request = globalThis.indexedDB.open(dataName);
+	const onLine = globalThis.navigator.onLine;
+	request.onerror = (event) => {
+		alert(`ERROR: ${event.target.errorCode}`);
+	};
+	request.onsuccess = async (event) => {
+		const object = event.target.result.transaction(dataName, "readwrite").objectStore(dataName);
+		const existsInIDB = object.get(works.reference);
+		existsInIDB.onsuccess = async () => {
+			existsInIDB.result === void 0 ? object.add(works) : await Promise.resolve(object.delete(existsInIDB.result.reference)).then(object.add(works));
+			movingDataToSesseionStorage(reference, fetched);
+		};
+		onLine || addNewWorksToIndexedDBOffLine(works);
+	};
+}
+/**
+* @param {String} reference The code/reference to the crates process.
+*/
+async function movingDataToSesseionStorage(reference, fetched = false) {
+	const request = globalThis.indexedDB.open("Results");
+	request.onerror = (event) => {
+		alert(`WARNING: ${event.target.errorCode}`);
+	};
+	request.onsuccess = () => {
+		const db = request.result.transaction("Results").objectStore("Results").get(reference);
+		db.onsuccess = async () => {
+			const reference = localStorage.getItem("refNumb");
+			const obj = db.result;
+			globalThis.sessionStorage.setItem(reference, JSON.stringify(obj));
+			fetched === false && await saveTheCurrentEstimate(db.result);
+			fetched === "crate" && await upDateCrateSizes(db.result);
+		};
+	};
+}
+//#endregion
+//#region app/front-modules/functions.front.end.mjs
+globalThis.onstorage = () => {
+	displayCub();
+	displayAirCub();
+	countWorks();
+};
+async function countWorks() {
+	const result = await parseArtWork();
+	const counter = document.getElementById("count");
+	result && result.length > 0 && document.getElementById("statusList").setAttribute("content", result.length);
+	counter.innerText = result ? "Counting: " + result?.length : "Counting 0";
+	return counter;
+}
+async function displayCub() {
+	let result;
+	const COMA = 1e3;
+	const element = document.getElementById("cub-meter");
+	result = await parseArtWork();
+	result = result?.reduce((sum, val) => {
+		return sum + val.cubed;
+	}, 0) ?? 0;
+	element.innerText = "Cub: " + (result * COMA / COMA).toFixed(3) + "m³";
+	return element;
+}
+async function displayAirCub() {
+	let result;
+	let element;
+	let std_msg;
+	const COMA = 1e3;
+	std_msg = "Air-Cub: ";
+	element = document.getElementById("cub-air");
+	result = await parseArtWork();
+	result = result?.reduce((sum, val) => {
+		return sum + val.cAir;
+	}, 0) ?? 0;
+	element.innerText = std_msg + (result * COMA / COMA).toFixed(3);
+	return element;
+}
+function setPanels() {
+	const fragment1 = new DocumentFragment();
+	const fragment2 = new DocumentFragment();
+	const pane1 = document.createElement("panel-info");
+	const pane2 = document.createElement("panel-info");
+	const firstPane = document.getElementById("first_pane");
+	const secondPane = document.getElementById("second_pane");
+	while (firstPane.firstChild) firstPane.removeChild(firstPane.firstChild);
+	while (secondPane.firstChild) secondPane.removeChild(secondPane.firstChild);
+	pane1.id = "first-pane";
+	pane2.id = "second-pane";
+	pane1.setAttribute("name", "pane1");
+	pane2.setAttribute("name", "pane2");
+	fragment1.append(pane1);
+	fragment2.append(pane2);
+	firstPane.append(fragment1);
+	secondPane.append(fragment2);
+}
+async function crate$1(fetched = false) {
+	const estimate = {};
+	const weak = /* @__PURE__ */ new WeakSet();
+	const e_code = localStorage.getItem("refNumb") ?? document.getElementById("input_estimate").value;
+	const grant = document.cookie.split("=")[1];
+	let list;
+	const cratesAsCm = await checkMetric();
+	const root = document.querySelector(":root");
+	const material = document.querySelector(".update-materials");
+	const upPanel = document.querySelector(".materials");
+	if (fetched || confirm("Ready to crate all works?") && cratesAsCm) {
+		setPanels();
+		estimate.reference = e_code;
+		list = await parseArtWork();
+		estimate.list = list.map((art) => art.data);
+		estimate.crates = cratesAsCm;
+		addNewWorksToIndexedDB(estimate, fetched);
+		material.setAttribute("name", "materials-used");
+		upPanel.setAttribute("name", "packed-works");
+		upPanel.setAttribute("content", "crates");
+		(grant === "FULL" || grant === "PLOTTER" || !grant) && (document.getElementById("crate-layers").disabled = false);
+		root.style.setProperty("--layer-state", "block");
+		sessionStorage.removeItem("crate");
+		sessionStorage.removeItem("plotter");
+		sessionStorage.removeItem("graphics");
+	}
+	weak.add(estimate);
+	return "Crated";
+}
+async function cleanInputs(fetched = false) {
+	document.getElementById("input_code").value = "";
+	document.getElementById("input_length").value = "";
+	document.getElementById("input_depth").value = "";
+	document.getElementById("input_height").value = "";
+	const RENDER = document.getElementById("show-layer");
+	const dialog = document.querySelectorAll("padding-dialog").length;
+	const root = document.querySelector(":root");
+	const packs = document.querySelector(".update-materials");
+	let granted = document.cookie;
+	granted = granted.split("=")[1];
+	RENDER && RENDER.hasChildNodes() && openDisplay();
+	globalThis.document.getElementById("input_estimate").select();
+	globalThis.document.getElementById("input_code").select();
+	packs.getAttribute("name") !== "update-materials" && packs.setAttribute("name", "update-materials");
+	countWorks();
+	displayCub();
+	displayAirCub();
+	dialog > 0 && sessionStorage.setItem("CLOSED", "NOW");
+	root.style.setProperty("--layer-state", "none");
+}
+async function parseArtWork() {
+	const DB = localStorage;
+	const temp = [];
+	let works;
+	const avoid = [
+		"doneList",
+		"mode",
+		"storage",
+		"currency",
+		"metrica",
+		"refNumb",
+		"offResults",
+		"FETCHED",
+		"materials",
+		"packing",
+		"crating"
+	];
+	Object.entries(DB).map((data) => {
+		!avoid.includes(data[0]) && temp.push(JSON.parse(data[1]));
+		return data;
+	});
+	if (temp.length > 0) works = temp.map((work) => {
+		const { code, x, z, y, packing } = work;
+		return new ArtWork(code, x, z, y, packing);
+	});
+	return works ? works : void 0;
+}
+async function checkMetric() {
+	const UNIT = localStorage.getItem("metrica") === "cm - centimeters" ? "cm" : "in";
+	const list = await parseArtWork();
+	let crates;
+	if (list.length === 0) return alert("Oops! Sounds like you do not added any work yet. Please, try again!");
+	crates = await Promise.resolve(new UnitAdapter(list, UNIT));
+	return crates;
+}
+//#endregion
+//#region app/front-modules/checkout.mjs
+globalThis.onload = async () => {
+	const color = localStorage.getItem("mode");
+	const statusFrame = document.getElementById("status-frame");
+	const list = document.getElementById("statusList");
+	sessionStorage.removeItem("onCrate");
+	sessionStorage.removeItem("plotter");
+	sessionStorage.removeItem("graphics");
+	sessionStorage.removeItem("crate");
+	list ? list.setAttribute("content", "reload") : statusFrame.append(addPanelInfo());
+	browserStoragePrepare();
+	color === null && localStorage.setItem("mode", "light");
+	setCheckRadio();
+	setModeColor();
+	populateRightPanels();
+};
+async function populateRightPanels() {
+	const fragment1 = new DocumentFragment();
+	const fragment2 = new DocumentFragment();
+	const materials = document.createElement("pack-up");
+	const report = document.createElement("pack-down");
+	const paneUp = document.getElementById("contents1");
+	const packDown = document.getElementById("contents2");
+	materials.setAttribute("name", "select-materials");
+	materials.className = "materials";
+	materials.ariaHidden = "false";
+	report.setAttribute("name", "update-materials");
+	report.setAttribute("content", "0");
+	report.className = "update-materials";
+	fragment1.appendChild(materials);
+	fragment2.appendChild(report);
+	paneUp.appendChild(fragment1);
+	packDown.appendChild(fragment2);
+}
+function addPanelInfo() {
+	const fragment = new DocumentFragment();
+	const status = document.createElement("panel-info");
+	status.setAttribute("name", "status");
+	status.id = "statusList";
+	status.class = "addedStatus";
+	status.setAttribute("content", 0);
+	return fragment.appendChild(status);
+}
+if (!localStorage.getItem("metrica")) {
+	const metrica = document.getElementById("cm").value;
+	localStorage.setItem("metrica", metrica);
+}
+function setUnit() {
+	const measure = localStorage.getItem("metrica");
+	const check = confirm("Attention! You are going to change the measurement of the works.");
+	if (!measure || measure === void 0) localStorage.setItem("metrica", document.getElementById("cm").value);
+	else if (check) {
+		measure === "cm - centimeters" ? localStorage.setItem("metrica", "in - inches") : localStorage.setItem("metrica", "cm - centimeters");
+		sessionStorage.setItem("clean", "reload");
+	}
+	setCheckRadio();
+}
+const crate = () => {
+	browserStoragePrepare();
+	crate$1();
+	const element = document.querySelector(".result");
+	if (sessionStorage.getItem("codes")) {
+		element && element.ariaHidden === "true" && openDisplay();
+		setTimeout(() => globalThis.scroll({
+			top: 300,
+			behavior: "smooth"
+		}), 1e3);
+	}
+};
+function clearBrowserStorage() {
+	const { mode, metrica, materials } = localStorage;
+	if (mode && metrica && materials) {
+		localStorage.clear();
+		sessionStorage.clear();
+		localStorage.setItem("mode", mode);
+		localStorage.setItem("metrica", metrica);
+		localStorage.setItem("materials", materials);
+	}
+	countWorks();
+	displayCub();
+	displayAirCub();
+}
+const clearAll = () => {
+	const status = document.getElementById("statusList");
+	const statusFrame = document.getElementById("status-frame");
+	const pane1 = document.getElementById("first_pane");
+	const pane2 = document.getElementById("second_pane");
+	const closeDialog = document.querySelector(".side-menu");
+	if (confirm("Do you really want to delete the whole list?")) {
+		clearBrowserStorage();
+		cleanInputs(true);
+		globalThis.document.getElementById("input_estimate").value = "";
+		globalThis.document.getElementById("input_estimate").select();
+		status.setAttribute("content", void 0);
+		statusFrame.removeChild(document.getElementById("statusList"));
+		pane1.firstChild && pane1.removeChild(document.getElementById("first-pane"));
+		pane2.firstChild && pane2.removeChild(document.getElementById("second-pane"));
+		statusFrame.append(addPanelInfo());
+		closeDialog.getElementsByTagName("panel-info").length > 0 && document.querySelector(".side-menu").lastElementChild.setAttribute("name", "close");
+		document.querySelector(".materials").setAttribute("name", "select-materials");
+		sessionStorage.removeItem("plotter");
+		sessionStorage.removeItem("graphics");
+		sessionStorage.removeItem("crate");
+	}
+};
+function browserStoragePrepare() {
+	const ref = localStorage.getItem("refNumb");
+	let grants = document.cookie;
+	grants = grants.split("=")[1];
+	if (ref) document.getElementById("input_estimate").value = ref;
+	createIDB();
+	createIDBMaterials();
+	if (grants === "OFF" || grants === "FULL") createOffLineIDB();
+	return displayCub() && displayAirCub() && countWorks();
+}
+function setCheckRadio() {
+	switch (localStorage.getItem("metrica")) {
+		case "cm - centimeters":
+			document.getElementById("cm").checked = true;
+			break;
+		case "in - inches":
+			document.getElementById("in").checked = true;
+			break;
+	}
+}
+function setModeColor() {
+	const color = localStorage.getItem("mode");
+	const body = document.body;
+	switch (color) {
+		case "light":
+			document.getElementById("light-mode").checked = true;
+			body.classList.remove("dark-mode");
+			body.classList.toggle("light-mode");
+			break;
+		case "dark":
+			document.getElementById("dark-mode").checked = true;
+			body.classList.remove("light-mode");
+			body.classList.toggle("dark-mode");
+			break;
+	}
+}
+//#endregion
+//#region app/front-modules/logout.mjs
+function cleanCacheSW() {
+	globalThis.navigator.serviceWorker.ready.then(async (registration) => {
+		await caches.delete("craterCache_v1");
+		await caches.delete("status_V1");
+		await caches.delete("pane1_v1");
+		await caches.delete("pane2_v1");
+		await registration.unregister();
+	});
+}
+async function logout() {
+	/**
+	* @constant {url}
+	*/
+	const url = "/api/v1/logout";
+	if (confirm("Are you sure to logout?")) await fetch(url, { method: "GET" }).then(cleanCacheSW).then((res) => globalThis.location.assign(res.url)).catch(async () => {
+		await Promise.resolve(cleanCacheSW).then(globalThis.location.replace("https://ottocratesolver.com/login"));
+	});
+}
+//#endregion
+//#region app/front-modules/mode.color.mjs
+function switchMode(mode) {
+	localStorage.setItem("mode", mode);
+	changeMode(mode);
+}
+function changeMode(color) {
+	const body = document.body.classList;
+	body.remove("light-mode");
+	body.remove("dark-mode");
+	return color === "dark" ? body.add("dark-mode") : body.add("light-mode");
+}
+//#endregion
+//#region app/front-modules/start.front.mjs
+function definedPackingMaterials() {
+	const packs = JSON.parse(localStorage.getItem("packing"));
+	const materials = JSON.parse(localStorage.getItem("materials"));
+	const filtered = [];
+	if (!packs || packs.length === 0) return false;
+	packs.filter((type) => {
+		filtered.push(materials.find((opts) => opts[0] === type).flat());
+		return type;
+	});
+	return filtered;
+}
+function checkWork(work) {
+	const checked = regValid([
+		+work[1],
+		+work[2],
+		+work[3]
+	].map((size) => parseInt(size)));
+	const regex = /[^-a-z-A-Z-0-9]/g;
+	const estimate = document.getElementById("input_estimate").value;
+	const materials = definedPackingMaterials();
+	let i = 0;
+	if (!materials) {
+		alert("Please, select some packing material to apply to the artwork.");
+		return "material";
+	}
+	if (regex.test(work[0]) || regex.test(estimate)) {
+		alert(`Found special character NOT allowed on "Work code",\
+		or "Estimate" input. Please, try again!`);
+		return false;
+	}
+	for (i in localStorage.key(i)) if (work[0] === localStorage.key(i)) {
+		alert(`${work[0]} already added to the list. Please, try again`);
+		return false;
+	}
+	checkReference();
+	return Array.isArray(checked) ? new ArtWork(work[0], checked[0], checked[1], checked[2], structuredClone(materials)) : false;
+}
+function regValid(sizesParsed) {
+	let i = 2;
+	const regex = /^[0-9.0-9]{1,7}$/;
+	while (--i >= 0) if (!regex.test(sizesParsed[i])) switch (i) {
+		case 2:
+			alert(`The provide HEIGHT is not a valid number.\
+					Please, try again!`);
+			return false;
+		case 1:
+			alert(`The provide DEPTH is not a valid number.\
+					Please, try again!`);
+			return false;
+		case 0:
+			alert(`The provide LENGTH is not a valid number.\
+					Please, try again!`);
+			return false;
+	}
+	return sizesParsed;
+}
+function selectEmptyinput() {
+	const IDS = [
+		"input_estimate",
+		"input_code",
+		"input_length",
+		"input_depth",
+		"input_height"
+	];
+	let aux = false;
+	IDS.find((field) => {
+		const input = document.getElementById(field);
+		if (!input.value && !aux) {
+			aux = true;
+			return input.select();
+		}
+		return field;
+	});
+}
+async function catchWork() {
+	const estimate = document.getElementById("input_estimate").value;
+	const cod = document.getElementById("input_code").value;
+	const length = document.getElementById("input_length").value;
+	const depth = document.getElementById("input_depth").value;
+	const height = document.getElementById("input_height").value;
+	let tmp;
+	if (!estimate) return alert("Attention! Please, add the \"Doc:\" reference field!");
+	switch (cod && length && depth && height) {
+		case "":
+			alert(`Oops! Do not forget to fill each field. Please, try again!`);
+			return selectEmptyinput();
+	}
+	tmp = checkWork([
+		cod,
+		length,
+		depth,
+		height
+	]);
+	if (tmp && tmp !== "material") {
+		await orderWorks(tmp.data);
+		localStorage.setItem(tmp.data.code, JSON.stringify(tmp.data));
+		localStorage.setItem("storage", "art-work");
+		countWorks();
+		displayAirCub();
+		displayCub();
+		cleanInputs();
+	}
+	return !tmp || tmp === "material" ? 0 : cleanInputs();
+}
+function catchRemove() {
+	const work = prompt("Please enter the work code to be removed split by spaces:", "code?");
+	const toRemove = work ? work.split(" ") : false;
+	if (!toRemove) return cleanInputs();
+	toRemove.map((art) => {
+		if (localStorage.getItem(art)) {
+			orderRemove(art);
+			localStorage.removeItem(work);
+		} else if (!art) return cleanInputs();
+		else alert(`"${art}" was not found in the list. Please, try again!`);
+		countWorks();
+		displayAirCub();
+		displayCub();
+		return art;
+	});
+	localStorage.setItem("storage", "art-work");
+	return cleanInputs();
+}
+function checkReference() {
+	const ref = localStorage.getItem("refNumb");
+	const actual = document.getElementById("input_estimate").value;
+	if (ref) {
+		if (ref !== actual) if (confirm("ATTENTION! The refNumb has changed")) {
+			localStorage.removeItem("refNumb");
+			localStorage.setItem("refNumb", actual);
+			document.getElementById("input_estimate").value = actual;
+		} else document.getElementById("input_estimate").value = ref;
+	}
+	localStorage.setItem("refNumb", actual);
+}
+async function orderWorks({ code }) {
+	const storage = sessionStorage;
+	const array = JSON.parse(storage.getItem("codes"));
+	let num;
+	if (!array) return storage.setItem("codes", JSON.stringify([[0, code]]));
+	num = Number.parseInt(array[array.length - 1]);
+	num = num + 1;
+	array.push([num, code]);
+	return storage.setItem("codes", JSON.stringify(array));
+}
+function orderRemove(code) {
+	const session = sessionStorage;
+	const codes = JSON.parse(session.getItem("codes"));
+	let i = 0;
+	while (codes[i][1] !== code && i <= codes.length) i++;
+	codes.splice(i, 1);
+	session.setItem("codes", JSON.stringify(codes));
+}
+//#endregion
+//#region app/installation.handler.mjs
+async function installer() {
+	globalThis.hideInstallPromotion();
+	globalThis.deferredPrompt.prompt();
+	const { outcome } = await deferredPrompt.userChoice;
+	console.log(`User response to the install prompt: ${outcome}`);
+	globalThis.deferredPrompt = null;
+}
+//#endregion
+//#region app/panels/clip.board.formatter.mjs
+function extractWorksLayers({ works }) {
+	const arts = [];
+	(Array.isArray(works[0][0]) ? works[0] : works)?.map((data) => {
+		let layer;
+		if (Array.isArray(data)) return arts.push(data);
+		for (layer in data) {
+			arts.push(layer);
+			data[layer].length === 1 ? arts.push(data[layer][0]) : !Array.isArray(data[0]) ? data[layer].map((work) => arts.push(work)) : data[layer][0].map((work) => arts.push(work));
+		}
+	});
+	return arts;
+}
+function findCratesAndWorks({ crates }) {
+	const polygons = [];
+	let key;
+	let tmp;
+	for (key in crates) if (Object.hasOwn(crates[key], "crates")) crates[key].crates.map((info, j) => {
+		switch (j % 2) {
+			case 0:
+				polygons.push(info);
+				break;
+			case 1:
+				tmp = extractWorksLayers(info);
+				tmp.map((arts) => polygons.push(arts));
+				tmp = null;
+				break;
+		}
+	}, 0);
+	sessionStorage.setItem("copy2", "done!");
+	return formatterClipBoard(polygons);
+}
+function findCrates({ crates }) {
+	sessionStorage.setItem("copy1", "done!");
+	return formatterClipBoard(crates.allCrates);
+}
+function formatterClipBoard(data) {
+	if (!data) return "There is no crates. Please, try again!";
+	const unit = localStorage.getItem("metrica") === "cm - centimeters" ? "cm" : "in";
+	const formatted = data.map((info) => {
+		let line;
+		if (typeof info === "string") return `LAYER layer ${info?.at(-1)}:`;
+		if (info.length >= 5) {
+			line = `CODE: ${info[0]} - ${info[1]} x ${info[2]} x ${info[3]} - ${unit}`;
+			return line;
+		} else if (info.length === 4) {
+			line = `CRATE: ${info[0]} x ${info[1]} x ${info[2]} - ${unit}`;
+			return line;
+		}
+	});
+	const copyFinished = charRemover(JSON.stringify(formatted), formatted.length);
+	navigator.clipboard.writeText(copyFinished);
+}
+function charRemover(target, len) {
+	while (len--) {
+		target = target.replace("LAYER", "	");
+		target = target.replace("CODE: ", "		");
+		target = target.replace("\"", "");
+		target = target.replace("\"", "");
+		target = target.replace(",", "\n");
+	}
+	target = target.replace("[", "");
+	target = target.replace("]", "");
+	return target;
+}
+//#endregion
+//#region app/panels/clip.board.caller.mjs
+function copyButton1() {
+	const crates = new Worker(new URL("./panels/worker.IDB.crates.mjs", import.meta.url), { type: "module" });
+	const estimate = document.getElementById("input_estimate").value;
+	if (!sessionStorage.getItem(estimate)) return alert(`Please, press the "Crate" button if already added works.`);
+	crates.postMessage(estimate);
+	crates.onmessage = (test) => {
+		(Array.isArray(test.data.crates) || Object.hasOwn(test.data, "crates")) && findCrates(test.data);
+	};
+}
+function copyButton2() {
+	const crates = new Worker(new URL("./panels/worker.IDB.crates.mjs", import.meta.url), { type: "module" });
+	const estimate = document.getElementById("input_estimate").value;
+	if (!sessionStorage.getItem(estimate)) return alert(`Please, press the "Crate" button if already added works.`);
+	crates.postMessage(estimate);
+	crates.onmessage = (res) => {
+		return findCratesAndWorks(res.data);
+	};
+}
+//#endregion
+//#region app/side-menu/interactive.menu.mjs
+function accordionController(event) {
+	const activePanel = event.target.closest(".accordion-panel");
+	if (event.target.id === "body-app") return closeMenu();
+	if (!activePanel) return;
+	toggleAccordion(activePanel);
+}
+function closeMenu() {
+	const element = document.querySelector(".accordion-panel");
+	let menu;
+	let buttons;
+	let panel;
+	for (menu in element) {
+		buttons = element.parentElement.querySelectorAll("button");
+		panel = element.parentElement.querySelectorAll(".menu__input");
+		buttons.forEach((button) => {
+			button.setAttribute("aria-expanded", false);
+		});
+		panel.forEach((aria) => {
+			aria.setAttribute("aria-hidden", true);
+		});
+	}
+}
+function toggleAccordion(clicked) {
+	const buttons = clicked.parentElement.querySelectorAll("button");
+	const panel = clicked.parentElement.querySelectorAll(".menu__input");
+	buttons.forEach((button) => {
+		button.setAttribute("aria-expanded", false);
+	});
+	panel.forEach((aria) => {
+		aria.setAttribute("aria-hidden", true);
+	});
+	openPanel(clicked);
+}
+function openPanel(panel) {
+	panel.querySelector("button").setAttribute("aria-expanded", true);
+	panel.querySelector(".menu__input").setAttribute("aria-hidden", false);
+	globalThis.document.getElementById("estimate_getter").select();
+}
+//#endregion
+//#region app/side-menu/core.currency.mjs
+function currencyName(list) {
+	const fragment = document.createDocumentFragment();
+	list.map((name) => {
+		const option = document.createElement("option");
+		option.textContent = name;
+		fragment.appendChild(option);
+	});
+	return fragment;
+}
+async function populateCoins() {
+	const coins = JSON.parse(sessionStorage.getItem("currency"));
+	const select1 = document.getElementById("coin1");
+	const select2 = document.getElementById("coin2");
+	const coinNames = Object.keys(coins);
+	if (!coins) return "Error";
+	select1.appendChild(currencyName(coinNames));
+	select2.appendChild(currencyName(coinNames));
+}
+function conversionCurrency(opt1, opt2, val1, val2) {
+	const list = JSON.parse(sessionStorage.getItem("currency"));
+	const COMA = 1e3;
+	const shiftInput1 = Number.parseFloat(val1.value) === list[opt1];
+	const shiftInput2 = Number.parseFloat(val2.value) === list[opt2];
+	if (opt1 === opt2) return shiftInput1 ? val2.value : val1.value;
+	else if (shiftInput1 && shiftInput2) return ~~(list[opt1] * list[opt2] * COMA) / COMA;
+	else if (list[opt1] < list[opt2]) return shiftInput1 === true ? ~~(val2.value / list[opt2] * list[opt1] * COMA) / COMA : ~~(val1.value * list[opt2] / list[opt1] * COMA) / COMA;
+	return shiftInput2 === true ? ~~(val1.value * list[opt2] / list[opt1] * COMA) / COMA : ~~(val2.value / list[opt2] * list[opt1] * COMA) / COMA;
+}
+async function getCurrencyValue() {
+	const { rates } = (await fetch("/api/v1/currencies", { method: "GET" }).then(async (values) => await values.json()).catch((err) => alert(`CurrencyError: ${err}!`))).response;
+	const storage = globalThis.sessionStorage;
+	return rates && storage.setItem("currency", JSON.stringify(rates));
+}
+function setValues(coin, place) {
+	const currency = JSON.parse(sessionStorage.getItem("currency"));
+	if (!currency) return false;
+	place.value = currency[coin];
+}
+//#endregion
+//#region app/side-menu/menu.currency.conversion.mjs
+async function coins() {
+	await getCurrencyValue();
+	await populateCoins();
+}
+async function exchangeHeader() {
+	const storageCurrency = sessionStorage.getItem("currency");
+	const coin1 = JSON.parse(sessionStorage.getItem("coin1"));
+	const coin2 = JSON.parse(sessionStorage.getItem("coin2"));
+	const opt1 = document.getElementById("coin1");
+	const opt2 = document.getElementById("coin2");
+	coin1 !== null && (opt1.value = coin1);
+	coin2 !== null && (opt2.value = coin2);
+	storageCurrency === null && await getCurrencyValue();
+}
+function coinInputOne() {
+	const coin = document.getElementById("coin1").value;
+	const input = document.getElementById("coin1-input");
+	sessionStorage.setItem("coin1", JSON.stringify(coin));
+	setValues(coin, input);
+}
+function coinInputTwo() {
+	const coin = document.getElementById("coin2").value;
+	const input = document.getElementById("coin2-input");
+	sessionStorage.setItem("coin2", JSON.stringify(coin));
+	setValues(coin, input);
+}
+function getInputOne() {
+	const opt1 = document.getElementById("coin1").value;
+	const opt2 = document.getElementById("coin2").value;
+	const value1 = document.getElementById("coin1-input");
+	const value2 = document.getElementById("coin2-input");
+	setValues(opt2, value2);
+	value2.value = `$ ${conversionCurrency(opt1, opt2, value1, value2)}`;
+}
+function getInputTwo() {
+	const opt1 = document.getElementById("coin1").value;
+	const opt2 = document.getElementById("coin2").value;
+	const value1 = document.getElementById("coin1-input");
+	const value2 = document.getElementById("coin2-input");
+	setValues(opt1, value1);
+	value1.value = `$ ${conversionCurrency(opt1, opt2, value1, value2)}`;
+}
+//#endregion
+//#region app/side-menu/core.units.mjs
+function unitConversion(input1, input2, value1, value2) {
+	return input1 === "centimeters" ? centimetersShift(input1, input2, value1, value2) : input1 === "inches" ? inchesShift(input1, input2, value1, value2) : metersShift(input1, input2, value1, value2);
+}
+function measureSetupCheckout(option1, option2) {
+	return {
+		checked1: option1 === "centimeters" && option2 === "inches",
+		checked2: option1 === "inches" && option2 === "centimeters",
+		checked3: option1 === "meters" && option2 === "centimeters"
+	};
+}
+function resolveConversion(input1, input2, unit, type) {
+	const roundDecimal = 1e3;
+	if (type !== "m") return input1.value > input2.value ? ~~(input1.value / unit * roundDecimal) / roundDecimal : ~~(input2.value * unit * roundDecimal) / roundDecimal;
+	return input1.value < input2.value ? ~~(input2.value / unit * roundDecimal) / roundDecimal : ~~(input1.value * unit * roundDecimal) / roundDecimal;
+}
+function centimetersShift(unit1, unit2, measure1, measure2) {
+	const inches = 2.54;
+	const meters = .01;
+	const cmpSetup = measureSetupCheckout(unit1, unit2);
+	if (unit1 === unit2) return measure1.value > measure2.value ? measure1.value : measure2.value;
+	else if (cmpSetup.checked1) return resolveConversion(measure1, measure2, inches, "in");
+	return resolveConversion(measure1, measure2, meters, "m");
+}
+function inchesShift(unit1, unit2, measure1, measure2) {
+	const centimeters = .393;
+	const meters = .0254;
+	const cmpSetup = measureSetupCheckout(unit1, unit2);
+	if (unit1 === unit2) return measure1.value > measure2.value ? measure1.value : measure2.value;
+	else if (cmpSetup.checked2) return resolveConversion(measure1, measure2, centimeters, "cm");
+	return resolveConversion(measure1, measure2, meters, "m");
+}
+function metersShift(unit1, unit2, measure1, measure2) {
+	const centimeters = .01;
+	const inches = .0254;
+	const cmpSetup = measureSetupCheckout(unit1, unit2);
+	if (unit1 === unit2) return measure1.value > measure2.value ? measure1.value : measure2.value;
+	else if (cmpSetup.checked3) return resolveConversion(measure1, measure2, centimeters, "cm");
+	return resolveConversion(measure1, measure2, inches, "in");
+}
+//#endregion
+//#region app/side-menu/menu.units.mjs
+function getUnitOne() {
+	const selected1 = globalThis.document.getElementById("units1").value;
+	const selected2 = globalThis.document.getElementById("units2").value;
+	const input1 = globalThis.document.getElementById("input-unit1");
+	const input2 = globalThis.document.getElementById("input-unit2");
+	input2.value = 0;
+	input2.value = unitConversion(selected1, selected2, input1, input2);
+}
+function getUnitTwo() {
+	const selected1 = globalThis.document.getElementById("units1").value;
+	const selected2 = globalThis.document.getElementById("units2").value;
+	const input1 = globalThis.document.getElementById("input-unit1");
+	const input2 = globalThis.document.getElementById("input-unit2");
+	input1.value = 0;
+	input1.value = unitConversion(selected1, selected2, input1, input2);
+}
+function setUnitOne() {
+	const input1 = globalThis.document.getElementById("input-unit1");
+	const input2 = globalThis.document.getElementById("input-unit2");
+	input1.value = 0;
+	input2.value = 0;
+}
+function setUnitTwo() {
+	const input1 = globalThis.document.getElementById("input-unit1");
+	const input2 = globalThis.document.getElementById("input-unit2");
+	input1.value = 0;
+	input2.value = 0;
+}
+//#endregion
+//#region app/side-menu/search.menu.mjs
+function addPanelFetched() {
+	const status = document.getElementById("statusList");
+	const statusFrame = document.getElementById("status-frame");
+	const closeDialog = document.querySelector(".side-menu");
+	statusFrame.removeChild(document.getElementById("statusList"));
+	statusFrame.append(addPanelInfo());
+	status.setAttribute("content", "FETCHED");
+	closeDialog.getElementsByTagName("panel-info").length > 0 && document.querySelector(".side-menu").lastElementChild.setAttribute("name", "close");
+	displayCub();
+	displayAirCub();
+	countWorks();
+}
+/**
+* @param {String} doc The reference/document with artwork list.
+*/
+async function checkBrowserDB(doc) {
+	const workerDB = new Worker(new URL("./panels/worker.IDB.crates.mjs", import.meta.url), { type: "module" });
+	const checkIDB = await new Promise((resolve, reject) => {
+		workerDB.postMessage(doc);
+		workerDB.onmessage = (result) => {
+			result !== void 0 ? resolve(result.data) : reject(void 0);
+		};
+	});
+	if (checkIDB) {
+		document.getElementById("input_estimate").value = doc;
+		sessionStorage.setItem("FETCHED", JSON.stringify(checkIDB));
+		addPanelFetched();
+		setDBFetched([checkIDB]);
+		return "IDB data Found.";
+	}
+	return false;
+}
+/**
+* @param {Crater} result The Crater object with the solved list from DB.
+*/
+async function setDBFetched(result) {
+	try {
+		if (result?.hasOwnProperty("crates")) {
+			document.getElementById("input_estimate").value = result.reference;
+			globalThis.sessionStorage.clear();
+			globalThis.sessionStorage.setItem("FETCHED", JSON.stringify(result, null));
+			const { materials } = localStorage;
+			sessionStorage.clear();
+			sessionStorage.setItem("FETCHED", JSON.stringify(result, null));
+			localStorage.setItem("materials", materials);
+			return addPanelFetched();
+		}
+		throw new TypeError("Data not found!");
+	} catch (err) {
+		return err;
+	}
+}
+/**
+* @param {String} doc The reference/document with artwork list.
+*/
+async function fetchDB(doc) {
+	const url = `/api/v1/estimates/${doc}`;
+	const headers = { "Content-Type": "application/json; charset=UTF-8" };
+	if (globalThis.navigator.onLine) return await fetch(url, {
+		method: "GET",
+		headers
+	}).then(async (estimate) => await estimate.json()).then(setDBFetched).catch((e) => alert(`Search ERROR! \n ${e}`));
+}
+/**
+* @param {String} doc The reference/document with artwork list.
+*/
+function regexChecker(data) {
+	switch (/[^-a-z-A-Z-0-9]/g.test(data)) {
+		case true:
+			alert(`Found special character NOT allowed. Please, try again!`);
+			return true;
+		case false: return false;
+	}
+}
+/**
+* @function Gets the reference/document number from the page in order to search.
+*/
+async function searchEstimate() {
+	const docEstimate = document.getElementById("estimate_getter").value;
+	const update = memoization(document.getElementById("input_estimate").value);
+	if (!regexChecker(docEstimate)) {
+		const data = [checkBrowserDB(docEstimate), fetchDB(docEstimate)];
+		await Promise.all(data).then(async (val) => {
+			!val[0] && val[1]?.length === 0 ? alert(`Document not found! Please, try again.`) : await Promise.resolve(update(docEstimate)).then(async () => {
+				if (val[1]?.length > 0) addNewWorksToIndexedDB({
+					reference: val[1][0].reference_id,
+					crates: val[1][0].crates.crates,
+					list: val[1][0].works.list
+				}, true);
+				else crate$1(true);
+			});
+		});
+	}
+}
+/**
+* @function check if the fetch to doc/reference was successful and updates the app status.
+*/
+function memoization(before) {
+	return async (after) => {
+		before && before !== after && cleanInputs(true);
+	};
+}
+//#endregion
+//#region app/main.mjs
+globalThis.onkeydown = (push) => {
+	const task1 = push.key === "Enter" && push.ctrlKey === true;
+	const task2 = push.ctrlKey === true && push.altKey === true && push.key === "c";
+	const task3 = push.key === "Escape";
+	task1 && crate();
+	task2 && openDisplay();
+	task3 && closeMenu();
+	push.stopImmediatePropagation();
+};
+globalThis.onafterprint = () => {
+	const { shadowRoot } = document.querySelector(".update-materials");
+	[...shadowRoot.querySelectorAll("[aria-hidden]")].map((node) => node.ariaHidden = "false");
+};
+globalThis.onbeforeprint = () => {
+	const { shadowRoot } = document.querySelector(".update-materials");
+	[...shadowRoot.querySelectorAll("[aria-hidden]")].map((node) => node.ariaHidden = "false");
+};
+globalThis.document.getElementById("main-app").addEventListener("click", (element) => {
+	const up = document.querySelector(".materials");
+	const down = document.querySelector(".update-materials");
+	const crates = sessionStorage.getItem("crate");
+	let cratesNum = crates ? +crates.split("/")[0] : 0;
+	const cratesTotal = crates ? +crates.split("/")[1] : 0;
+	const plotter = new GraphicCrates();
+	const crateDisplay = document.getElementById("layer-count");
+	let { id, className, attributes } = element.target;
+	{
+		const { shadowRoot } = up;
+		const shadow = shadowRoot.querySelector(".upPane");
+		shadow?.addEventListener("click", (e) => {
+			const { id, className, tagName } = e.target;
+			const composeEvent = new CustomEvent("open-crate", {
+				bubbles: true,
+				composed: true,
+				detail: {
+					id,
+					className,
+					tagName
+				}
+			});
+			shadow.dispatchEvent(composeEvent);
+		}, true);
+	}
+	{
+		const { shadowRoot } = down;
+		const shadow = shadowRoot.querySelector(".data-update");
+		shadow?.addEventListener("click", (e) => {
+			const { id, className } = e.target;
+			const composeEvent = new CustomEvent("update-materials-info", {
+				bubbles: true,
+				composed: true,
+				detail: {
+					id,
+					className
+				}
+			});
+			shadow.dispatchEvent(composeEvent);
+			e.stopImmediatePropagation();
+		});
+	}
+	attributes.content === "crates" && (className = "crates");
+	switch (!id ? id = className : id) {
+		case "body-app":
+			accordionController(element);
+			break;
+		case "buttonInstall":
+			installer();
+			break;
+		case "add-btn":
+			catchWork();
+			break;
+		case "remove-btn":
+			catchRemove();
+			break;
+		case "clear-btn":
+			clearAll();
+			break;
+		case "crate-btn":
+			crate();
+			break;
+		case "crate_btn":
+			crate();
+			break;
+		case "copy-pane1":
+			copyButton1();
+			break;
+		case "copy-pane2":
+			copyButton2();
+			break;
+		case "logout":
+			logout();
+			break;
+		case "logout-btn":
+			logout();
+			break;
+		case "seek-btn":
+			accordionController(element);
+			break;
+		case "search-header":
+			accordionController(element);
+			break;
+		case "exchange-header":
+			coins();
+			exchangeHeader();
+			accordionController(element);
+			break;
+		case "units-header":
+			accordionController(element);
+			break;
+		case "button-seek":
+			accordionController(element);
+			break;
+		case "search-btn":
+			accordionController(element);
+			break;
+		case "ex-btn":
+			coins();
+			accordionController(element);
+			break;
+		case "exchange-btn":
+			coins();
+			accordionController(element);
+			break;
+		case "unit-btn":
+			accordionController(element);
+			break;
+		case "units-btn":
+			accordionController(element);
+			break;
+		case "fetch-btn":
+			searchEstimate();
+			break;
+		case "crate-layers":
+			openDisplay();
+			break;
+		case "layer-crate":
+			openDisplay();
+			break;
+		case "previous":
+			if (cratesNum > 1) {
+				cratesNum -= 1;
+				sessionStorage.setItem("crate", `${cratesNum}/${cratesTotal}`);
+				crateDisplay.innerText = `Current crate: ${cratesNum} / ${cratesTotal}`;
+				plotter.show;
+			}
+			break;
+		case "layer-prev":
+			if (cratesNum > 1) {
+				cratesNum -= 1;
+				sessionStorage.setItem("crate", `${cratesNum}/${cratesTotal}`);
+				crateDisplay.innerText = `Current crate: ${cratesNum} / ${cratesTotal}`;
+				plotter.show;
+			}
+			break;
+		case "next":
+			if (cratesNum < cratesTotal) {
+				cratesNum += 1;
+				sessionStorage.setItem("crate", `${cratesNum}/${cratesTotal}`);
+				crateDisplay.innerText = `Current crate: ${cratesNum} / ${cratesTotal}`;
+				plotter.show;
+			}
+			break;
+		case "layer-next":
+			if (cratesNum < cratesTotal) {
+				cratesNum += 1;
+				sessionStorage.setItem("crate", `${cratesNum}/${cratesTotal}`);
+				crateDisplay.innerText = `Current crate: ${cratesNum} / ${cratesTotal}`;
+				plotter.show;
+			}
+			break;
+		case "settings-content":
+			className !== "update-materials" && className !== "new-material" && up.setAttribute("content", "settings-content");
+			break;
+		case "packages":
+			className !== "update-materials" && className !== "select-materials" && up.setAttribute("content", "packages");
+			break;
+		case "select-materials":
+			className !== "update-materials" && className !== "select-materials" && up.setAttribute("content", "select-materials");
+			break;
+		case "materials":
+			className !== "update-materials" && className !== "select-materials" && up.setAttribute("content", "confirm-save");
+			break;
+		case "report":
+			up.setAttribute("name", "packages");
+			break;
+		case "report":
+			up.setAttribute("name", "packages");
+			break;
+		case "pack-opts":
+			up.setAttribute("name", "works-packed");
+			break;
+		case "works-packed":
+			up.setAttribute("name", "works-packed");
+			break;
+		case "reset-sizes":
+			up.setAttribute("name", "reset-sizes");
+			break;
+		case "reset-szs":
+			up.setAttribute("name", "reset-szs");
+			break;
+		case "adding-material":
+			up.setAttribute("name", "adding-material");
+			break;
+		case "add__new__field":
+			up.setAttribute("name", "add__new__field");
+			break;
+		case "cancel-remove":
+			up.setAttribute("name", "cancel-remove");
+			break;
+		case "new-material":
+			up.setAttribute("name", "new-material");
+			break;
+		case "confirm-save":
+			up.setAttribute("name", "confirm-save");
+			break;
+		case "printer-icon":
+			globalThis.print();
+			break;
+		case "printer-btn":
+			globalThis.print();
+			break;
+		case "printer-svg":
+			globalThis.print();
+			break;
+		case "printer":
+			globalThis.print();
+			break;
+	}
+}, true);
+globalThis.document.getElementById("main-app").addEventListener("change", (element) => {
+	element.preventDefault();
+	switch (element.target.id) {
+		case "input_estimate":
+			createIDB();
+			break;
+		case "in":
+			setUnit();
+			break;
+		case "cm":
+			setUnit();
+			break;
+		case "dark-mode":
+			switchMode("dark");
+			break;
+		case "light-mode":
+			switchMode("light");
+			break;
+		case "coin1":
+			coinInputOne();
+			break;
+		case "coin2":
+			coinInputTwo();
+			break;
+		case "units1":
+			setUnitOne();
+			break;
+		case "units2":
+			setUnitTwo();
+			break;
+		case "selected-crate":
+			openDisplay();
+			break;
+		default:
+	}
+}, true);
+globalThis.document.getElementById("main-app").addEventListener("input", (element) => {
+	let { id, className } = element.target;
+	switch (!id ? id = className : id) {
+		case "coin1-input":
+			getInputOne();
+			break;
+		case "coin2-input":
+			getInputTwo();
+			break;
+		case "input-unit1":
+			getUnitOne();
+			break;
+		case "input-unit2":
+			getUnitTwo();
+			break;
+		default:
+	}
+}, true);
+globalThis.onsubmit = (event) => {
+	event.preventDefault();
+};
+globalThis.document.getElementById("main-app").addEventListener("open-crate", (e) => {
+	const { id, className, tagName } = e.detail;
+	const up = document.querySelector(".materials");
+	tagName === "A" && up.setAttribute("content", `${id}-${className}`);
+}, true);
+globalThis.document.getElementById("main-app").addEventListener("update-materials-info", (e) => {
+	const { id } = e.detail;
+	const down = document.querySelector(".update-materials");
+	e.stopImmediatePropagation();
+	id === "update-info" && down.setAttribute("name", "update");
+}, true);
+globalThis.document.getElementById("estimate_getter").addEventListener("keypress", (event) => {
+	event.key === "Enter" && searchEstimate();
+});
+globalThis.addEventListener("beforeinstallprompt", (event) => {
+	event.preventDefault();
+	console.log("👍", "beforeinstallprompt", event);
+	globalThis.deferredPrompt = event;
+});
+//#endregion

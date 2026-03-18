@@ -45,9 +45,9 @@ export default class CraterPythagoras {
 		const x = +(innerCrate[0] + crate.x).toFixed(3);
 		const z = +(innerCrate[1] + crate.z).toFixed(3);
 		const y = +(innerCrate[2] + crate.y).toFixed(3);
-		const X = x % 1 > 0 ? x : x.toFixed(0);
-		const Z = z % 1 > 0 ? z : z.toFixed(0);
-		const Y = y % 1 > 0 ? y : y.toFixed(0);
+		const X = x % 1 > 0 ? x : +(x).toFixed(3);
+		const Z = z % 1 > 0 ? z : +(z).toFixed(3);
+		const Y = y % 1 > 0 ? y : +(y).toFixed(3);
 		const div =
 			crate.div && layers.length > 1
 				? innerCrate[1] + crate.div * (layers - 1)
@@ -57,19 +57,38 @@ export default class CraterPythagoras {
 		return [+X, +Z, +Y];
 	}
 
+	#extraStructureData(baseSize, crate, hypotenusa) {
+		const MAXHEIGHT = 240;
+		const straightAngle = 180;
+		const degrees = straightAngle / Math.PI;
+		const angle1 = Math.ceil(straightAngle - (straightAngle / 2 + (Math.acos(baseSize / hypotenusa) * degrees)));
+		const angle2 = straightAngle / 2 - angle1;
+		const degree1 = angle1 * Math.PI / straightAngle;
+		const degree2 = angle2 * Math.PI / straightAngle;
+		const extraHeight = +(crate[1] / Math.sin(degree2)).toFixed(3);
+		const extraLength = Math.cos(degree1) * crate[1];
+
+		const leanSupport = +(Math.sqrt((crate[2] ** 2) - (baseSize ** 2))).toFixed(3);
+		const totalDepth = +(baseSize + extraLength).toFixed(3);
+		this.#coordinates.finalSize = [ crate[0], totalDepth, MAXHEIGHT ];
+		this.#coordinates.extra = {
+			extraHeight : +(extraHeight).toFixed(3),
+			leanSupport,
+			extraLength: +(extraLength).toFixed(3),
+			baseSize: crate,
+			angle: angle1,
+		};
+	}
+
 	#pitagorasTheorem(crate) {
 		const ply = this.#materials?.materials.find((opts) => opts[5] === "Plywood");
 		const feet = this.#materials?.materials.find((opts) => opts[5] === "Wooden Post");
+		const baseStructure = 2 * +ply[2] + +feet[3];
 		const MAXHEIGHT = 240;
-		const realHeight = +(Math.sqrt(crate[2] ** 2 + crate[1] ** 2)).toFixed(3);
-		const diffExt = crate[2] - MAXHEIGHT + crate[1];
-		const extraDepth = +(Math.sqrt(diffExt ** 2 - crate[1] ** 2)).toFixed(3);
-		const heightFactor = realHeight + (2 * +ply[2]) + +feet[3];
-		const z = +(Math.cos(Math.asin(MAXHEIGHT / heightFactor)) * heightFactor).toFixed(3);
+		const realHeightDiagonal = Math.sqrt(crate[1] ** 2) + Math.sqrt((crate[2] + baseStructure) ** 2);
+		const z = +(Math.cos(Math.asin(MAXHEIGHT / realHeightDiagonal)) * realHeightDiagonal).toFixed(3);
 
-		this.#coordinates.finalSize = [ crate[0], z, MAXHEIGHT ];
-		this.#coordinates.baseSize = [ crate[0], crate[1], realHeight ];
-		this.#coordinates.extraDepth = extraDepth;
+		this.#extraStructureData(z, crate, realHeightDiagonal);
 		return [...this.#coordinates.finalSize];
 	}
 

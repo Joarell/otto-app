@@ -105,7 +105,6 @@ export default class Crater {
 				false,
 			);
 			this.#crates.standardCrate = std.makeCrate;
-			console.log("✅", structuredClone(this.#crates.standardCrate));
 		}
 	}
 

@@ -2,7 +2,7 @@ import SetLargeCrateWalls from "./Crate.walls.plotly.class.mjs";
 import LargeCratesFrame from "./Plotly.large.crate.frame.mjs";
 import PaddingCrate from "./Padding.crate.plotly.mjs";
 import PositionWorksInSideCrate from "./Plotly.layer.position.work.class.mjs";
-import BottomCrate from "./Plotly.bottomCrate.render.mjs";
+import LargeBottomCrate from "./Plotly.large.bottom.mjs";
 
 export default class largestCrateRender {
 	#crates;
@@ -17,10 +17,10 @@ export default class largestCrateRender {
 		const { crates } = this.#crates;
 		const result = crates.map((data, i) => {
 			if (i % 2 === 0) {
-				const { finalSize, innerSize, baseSize, extraDepth } = data.at(-1)[0];
-				const bottom = new BottomCrate(finalSize, data.at(-1)[0], baseSize);
+				const { finalSize, innerSize, baseSize, extraDepth, extraHeight } = data.at(-1)[0];
+				const bottom = new LargeBottomCrate(data.at(-1)[0]);
 				let meta = bottom.largeBottom;
-				const frame = new LargeCratesFrame(meta, baseSize, data.at(-1)[0], finalSize, extraDepth);
+				const frame = new LargeCratesFrame(meta, data.at(-1)[0]);
 				meta = frame.setFrame;
 				// const walls = new SetLargeCrateWalls(baseSize, data.at(-1)[0], meta, finalSize);
 				// meta = walls.setHugeWalls;

@@ -77,7 +77,7 @@ export default class CraterNotCanvas {
 		const Y = y % 1 > 0 ? y : y.toFixed(3);
 
 		this.#setWorksCoordinates(structuredClone([+X, +Z, +Y]));
-		this.#coordinates.innerSize = [ x, innerCrate[1], innerCrate[2] ];
+		this.#coordinates.innerSize = innerCrate;
 		this.#coordinates.finalSize = [+X, +Z, +Y];
 		return [...this.#coordinates.finalSize, this.#coordinates];
 	}
@@ -138,18 +138,16 @@ export default class CraterNotCanvas {
 	}
 
 	#validationSizes(x, z, equals, items) {
-		const PAD = 10;
 		const MAXLEN = 554;
 		const MAXDEPTH = 177;
 
 		if (items.length % 2 === 0)
-			if (x > MAXLEN && z * 2 + PAD < MAXDEPTH) return items.length;
+			if (x > MAXLEN && z * 2 < MAXDEPTH) return items.length;
 		return equals === 0 || items[0][1] > MAXLEN ? 1 : equals;
 	}
 
 	#defineMaxPeces(items) {
-		const PAD = 10;
-		let x = PAD * items.length;
+		let x = items.length;
 		let z = 0;
 		let equals = 0;
 		const workRef = items[0];
@@ -158,7 +156,7 @@ export default class CraterNotCanvas {
 			const compare = this.#validationComp(art, workRef);
 			const bool1 = art[2] - workRef[2];
 			const bool2 = workRef[2] - art[2];
-			const check = (bool1 > 0 && bool1 <= PAD) || (bool2 > 0 && bool2 <= PAD);
+			const check = bool1 > 0 || bool2 > 0;
 
 			if (compare === true || check) {
 				equals++;

@@ -49,7 +49,7 @@ export default class DesignWalls {
 
 	#createTube() {
 		const segments = 100;
-		const { width, depth, height, offsetX, offsetZ, offsetY, info, name, next } = this.#data;
+		const { width, depth, height, offsetX, offsetZ, offsetY, info, name } = this.#data;
 		const radius = depth / 2;
 		const color = "#BB0056BB";
 		const vertices_x = [];
@@ -64,6 +64,8 @@ export default class DesignWalls {
 			for (let s = 0; s < segments; s++) {
 				const angle = (2 * Math.PI * s) / segments;
 				vertices_x.push(x - offsetX);
+				// vertices_y.push(radius * Math.cos(angle) + height);
+				// vertices_z.push(radius * Math.sin(angle) + depth);
 				vertices_y.push(radius * Math.cos(angle) + offsetY);
 				vertices_z.push(radius * Math.sin(angle) + offsetZ);
 			}
@@ -184,10 +186,10 @@ export default class DesignWalls {
 		const cosAngle = Math.cos(dep / high);
 		const sinAngle = Math.sin(high / dep);
 		const rotX1 = (x, y, z) => [
-			x, (z * sinAngle - y * cosAngle) + align, z * cosAngle + y * sinAngle
+			x, z * sinAngle - y * cosAngle, z * cosAngle + y * sinAngle - align
 		];
 		const rotX2 = (x, y, z) => [
-			x, y * cosAngle - z * sinAngle + align, y * sinAngle + z * cosAngle,
+			x, y * cosAngle - z * sinAngle, y * sinAngle + z * cosAngle - align,
 		];
 		const offsetVertices = vertices.map((v) => [
 			v[0] + offsetX,

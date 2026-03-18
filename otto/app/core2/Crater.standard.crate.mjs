@@ -57,9 +57,19 @@ export default class CraterStandard {
 			check3 = list1[pos][2] > list2[pos][2];
 			check4 = list1[pos][2] !== list2[pos][2];
 
-			if(check1 && check2) (opt1 += 1)
+			if(check1 && check2) {
+				const quarterSize = list1[pos][0] * 0.25;
+				const diffSize = list1[pos][0] - list2[pos][0];
+
+				 if(diffSize > quarterSize) opt1 += 1;
+			}
 			else if (check2) opt2 += 1;
-			if(check3 && check4) opt1 += 1;
+			if(check3 && check4) {
+				const quarterSize = list1[pos][2] * 0.25;
+				const diffSize = list1[pos][2] - list2[pos][2];
+
+				 if(diffSize > quarterSize) opt1 += 1;
+			}
 			else if (check4) opt2 += 1;
 		}
 		return { opt1, opt2 };
@@ -85,7 +95,6 @@ export default class CraterStandard {
 		return { bestArrange };
 	}
 
-	// BUG: the recheck option is defining one more layer rather increase tiny length or hight centimeters
 	#selectTheBestSolution() {
 		const copy1 = structuredClone(this.#list);
 		const copy2 = structuredClone(this.#list);
@@ -139,7 +148,6 @@ export default class CraterStandard {
 	}
 
 	#defineFinalSize(innerSize, works) {
-		const FORKFEET = 8;
 		let z = 0;
 		let i = 0;
 		let tmp = 0;
@@ -160,9 +168,9 @@ export default class CraterStandard {
 			}
 		tmp = crate.div * (this.#layers - 1) + z;
 		this.#coordinates.innerSize = [
-			+(innerSize[0] + crate.pad).toFixed(3),
-			+(tmp + crate.pad).toFixed(3),
-			+(innerSize[2] + crate.pad).toFixed(3),
+			innerSize[0],
+			+(tmp).toFixed(3),
+			innerSize[2],
 		];
 		crate.x += innerSize[0];
 		crate.z += !tmp ? innerSize[1] : tmp;

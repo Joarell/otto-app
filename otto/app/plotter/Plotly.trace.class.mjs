@@ -42,12 +42,12 @@ export default class TraceMaker {
 			const sinAngle = Math.sin(high / dep);
 			const rotX1 = (x, y, z) => [
 				x,
-				y * cosAngle + z * sinAngle,
-				(y * sinAngle - z * cosAngle) + align,
+				y * cosAngle + z * sinAngle - align,
+				y * sinAngle - z * cosAngle
 			];
 			const rotX2 = (x, y, z) => [
 				x,
-				z * sinAngle + y * cosAngle + align,
+				z * sinAngle + y * cosAngle - align,
 				z * cosAngle - y * sinAngle,
 			];
 			const first = sinAngle > 0

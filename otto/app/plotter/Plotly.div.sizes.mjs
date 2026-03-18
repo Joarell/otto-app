@@ -47,7 +47,7 @@ export default class PadDivSizes  {
 		return divisor;
 	}
 
-	#setDivSameSize(data = [], filled = { x: 0, y: 0, full: 0}) {
+	#setDivSameSize(data = [], filled = { x: 0, y: 0, full: false}) {
 		if(filled.full) return data;
 		let { x, y } = filled;
 

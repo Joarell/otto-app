@@ -63,7 +63,6 @@ export default class CraterSameSize {
 		this.#rawList.map((work) =>
 			this.#coordinates.artLocation.set(work.code, work),
 		);
-		this.#coordinates.innerSize = base;
 		delete this.#coordinates.defineLayer;
 		delete this.#coordinates.reset;
 		return base;
@@ -76,15 +75,16 @@ export default class CraterSameSize {
 			layersUp,
 		).outSizes;
 		const x = +(innerCrate[0] + crater.x).toFixed(3);
-		const z = +(innerCrate[1] + crater.z).toFixed(3);
+		const z = innerCrate[1] + crater.z;
 		const y = +(innerCrate[2] + crater.y).toFixed(3);
 		const X = x % 1 > 0 ? x : x.toFixed(0);
-		const Z = z % 1 > 0 ? z : z.toFixed(0);
+		const Z = z + 1;
+		// const Z = z % 1 > 0 ? z : z.toFixed(0);
 		const Y = y % 1 > 0 ? y : y.toFixed(0);
-		const div = innerCrate[1] + crater.div * this.#pieces.length;
 
+		// console.log("❌", crater, z);
 		this.#setWorksCoordinates(innerCrate, layersUp);
-		this.#coordinates.innerSize = [innerCrate[0], div, innerCrate[2]];
+		this.#coordinates.innerSize = [innerCrate[0], crater.z, innerCrate[2]];
 		this.#coordinates.finalSize = [+X, +Z, +Y];
 		return [...this.#coordinates.finalSize, this.#coordinates];
 	}

@@ -9,6 +9,7 @@ export default class ArrangerSameSize {
 		const MAXDEPTH = 10;
 		const getter = [];
 		const checker = (a, b) => a.cubed <= b.cubed && a.code !== b.code;
+		let sameSized;
 
 		this.map((work) => {
 			let i = 0;
@@ -16,8 +17,12 @@ export default class ArrangerSameSize {
 
 			if (work.z <= MAXDEPTH)
 				for (i in this) {
+					sameSized = this[i].x === work.x && this[i].y === work.y;
 					checked = checker(this[i], work);
+
 					if (!getter.includes(this[i]) && checked) getter.push(this[i]);
+					else if(!checked && sameSized && !getter.includes(this[i]))
+						getter.push(this[i]);
 				}
 			return work;
 		});

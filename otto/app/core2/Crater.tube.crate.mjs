@@ -46,20 +46,19 @@ export default class CraterTube {
 		const info = { emptyArea, feat: [] };
 		const len = Array.isArray(list[0]) ? list.length - 1 : 0;
 		const spanPad = 10;
-		let lastY = 0;
+		let sumY = 0;
 
 		coordinates.fillPreparing = { info, list, len, raw: this.#rawList };
 		const { feat } = coordinates.fillLayer;
 		this.#coordinates.defineLayer = [1, feat];
-		this.#coordinates.innerSize = [innerSize[0], innerSize[1], innerSize[2]];
 		this.#worksInPlace(list, coordinates);
-		this.#rawList.map((work) => {
-			work.y += lastY;
+		this.#rawList.map((work, i) => {
+			if(i > 0) sumY += spanPad;
 			this.#coordinates.artLocation.set(work.code, work)
 
-			lastY += work.y + spanPad;
 			return work;
-		});
+		}, 0);
+		this.#coordinates.innerSize = [innerSize[0], innerSize[1], innerSize[2] + sumY];
 	}
 
 	#sizeComposer(list) {

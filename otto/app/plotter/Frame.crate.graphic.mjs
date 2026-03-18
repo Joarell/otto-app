@@ -7,14 +7,15 @@ export default class CratesFrame {
 	#feet;
 	#meta;
 
-	constructor(meta, sized, material) {
+	constructor(meta, data) {
+		const { finalSize } = data;
 		const available = JSON.parse(localStorage.getItem("crating"));
-		const used = available.map((opt) => material.usedMaterials.get(opt));
+		const used = available.map((opt) => data.usedMaterials.get(opt));
 
 		this.#meta = meta;
 		this.#pine = used.find((list) => list.at(-1) === "Pinewood");
 		this.#feet = used.find((list) => list.at(-1) === "Wooden Post");
-		this.#sized = sized;
+		this.#sized = finalSize;
 		this.#pine[1] = +this.#pine[1];
 		this.#pine[2] = +this.#pine[2];
 		this.#pine[3] = +this.#pine[3];

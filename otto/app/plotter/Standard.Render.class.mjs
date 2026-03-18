@@ -17,19 +17,16 @@ export default class standardCrateRender {
 		const { crates } = this.#crates;
 		const result = crates.map((data, i) => {
 			if (i % 2 === 0) {
-				const { finalSize, innerSize } = data.at(-1)[0];
-				const bottom = new BottomCrate(finalSize, data.at(-1)[0]);
+				const bottom = new BottomCrate(data.at(-1)[0]);
 				let meta = bottom.commumBottom;
-				const frame = new CratesFrame(meta, finalSize, data.at(-1)[0]);
+				const frame = new CratesFrame(meta, data.at(-1)[0]);
 				meta = frame.setFrame;
-				const walls = new SetCrateWalls(finalSize, data.at(-1)[0], meta);
+				const walls = new SetCrateWalls(meta, data.at(-1)[0]);
 				meta = walls.setWalls;
-				const padding = new PaddingCrate(finalSize, data.at(-1)[0], meta);
+				const padding = new PaddingCrate(meta, data.at(-1)[0]);
 				meta = padding.setPadding;
 				const position = new PositionWorksInSideCrate(
-					{ sized: finalSize, innerSize, type: "standardCrate" },
-					data,
-					meta,
+					data.at(-1)[0], meta, "standardCrate"
 				);
 
 				meta = position.arrange;

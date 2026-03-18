@@ -5,34 +5,36 @@ import TraceMaker from "./Plotly.trace.class.mjs";
 export default class LargeCratesFrame {
 	#sized;
 	#pine;
-	#baseFinalSize;
 	#meta;
 	#feet;
 	#ply;
 	#depth;
+	#heightExtra;
 
-	constructor(meta, sized, material, finalSize, extraDepth) {
+	constructor(meta, data) {
+		const { extra } = data;
+		const { extraHeight, baseSize, extraLength } = extra;
 		const available = JSON.parse(localStorage.getItem("crating"));
-		const used = available.map((opt) => material.usedMaterials.get(opt));
+		const used = available.map((opt) => data.usedMaterials.get(opt));
 		const parser = (data) => data.map((info, i) => {
 			if(i === 1 || i === 2 || i === 3) data[i] = +data[i];
 			return info;
 		})
 
+		this.#heightExtra = extraHeight;
 		this.#meta = meta;
-		this.#baseFinalSize = [ finalSize[0], finalSize[1] - sized[1], finalSize[2] ];
 		this.#pine = used.find((list) => list.at(-1) === "Pinewood");
 		this.#feet = used.find((list) => list.at(-1) === "Wooden Post");
 		this.#ply = used.find((list) => list.at(-1) === "Plywood");
-		this.#sized = sized;
+		this.#sized = baseSize;
 		parser(this.#feet)
 		parser(this.#ply);
 		parser(this.#pine);
-		this.#depth = extraDepth + this.#pine[2];
+		this.#depth = extraLength;
 	}
 
 	#offsetFrame() {
-		const structOffset = this.#depth - 2 * this.#pine[2] + +this.#feet[3];
+		const structOffset = this.#heightExtra;
 		const allOffset = {
 			offsetFacesRightBackV: {
 				type: "faceV",
@@ -279,7 +281,7 @@ export default class LargeCratesFrame {
 	}
 
 	#defineFrameComponents() {
-		const offSetFeet = this.#depth - 2 * this.#ply[2] + this.#feet[3];
+		const offSetFeet = this.#heightExtra;
 		const vertical = this.#sized[2] - this.#pine[3] - this.#pine[2];
 		const rightFeet = this.#sized[0] - this.#pine[3];
 		const vDepth = this.#sized[1] - this.#pine[2];
@@ -533,13 +535,17 @@ export default class LargeCratesFrame {
 		return change;
 	}
 
+	extraHoriZontalPinesFrontAndBack() {
+
+	}
+
 	#setAllParts(meta, component, offsets) {
 		const trace = new TraceMaker();
 		const fill = new DesignWalls();
-		const align = this.#feet[3];
+		const align = this.#depth;
 		const sizes = {
-			dep: this.#sized[1] - this.#depth,
-			high: this.#baseFinalSize[2]
+			dep: this.#sized[1],
+			high: this.#sized[2],
 		};
 		let show = true;
 

@@ -14,13 +14,18 @@ export default class PositionWorksInSideCrate {
 	#type;
 	#pine;
 
-	constructor(crate, data, meta, type = "standard") {
+	constructor(data, meta, type = "standardCrate") {
+		const { finalSize, innerSize } = data;
 		this.#type = type;
-		this.#crate = crate;
+		this.#crate = {
+			sized: finalSize,
+			innerSize,
+			type,
+		};
 		this.#data = meta;
-		this.#info = data.at(-1)[0];
+		this.#info = data;
 		this.#threshold = [];
-		this.#inner = crate.innerSize;
+		this.#inner = innerSize;
 	}
 
 	/**
@@ -36,8 +41,7 @@ export default class PositionWorksInSideCrate {
 			if (wood.at(-1) === "Wooden Post") {
 				this.#threshold[2] += wood[3];
 				return wood;
-			}
-			else if (wood.at(-1) === "Pinewood") {
+			} else if (wood.at(-1) === "Pinewood") {
 				this.#threshold[0] += wood[2];
 				this.#threshold[1] += wood[2];
 				this.#pine = wood;
@@ -139,8 +143,19 @@ export default class PositionWorksInSideCrate {
 		let heightSum = 0;
 		let thickness = 0;
 
-		this.#threshold[1] *= 2;
-		this.#threshold[2] = 2 * this.#threshold[2] + this.#pine[2];
+		switch (layers.length) {
+			case 2:
+				this.#threshold[1] += 3 * this.#pad[2];
+				this.#threshold[2] += 2 * this.#pine[2] + 2 * this.#pad[2];
+				break;
+			case 3:
+				this.#threshold[1] *= 2;
+				this.#threshold[2] = 2 * this.#threshold[2] + this.#pine[2];
+				break;
+			default:
+				this.#threshold[1] += this.#pad[2];
+				this.#threshold[2] += 2 * this.#pine[2] + this.#pad[2];
+		}
 		layers.map((data, i) => {
 			const { vacuum, works } = data;
 			const allWorks = works.map((info) => {
