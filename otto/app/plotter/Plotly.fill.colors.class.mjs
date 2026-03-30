@@ -5,10 +5,10 @@ export default class DesignWalls {
 
 	constructor() {
 		[
-			// [ 'walls', '#3DDDDD' ],
+			// [ 'walls', '#008080' ],
 			// [ 'works', '#BB0056BB' ],
 			["frame", "yellow"],
-			["walls", "#BF5E30"],
+			["walls", "#FF5252"],
 			["padding", "#222725"],
 			["div", "#EFECBBBE"],
 			["fill", "#2DD751"],
