@@ -2746,7 +2746,7 @@ var PaddingCrate = class {
 	#bluePrintFacesSchema({ x, y, z }, lastX, lastY) {
 		const offX = lastX + this.#threshold[0] + this.#pad[2];
 		const offZ = z + this.#threshold[1];
-		const offY = lastY === 0 ? this.#threshold[2] + this.#pad[2] : lastY;
+		const offY = lastY === 0 ? this.#threshold[2] : lastY;
 		if (x <= this.#inner[0]) x += lastX === 0 ? this.#threshold[0] + this.#pad[2] : lastX;
 		return {
 			coordinates: [
@@ -2793,16 +2793,16 @@ var PaddingCrate = class {
 			],
 			width: lastX === 0 ? x - this.#threshold[0] - this.#pad[2] : x - lastX - this.#threshold[0] - this.#pad[2],
 			depth: this.#pad[2],
-			height: lastY === 0 ? y - this.#threshold[2] - this.#pad[2] : y - lastY,
+			height: lastY === 0 ? y - this.#threshold[2] : y - lastY,
 			offsetX: offX,
 			offsetY: z,
-			offsetZ: lastY === 0 ? this.#threshold[2] + this.#pad[2] : lastY
+			offsetZ: lastY === 0 ? this.#threshold[2] : lastY
 		};
 	}
 	#bluePrintSidesSchema({ x, y, z }, lastX, lastY) {
 		const offX = lastX === 0 && this.#inner[0] !== x ? this.#pad[2] + this.#threshold[0] : lastX - 2 * this.#pad[2];
 		const offZ = this.#threshold[1];
-		const offY = lastY === 0 ? this.#threshold[2] + this.#pad[2] : lastY;
+		const offY = lastY === 0 ? this.#threshold[2] : lastY;
 		return {
 			coordinates: [
 				{
@@ -2848,15 +2848,15 @@ var PaddingCrate = class {
 			],
 			width: lastX === 0 ? x - this.#threshold[0] - this.#pad[2] : x - lastX,
 			depth: z - this.#pad[2],
-			height: lastY === 0 ? y - this.#threshold[2] - this.#pad[2] : y - offY,
+			height: lastY === 0 ? y - this.#threshold[2] : y - offY,
 			offsetX: lastX === 0 ? offX : offX + this.#pad[2],
 			offsetY: offZ,
-			offsetZ: lastY === 0 ? this.#threshold[2] + this.#pad[2] : offY
+			offsetZ: lastY === 0 ? this.#threshold[2] : offY
 		};
 	}
 	#bluePrintUpDownSchema({ x, y, z }, lastX, lastY) {
-		const offX = lastX === 0 ? this.#threshold[0] : this.#threshold[0] + lastX;
-		const offZ = this.#threshold[1];
+		const offX = lastX === 0 ? this.#threshold[0] + this.#pad[2] : this.#threshold[0] + lastX;
+		const offZ = this.#threshold[1] + this.#pad[2];
 		const offY = lastY === 0 ? lastY + this.#threshold[2] + this.#pad[2] : this.#crate[2] - this.#pad[2] - this.#pine[2] - this.#ply[2];
 		x += lastX === 0 ? this.#threshold[0] : lastX + this.#pad[2];
 		return {
@@ -2902,8 +2902,8 @@ var PaddingCrate = class {
 					z
 				}
 			],
-			width: lastX === 0 ? x - this.#threshold[0] : x - lastX - this.#threshold[0],
-			depth: z - this.#pad[2],
+			width: lastX === 0 ? x - this.#threshold[0] - this.#pad[2] : x - lastX - this.#threshold[0],
+			depth: z - 2 * this.#pad[2],
 			height: lastY === 0 ? y - this.#threshold[2] + this.#pad[2] : y - lastY - this.#threshold[2] - this.#pad[2],
 			offsetX: offX,
 			offsetY: offZ,
@@ -2913,14 +2913,14 @@ var PaddingCrate = class {
 	#defineSizingPadFaces(filled) {
 		let { x, y, z, faceA } = filled;
 		if (x === 0) x = this.#pad[1] > this.#inner[0] ? this.#crate[0] - this.#threshold[0] - this.#pad[2] : this.#pad[1] + this.#pad[2];
-		y = this.#inner[2] - y > this.#pad[3] ? +this.#pad[3].toFixed(3) : +(this.#crate[2] - this.#pad[2] - this.#ply[2] - this.#pine[2]).toFixed(3);
+		y = this.#inner[2] - y > this.#pad[3] ? +this.#pad[3].toFixed(3) : +(this.#crate[2] - this.#ply[2] - this.#pine[2]).toFixed(3);
 		z = faceA === 0 ? this.#pad[2] : this.#crate[1] - this.#threshold[1] - this.#pad[2];
 		if (filled.x > 0) {
 			if (x >= this.#inner[0] && y < this.#inner[2]) {
 				filled.x = 0;
 				if (y < this.#inner[2] && x >= this.#inner[0]) {
 					filled.y += y;
-					y = this.#inner[2] - filled.y > this.#pad[3] ? this.#crate[2] - this.#pad[3] : +(this.#crate[2] - this.#pad[2] - this.#pine[2] - this.#ply[2]).toFixed(3);
+					y = this.#crate[2] - filled.y > this.#pad[3] ? this.#crate[2] - this.#pad[3] : this.#pad[3];
 				}
 			}
 			x = this.#crate[0] - x - this.#threshold[0] - this.#pad[2];
@@ -2934,8 +2934,8 @@ var PaddingCrate = class {
 	#defineSizingPadSides(filled) {
 		let { x, y, z, sideA } = filled;
 		x = sideA === 0 ? this.#pad[2] : this.#crate[0] - this.#pad[2];
-		if (y === 0) y = this.#inner[2] - y > this.#pad[3] ? this.#pad[3] : +(this.#crate[2] - this.#ply[2] - this.#pine[2] - this.#pad[2]).toFixed(3);
-		else y += this.#inner[2] - y > this.#pad[3] ? this.#pad[3] : this.#crate[2] - y - this.#pine[2] - 2 * this.#ply[2] - this.#ply[2];
+		if (y === 0) y = this.#inner[2] - y > this.#pad[3] ? this.#pad[3] : +(this.#crate[2] - this.#ply[2] - this.#pine[2]).toFixed(3);
+		else y += this.#inner[2] - y > this.#pad[3] ? this.#pad[3] : this.#crate[2] - y - this.#pine[2] - this.#ply[2];
 		z = this.#crate[1] < this.#pad[1] ? this.#crate[1] - this.#threshold[1] : this.#crate[1] - this.#pad[1] - z;
 		return {
 			x,
@@ -2945,10 +2945,10 @@ var PaddingCrate = class {
 	}
 	#defineSizingPadUpDown(filled) {
 		let { x, y, z } = filled;
-		if (x === 0) x = this.#pad[1] > this.#inner[0] ? this.#crate[0] - this.#threshold[0] - this.#pad[2] : this.#pad[1] + this.#pad[2];
-		else x = this.#crate[0] - x - this.#threshold[0] - this.#pad[2];
+		if (x === 0) x = this.#pad[1] > this.#inner[0] ? this.#crate[0] - this.#threshold[0] - 2 * this.#pad[2] : this.#pad[1] + this.#pad[2];
+		else x = this.#crate[0] - x - this.#threshold[0] - 2 * this.#pad[2];
 		y = y === 0 ? this.#threshold[2] : this.#crate[2] - this.#pine[2] - this.#ply[2];
-		z = this.#crate[1] - this.#threshold[1];
+		z = this.#crate[1] - this.#threshold[1] - this.#pad[2];
 		return {
 			x,
 			y,
