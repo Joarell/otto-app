@@ -78,11 +78,9 @@ export default class CraterSameSize {
 		const z = innerCrate[1] + crater.z;
 		const y = +(innerCrate[2] + crater.y).toFixed(3);
 		const X = x % 1 > 0 ? x : x.toFixed(0);
-		const Z = z + 1;
-		// const Z = z % 1 > 0 ? z : z.toFixed(0);
+		const Z = z % 1 > 0 ? z : z.toFixed(0);
 		const Y = y % 1 > 0 ? y : y.toFixed(0);
 
-		// console.log("❌", crater, z);
 		this.#setWorksCoordinates(innerCrate, layersUp);
 		this.#coordinates.innerSize = [innerCrate[0], crater.z, innerCrate[2]];
 		this.#coordinates.finalSize = [+X, +Z, +Y];
@@ -124,21 +122,18 @@ export default class CraterSameSize {
 	#orderSizes(base, art) {
 		const STACK = base.shift();
 		const LEN = art.length;
-		// const LEN = Array.isArray(art[0]) ? art[0].length : art.length;
 		let DEPTH;
 		let x;
-		let z;
+		let z = this.#pieces.reduce((val, sum) => sum[2] + val, 0);
 		let y;
 
 		if (STACK) {
 			DEPTH = (LEN % 2) + LEN / 2;
 			x = base[0];
-			z = DEPTH * this.#packageSize[2];
+			z /= 2;
 			y = base[2];
 		} else {
-			// DEPTH = (LEN % 2) + LEN;
 			x = base[0];
-			z = LEN * this.#packageSize[2];
 			y = base[2];
 		}
 		return this.#setPad([x, z, y], STACK);
