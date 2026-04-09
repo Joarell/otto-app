@@ -241,7 +241,7 @@ export default class PositionWorksInSideCrate {
 	}
 
 	#populateLayerHugeCanvas() {
-		const { layers, fillGaps, artLocation, finalSize } = this.#info;
+		const { layers, fillGaps, artLocation, finalSize, extra } = this.#info;
 		const onLayers = [];
 		let depthSum = 0;
 		let thickness = 0;
@@ -293,7 +293,7 @@ export default class PositionWorksInSideCrate {
 			thickness = 0;
 			return data;
 		}, 0);
-		const designWorks = new DesignPlotter(onLayers, this.#data, finalSize);
+		const designWorks = new DesignPlotter(onLayers, this.#data, finalSize, extra);
 		return designWorks.hugeDesign;
 	}
 

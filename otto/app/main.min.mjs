@@ -207,8 +207,7 @@ var DesignWalls = class {
 		return info;
 	}
 	#defineLargestCrate() {
-		const { align, width, depth, height, offsetX, offsetZ, offsetY, info, name, sizes } = this.#data;
-		const { dep, high } = sizes;
+		const { angle, align, width, depth, height, offsetX, offsetZ, offsetY, info, name, base } = this.#data;
 		const color = this.#colors.get(name.color || name);
 		const vertices = [
 			[
@@ -252,17 +251,17 @@ var DesignWalls = class {
 				height
 			]
 		];
-		const cosAngle = Math.cos(dep / high);
-		const sinAngle = Math.sin(high / dep);
+		const cosAngle = Math.cos(angle);
+		const sinAngle = Math.sin(angle);
 		const rotX1 = (x, y, z) => [
 			x,
-			z * sinAngle - y * cosAngle,
-			z * cosAngle + y * sinAngle - align
+			z * sinAngle - y * cosAngle - align,
+			z * cosAngle + y * sinAngle + base
 		];
 		const rotX2 = (x, y, z) => [
 			x,
-			y * cosAngle - z * sinAngle,
-			y * sinAngle + z * cosAngle - align
+			y * cosAngle - z * sinAngle - align,
+			y * sinAngle + z * cosAngle + base
 		];
 		const offsetVertices = vertices.map((v) => [
 			v[0] + offsetX,
@@ -352,23 +351,22 @@ var TraceMaker = class {
 		];
 	}
 	#defineHugeShape() {
-		const { align, info, coordinates, name, show, sizes } = this.#data;
+		const { angle, align, info, coordinates, name, show, base } = this.#data;
 		const color = this.#colors.get(name.color ?? name) ?? name.color;
-		const { dep, high } = sizes;
 		this.#edges.forEach((edge, i) => {
 			const v1 = coordinates[edge[0]];
 			const v2 = coordinates[edge[1]];
-			const cosAngle = Math.cos(dep / high);
-			const sinAngle = Math.sin(high / dep);
+			const cosAngle = Math.cos(angle);
+			const sinAngle = Math.sin(angle);
 			const rotX1 = (x, y, z) => [
 				x,
-				y * cosAngle + z * sinAngle - align,
-				y * sinAngle - z * cosAngle
+				y * cosAngle + z * sinAngle + base,
+				y * sinAngle - z * cosAngle - align
 			];
 			const rotX2 = (x, y, z) => [
 				x,
-				z * sinAngle + y * cosAngle - align,
-				z * cosAngle - y * sinAngle
+				z * sinAngle + y * cosAngle + base,
+				z * cosAngle - y * sinAngle - align
 			];
 			const first = sinAngle > 0 ? rotX2(v1.x, v1.y, v1.z) : rotX1(v1.x, v1.y, v1.z);
 			const second = sinAngle > 0 ? rotX2(v2.x, v2.y, v2.z) : rotX1(v2.x, v2.y, v2.z);
@@ -446,9 +444,18 @@ var SetCrateWalls = class {
 	#feet;
 	#threshold;
 	#inner;
+	#baseCrate;
+	#angle;
+	#depth;
+	#height;
 	constructor(meta, data) {
-		const { finalSize, innerSize } = data;
+		const { finalSize, innerSize, extra } = data;
+		const { baseSize, angle, extraHeight, extraLength } = extra;
 		const used = JSON.parse(localStorage.getItem("crating")).map((opt) => data.usedMaterials.get(opt));
+		this.#baseCrate = baseSize;
+		this.#angle = angle;
+		this.#depth = extraLength;
+		this.#height = extraHeight;
 		this.#inner = innerSize;
 		this.#pine = used.find((list) => list.at(-1) === "Pinewood");
 		this.#ply = used.find((list) => list.at(-1) === "Plywood");
@@ -464,379 +471,60 @@ var SetCrateWalls = class {
 			+this.#feet[3]
 		];
 	}
-	#crateWalls() {
-		const pineDepth = this.#pine[2] + this.#ply[2];
-		const facesLength = this.#crate[0] - this.#pine[2];
-		const facesHeight = this.#crate[2] - pineDepth;
-		const sideLength = this.#crate[1] - pineDepth;
-		const faceLeftLen = this.#crate[0] - pineDepth;
-		const side = this.#pine[2] + this.#ply[2];
-		const height = 2 * this.#pine[2] + this.#ply[2];
-		const thick = this.#crate[1] - this.#pine[2];
+	#bluePrintHugeFacesSchema({ x, y, z }, lastX, lastY) {
+		const offX = lastX === 0 ? this.#threshold[0] : lastX + this.#threshold[0];
+		const offZ = z + this.#threshold[1];
+		const offY = lastY === 0 ? this.#threshold[2] : lastY;
+		if (x <= this.#baseCrate[0]) x += lastX === 0 ? this.#threshold[0] : lastX - this.#ply[2];
 		return {
-			backFace: [
+			coordinates: [
 				{
-					x: 0,
-					y: 0,
-					z: 0
+					x: offX,
+					y: offY,
+					z: offZ
 				},
 				{
-					x: facesLength,
-					y: 0,
-					z: 0
+					x,
+					y: offY,
+					z: offZ
 				},
 				{
-					x: facesLength,
-					y: facesHeight,
-					z: 0
+					x,
+					y,
+					z: offZ
 				},
 				{
-					x: 0,
-					y: facesHeight,
-					z: 0
+					x: offX,
+					y,
+					z: offZ
 				},
 				{
-					x: 0,
-					y: 0,
-					z: this.#ply[2]
+					x: offX,
+					y: offY,
+					z
 				},
 				{
-					x: facesLength,
-					y: 0,
-					z: this.#ply[2]
+					x,
+					y: offY,
+					z
 				},
 				{
-					x: facesLength,
-					y: facesHeight,
-					z: this.#ply[2]
+					x,
+					y,
+					z
 				},
 				{
-					x: 0,
-					y: facesHeight,
-					z: this.#ply[2]
+					x: offX,
+					y,
+					z
 				}
 			],
-			frontFace: [
-				{
-					x: 0,
-					y: 0,
-					z: 0
-				},
-				{
-					x: facesLength,
-					y: 0,
-					z: 0
-				},
-				{
-					x: facesLength,
-					y: facesHeight,
-					z: 0
-				},
-				{
-					x: 0,
-					y: facesHeight,
-					z: 0
-				},
-				{
-					x: 0,
-					y: 0,
-					z: sideLength
-				},
-				{
-					x: facesLength,
-					y: 0,
-					z: sideLength
-				},
-				{
-					x: facesLength,
-					y: facesHeight,
-					z: sideLength
-				},
-				{
-					x: 0,
-					y: facesHeight,
-					z: sideLength
-				}
-			],
-			sideRight: [
-				{
-					x: 0,
-					y: 0,
-					z: 0
-				},
-				{
-					x: side,
-					y: 0,
-					z: 0
-				},
-				{
-					x: side,
-					y: facesHeight,
-					z: 0
-				},
-				{
-					x: 0,
-					y: facesHeight,
-					z: 0
-				},
-				{
-					x: 0,
-					y: 0,
-					z: sideLength
-				},
-				{
-					x: side,
-					y: 0,
-					z: sideLength
-				},
-				{
-					x: side,
-					y: facesHeight,
-					z: sideLength
-				},
-				{
-					x: 0,
-					y: facesHeight,
-					z: sideLength
-				}
-			],
-			sideLeft: [
-				{
-					x: 0,
-					y: 0,
-					z: 0
-				},
-				{
-					x: faceLeftLen,
-					y: 0,
-					z: 0
-				},
-				{
-					x: faceLeftLen,
-					y: facesHeight,
-					z: 0
-				},
-				{
-					x: 0,
-					y: facesHeight,
-					z: 0
-				},
-				{
-					x: 0,
-					y: 0,
-					z: sideLength
-				},
-				{
-					x: faceLeftLen,
-					y: 0,
-					z: sideLength
-				},
-				{
-					x: faceLeftLen,
-					y: facesHeight,
-					z: sideLength
-				},
-				{
-					x: 0,
-					y: facesHeight,
-					z: sideLength
-				}
-			],
-			top: [
-				{
-					x: 0,
-					y: 0,
-					z: 0
-				},
-				{
-					x: facesLength,
-					y: 0,
-					z: 0
-				},
-				{
-					x: facesLength,
-					y: facesHeight,
-					z: 0
-				},
-				{
-					x: 0,
-					y: facesHeight,
-					z: 0
-				},
-				{
-					x: 0,
-					y: 0,
-					z: thick
-				},
-				{
-					x: facesLength,
-					y: 0,
-					z: thick
-				},
-				{
-					x: facesLength,
-					y: facesHeight,
-					z: thick
-				},
-				{
-					x: 0,
-					y: facesHeight,
-					z: thick
-				}
-			],
-			bottom: [
-				{
-					x: 0,
-					y: 0,
-					z: 0
-				},
-				{
-					x: facesLength,
-					y: 0,
-					z: 0
-				},
-				{
-					x: facesLength,
-					y: height,
-					z: 0
-				},
-				{
-					x: 0,
-					y: height,
-					z: 0
-				},
-				{
-					x: 0,
-					y: 0,
-					z: thick
-				},
-				{
-					x: facesLength,
-					y: 0,
-					z: thick
-				},
-				{
-					x: facesLength,
-					y: height,
-					z: thick
-				},
-				{
-					x: 0,
-					y: height,
-					z: thick
-				}
-			]
-		};
-	}
-	#defineWalls(offset, comp) {
-		const { x, y, z } = offset;
-		const change = structuredClone(comp);
-		Object.entries(change).map((data, i) => {
-			switch (i) {
-				case 0:
-					data[1].x === 0 && (data[1].x = x);
-					data[1].y === 0 && (data[1].y = y);
-					data[1].z === 0 && (data[1].z = z);
-					return data;
-				case 1:
-					data[1].y === 0 && (data[1].y = y);
-					data[1].z === 0 && (data[1].z = z);
-					return data;
-				case 2:
-					data[1].z === 0 && (data[1].z = z);
-					return data;
-				case 3:
-					data[1].x === 0 && (data[1].x = x);
-					data[1].z === 0 && (data[1].z = z);
-					return data;
-				case 4:
-					data[1].x === 0 && (data[1].x = x);
-					data[1].y === 0 && (data[1].y = y);
-					return data;
-				case 5:
-					data[1].y === 0 && (data[1].y = y);
-					return data;
-				case 7:
-					data[1].x === 0 && (data[1].x = x);
-					return data;
-			}
-		});
-		return change;
-	}
-	#offsetWalls() {
-		return {
-			faceBack: {
-				type: "backFace",
-				x: this.#pine[2],
-				y: 3 * this.#pine[2],
-				z: 2 * this.#pine[2],
-				width: this.#crate[0] - 2 * this.#pine[2],
-				depth: this.#pine[2],
-				height: this.#crate[2] - (3 * this.#pine[2] + 2 * this.#ply[2]),
-				offsetX: this.#pine[2],
-				offsetY: this.#pine[2],
-				offsetZ: 3 * this.#pine[2]
-			},
-			faceFront: {
-				type: "frontFace",
-				x: this.#pine[2],
-				y: 3 * this.#pine[2],
-				z: this.#crate[1] - this.#pine[2],
-				width: this.#crate[0] - 2 * this.#pine[2],
-				depth: this.#pine[2],
-				height: this.#crate[2] - (3 * this.#pine[2] + 2 * this.#ply[2]),
-				offsetX: this.#pine[2],
-				offsetY: this.#crate[1] - 2 * this.#pine[2],
-				offsetZ: 3 * this.#pine[2]
-			},
-			faceRight: {
-				type: "sideRight",
-				x: this.#pine[2],
-				y: 3 * this.#pine[2],
-				z: 2 * this.#pine[2],
-				width: this.#pine[2],
-				depth: this.#crate[1] - 4 * this.#pine[2],
-				height: this.#crate[2] - (3 * this.#pine[2] + 2 * this.#ply[2]),
-				offsetX: this.#pine[2],
-				offsetY: 2 * this.#pine[2],
-				offsetZ: 3 * this.#pine[2]
-			},
-			faceLeft: {
-				type: "sideLeft",
-				x: this.#crate[0] - this.#pine[2],
-				y: 3 * this.#pine[2],
-				z: 2 * this.#pine[2],
-				width: this.#pine[2],
-				depth: this.#crate[1] - (2 * this.#pine[2] + 2 * this.#ply[2]),
-				height: this.#crate[2] - (3 * this.#pine[2] + 2 * this.#ply[2]),
-				offsetX: this.#crate[0] - 2 * this.#pine[2],
-				offsetY: 2 * this.#pine[2],
-				offsetZ: 3 * this.#pine[2]
-			},
-			top: {
-				type: "top",
-				x: this.#pine[2],
-				y: this.#crate[2] - this.#pine[2],
-				z: this.#pine[2],
-				width: this.#crate[0] - 2 * this.#pine[2],
-				depth: this.#crate[1] - 2 * this.#pine[2],
-				height: this.#pine[2],
-				offsetX: this.#pine[2],
-				offsetY: this.#pine[2],
-				offsetZ: this.#crate[2] - 2 * this.#pine[2]
-			},
-			bottom: {
-				type: "bottom",
-				x: this.#pine[2],
-				y: 2 * this.#pine[2],
-				z: this.#pine[2],
-				width: this.#crate[0] - 2 * this.#pine[2],
-				depth: this.#crate[1] - 2 * this.#pine[2],
-				height: this.#pine[2],
-				offsetX: this.#pine[2],
-				offsetY: this.#pine[2],
-				offsetZ: 2 * this.#pine[2]
-			}
+			width: lastX === 0 ? x - this.#threshold[0] : x - lastX - this.#threshold[0] - this.#ply[2],
+			depth: this.#ply[2],
+			height: lastY === 0 ? y - this.#threshold[2] : y - lastY,
+			offsetX: offX,
+			offsetY: z,
+			offsetZ: lastY === 0 ? this.#threshold[2] : lastY
 		};
 	}
 	#bluePrintFacesSchema({ x, y, z }, lastX, lastY) {
@@ -895,6 +583,61 @@ var SetCrateWalls = class {
 			offsetZ: lastY === 0 ? this.#threshold[2] + this.#ply[2] : lastY
 		};
 	}
+	#bluePrintHugeSidesSchema({ x, y, z }, lastX, lastY) {
+		const offX = lastX === 0 && this.#baseCrate[0] !== x ? this.#ply[2] + this.#threshold[0] : lastX - 2 * this.#ply[2];
+		const offZ = 2 * this.#threshold[1];
+		const offY = lastY === 0 ? this.#threshold[2] : lastY;
+		return {
+			coordinates: [
+				{
+					x: offX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y,
+					z
+				}
+			],
+			width: lastX === 0 ? x - this.#threshold[0] - this.#ply[2] : x - lastX,
+			depth: z - 2 * this.#ply[2],
+			height: lastY === 0 ? y - this.#threshold[2] : y - offY,
+			offsetX: lastX === 0 ? offX : offX + this.#ply[2],
+			offsetY: offZ,
+			offsetZ: lastY === 0 ? lastY + this.#threshold[2] : offY
+		};
+	}
 	#bluePrintSidesSchema({ x, y, z }, lastX, lastY) {
 		const offX = lastX === 0 && this.#crate[0] !== x ? this.#ply[2] + this.#threshold[0] : lastX - 2 * this.#ply[2];
 		const offZ = 2 * this.#threshold[1];
@@ -948,6 +691,62 @@ var SetCrateWalls = class {
 			offsetX: lastX === 0 ? offX : offX + this.#ply[2],
 			offsetY: offZ,
 			offsetZ: lastY === 0 ? lastY + this.#threshold[2] + this.#ply[2] : offY
+		};
+	}
+	#bluePrintHugeUpDownSchema({ x, y, z }, lastX, lastY) {
+		const offX = lastX === 0 ? this.#threshold[0] : this.#threshold[0] + lastX;
+		const offZ = this.#threshold[1];
+		const offY = lastY === 0 ? this.#threshold[2] : this.#baseCrate[2] - this.#pine[2] - this.#ply[2];
+		x += lastX === 0 ? this.#threshold[0] : lastX + this.#ply[2];
+		return {
+			coordinates: [
+				{
+					x: offX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y,
+					z
+				}
+			],
+			width: lastX === 0 ? x - this.#threshold[0] : x - lastX - this.#threshold[0],
+			depth: z - this.#ply[2],
+			height: lastY === 0 ? y - this.#threshold[2] : +this.#ply[2],
+			offsetX: offX,
+			offsetY: offZ,
+			offsetZ: lastY === 0 ? this.#threshold[2] : this.#baseCrate[2] - +this.#pine[2] - +this.#ply[2]
 		};
 	}
 	#bluePrintUpDownSchema({ x, y, z }, lastX, lastY) {
@@ -1027,12 +826,57 @@ var SetCrateWalls = class {
 			z
 		};
 	}
+	#defineHugeSizingPlyFaces(filled) {
+		let { x, y, z, faceA } = filled;
+		if (x === 0) x = this.#ply[1] > this.#baseCrate[0] ? this.#baseCrate[0] - this.#threshold[0] - this.#pine[2] : this.#ply[1];
+		y = this.#baseCrate[2] - y > this.#ply[3] ? +this.#ply[3] : +(this.#baseCrate[2] - 2 * this.#pine[2]).toFixed(3);
+		z = faceA === 0 ? this.#ply[2] : this.#baseCrate[1] - this.#threshold[1] - this.#ply[2];
+		if (filled.x > 0) {
+			if (x >= this.#baseCrate[0] && y < this.#crate[2]) {
+				filled.x = 0;
+				if (y < this.#baseCrate[2] && x >= this.#crate[0]) {
+					filled.y += y;
+					y = this.#baseCrate[2] - filled.y > this.#ply[3] ? this.#ply[3] : +(this.#baseCrate[2] - this.#ply[2] - this.#pine[2]).toFixed(3);
+				}
+			}
+			x = this.#baseCrate[0] - x - this.#threshold[0] + this.#ply[2];
+		}
+		return {
+			x,
+			y,
+			z
+		};
+	}
+	#defineHugeSizingPadSides(filled) {
+		let { x, y, z, sideA } = filled;
+		x = sideA === 0 ? this.#ply[2] : this.#baseCrate[0] - this.#ply[2];
+		if (y === 0) y = this.#baseCrate[2] - y > +this.#ply[3] ? +this.#ply[3] : +(this.#baseCrate[2] - this.#ply[2] - this.#pine[2]).toFixed(3);
+		else y += this.#baseCrate[2] - y > this.#ply[3] ? this.#ply[3] : this.#baseCrate[2] - y - this.#pine[2] - this.#ply[2];
+		z = this.#baseCrate[1] < this.#ply[1] ? this.#baseCrate[1] - 2 * this.#threshold[1] : this.#baseCrate[1] - 2 * this.#ply[1] - z;
+		return {
+			x,
+			y,
+			z
+		};
+	}
 	#defineSizingPadSides(filled) {
 		let { x, y, z, sideA } = filled;
 		x = sideA === 0 ? this.#ply[2] : this.#crate[0] - this.#ply[2];
 		if (y === 0) y = this.#crate[2] - y > +this.#ply[3] ? +this.#ply[3] : +(this.#crate[2] - this.#ply[2] - this.#pine[2]).toFixed(3);
 		else y += this.#crate[2] - y > this.#ply[3] ? this.#ply[3] : this.#crate[2] - y - this.#pine[2] - this.#ply[2];
 		z = this.#crate[1] < this.#ply[1] ? this.#crate[1] - 2 * this.#threshold[1] : this.#crate[1] - 2 * this.#ply[1] - z;
+		return {
+			x,
+			y,
+			z
+		};
+	}
+	#defineHugeSizingPlyUpDown(filled) {
+		let { x, y, z } = filled;
+		if (x === 0) x = this.#ply[1] > this.#baseCrate[0] ? this.#baseCrate[0] - this.#threshold[0] - this.#ply[2] : this.#ply[1];
+		else x = this.#baseCrate[0] - x - this.#threshold[0] - this.#ply[2];
+		y = y === 0 ? this.#ply[2] : this.#baseCrate[2] - this.#pine[2];
+		z = this.#baseCrate[1] - this.#threshold[1];
 		return {
 			x,
 			y,
@@ -1064,6 +908,19 @@ var SetCrateWalls = class {
 		} else filled.faceB = 1;
 		return this.#setFrontAndBackFaces(data, filled);
 	}
+	#setHugeFrontAndBackFaces(data, filled) {
+		const { faceA, faceB } = filled;
+		if (faceA === 1 && faceB === 1) return data;
+		const sizes = this.#defineHugeSizingPlyFaces(filled);
+		data.push(this.#bluePrintHugeFacesSchema(sizes, filled.x, filled.y));
+		filled.x += sizes.x;
+		if (filled.x >= this.#inner[0] && filled.y + sizes.y >= this.#inner[2]) if (faceA === 0) {
+			filled.faceA = 1;
+			filled.x = 0;
+			filled.y = 0;
+		} else filled.faceB = 1;
+		return this.#setHugeFrontAndBackFaces(data, filled);
+	}
 	#setRightAndLeftSides(data, filled) {
 		const { sideA, sideB } = filled;
 		if (sideA === 1 && sideB === 1) return data;
@@ -1076,6 +933,33 @@ var SetCrateWalls = class {
 			filled.y = 0;
 		} else filled.sideB = 1;
 		return this.#setRightAndLeftSides(data, filled);
+	}
+	#setHugeRightAndLeftSides(data, filled) {
+		const { sideA, sideB } = filled;
+		if (sideA === 1 && sideB === 1) return data;
+		const sizes = this.#defineHugeSizingPadSides(filled);
+		data.push(this.#bluePrintHugeSidesSchema(sizes, filled.x, filled.y));
+		filled.y += sizes.y;
+		if (filled.y + this.#pine[2] + this.#ply[2] >= this.#crate[2]) if (sideA === 0) {
+			filled.sideA = 1;
+			filled.x = this.#crate[0];
+			filled.y = 0;
+		} else filled.sideB = 1;
+		return this.#setHugeRightAndLeftSides(data, filled);
+	}
+	#setHugeTopAndBottom(data, filled) {
+		const { top, bottom } = filled;
+		if (top === 1 && bottom === 1) return data;
+		const sizes = this.#defineHugeSizingPlyUpDown(filled);
+		const setY = this.#crate[2] - 2 * this.#ply[2] - this.#threshold[2] - this.#ply[2] - this.#pine[2];
+		data.push(this.#bluePrintHugeUpDownSchema(sizes, filled.x, filled.y));
+		filled.x += sizes.x;
+		if (filled.x + this.#ply[2] >= this.#inner[0]) if (bottom === 0) {
+			filled.bottom = 1;
+			filled.x = 0;
+			filled.y = setY;
+		} else filled.top = 1;
+		return this.#setHugeTopAndBottom(data, filled);
 	}
 	#setTopAndBottom(data, filled) {
 		const { top, bottom } = filled;
@@ -1116,11 +1000,34 @@ var SetCrateWalls = class {
 		});
 		return faces;
 	}
+	#setupHugeFaces() {
+		const faces = [];
+		this.#setHugeFrontAndBackFaces(faces, {
+			x: 0,
+			y: 0,
+			z: 0,
+			faceA: 0,
+			faceB: 0
+		});
+		this.#setHugeRightAndLeftSides(faces, {
+			x: 0,
+			y: 0,
+			z: 0,
+			sideA: 0,
+			sideB: 0
+		});
+		this.#setHugeTopAndBottom(faces, {
+			x: 0,
+			y: 0,
+			z: 0,
+			top: 0,
+			bottom: 0
+		});
+		return faces;
+	}
 	#defineCrateWalls() {
 		const trace = new TraceMaker();
 		const fill = new DesignWalls();
-		this.#crateWalls();
-		this.#offsetWalls();
 		const faces = this.#setupFaces();
 		let meta = structuredClone(this.#data);
 		let show = true;
@@ -1150,13 +1057,55 @@ var SetCrateWalls = class {
 		});
 		return meta;
 	}
+	#defineCrateHugeWalls() {
+		const trace = new TraceMaker();
+		const fill = new DesignWalls();
+		const faces = this.#setupHugeFaces();
+		let meta = structuredClone(this.#data);
+		let show = true;
+		if (!this.#ply) return this.#data;
+		faces.map((face) => {
+			const { coordinates, offsetX, offsetY, offsetZ, width, depth, height } = face;
+			trace.data = {
+				info: meta,
+				coordinates,
+				name: "walls",
+				align: this.#depth,
+				angle: this.#angle,
+				base: this.#height,
+				show
+			};
+			meta = trace.defineHugeTrace;
+			fill.objectData = {
+				width,
+				depth,
+				height,
+				info: meta,
+				name: "walls",
+				angle: this.#angle,
+				base: this.#height,
+				align: this.#depth,
+				offsetX,
+				offsetY,
+				offsetZ
+			};
+			meta = this.#data = fill.largestCanvas;
+			show = false;
+			return face;
+		});
+		return meta;
+	}
 	get setWalls() {
 		return this.#defineCrateWalls();
+	}
+	get setHugeWalls() {
+		return this.#defineCrateHugeWalls();
 	}
 };
 //#endregion
 //#region app/plotter/Plotly.large.crate.frame.mjs
 var LargeCratesFrame = class {
+	#angle;
 	#sized;
 	#pine;
 	#meta;
@@ -1166,12 +1115,13 @@ var LargeCratesFrame = class {
 	#heightExtra;
 	constructor(meta, data) {
 		const { extra } = data;
-		const { extraHeight, baseSize, extraLength } = extra;
+		const { angle, extraHeight, baseSize, extraLength } = extra;
 		const used = JSON.parse(localStorage.getItem("crating")).map((opt) => data.usedMaterials.get(opt));
 		const parser = (data) => data.map((info, i) => {
 			if (i === 1 || i === 2 || i === 3) data[i] = +data[i];
 			return info;
 		});
+		this.#angle = angle;
 		this.#heightExtra = extraHeight;
 		this.#meta = meta;
 		this.#pine = used.find((list) => list.at(-1) === "Pinewood");
@@ -1184,7 +1134,7 @@ var LargeCratesFrame = class {
 		this.#depth = extraLength;
 	}
 	#offsetFrame() {
-		const structOffset = this.#heightExtra;
+		const structOffset = 0;
 		return {
 			offsetFacesRightBackV: {
 				type: "faceV",
@@ -1378,6 +1328,30 @@ var LargeCratesFrame = class {
 				offsetY: this.#sized[1] - this.#pine[3],
 				offsetZ: structOffset + this.#pine[3]
 			},
+			offsetBottomFrontH: {
+				type: "bottomFace",
+				x: this.#pine[3],
+				y: 0,
+				z: 0,
+				width: this.#sized[0] - 2 * this.#pine[3],
+				depth: this.#pine[3],
+				height: this.#pine[2],
+				offsetX: this.#pine[3],
+				offsetY: 0,
+				offsetZ: 0
+			},
+			offsetBottomBackH: {
+				type: "bottomComp",
+				x: this.#pine[3],
+				y: 0,
+				z: this.#sized[1],
+				width: this.#sized[0] - 2 * this.#pine[3],
+				depth: this.#pine[3],
+				height: this.#pine[2],
+				offsetX: this.#pine[3],
+				offsetY: this.#sized[1] - this.#pine[3],
+				offsetZ: 0
+			},
 			offsetTopFrontH: {
 				type: "topFace",
 				x: this.#pine[3],
@@ -1401,6 +1375,30 @@ var LargeCratesFrame = class {
 				offsetX: this.#pine[3],
 				offsetY: this.#sized[1] - this.#pine[3],
 				offsetZ: this.#sized[2] - this.#pine[2]
+			},
+			offsetBottomRight: {
+				type: "bottomFeet",
+				x: 0,
+				y: 0,
+				z: 0,
+				width: this.#pine[3],
+				depth: this.#sized[1],
+				height: this.#pine[2],
+				offsetX: 0,
+				offsetY: 0,
+				offsetZ: 0
+			},
+			offsetBottomLeft: {
+				type: "bottomLeftFeet",
+				x: this.#sized[0],
+				y: 0,
+				z: 0,
+				width: this.#pine[3],
+				depth: this.#sized[1],
+				height: this.#pine[2],
+				offsetX: this.#sized[0] - this.#pine[3],
+				offsetY: 0,
+				offsetZ: 0
 			},
 			offsetTopRight: {
 				type: "topFeet",
@@ -1429,7 +1427,7 @@ var LargeCratesFrame = class {
 		};
 	}
 	#defineFrameComponents() {
-		const offSetFeet = this.#heightExtra;
+		const offSetFeet = 0;
 		const vertical = this.#sized[2] - this.#pine[3] - this.#pine[2];
 		const rightFeet = this.#sized[0] - this.#pine[3];
 		const vDepth = this.#sized[1] - this.#pine[2];
@@ -1439,6 +1437,7 @@ var LargeCratesFrame = class {
 		const sideComp = this.#pine[3] + this.#pine[2];
 		const rightComp = this.#sized[0] - this.#pine[3] - this.#pine[2];
 		const topZ = this.#sized[2];
+		const bottomZ = this.#pine[2];
 		const topzComp = this.#sized[1] - this.#pine[3];
 		return {
 			faceV: [
@@ -2113,6 +2112,90 @@ var LargeCratesFrame = class {
 					z: this.#sized[1]
 				}
 			],
+			bottomFace: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: bottomZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: bottomZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#pine[3]
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: this.#pine[3]
+				},
+				{
+					x: rightFeet,
+					y: bottomZ,
+					z: this.#pine[3]
+				},
+				{
+					x: 0,
+					y: bottomZ,
+					z: this.#pine[3]
+				}
+			],
+			bottomComp: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: bottomZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: bottomZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: topzComp
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: topzComp
+				},
+				{
+					x: rightFeet,
+					y: bottomZ,
+					z: topzComp
+				},
+				{
+					x: 0,
+					y: bottomZ,
+					z: topzComp
+				}
+			],
 			topFace: [
 				{
 					x: 0,
@@ -2195,6 +2278,90 @@ var LargeCratesFrame = class {
 					x: 0,
 					y: topZ,
 					z: topzComp
+				}
+			],
+			bottomFeet: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[3],
+					y: 0,
+					z: 0
+				},
+				{
+					x: this.#pine[3],
+					y: bottomZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: bottomZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: this.#pine[3],
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: this.#pine[3],
+					y: bottomZ,
+					z: this.#sized[1]
+				},
+				{
+					x: 0,
+					y: bottomZ,
+					z: this.#sized[1]
+				}
+			],
+			bottomLeftFeet: [
+				{
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: 0
+				},
+				{
+					x: rightFeet,
+					y: bottomZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: bottomZ,
+					z: 0
+				},
+				{
+					x: 0,
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: rightFeet,
+					y: 0,
+					z: this.#sized[1]
+				},
+				{
+					x: rightFeet,
+					y: bottomZ,
+					z: this.#sized[1]
+				},
+				{
+					x: 0,
+					y: bottomZ,
+					z: this.#sized[1]
 				}
 			],
 			topFeet: [
@@ -2319,15 +2486,388 @@ var LargeCratesFrame = class {
 		});
 		return change;
 	}
-	extraHoriZontalPinesFrontAndBack() {}
-	#setAllParts(meta, component, offsets) {
+	#bluePrintExtraPineHorizontal({ x, y, z }, lastX) {
+		const offX = lastX === 0 && this.#sized[0] !== x ? this.#pine[3] + this.#pine[2] : lastX - 2 * this.#pine[3];
+		const offZ = z === this.#pine[2] ? 0 : this.#sized[1] - this.#pine[2];
+		const offY = +this.#feet[3] + (+this.#ply[3] - this.#pine[3]);
+		return {
+			coordinates: [
+				{
+					x: offX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y,
+					z
+				}
+			],
+			width: lastX === 0 ? x - this.#pine[3] - this.#pine[2] : x - lastX,
+			depth: z === this.#pine[3] ? z : -offZ + z,
+			height: y - offY,
+			offsetX: lastX === 0 ? offX : offX + this.#pine[3],
+			offsetY: z === this.#pine[2] ? offZ : this.#sized[1] - this.#pine[2],
+			offsetZ: offY
+		};
+	}
+	#bluePrintExtraPineDepth({ x, y, z }, lastX) {
+		const offX = lastX === 0 ? 0 : this.#sized[0];
+		const offY = +this.#feet[3] + (+this.#ply[3] - this.#pine[3]);
+		const offZ = this.#pine[3];
+		return {
+			coordinates: [
+				{
+					x: offX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y,
+					z
+				}
+			],
+			width: lastX === 0 ? this.#pine[2] : lastX - this.#pine[2],
+			depth: z - offZ,
+			height: y - offY,
+			offsetX: offX,
+			offsetY: offZ,
+			offsetZ: offY
+		};
+	}
+	#bluePrintExtraPineVertical({ x, y, z }, lastX, lastY) {
+		const offX = lastX + +this.#ply[1] - +this.#pine[3] / 2 + this.#pine[2];
+		const offY = lastY === 0 ? this.#pine[3] : this.#sized[2] - this.#pine[3] - this.#pine[2];
+		const offZ = z === this.#pine[2] ? 0 : this.#sized[1];
+		return {
+			coordinates: [
+				{
+					x: offX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y,
+					z
+				}
+			],
+			width: this.#pine[3],
+			depth: this.#pine[2],
+			height: y - offY,
+			offsetX: offX,
+			offsetY: z === this.#pine[2] ? offZ : z,
+			offsetZ: offY
+		};
+	}
+	#bluePrintExtraPineTop({ x, y, z }, bottom) {
+		const offX = +this.#ply[1] + +this.#ply[2] + this.#pine[3] / 2;
+		const offY = bottom === 0 ? 0 : this.#sized[2] - this.#pine[2];
+		const offZ = this.#pine[3];
+		return {
+			coordinates: [
+				{
+					x: offX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y,
+					z
+				}
+			],
+			width: this.#pine[3],
+			depth: z - offZ,
+			height: y - offY,
+			offsetX: offX - this.#pine[3],
+			offsetY: offZ,
+			offsetZ: offY
+		};
+	}
+	#setFacesExtraPineHorizontal(data) {
+		let { x, y, z, faceA } = data;
+		if (x === 0) x = this.#pine[1] > this.#sized[0] ? this.#sized[0] - this.#pine[3] - this.#pine[2] : this.#pine[1] + this.#pine[3] + this.#pine[2];
+		y = +this.#ply[3] - this.#pine[3] / 2 + this.#feet[3] + this.#pine[3] / 2;
+		z = faceA === 0 ? this.#pine[2] : this.#sized[1];
+		if (data.x > 0) x = this.#sized[0] - x - this.#pine[3] - this.#pine[2];
+		return {
+			x,
+			y,
+			z
+		};
+	}
+	#setFacesExtraPineVertical(data) {
+		let { x, y, z, faceA } = data;
+		x += +this.#ply[1] - this.#pine[3] / 2 + this.#pine[3] + this.#pine[2];
+		y = y === 0 ? +this.#ply[3] - this.#pine[3] / 2 : y + this.#pine[3];
+		z = faceA === 0 ? this.#pine[2] : this.#sized[1] - this.#pine[2];
+		if (data.x > 0) x = this.#sized[0] - x - this.#pine[3] - this.#pine[2];
+		return {
+			x,
+			y,
+			z
+		};
+	}
+	#setBottomTopExtraPine(data) {
+		let { x, y, z, bottom } = data;
+		x = +this.#ply[1] - this.#pine[3] / 2 + this.#pine[2];
+		y = bottom === 0 ? this.#pine[2] : this.#sized[2];
+		z = this.#sized[1] - this.#pine[3];
+		return {
+			x,
+			y,
+			z
+		};
+	}
+	#setFacesExtraPineSides(data) {
+		let { x, y, z, right } = data;
+		if (right === 0) x = this.#pine[2];
+		else x = this.#sized[0] - this.#pine[2];
+		y = +this.#ply[3] - this.#pine[3] / 2 + this.#feet[3] + this.#pine[3] / 2;
+		z = this.#sized[1] - this.#pine[3];
+		return {
+			x,
+			y,
+			z
+		};
+	}
+	#frontAndBackFacesPineJoinVertical(data, join) {
+		const { faceA, faceB } = join;
+		if (faceA === 1 && faceB === 1) return data;
+		const extraPine = this.#setFacesExtraPineVertical(join);
+		data.push(this.#bluePrintExtraPineVertical(extraPine, join.x, join.y));
+		join.y += extraPine.y;
+		if (join.y >= this.#sized[2] && faceA === 0) {
+			join.faceA = 1;
+			join.y = 0;
+		} else if (faceA === 1 && join.y >= this.#sized[2]) join.faceB = 1;
+		return this.#frontAndBackFacesPineJoinVertical(data, join);
+	}
+	#frontAndBackFacesPineJoinHorizontal(data, join) {
+		const { faceA, faceB } = join;
+		if (faceA === 1 && faceB === 1) return data;
+		const extraPine = this.#setFacesExtraPineHorizontal(join);
+		data.push(this.#bluePrintExtraPineHorizontal(extraPine, join.x));
+		if (faceA === 0) join.faceA = 1;
+		else join.faceB = 1;
+		return this.#frontAndBackFacesPineJoinHorizontal(data, join);
+	}
+	#sidePineJoin(data, join) {
+		const { right, left } = join;
+		if (right === 1 && left === 1) return data;
+		const extraPine = this.#setFacesExtraPineSides(join);
+		data.push(this.#bluePrintExtraPineDepth(extraPine, join.x, join.y));
+		join.x += extraPine.x;
+		if (right === 0) join.right = 1;
+		else join.left = 1;
+		return this.#sidePineJoin(data, join);
+	}
+	#topAndBottomJoinExtrapine(data, join) {
+		const { top, bottom } = join;
+		if (top === 1 && bottom === 1) return data;
+		const extraPine = this.#setBottomTopExtraPine(join);
+		data.push(this.#bluePrintExtraPineTop(extraPine, bottom));
+		if (bottom === 0) join.bottom = 1;
+		else join.top = 1;
+		return this.#topAndBottomJoinExtrapine(data, join);
+	}
+	#setJoins(data) {
 		const trace = new TraceMaker();
 		const fill = new DesignWalls();
 		const align = this.#depth;
-		const sizes = {
-			dep: this.#sized[1],
-			high: this.#sized[2]
-		};
+		const show = false;
+		data.map((part) => {
+			const { coordinates, offsetX, offsetY, offsetZ, width, depth, height } = part;
+			trace.data = {
+				info: this.#meta,
+				coordinates,
+				name: "frame",
+				show,
+				align,
+				angle: this.#angle,
+				base: this.#heightExtra
+			};
+			this.#meta = trace.defineHugeTrace;
+			fill.objectData = {
+				align,
+				width,
+				depth,
+				height,
+				info: this.#meta,
+				name: "frame",
+				offsetX,
+				offsetY,
+				offsetZ,
+				angle: this.#angle,
+				base: this.#heightExtra
+			};
+			this.#meta = fill.largestCanvas;
+			return part;
+		});
+	}
+	#extraPainForPlyJoins() {
+		const lengthSize = this.#sized[0] > +this.#ply[1];
+		const heightSize = this.#sized[2] > +this.#ply[3] - +this.#feet[3];
+		const pineJoins = [];
+		if (lengthSize) {
+			this.#frontAndBackFacesPineJoinVertical(pineJoins, {
+				x: 0,
+				y: 0,
+				z: 0,
+				faceA: 0,
+				faceB: 0
+			});
+			this.#topAndBottomJoinExtrapine(pineJoins, {
+				x: 0,
+				y: 0,
+				z: 0,
+				top: 0,
+				bottom: 0
+			});
+		}
+		if (heightSize) {
+			this.#frontAndBackFacesPineJoinHorizontal(pineJoins, {
+				x: 0,
+				y: 0,
+				z: 0,
+				faceA: 0,
+				faceB: 0
+			});
+			this.#sidePineJoin(pineJoins, {
+				x: 0,
+				y: 0,
+				z: 0,
+				right: 0,
+				left: 0
+			});
+		}
+		if (pineJoins.length > 0) this.#setJoins(pineJoins);
+	}
+	#setAllParts(meta, component, offsets) {
+		const trace = new TraceMaker();
+		const fill = new DesignWalls();
 		let show = true;
 		Object.entries(offsets).map((part) => {
 			const { type, offsetX, offsetY, offsetZ, width, depth, height } = part[1];
@@ -2338,12 +2878,13 @@ var LargeCratesFrame = class {
 				coordinates: defined,
 				name: "frame",
 				show,
-				sizes,
-				align
+				align: this.#depth,
+				angle: this.#angle,
+				base: this.#heightExtra
 			};
 			meta = trace.defineHugeTrace;
 			fill.objectData = {
-				align,
+				align: this.#depth,
 				width,
 				depth,
 				height,
@@ -2352,7 +2893,8 @@ var LargeCratesFrame = class {
 				offsetX,
 				offsetY,
 				offsetZ,
-				sizes
+				angle: this.#angle,
+				base: this.#heightExtra
 			};
 			meta = fill.largestCanvas;
 			show = false;
@@ -2364,6 +2906,7 @@ var LargeCratesFrame = class {
 		const components = this.#defineFrameComponents();
 		const offset = this.#offsetFrame();
 		this.#meta = this.#setAllParts(this.#meta, components, offset);
+		this.#extraPainForPlyJoins();
 		return this.#meta;
 	}
 	get setFrame() {
@@ -2371,23 +2914,25 @@ var LargeCratesFrame = class {
 	}
 };
 //#endregion
-//#region app/plotter/Padding.crate.plotly.mjs
-var PaddingCrate = class {
+//#region app/plotter/Plotly.large.padding.mjs
+var PaddingLargeCrate = class {
 	#data;
 	#pine;
 	#ply;
-	#crate;
 	#pad;
 	#baseSize;
 	#feet;
-	#threshold;
-	#inner;
+	#angle;
+	#depth;
+	#height;
 	constructor(meta, data) {
-		const { finalSize, baseSize, innerSize } = data;
+		const { extra } = data;
+		const { baseSize, angle, extraHeight, extraLength } = extra;
 		const used = JSON.parse(localStorage.getItem("crating")).map((opt) => data.usedMaterials.get(opt));
-		this.#inner = innerSize;
+		this.#angle = angle;
+		this.#depth = extraLength;
+		this.#height = extraHeight;
 		this.#baseSize = baseSize;
-		this.#crate = finalSize;
 		this.#data = meta;
 		this.#pine = used.find((list) => list.at(-1) === "Pinewood");
 		this.#ply = used.find((list) => list.at(-1) === "Plywood");
@@ -2396,98 +2941,92 @@ var PaddingCrate = class {
 		this.#pad[1] = +this.#pad[1];
 		this.#pad[2] = +this.#pad[2];
 		this.#pad[3] = +this.#pad[3];
-		this.#threshold = [
-			+this.#pine[2] + +this.#ply[2],
-			+this.#pine[2] + +this.#ply[2],
-			+this.#ply[2] + +this.#feet[3]
-		];
 	}
 	#offSetHugeWalls() {
-		const structure = 3 * +this.#ply[2] + +this.#feet[3];
 		return {
 			faceBack: {
 				type: "backFace",
 				x: this.#pine[2] + this.#ply[2] + this.#pad[2],
-				y: 2 * this.#pad[2] + structure + +this.#pine[2],
+				y: 2 * this.#pad[2] + this.#pine[2],
 				z: this.#pine[2] + this.#ply[2] + this.#pad[2],
-				width: this.#crate[0] - (2 * this.#pine[2] + 2 * this.#ply[2] + 2 * this.#pad[2]),
+				width: this.#baseSize[0] - (2 * this.#pine[2] + 2 * this.#ply[2] + 2 * this.#pad[2]),
 				depth: this.#pad[2],
-				height: this.#crate[2] - structure - 5 * this.#ply[2] - 2 * this.#pad[2],
+				height: this.#baseSize[2] - 5 * this.#ply[2] - 2 * this.#pad[2],
 				offsetX: this.#pine[2] + this.#ply[2] + this.#pad[2],
 				offsetY: this.#pad[2],
-				offsetZ: structure + this.#pine[2] + 4 * this.#ply[2]
+				offsetZ: this.#pine[2] + 4 * this.#ply[2]
 			},
 			faceFront: {
 				type: "frontFace",
 				x: this.#pine[2] + this.#ply[2] + this.#pad[2],
-				y: 2 * this.#pad[2] + structure + +this.#pine[2],
-				z: this.#crate[1] - this.#pine[2] - this.#ply[2] - this.#pad[2],
-				width: this.#crate[0] - (2 * this.#pine[2] + 2 * this.#ply[2] + 2 * this.#pad[2]),
+				y: 2 * this.#pad[2] + +this.#pine[2],
+				z: this.#baseSize[1] - this.#pine[2] - this.#ply[2] - this.#pad[2],
+				width: this.#baseSize[0] - (2 * this.#pine[2] + 2 * this.#ply[2] + 2 * this.#pad[2]),
 				depth: this.#pad[2],
-				height: this.#crate[2] - structure - 5 * this.#ply[2] - 2 * this.#pad[2],
+				height: this.#baseSize[2] - 5 * this.#ply[2] - 2 * this.#pad[2],
 				offsetX: this.#pine[2] + this.#ply[2] + this.#pad[2],
-				offsetY: this.#crate[1] - 2 * this.#pad[2],
-				offsetZ: structure + this.#pine[2] + 4 * this.#ply[2]
+				offsetY: this.#baseSize[1] - 2 * this.#pad[2],
+				offsetZ: this.#pine[2] + 4 * this.#ply[2]
 			},
 			faceRight: {
 				type: "sideRight",
 				x: this.#pine[2] + this.#ply[2],
-				y: 2 * this.#pad[2] + structure + +this.#pine[2],
+				y: 2 * this.#pad[2] + +this.#pine[2],
 				z: this.#pine[2] + this.#ply[2],
 				width: this.#pad[2],
-				depth: this.#crate[1] - 2 * this.#pine[2] - 2 * this.#pine[2],
-				height: this.#crate[2] - structure - 5 * this.#ply[2] - 2 * this.#pad[2],
+				depth: this.#baseSize[1] - 2 * this.#pine[2] - 2 * this.#pine[2],
+				height: this.#baseSize[2] - 5 * this.#ply[2] - 2 * this.#pad[2],
 				offsetX: this.#pine[2] + this.#ply[2],
 				offsetY: 2 * this.#pine[2],
-				offsetZ: structure + this.#pine[2] + 4 * this.#ply[2]
+				offsetZ: this.#pine[2] + 4 * this.#ply[2]
 			},
 			faceLeft: {
 				type: "sideLeft",
-				x: this.#crate[0] - this.#pine[2] - this.#ply[2] - this.#pad[2],
-				y: 2 * this.#pad[2] + structure + +this.#pine[2],
+				x: this.#baseSize[0] - this.#pine[2] - this.#ply[2] - this.#pad[2],
+				y: 2 * this.#pad[2] + +this.#pine[2],
 				z: this.#pine[2] + this.#ply[2],
 				width: this.#pad[2],
-				depth: this.#crate[1] - 2 * this.#pine[2] - 2 * this.#pine[2],
-				height: this.#crate[2] - structure - 5 * this.#ply[2] - 2 * this.#pad[2],
-				offsetX: this.#crate[0] - this.#ply[2] - this.#pine[2] - this.#pad[2],
+				depth: this.#baseSize[1] - 2 * this.#pine[2] - 2 * this.#pine[2],
+				height: this.#baseSize[2] - 5 * this.#ply[2] - 2 * this.#pad[2],
+				offsetX: this.#baseSize[0] - this.#ply[2] - this.#pine[2] - this.#pad[2],
 				offsetY: 2 * this.#pine[2],
-				offsetZ: structure + this.#pine[2] + 4 * this.#ply[2]
+				offsetZ: this.#pine[2] + 4 * this.#ply[2]
 			},
 			top: {
 				type: "top",
 				x: this.#pine[2] + this.#ply[2],
-				y: this.#crate[2] - this.#pine[2] - this.#ply[2],
+				y: this.#baseSize[2] - this.#pine[2] - this.#ply[2],
 				z: this.#pine[2] + this.#ply[2],
-				width: this.#crate[0] - (2 * this.#pine[2] + 2 * this.#ply[2]),
-				depth: this.#crate[1] - (this.#pine[2] + this.#ply[2] + this.#pad[2]),
+				width: this.#baseSize[0] - (2 * this.#pine[2] + 2 * this.#ply[2]),
+				depth: this.#baseSize[1] - (this.#pine[2] + this.#ply[2] + this.#pad[2]),
 				height: this.#pad[2],
 				offsetX: this.#pine[2] + this.#ply[2],
 				offsetY: this.#pine[2] + this.#ply[2],
-				offsetZ: this.#crate[2] - (2 * this.#ply[2] + this.#pad[2])
+				offsetZ: this.#baseSize[2] - (2 * this.#ply[2] + this.#pad[2])
 			},
 			bottom: {
 				type: "bottom",
 				x: this.#pine[2] + this.#ply[2],
-				y: 2 * this.#pad[2] + structure + +this.#pine[2],
+				y: this.#pad[2] + this.#pine[2],
 				z: this.#pine[2] + this.#ply[2],
-				width: this.#crate[0] - (2 * this.#pine[2] + 2 * this.#ply[2]),
-				depth: this.#crate[1] - (2 * this.#pine[2] + 2 * this.#ply[2]),
+				width: this.#baseSize[0] - (2 * this.#pine[2] + 2 * this.#ply[2]),
+				depth: this.#baseSize[1] - (2 * this.#pine[2] + 2 * this.#ply[2]),
 				height: this.#pad[2],
 				offsetX: this.#pine[2] + this.#ply[2],
 				offsetY: this.#pine[2] + this.#ply[2],
-				offsetZ: +this.#feet[3] + structure + +this.#pine[2]
+				offsetZ: +this.#feet[3] + +this.#pine[2]
 			}
 		};
 	}
 	#cratePaddingHugeTrace() {
 		const pineDepth = this.#ply[2] + +this.#pine[2];
-		const facesLength = this.#crate[0] - (+this.#pine[2] + +this.#ply[2] + 2 * +this.#ply[2]);
-		const facesHeight = this.#crate[2] - pineDepth - this.#pad[2];
-		const sideLength = this.#crate[1] - pineDepth;
-		const faceLeftLen = this.#crate[0] - pineDepth;
+		const facesLength = this.#baseSize[0] - (+this.#pine[2] + +this.#ply[2] + 2 * +this.#ply[2]);
+		const facesHeight = this.#baseSize[2] - pineDepth - this.#pad[2];
+		const sideLength = this.#baseSize[1] - pineDepth;
+		const faceLeftLen = this.#baseSize[0] - pineDepth;
 		const side = +this.#pine[2] + +this.#ply[2] + this.#pad[2];
-		const height = +this.#feet[3] + 2 * this.#ply[2] + 2 * this.#pad[2];
-		const thick = this.#crate[1] - this.#pine[2] - +this.#ply[2];
+		const height = +this.#feet[3] + this.#ply[2] + this.#pad[2];
+		const thick = this.#baseSize[1] - this.#pine[2] - +this.#ply[2];
 		return {
 			backFace: [
 				{
@@ -2743,258 +3282,6 @@ var PaddingCrate = class {
 			]
 		};
 	}
-	#bluePrintFacesSchema({ x, y, z }, lastX, lastY) {
-		const offX = lastX + this.#threshold[0] + this.#pad[2];
-		const offZ = z + this.#threshold[1];
-		const offY = lastY === 0 ? this.#threshold[2] : lastY;
-		if (x <= this.#inner[0]) x += lastX === 0 ? this.#threshold[0] + this.#pad[2] : lastX;
-		return {
-			coordinates: [
-				{
-					x: offX,
-					y: offY,
-					z: offZ
-				},
-				{
-					x,
-					y: offY,
-					z: offZ
-				},
-				{
-					x,
-					y,
-					z: offZ
-				},
-				{
-					x: offX,
-					y,
-					z: offZ
-				},
-				{
-					x: offX,
-					y: offY,
-					z
-				},
-				{
-					x,
-					y: offY,
-					z
-				},
-				{
-					x,
-					y,
-					z
-				},
-				{
-					x: offX,
-					y,
-					z
-				}
-			],
-			width: lastX === 0 ? x - this.#threshold[0] - this.#pad[2] : x - lastX - this.#threshold[0] - this.#pad[2],
-			depth: this.#pad[2],
-			height: lastY === 0 ? y - this.#threshold[2] : y - lastY,
-			offsetX: offX,
-			offsetY: z,
-			offsetZ: lastY === 0 ? this.#threshold[2] : lastY
-		};
-	}
-	#bluePrintSidesSchema({ x, y, z }, lastX, lastY) {
-		const offX = lastX === 0 && this.#inner[0] !== x ? this.#pad[2] + this.#threshold[0] : lastX - 2 * this.#pad[2];
-		const offZ = this.#threshold[1];
-		const offY = lastY === 0 ? this.#threshold[2] : lastY;
-		return {
-			coordinates: [
-				{
-					x: offX,
-					y: offY,
-					z: offZ
-				},
-				{
-					x,
-					y: offY,
-					z: offZ
-				},
-				{
-					x,
-					y,
-					z: offZ
-				},
-				{
-					x: offX,
-					y,
-					z: offZ
-				},
-				{
-					x: offX,
-					y: offY,
-					z
-				},
-				{
-					x,
-					y: offY,
-					z
-				},
-				{
-					x,
-					y,
-					z
-				},
-				{
-					x: offX,
-					y,
-					z
-				}
-			],
-			width: lastX === 0 ? x - this.#threshold[0] - this.#pad[2] : x - lastX,
-			depth: z - this.#pad[2],
-			height: lastY === 0 ? y - this.#threshold[2] : y - offY,
-			offsetX: lastX === 0 ? offX : offX + this.#pad[2],
-			offsetY: offZ,
-			offsetZ: lastY === 0 ? this.#threshold[2] : offY
-		};
-	}
-	#bluePrintUpDownSchema({ x, y, z }, lastX, lastY) {
-		const offX = lastX === 0 ? this.#threshold[0] + this.#pad[2] : this.#threshold[0] + lastX;
-		const offZ = this.#threshold[1] + this.#pad[2];
-		const offY = lastY === 0 ? lastY + this.#threshold[2] + this.#pad[2] : this.#crate[2] - this.#pad[2] - this.#pine[2] - this.#ply[2];
-		x += lastX === 0 ? this.#threshold[0] : lastX + this.#pad[2];
-		return {
-			coordinates: [
-				{
-					x: offX,
-					y: offY,
-					z: offZ
-				},
-				{
-					x,
-					y: offY,
-					z: offZ
-				},
-				{
-					x,
-					y,
-					z: offZ
-				},
-				{
-					x: offX,
-					y,
-					z: offZ
-				},
-				{
-					x: offX,
-					y: offY,
-					z
-				},
-				{
-					x,
-					y: offY,
-					z
-				},
-				{
-					x,
-					y,
-					z
-				},
-				{
-					x: offX,
-					y,
-					z
-				}
-			],
-			width: lastX === 0 ? x - this.#threshold[0] - this.#pad[2] : x - lastX - this.#threshold[0],
-			depth: z - 2 * this.#pad[2],
-			height: lastY === 0 ? y - this.#threshold[2] + this.#pad[2] : y - lastY - this.#threshold[2] - this.#pad[2],
-			offsetX: offX,
-			offsetY: offZ,
-			offsetZ: lastY === 0 ? this.#threshold[2] : lastY + this.#threshold[2] + this.#pad[2]
-		};
-	}
-	#defineSizingPadFaces(filled) {
-		let { x, y, z, faceA } = filled;
-		if (x === 0) x = this.#pad[1] > this.#inner[0] ? this.#crate[0] - this.#threshold[0] - this.#pad[2] : this.#pad[1] + this.#pad[2];
-		y = this.#inner[2] - y > this.#pad[3] ? +this.#pad[3].toFixed(3) : +(this.#crate[2] - this.#ply[2] - this.#pine[2]).toFixed(3);
-		z = faceA === 0 ? this.#pad[2] : this.#crate[1] - this.#threshold[1] - this.#pad[2];
-		if (filled.x > 0) {
-			if (x >= this.#inner[0] && y < this.#inner[2]) {
-				filled.x = 0;
-				if (y < this.#inner[2] && x >= this.#inner[0]) {
-					filled.y += y;
-					y = this.#crate[2] - filled.y > this.#pad[3] ? this.#crate[2] - this.#pad[3] : this.#pad[3];
-				}
-			}
-			x = this.#crate[0] - x - this.#threshold[0] - this.#pad[2];
-		}
-		return {
-			x,
-			y,
-			z
-		};
-	}
-	#defineSizingPadSides(filled) {
-		let { x, y, z, sideA } = filled;
-		x = sideA === 0 ? this.#pad[2] : this.#crate[0] - this.#pad[2];
-		if (y === 0) y = this.#inner[2] - y > this.#pad[3] ? this.#pad[3] : +(this.#crate[2] - this.#ply[2] - this.#pine[2]).toFixed(3);
-		else y += this.#inner[2] - y > this.#pad[3] ? this.#pad[3] : this.#crate[2] - y - this.#pine[2] - this.#ply[2];
-		z = this.#crate[1] < this.#pad[1] ? this.#crate[1] - this.#threshold[1] : this.#crate[1] - this.#pad[1] - z;
-		return {
-			x,
-			y,
-			z
-		};
-	}
-	#defineSizingPadUpDown(filled) {
-		let { x, y, z } = filled;
-		if (x === 0) x = this.#pad[1] > this.#inner[0] ? this.#crate[0] - this.#threshold[0] - 2 * this.#pad[2] : this.#pad[1] + this.#pad[2];
-		else x = this.#crate[0] - x - this.#threshold[0] - 2 * this.#pad[2];
-		y = y === 0 ? this.#threshold[2] : this.#crate[2] - this.#pine[2] - this.#ply[2];
-		z = this.#crate[1] - this.#threshold[1] - this.#pad[2];
-		return {
-			x,
-			y,
-			z
-		};
-	}
-	#setFrontAndBackFaces(data, filled) {
-		const { faceA, faceB } = filled;
-		if (faceA === 1 && faceB === 1) return data;
-		const sizes = this.#defineSizingPadFaces(filled);
-		data.push(this.#bluePrintFacesSchema(sizes, filled.x, filled.y));
-		filled.x += sizes.x;
-		if (filled.x >= this.#inner[0] && filled.y + sizes.y >= this.#inner[2]) if (faceA === 0) {
-			filled.faceA = 1;
-			filled.x = 0;
-			filled.y = 0;
-		} else filled.faceB = 1;
-		return this.#setFrontAndBackFaces(data, filled);
-	}
-	#setRightAndLeftSides(data, filled) {
-		const { sideA, sideB } = filled;
-		if (sideA === 1 && sideB === 1) return data;
-		const sizes = this.#defineSizingPadSides(filled);
-		data.push(this.#bluePrintSidesSchema(sizes, filled.x, filled.y));
-		filled.y += sizes.y;
-		if (filled.y >= this.#inner[2]) if (sideA === 0) {
-			filled.sideA = 1;
-			filled.x = this.#crate[0];
-			filled.y = 0;
-		} else filled.sideB = 1;
-		return this.#setRightAndLeftSides(data, filled);
-	}
-	#setTopAndBottom(data, filled) {
-		const { top, bottom } = filled;
-		if (top === 1 && bottom === 1) return data;
-		const sizes = this.#defineSizingPadUpDown(filled);
-		const setY = this.#crate[2] - 2 * this.#pad[2] - this.#threshold[2] - this.#ply[2] - this.#pine[2];
-		data.push(this.#bluePrintUpDownSchema(sizes, filled.x, filled.y));
-		filled.x += sizes.x;
-		if (filled.x >= this.#inner[0]) if (bottom === 0) {
-			filled.bottom = 1;
-			filled.x = 0;
-			filled.y = setY;
-		} else filled.top = 1;
-		return this.#setTopAndBottom(data, filled);
-	}
 	#defineWalls(offset, comp) {
 		const { x, y, z } = offset;
 		const change = structuredClone(comp);
@@ -3031,95 +3318,6 @@ var PaddingCrate = class {
 		});
 		return change;
 	}
-	#setupFaces() {
-		const pads = [];
-		this.#setFrontAndBackFaces(pads, {
-			x: 0,
-			y: 0,
-			z: 0,
-			faceA: 0,
-			faceB: 0
-		});
-		this.#setRightAndLeftSides(pads, {
-			x: 0,
-			y: 0,
-			z: 0,
-			sideA: 0,
-			sideB: 0
-		});
-		this.#setTopAndBottom(pads, {
-			x: 0,
-			y: 0,
-			z: 0,
-			top: 0,
-			bottom: 0
-		});
-		return pads;
-	}
-	#defineCratePaddingTubes() {
-		const trace = new TraceMaker();
-		const fill = new DesignWalls();
-		const faces = this.#setupFaces();
-		let meta = structuredClone(this.#data);
-		let show = true;
-		if (!this.#pad) return this.#data;
-		faces.map((pads) => {
-			const { coordinates, offsetX, offsetY, offsetZ, width, depth, height } = pads;
-			trace.data = {
-				info: this.#data,
-				coordinates,
-				name: "padding",
-				show
-			};
-			meta = trace.defineTrace;
-			fill.objectData = {
-				width,
-				depth,
-				height,
-				info: this.#data,
-				name: "padding",
-				offsetX,
-				offsetY,
-				offsetZ
-			};
-			this.#data = this.#data = fill.designSides;
-			show = false;
-			return pads;
-		});
-		return meta;
-	}
-	#defineCratePadding() {
-		const trace = new TraceMaker();
-		const fill = new DesignWalls();
-		const faces = this.#setupFaces();
-		let meta = structuredClone(this.#data);
-		let show = true;
-		if (!this.#pad) return this.#data;
-		faces.map((pads) => {
-			const { coordinates, offsetX, offsetY, offsetZ, width, depth, height } = pads;
-			trace.data = {
-				info: this.#data,
-				coordinates,
-				name: "padding",
-				show
-			};
-			meta = trace.defineTrace;
-			fill.objectData = {
-				width,
-				depth,
-				height,
-				info: this.#data,
-				name: "padding",
-				offsetX,
-				offsetY,
-				offsetZ
-			};
-			this.#data = this.#data = fill.designSides;
-			show = false;
-			return pads;
-		});
-		return meta;
-	}
 	#defineHugeCratePadding() {
 		const trace = new TraceMaker();
 		const fill = new DesignWalls();
@@ -3140,6 +3338,9 @@ var PaddingCrate = class {
 				info: meta,
 				coordinates: defined,
 				name: "padding",
+				align: this.#depth,
+				angle: this.#angle,
+				base: this.#height,
 				show,
 				sizes
 			};
@@ -3150,6 +3351,9 @@ var PaddingCrate = class {
 				height,
 				info: meta,
 				name: "padding",
+				angle: this.#angle,
+				base: this.#height,
+				align: this.#depth,
 				offsetX,
 				offsetY,
 				offsetZ,
@@ -3161,14 +3365,8 @@ var PaddingCrate = class {
 		});
 		return meta;
 	}
-	get setPadding() {
-		return this.#defineCratePadding();
-	}
 	get setPaddingHuge() {
 		return this.#defineHugeCratePadding();
-	}
-	get setPaddingTubes() {
-		return this.#defineCratePaddingTubes();
 	}
 };
 //#endregion
@@ -3783,12 +3981,12 @@ var WorksLabel = class {
 		};
 	}
 	#defineHugeLabel() {
-		const { x, y, z, info, code, dep, high, name } = this.#data;
-		const cosAngle = Math.cos(dep / high);
-		const sinAngle = Math.sin(high / dep);
+		const { x, y, z, info, code, name, angle, align, base } = this.#data;
+		const cosAngle = Math.cos(angle);
+		const sinAngle = Math.sin(angle);
 		const rotX = {
-			valY: y * cosAngle - z * sinAngle,
-			valZ: y * sinAngle + z * cosAngle
+			valY: y * cosAngle - z * sinAngle + base,
+			valZ: y * sinAngle + z * cosAngle + align
 		};
 		this.#config.x.push(x);
 		this.#config.y.push(rotX.valY);
@@ -3824,11 +4022,23 @@ var WorksLabel = class {
 var DesignPlotter = class {
 	#data;
 	#list;
+	#angle;
+	#depth;
+	#height;
 	#baseSize;
-	constructor(list, data, baseSize) {
+	constructor(list, data, baseSize, info = false) {
+		if (info) {
+			const { angle, baseSize, extraHeight, extraLength } = info;
+			this.#angle = angle;
+			this.#depth = extraLength;
+			this.#height = extraHeight;
+			this.#baseSize = baseSize;
+		} else {
+			this.#baseSize = baseSize;
+			this.#data = data;
+		}
 		this.#data = data;
 		this.#list = list;
-		this.#baseSize = baseSize;
 	}
 	#buildTraceAndFillTubes() {
 		let meta = structuredClone(this.#data);
@@ -3868,56 +4078,56 @@ var DesignPlotter = class {
 		return meta;
 	}
 	#buildTraceAndFillHuge() {
-		let meta = structuredClone(this.#data);
 		const trace = new TraceMaker();
 		const fill = new DesignWalls();
-		const sizes = {
-			dep: this.#baseSize[1],
-			high: this.#baseSize[2]
-		};
 		const label = new WorksLabel();
 		let tmp;
 		this.#list.map((info) => {
 			info.map((data) => {
 				const { div, layer, art, offsetX, offsetY, offsetZ, width, depth, height, code } = data;
 				trace.data = {
-					info: meta,
+					info: this.#data,
 					coordinates: art ? art : div,
 					name: layer ?? div,
 					show: div || tmp === layer.name ? false : true,
-					sizes
+					angle: this.#angle,
+					base: this.#height,
+					align: this.#depth
 				};
-				meta = trace.defineHugeTrace;
+				this.#data = trace.defineHugeTrace;
 				if (code) {
 					label.data = {
-						info: meta,
+						angle: this.#angle,
+						align: this.#depth,
+						base: this.#height,
+						info: this.#data,
 						x: offsetX + width / 2,
-						y: offsetY + depth / 2,
+						y: -this.#depth,
 						z: offsetZ + height / 2,
-						dep: depth,
-						high: height,
 						code
 					};
-					meta = label.setHugeLabel;
+					this.#data = label.setHugeLabel;
 				}
 				fill.objectData = {
 					width,
 					depth,
 					height,
-					info: meta,
+					info: this.#data,
 					name: layer ?? div,
 					offsetX,
 					offsetY,
 					offsetZ,
-					sizes
+					angle: this.#angle,
+					align: this.#depth,
+					base: this.#height
 				};
-				meta = fill.largestCanvas;
+				this.#data = fill.largestCanvas;
 				tmp = div || layer.name === tmp ? tmp : layer.name;
 				return data;
 			});
 			return info;
 		});
-		return meta;
+		return this.#data;
 	}
 	#buildTraceAndFill() {
 		let meta = structuredClone(this.#data);
@@ -4168,7 +4378,7 @@ var PositionWorksInSideCrate = class {
 		return new DesignPlotter(onLayers, this.#data).squaredDesign;
 	}
 	#populateLayerHugeCanvas() {
-		const { layers, fillGaps, artLocation, finalSize } = this.#info;
+		const { layers, fillGaps, artLocation, finalSize, extra } = this.#info;
 		const onLayers = [];
 		let depthSum = 0;
 		let thickness = 0;
@@ -4200,7 +4410,7 @@ var PositionWorksInSideCrate = class {
 			thickness = 0;
 			return data;
 		}, 0);
-		return new DesignPlotter(onLayers, this.#data, finalSize).hugeDesign;
+		return new DesignPlotter(onLayers, this.#data, finalSize, extra).hugeDesign;
 	}
 	#populateLayerSameSizes() {
 		const { layers, fillGaps, artLocation } = this.#info;
@@ -4305,7 +4515,7 @@ var LargeBottomCrate = class {
 		this.#angle = angle;
 		this.#leanPines = leanSupport;
 		this.#extraDepth = extraLength;
-		this.#base = baseSize;
+		this.#base = structuredClone(baseSize);
 		this.#foot = used.find((list) => list.at(-1) === "Wooden Post");
 		this.#ply = used.find((list) => list.at(-1) === "Plywood");
 		this.#pine = used.find((list) => list.at(-1) === "Pinewood");
@@ -4324,8 +4534,10 @@ var LargeBottomCrate = class {
 		const x = this.#foot[2] + offX;
 		const y = this.#foot[2] + offY;
 		const z = -this.#sized[1] - this.#base[1];
-		const degree = (90 - this.#angle - 2) * Math.PI / 180;
-		const leanCut = -+(+this.#foot[3] / Math.cos(degree)).toFixed(3) - this.#extraDepth + this.#foot[3];
+		const adjacent = +(+this.#foot[3] / Math.cos(this.#angle)).toFixed(5);
+		const angleTan = +Math.atan(this.#foot[3] / adjacent).toFixed(5);
+		const realAngle = Math.PI / 180 * 90 - angleTan;
+		const leanCut = -Math.ceil(+this.#foot[3] / Math.cos(realAngle)) + this.#foot[3] + offZ;
 		return {
 			coordinates: [
 				{
@@ -4369,12 +4581,12 @@ var LargeBottomCrate = class {
 					z: leanCut
 				}
 			],
-			width: x - offX,
-			depth: this.#sized[1],
-			height: y - offY,
-			offsetX: offX,
-			offsetY: -this.#sized[1] + offZ,
-			offsetZ: offY
+			width: 0,
+			depth: 0,
+			height: 0,
+			offsetX: 0,
+			offsetY: 0,
+			offsetZ: 0
 		};
 	}
 	#defineVerticalPineStructureSupport(offX) {
@@ -4382,13 +4594,64 @@ var LargeBottomCrate = class {
 		const offZ = -this.#sized[1] - this.#base[1] + +this.#pine[3];
 		const x = offX > 0 ? offX - +this.#pine[2] : +this.#pine[2];
 		const hipotenusa = +this.#pine[3] / Math.sin(this.#angle);
-		const y = this.#leanPines + offY;
+		const y = this.#leanPines - this.#foot[3];
 		const extraY = Math.floor(y + Math.sqrt(hipotenusa ** 2 - this.#pine[3] ** 2));
 		const z = -this.#sized[1] - this.#base[1];
+		return { coordinates: [
+			{
+				x: offX,
+				y: offY,
+				z
+			},
+			{
+				x,
+				y: offY,
+				z
+			},
+			{
+				x,
+				y: extraY,
+				z
+			},
+			{
+				x: offX,
+				y: extraY,
+				z
+			},
+			{
+				x: offX,
+				y: offY,
+				z: offZ
+			},
+			{
+				x,
+				y: offY,
+				z: offZ
+			},
+			{
+				x,
+				y,
+				z: offZ
+			},
+			{
+				x: offX,
+				y,
+				z: offZ
+			}
+		] };
+	}
+	#defineHorizontalPineStructureSupport(lastY, lastZ) {
+		const baseOffSet = 2 * +this.#foot[3] + 2 * +this.#ply[2];
+		const angleRad = Math.PI / 180 * (90 / 2);
+		const offY = lastZ === 0 ? Math.floor(this.#pine[3] * Math.sin(angleRad)) + baseOffSet + lastY : baseOffSet + lastY;
+		const offZ = -this.#sized[1] - this.#base[1] + +this.#pine[3] - lastZ;
+		const x = this.#sized[0];
+		const y = lastZ === 0 ? +this.#pine[3] + offY : offY + +this.#pine[3];
+		const z = -this.#sized[1] - this.#base[1] + +this.#pine[3] + +this.#pine[2] - lastZ;
 		return {
 			coordinates: [
 				{
-					x: offX,
+					x: 0,
 					y: offY,
 					z
 				},
@@ -4399,16 +4662,16 @@ var LargeBottomCrate = class {
 				},
 				{
 					x,
-					y: extraY,
+					y,
 					z
 				},
 				{
-					x: offX,
-					y: extraY,
+					x: 0,
+					y,
 					z
 				},
 				{
-					x: offX,
+					x: 0,
 					y: offY,
 					z: offZ
 				},
@@ -4423,29 +4686,228 @@ var LargeBottomCrate = class {
 					z: offZ
 				},
 				{
-					x: offX,
+					x: 0,
 					y,
 					z: offZ
 				}
 			],
-			width: x - offX,
-			depth: +this.#pine[3],
-			height: 0,
-			offsetX: offX,
-			offsetY: offZ,
-			offsetZ: offY
+			lastY: +this.#pine[3]
 		};
 	}
-	#verticalPines(info) {
+	#defineVerticalPineStructureSupportEnforcement(offX) {
+		const offY = +this.#foot[3] + 2 * +this.#ply[2];
+		const offZ = -this.#sized[1] - this.#base[1] + 2 * +this.#pine[3];
+		const x = offX > 0 ? offX - +this.#pine[2] : +this.#pine[2];
+		const y = offY + this.#foot[3];
+		const angleRad = Math.PI / 180 * (90 / 2);
+		const extraY = Math.floor(this.#pine[3] * Math.sin(angleRad)) + y;
+		const z = -this.#sized[1] - this.#base[1] + +this.#pine[3];
+		return { coordinates: [
+			{
+				x: offX,
+				y: offY,
+				z
+			},
+			{
+				x,
+				y: offY,
+				z
+			},
+			{
+				x,
+				y: extraY,
+				z
+			},
+			{
+				x: offX,
+				y: extraY,
+				z
+			},
+			{
+				x: offX,
+				y: offY,
+				z: offZ
+			},
+			{
+				x,
+				y: offY,
+				z: offZ
+			},
+			{
+				x,
+				y,
+				z: offZ
+			},
+			{
+				x: offX,
+				y,
+				z: offZ
+			}
+		] };
+	}
+	#defineSecondVerticalPineStructureSupportEnforcement(offX) {
+		const offY = +this.#foot[3] + 2 * +this.#ply[2];
+		const offZ = -this.#extraDepth;
+		const x = offX > 0 ? offX - +this.#pine[2] : +this.#pine[2];
+		const hipotenusa = +this.#pine[3] / Math.sin(this.#angle);
+		const y = offY;
+		const extraY = Math.floor(y + Math.sqrt(hipotenusa ** 2 - this.#pine[3] ** 2));
+		const z = -this.#extraDepth - this.#pine[3];
+		return { coordinates: [
+			{
+				x: offX,
+				y: offY,
+				z
+			},
+			{
+				x,
+				y: offY,
+				z
+			},
+			{
+				x,
+				y: extraY,
+				z
+			},
+			{
+				x: offX,
+				y: extraY,
+				z
+			},
+			{
+				x: offX,
+				y: offY,
+				z: offZ
+			},
+			{
+				x,
+				y: offY,
+				z: offZ
+			},
+			{
+				x,
+				y,
+				z: offZ
+			},
+			{
+				x: offX,
+				y,
+				z: offZ
+			}
+		] };
+	}
+	#defineThirdVerticalPineStructureSupportEnforcement(offX) {
+		const offY = +this.#foot[3] + 2 * +this.#ply[2];
+		const offZ = -this.#extraDepth - this.#pine[3];
+		const x = offX > 0 ? offX - +this.#pine[2] : +this.#pine[2];
+		const hipotenusa = +this.#pine[3] / Math.sin(this.#angle);
+		const y = offY;
+		const extraY = Math.floor(y + Math.sqrt(hipotenusa ** 2 - this.#pine[3] ** 2));
+		const z = -this.#extraDepth - 2 * this.#pine[3];
+		return { coordinates: [
+			{
+				x: offX,
+				y: offY,
+				z
+			},
+			{
+				x,
+				y: offY,
+				z
+			},
+			{
+				x,
+				y,
+				z
+			},
+			{
+				x: offX,
+				y,
+				z
+			},
+			{
+				x: offX,
+				y: offY,
+				z: offZ
+			},
+			{
+				x,
+				y: offY,
+				z: offZ
+			},
+			{
+				x,
+				y: extraY,
+				z: offZ
+			},
+			{
+				x: offX,
+				y: extraY,
+				z: offZ
+			}
+		] };
+	}
+	#defineSecondVerticalPineStructureSupport(offX) {
+		const offY = +this.#foot[3] + 2 * +this.#ply[2];
+		const offZ = -this.#sized[1] - this.#base[1] + 3 * +this.#pine[3];
+		const x = offX > 0 ? offX - +this.#pine[2] : +this.#pine[2];
+		const hipotenusa = +this.#pine[3] / Math.sin(this.#angle);
+		const catectOpp = this.#sized[1] - this.#extraDepth - +this.#pine[3];
+		const y = Math.ceil(catectOpp / Math.sin(this.#angle)) + this.#foot[3];
+		const extraY = Math.floor(y + Math.sqrt(hipotenusa ** 2 - this.#pine[3] ** 2));
+		const z = -this.#sized[1] - this.#base[1] + 2 * +this.#pine[3];
+		return { coordinates: [
+			{
+				x: offX,
+				y: offY,
+				z
+			},
+			{
+				x,
+				y: offY,
+				z
+			},
+			{
+				x,
+				y: extraY,
+				z
+			},
+			{
+				x: offX,
+				y: extraY,
+				z
+			},
+			{
+				x: offX,
+				y: offY,
+				z: offZ
+			},
+			{
+				x,
+				y: offY,
+				z: offZ
+			},
+			{
+				x,
+				y,
+				z: offZ
+			},
+			{
+				x: offX,
+				y,
+				z: offZ
+			}
+		] };
+	}
+	#verticalPinesEnforcement(info) {
 		const pineSpanCm = 100;
 		const counter = Math.floor(this.#sized[0] / pineSpanCm) + 1;
 		const trace = new TraceMaker();
-		const fill = new DesignWalls();
 		const half = +this.#foot[2] / 2;
 		let offX = 0;
 		let addFeet = 0;
 		while (addFeet++ <= counter) {
-			const { coordinates, offsetX, offsetY, offsetZ, width, depth, height } = this.#defineVerticalPineStructureSupport(offX);
+			const { coordinates } = this.#defineVerticalPineStructureSupportEnforcement(offX);
 			if (offX === 0) offX = +this.#foot[2] + +this.#pine[2];
 			trace.data = {
 				info,
@@ -4454,17 +4916,120 @@ var LargeBottomCrate = class {
 				show: false
 			};
 			info = trace.defineTrace;
-			fill.objectData = {
-				width,
-				depth,
-				height,
+			offX += offX + pineSpanCm >= +this.#ply[1] ? pineSpanCm - half : pineSpanCm;
+			if (offX >= this.#sized[0] - pineSpanCm) offX = this.#sized[0];
+		}
+		return info;
+	}
+	#thirdVerticalPinesEnforcement(info) {
+		const pineSpanCm = 100;
+		const counter = Math.floor(this.#sized[0] / pineSpanCm) + 1;
+		const trace = new TraceMaker();
+		const half = +this.#foot[2] / 2;
+		let offX = 0;
+		let addFeet = 0;
+		while (addFeet++ <= counter) {
+			const { coordinates } = this.#defineThirdVerticalPineStructureSupportEnforcement(offX);
+			if (offX === 0) offX = +this.#foot[2] + +this.#pine[2];
+			trace.data = {
 				info,
+				coordinates,
 				name: "frame",
-				offsetX,
-				offsetY,
-				offsetZ
+				show: false
 			};
-			info = fill.designSides;
+			info = trace.defineTrace;
+			offX += offX + pineSpanCm >= +this.#ply[1] ? pineSpanCm - half : pineSpanCm;
+			if (offX >= this.#sized[0] - pineSpanCm) offX = this.#sized[0];
+		}
+		return info;
+	}
+	#secondVerticalPinesEnforcement(info) {
+		const pineSpanCm = 100;
+		const counter = Math.floor(this.#sized[0] / pineSpanCm) + 1;
+		const trace = new TraceMaker();
+		const half = +this.#foot[2] / 2;
+		let offX = 0;
+		let addFeet = 0;
+		while (addFeet++ <= counter) {
+			const { coordinates } = this.#defineSecondVerticalPineStructureSupportEnforcement(offX);
+			if (offX === 0) offX = +this.#foot[2] + +this.#pine[2];
+			trace.data = {
+				info,
+				coordinates,
+				name: "frame",
+				show: false
+			};
+			info = trace.defineTrace;
+			offX += offX + pineSpanCm >= +this.#ply[1] ? pineSpanCm - half : pineSpanCm;
+			if (offX >= this.#sized[0] - pineSpanCm) offX = this.#sized[0];
+		}
+		return info;
+	}
+	#secondVerticalPines(info) {
+		const pineSpanCm = 100;
+		const counter = Math.floor(this.#sized[0] / pineSpanCm) + 1;
+		const trace = new TraceMaker();
+		const half = +this.#foot[2] / 2;
+		let offX = 0;
+		let addFeet = 0;
+		while (addFeet++ <= counter) {
+			const { coordinates } = this.#defineSecondVerticalPineStructureSupport(offX);
+			if (offX === 0) offX = +this.#foot[2] + +this.#pine[2];
+			trace.data = {
+				info,
+				coordinates,
+				name: "frame",
+				show: false
+			};
+			info = trace.defineTrace;
+			offX += offX + pineSpanCm >= +this.#ply[1] ? pineSpanCm - half : pineSpanCm;
+			if (offX >= this.#sized[0] - pineSpanCm) offX = this.#sized[0];
+		}
+		return info;
+	}
+	#horizontalPinesEnforcement(info) {
+		const trace = new TraceMaker();
+		const enforcements = {
+			enforce1: 0,
+			enforce2: 0
+		};
+		let offY = 0;
+		let offZ = 0;
+		while (enforcements.enforce1 < 2 || enforcements.enforce2 < 2) {
+			const { coordinates, lastY } = this.#defineHorizontalPineStructureSupport(offY, offZ);
+			enforcements.enforce1 < 2 ? enforcements.enforce1++ : enforcements.enforce2++;
+			offY = lastY;
+			if (enforcements.enforce1 === 2 && enforcements.enforce2 === 0) {
+				offY = 0;
+				offZ = -2 * +this.#pine[3];
+			} else offY = lastY;
+			trace.data = {
+				info,
+				coordinates,
+				name: "frame",
+				show: false
+			};
+			info = trace.defineTrace;
+		}
+		return info;
+	}
+	#verticalPines(info) {
+		const pineSpanCm = 100;
+		const counter = Math.floor(this.#sized[0] / pineSpanCm) + 1;
+		const trace = new TraceMaker();
+		const half = +this.#foot[2] / 2;
+		let offX = 0;
+		let addFeet = 0;
+		while (addFeet++ <= counter) {
+			const { coordinates } = this.#defineVerticalPineStructureSupport(offX);
+			if (offX === 0) offX = +this.#foot[2] + +this.#pine[2];
+			trace.data = {
+				info,
+				coordinates,
+				name: "frame",
+				show: false
+			};
+			info = trace.defineTrace;
 			offX += offX + pineSpanCm >= +this.#ply[1] ? pineSpanCm - half : pineSpanCm;
 			if (offX >= this.#sized[0] - pineSpanCm) offX = this.#sized[0];
 		}
@@ -4695,6 +5260,11 @@ var LargeBottomCrate = class {
 		this.#setBaseSheet(meta);
 		this.#extraFeet(meta);
 		this.#verticalPines(meta);
+		this.#secondVerticalPines(meta);
+		this.#verticalPinesEnforcement(meta);
+		this.#secondVerticalPinesEnforcement(meta);
+		this.#thirdVerticalPinesEnforcement(meta);
+		this.#horizontalPinesEnforcement(meta);
 		return meta;
 	}
 	get largeBottom() {
@@ -4715,9 +5285,11 @@ var largestCrateRender = class {
 		const { crates } = this.#crates;
 		const result = crates.map((data, i) => {
 			if (i % 2 === 0) {
-				const { finalSize, innerSize, baseSize, extraDepth, extraHeight } = data.at(-1)[0];
 				let meta = new LargeBottomCrate(data.at(-1)[0]).largeBottom;
 				meta = new LargeCratesFrame(meta, data.at(-1)[0]).setFrame;
+				meta = new SetCrateWalls(meta, data.at(-1)[0]).setHugeWalls;
+				meta = new PaddingLargeCrate(meta, data.at(-1)[0]).setPaddingHuge;
+				meta = new PositionWorksInSideCrate(data.at(-1)[0], meta, "largestCrate").arrange;
 				return meta;
 			}
 			return data;
@@ -6463,6 +7035,422 @@ var CratesFrame = class {
 	}
 	get setFrame() {
 		return this.#designFrame();
+	}
+};
+//#endregion
+//#region app/plotter/Padding.crate.plotly.mjs
+var PaddingCrate = class {
+	#data;
+	#pine;
+	#ply;
+	#crate;
+	#pad;
+	#baseSize;
+	#feet;
+	#threshold;
+	#inner;
+	constructor(meta, data) {
+		const { finalSize, baseSize, innerSize } = data;
+		const used = JSON.parse(localStorage.getItem("crating")).map((opt) => data.usedMaterials.get(opt));
+		this.#inner = innerSize;
+		this.#baseSize = baseSize;
+		this.#crate = finalSize;
+		this.#data = meta;
+		this.#pine = used.find((list) => list.at(-1) === "Pinewood");
+		this.#ply = used.find((list) => list.at(-1) === "Plywood");
+		this.#feet = used.find((list) => list.at(-1) === "Wooden Post");
+		this.#pad = used.find((list) => list.at(-1) === "Foam Sheet" && list[2] > 2.5);
+		this.#pad[1] = +this.#pad[1];
+		this.#pad[2] = +this.#pad[2];
+		this.#pad[3] = +this.#pad[3];
+		this.#threshold = [
+			+this.#pine[2] + +this.#ply[2],
+			+this.#pine[2] + +this.#ply[2],
+			+this.#ply[2] + +this.#feet[3]
+		];
+	}
+	#bluePrintFacesSchema({ x, y, z }, lastX, lastY) {
+		const offX = lastX + this.#threshold[0] + this.#pad[2];
+		const offZ = z + this.#threshold[1];
+		const offY = lastY === 0 ? this.#threshold[2] : lastY;
+		if (x <= this.#inner[0]) x += lastX === 0 ? this.#threshold[0] + this.#pad[2] : lastX;
+		return {
+			coordinates: [
+				{
+					x: offX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y,
+					z
+				}
+			],
+			width: lastX === 0 ? x - this.#threshold[0] - this.#pad[2] : x - lastX - this.#threshold[0] - this.#pad[2],
+			depth: this.#pad[2],
+			height: lastY === 0 ? y - this.#threshold[2] : y - lastY,
+			offsetX: offX,
+			offsetY: z,
+			offsetZ: lastY === 0 ? this.#threshold[2] : lastY
+		};
+	}
+	#bluePrintSidesSchema({ x, y, z }, lastX, lastY) {
+		const offX = lastX === 0 && this.#inner[0] !== x ? this.#pad[2] + this.#threshold[0] : lastX - 2 * this.#pad[2];
+		const offZ = this.#threshold[1];
+		const offY = lastY === 0 ? this.#threshold[2] : lastY;
+		return {
+			coordinates: [
+				{
+					x: offX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y,
+					z
+				}
+			],
+			width: lastX === 0 ? x - this.#threshold[0] - this.#pad[2] : x - lastX,
+			depth: z - this.#pad[2],
+			height: lastY === 0 ? y - this.#threshold[2] : y - offY,
+			offsetX: lastX === 0 ? offX : offX + this.#pad[2],
+			offsetY: offZ,
+			offsetZ: lastY === 0 ? this.#threshold[2] : offY
+		};
+	}
+	#bluePrintUpDownSchema({ x, y, z }, lastX, lastY) {
+		const offX = lastX === 0 ? this.#threshold[0] + this.#pad[2] : this.#threshold[0] + lastX;
+		const offZ = this.#threshold[1] + this.#pad[2];
+		const offY = lastY === 0 ? lastY + this.#threshold[2] + this.#pad[2] : this.#crate[2] - this.#pad[2] - this.#pine[2] - this.#ply[2];
+		x += lastX === 0 ? this.#threshold[0] : lastX + this.#pad[2];
+		return {
+			coordinates: [
+				{
+					x: offX,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y: offY,
+					z: offZ
+				},
+				{
+					x,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y,
+					z: offZ
+				},
+				{
+					x: offX,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y: offY,
+					z
+				},
+				{
+					x,
+					y,
+					z
+				},
+				{
+					x: offX,
+					y,
+					z
+				}
+			],
+			width: lastX === 0 ? x - this.#threshold[0] - this.#pad[2] : x - lastX - this.#threshold[0],
+			depth: z - 2 * this.#pad[2],
+			height: lastY === 0 ? y - this.#threshold[2] + this.#pad[2] : y - lastY - this.#threshold[2] - this.#pad[2],
+			offsetX: offX,
+			offsetY: offZ,
+			offsetZ: lastY === 0 ? this.#threshold[2] : lastY + this.#threshold[2] + this.#pad[2]
+		};
+	}
+	#defineSizingPadFaces(filled) {
+		let { x, y, z, faceA } = filled;
+		if (x === 0) x = this.#pad[1] > this.#inner[0] ? this.#crate[0] - this.#threshold[0] - this.#pad[2] : this.#pad[1] + this.#pad[2];
+		y = this.#inner[2] - y > this.#pad[3] ? +this.#pad[3].toFixed(3) : +(this.#crate[2] - this.#ply[2] - this.#pine[2]).toFixed(3);
+		z = faceA === 0 ? this.#pad[2] : this.#crate[1] - this.#threshold[1] - this.#pad[2];
+		if (filled.x > 0) {
+			if (x >= this.#inner[0] && y < this.#inner[2]) {
+				filled.x = 0;
+				if (y < this.#inner[2] && x >= this.#inner[0]) {
+					filled.y += y;
+					y = this.#crate[2] - filled.y > this.#pad[3] ? this.#crate[2] - this.#pad[3] : this.#pad[3];
+				}
+			}
+			x = this.#crate[0] - x - this.#threshold[0] - this.#pad[2];
+		}
+		return {
+			x,
+			y,
+			z
+		};
+	}
+	#defineSizingPadSides(filled) {
+		let { x, y, z, sideA } = filled;
+		x = sideA === 0 ? this.#pad[2] : this.#crate[0] - this.#pad[2];
+		if (y === 0) y = this.#inner[2] - y > this.#pad[3] ? this.#pad[3] : +(this.#crate[2] - this.#ply[2] - this.#pine[2]).toFixed(3);
+		else y += this.#inner[2] - y > this.#pad[3] ? this.#pad[3] : this.#crate[2] - y - this.#pine[2] - this.#ply[2];
+		z = this.#crate[1] < this.#pad[1] ? this.#crate[1] - this.#threshold[1] : this.#crate[1] - this.#pad[1] - z;
+		return {
+			x,
+			y,
+			z
+		};
+	}
+	#defineSizingPadUpDown(filled) {
+		let { x, y, z } = filled;
+		if (x === 0) x = this.#pad[1] > this.#inner[0] ? this.#crate[0] - this.#threshold[0] - 2 * this.#pad[2] : this.#pad[1] + this.#pad[2];
+		else x = this.#crate[0] - x - this.#threshold[0] - 2 * this.#pad[2];
+		y = y === 0 ? this.#threshold[2] : this.#crate[2] - this.#pine[2] - this.#ply[2];
+		z = this.#crate[1] - this.#threshold[1] - this.#pad[2];
+		return {
+			x,
+			y,
+			z
+		};
+	}
+	#setFrontAndBackFaces(data, filled) {
+		const { faceA, faceB } = filled;
+		if (faceA === 1 && faceB === 1) return data;
+		const sizes = this.#defineSizingPadFaces(filled);
+		data.push(this.#bluePrintFacesSchema(sizes, filled.x, filled.y));
+		filled.x += sizes.x;
+		if (filled.x >= this.#inner[0] && filled.y + sizes.y >= this.#inner[2]) if (faceA === 0) {
+			filled.faceA = 1;
+			filled.x = 0;
+			filled.y = 0;
+		} else filled.faceB = 1;
+		return this.#setFrontAndBackFaces(data, filled);
+	}
+	#setRightAndLeftSides(data, filled) {
+		const { sideA, sideB } = filled;
+		if (sideA === 1 && sideB === 1) return data;
+		const sizes = this.#defineSizingPadSides(filled);
+		data.push(this.#bluePrintSidesSchema(sizes, filled.x, filled.y));
+		filled.y += sizes.y;
+		if (filled.y >= this.#inner[2]) if (sideA === 0) {
+			filled.sideA = 1;
+			filled.x = this.#crate[0];
+			filled.y = 0;
+		} else filled.sideB = 1;
+		return this.#setRightAndLeftSides(data, filled);
+	}
+	#setTopAndBottom(data, filled) {
+		const { top, bottom } = filled;
+		if (top === 1 && bottom === 1) return data;
+		const sizes = this.#defineSizingPadUpDown(filled);
+		const setY = this.#crate[2] - 2 * this.#pad[2] - this.#threshold[2] - this.#ply[2] - this.#pine[2];
+		data.push(this.#bluePrintUpDownSchema(sizes, filled.x, filled.y));
+		filled.x += sizes.x;
+		if (filled.x >= this.#inner[0]) if (bottom === 0) {
+			filled.bottom = 1;
+			filled.x = 0;
+			filled.y = setY;
+		} else filled.top = 1;
+		return this.#setTopAndBottom(data, filled);
+	}
+	#defineWalls(offset, comp) {
+		const { x, y, z } = offset;
+		const change = structuredClone(comp);
+		Object.entries(change).map((data, i) => {
+			switch (i) {
+				case 0:
+					if (data[1].x === 0) data[1].x = x;
+					if (data[1].y === 0) data[1].y = y;
+					if (data[1].z === 0) data[1].z = z;
+					return data;
+				case 1:
+					if (data[1].y === 0) data[1].y = y;
+					if (data[1].z === 0) data[1].z = z;
+					return data;
+				case 2:
+					if (data[1].z === 0) data[1].z = z;
+					return data;
+				case 3:
+					if (data[1].x === 0) data[1].x = x;
+					if (data[1].z === 0) data[1].z = z;
+					return data;
+				case 4:
+					if (data[1].x === 0) data[1].x = x;
+					if (data[1].y === 0) data[1].y = y;
+					return data;
+				case 5:
+					if (data[1].y === 0) data[1].y = y;
+					return data;
+				case 7:
+					if (data[1].x === 0) data[1].x = x;
+					return data;
+			}
+			return data;
+		});
+		return change;
+	}
+	#setupFaces() {
+		const pads = [];
+		this.#setFrontAndBackFaces(pads, {
+			x: 0,
+			y: 0,
+			z: 0,
+			faceA: 0,
+			faceB: 0
+		});
+		this.#setRightAndLeftSides(pads, {
+			x: 0,
+			y: 0,
+			z: 0,
+			sideA: 0,
+			sideB: 0
+		});
+		this.#setTopAndBottom(pads, {
+			x: 0,
+			y: 0,
+			z: 0,
+			top: 0,
+			bottom: 0
+		});
+		return pads;
+	}
+	#defineCratePaddingTubes() {
+		const trace = new TraceMaker();
+		const fill = new DesignWalls();
+		const faces = this.#setupFaces();
+		let meta = structuredClone(this.#data);
+		let show = true;
+		if (!this.#pad) return this.#data;
+		faces.map((pads) => {
+			const { coordinates, offsetX, offsetY, offsetZ, width, depth, height } = pads;
+			trace.data = {
+				info: this.#data,
+				coordinates,
+				name: "padding",
+				show
+			};
+			meta = trace.defineTrace;
+			fill.objectData = {
+				width,
+				depth,
+				height,
+				info: this.#data,
+				name: "padding",
+				offsetX,
+				offsetY,
+				offsetZ
+			};
+			this.#data = this.#data = fill.designSides;
+			show = false;
+			return pads;
+		});
+		return meta;
+	}
+	#defineCratePadding() {
+		const trace = new TraceMaker();
+		const fill = new DesignWalls();
+		const faces = this.#setupFaces();
+		let meta = structuredClone(this.#data);
+		let show = true;
+		if (!this.#pad) return this.#data;
+		faces.map((pads) => {
+			const { coordinates, offsetX, offsetY, offsetZ, width, depth, height } = pads;
+			trace.data = {
+				info: this.#data,
+				coordinates,
+				name: "padding",
+				show
+			};
+			meta = trace.defineTrace;
+			fill.objectData = {
+				width,
+				depth,
+				height,
+				info: this.#data,
+				name: "padding",
+				offsetX,
+				offsetY,
+				offsetZ
+			};
+			this.#data = this.#data = fill.designSides;
+			show = false;
+			return pads;
+		});
+		return meta;
+	}
+	get setPadding() {
+		return this.#defineCratePadding();
+	}
+	get setPaddingTubes() {
+		return this.#defineCratePaddingTubes();
 	}
 };
 //#endregion
@@ -8501,10 +9489,11 @@ var CraterPythagoras = class {
 		];
 	}
 	#setPadding(innerCrate, layers) {
+		const pine = this.#materials?.materials.find((opts) => opts[5] === "Pinewood");
 		const crate = new CrateMaker(layers, this.#materials).outSizes;
 		const x = +(innerCrate[0] + crate.x).toFixed(3);
 		const z = +(innerCrate[1] + crate.z).toFixed(3);
-		const y = +(innerCrate[2] + crate.y).toFixed(3);
+		const y = +(innerCrate[2] + crate.y + +pine[2]).toFixed(3);
 		const X = x % 1 > 0 ? x : +x.toFixed(3);
 		const Z = z % 1 > 0 ? z : +z.toFixed(3);
 		const Y = y % 1 > 0 ? y : +y.toFixed(3);
@@ -8516,39 +9505,38 @@ var CraterPythagoras = class {
 			+Y
 		];
 	}
-	#extraStructureData(baseSize, crate, hypotenusa) {
+	#extraStructureData(depth, crate, hypo, extraHeight) {
 		const MAXHEIGHT = 240;
-		const straightAngle = 180;
-		const degrees = straightAngle / Math.PI;
-		const angle1 = Math.ceil(straightAngle - (straightAngle / 2 + Math.acos(baseSize / hypotenusa) * degrees));
-		const angle2 = straightAngle / 2 - angle1;
-		const degree1 = angle1 * Math.PI / straightAngle;
-		const degree2 = angle2 * Math.PI / straightAngle;
-		const extraHeight = +(crate[1] / Math.sin(degree2)).toFixed(3);
-		const extraLength = Math.cos(degree1) * crate[1];
-		const leanSupport = +Math.sqrt(crate[2] ** 2 - baseSize ** 2).toFixed(3);
-		const totalDepth = +(baseSize + extraLength).toFixed(3);
+		const RAD = Math.PI / 180;
+		const angleFirstTriangle = +Math.acos(depth / hypo).toFixed(5);
+		const angleUp = +Math.atan2(hypo, crate[1]).toFixed(10);
+		const angleSecondTriangle = angleFirstTriangle - +(RAD * 90 - angleUp).toFixed(5);
+		const angle = +(RAD * 90 - angleSecondTriangle).toFixed(5);
+		const angleHeight = Math.ceil(crate[1] * Math.sin(angle));
+		const extraLength = Math.ceil(crate[1] * Math.cos(angle));
+		const extension = +(crate[2] * Math.sin(angle)).toFixed(1) + extraLength;
+		const leanSupport = Math.ceil(crate[2] * Math.cos(angle) - (angleHeight - extraHeight));
 		this.#coordinates.finalSize = [
 			crate[0],
-			totalDepth,
+			extension,
 			MAXHEIGHT
 		];
 		this.#coordinates.extra = {
-			extraHeight: +extraHeight.toFixed(3),
+			extraHeight,
 			leanSupport,
-			extraLength: +extraLength.toFixed(3),
+			extraLength,
 			baseSize: crate,
-			angle: angle1
+			angle
 		};
 	}
 	#pitagorasTheorem(crate) {
 		const ply = this.#materials?.materials.find((opts) => opts[5] === "Plywood");
 		const feet = this.#materials?.materials.find((opts) => opts[5] === "Wooden Post");
-		const baseStructure = 2 * +ply[2] + +feet[3];
-		const MAXHEIGHT = 240;
-		const realHeightDiagonal = Math.sqrt(crate[1] ** 2) + Math.sqrt((crate[2] + baseStructure) ** 2);
-		const z = +(Math.cos(Math.asin(MAXHEIGHT / realHeightDiagonal)) * realHeightDiagonal).toFixed(3);
-		this.#extraStructureData(z, crate, realHeightDiagonal);
+		const BASE = 2 * +ply[2] + +feet[3];
+		const MAXHEIGHT = 240 - BASE;
+		const hypotenusa = +Math.sqrt(crate[1] ** 2 + crate[2] ** 2).toFixed(0);
+		const z = Math.floor(Math.cos(Math.asin(MAXHEIGHT / hypotenusa)) * hypotenusa);
+		this.#extraStructureData(z, crate, hypotenusa, BASE);
 		return [...this.#coordinates.finalSize];
 	}
 	#defineCrate(canvas) {
@@ -8595,7 +9583,9 @@ var CraterPythagoras = class {
 	}
 	#pitagorasCrater() {
 		if (!this.#rawList || this.#rawList.length === 0) return { largest: false };
-		return { crates: this.#largestCrateTrail() };
+		const crates = this.#largestCrateTrail();
+		delete this.#coordinates.defineLayer;
+		return { crates };
 	}
 	get makeCrate() {
 		return this.#pitagorasCrater();

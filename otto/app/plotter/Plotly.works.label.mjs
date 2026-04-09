@@ -17,12 +17,12 @@ export default class WorksLabel  {
 	}
 
 	#defineHugeLabel() {
-		const { x, y, z, info, code, dep, high, name } = this.#data;
-		const cosAngle = Math.cos(dep / high);
-		const sinAngle = Math.sin(high / dep);
+		const { x, y, z, info, code, name, angle, align, base } = this.#data;
+		const cosAngle = Math.cos(angle);
+		const sinAngle = Math.sin(angle);
 		const rotX = {
-			valY : y * cosAngle - z * sinAngle,
-			valZ: y * sinAngle + z * cosAngle
+			valY : y * cosAngle - z * sinAngle + base,
+			valZ: y * sinAngle + z * cosAngle + align
 		};
 
 		this.#config.x.push(x);

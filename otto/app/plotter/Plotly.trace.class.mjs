@@ -31,24 +31,23 @@ export default class TraceMaker {
 	}
 
 	#defineHugeShape() {
-		const { align, info, coordinates, name, show, sizes } = this.#data;
+		const { angle, align, info, coordinates, name, show, base } = this.#data;
 		const color = this.#colors.get(name.color ?? name) ?? name.color;
-		const { dep, high } = sizes;
 
 		this.#edges.forEach((edge, i) => {
 			const v1 = coordinates[edge[0]];
 			const v2 = coordinates[edge[1]];
-			const cosAngle = Math.cos(dep / high);
-			const sinAngle = Math.sin(high / dep);
+			const cosAngle = Math.cos(angle);
+			const sinAngle = Math.sin(angle);
 			const rotX1 = (x, y, z) => [
 				x,
-				y * cosAngle + z * sinAngle - align,
-				y * sinAngle - z * cosAngle
+				y * cosAngle + z * sinAngle + base,
+				y * sinAngle - z * cosAngle - align,
 			];
 			const rotX2 = (x, y, z) => [
 				x,
-				z * sinAngle + y * cosAngle - align,
-				z * cosAngle - y * sinAngle,
+				z * sinAngle + y * cosAngle + base,
+				z * cosAngle - y * sinAngle - align,
 			];
 			const first = sinAngle > 0
 				? rotX2(v1.x, v1.y, v1.z)

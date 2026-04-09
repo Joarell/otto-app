@@ -32,7 +32,8 @@ export default class CratesFrame {
 				z: 0,
 				width: this.#pine[3],
 				depth: this.#pine[2],
-				height: this.#sized[2] - (+this.#feet[3] + 2 * this.#pine[3] + this.#pine[2]),
+				height:
+					this.#sized[2] - (+this.#feet[3] + 2 * this.#pine[3] + this.#pine[2]),
 				offsetX: this.#pine[2],
 				offsetY: 0,
 				offsetZ: +this.#feet[3] + this.#pine[3],
@@ -44,7 +45,8 @@ export default class CratesFrame {
 				z: 0,
 				width: this.#pine[3],
 				depth: this.#pine[2],
-				height: this.#sized[2] - (+this.#feet[3] + 2 * this.#pine[3] + this.#pine[2]),
+				height:
+					this.#sized[2] - (+this.#feet[3] + 2 * this.#pine[3] + this.#pine[2]),
 				offsetX: this.#sized[0] - (this.#pine[3] + this.#pine[2]),
 				offsetY: 0,
 				offsetZ: +this.#feet[3] + this.#pine[3],
@@ -56,7 +58,8 @@ export default class CratesFrame {
 				z: this.#sized[1],
 				width: this.#pine[3],
 				depth: this.#pine[2],
-				height: this.#sized[2] - (+this.#feet[3] + 2 * this.#pine[3] + this.#pine[2]),
+				height:
+					this.#sized[2] - (+this.#feet[3] + 2 * this.#pine[3] + this.#pine[2]),
 				offsetX: this.#pine[2],
 				offsetY: this.#sized[1] - this.#pine[2],
 				offsetZ: +this.#feet[3] + this.#pine[3],
@@ -68,7 +71,8 @@ export default class CratesFrame {
 				z: this.#sized[1],
 				width: this.#pine[3],
 				depth: this.#pine[2],
-				height: this.#sized[2] - (+this.#feet[3] + 2 * this.#pine[3] + this.#pine[2]),
+				height:
+					this.#sized[2] - (+this.#feet[3] + 2 * this.#pine[3] + this.#pine[2]),
 				offsetX: this.#sized[0] - (this.#pine[3] + this.#pine[2]),
 				offsetY: this.#sized[1] - this.#pine[2],
 				offsetZ: +this.#feet[3] + this.#pine[3],
@@ -533,30 +537,30 @@ export default class CratesFrame {
 		Object.entries(change).map((data, i) => {
 			switch (i) {
 				case 0:
-					if(data[1].x === 0) data[1].x = x;
-					if(data[1].y === 0) data[1].y = y;
-					if(data[1].z === 0) data[1].z = z;
+					if (data[1].x === 0) data[1].x = x;
+					if (data[1].y === 0) data[1].y = y;
+					if (data[1].z === 0) data[1].z = z;
 					return data;
 				case 1:
-					if(data[1].y === 0) data[1].y = y;
-					if(data[1].z === 0) data[1].z = z;
+					if (data[1].y === 0) data[1].y = y;
+					if (data[1].z === 0) data[1].z = z;
 					return data;
 				case 2:
-					if(data[1].z === 0) data[1].z = z;
+					if (data[1].z === 0) data[1].z = z;
 					return data;
 				case 3:
-					if(data[1].x === 0) data[1].x = x;
-					if(data[1].z === 0) data[1].z = z;
+					if (data[1].x === 0) data[1].x = x;
+					if (data[1].z === 0) data[1].z = z;
 					return data;
 				case 4:
-					if(data[1].x === 0) data[1].x = x;
-					if(data[1].y === 0) data[1].y = y;
+					if (data[1].x === 0) data[1].x = x;
+					if (data[1].y === 0) data[1].y = y;
 					return data;
 				case 5:
-					if(data[1].y === 0) data[1].y = y;
+					if (data[1].y === 0) data[1].y = y;
 					return data;
 				case 7:
-					if(data[1].x === 0) data[1].x = x;
+					if (data[1].x === 0) data[1].x = x;
 					return data;
 			}
 			return data;
@@ -565,9 +569,10 @@ export default class CratesFrame {
 	}
 
 	#bluePrintExtraPineHorizontal({ x, y, z }, lastX) {
-		const offX = lastX === 0 && this.#sized[0] !== x
-			? this.#pine[3] + this.#pine[2]
-			: lastX - 2 * this.#pine[3];
+		const offX =
+			lastX === 0 && this.#sized[0] !== x
+				? this.#pine[3] + this.#pine[2]
+				: lastX - 2 * this.#pine[3];
 		const offZ = z === this.#pine[2] ? 0 : this.#sized[1] - this.#pine[2];
 		const offY = +this.#feet[3] + (+this.#ply[3] - this.#pine[3]);
 
@@ -583,9 +588,9 @@ export default class CratesFrame {
 				{ x: offX, y, z }, // Vertex 7
 			],
 			width: lastX === 0 ? x - this.#pine[3] - this.#pine[2] : x - lastX,
-			depth: z === this.#pine[3] ? z : - offZ + z,
+			depth: z === this.#pine[3] ? z : -offZ + z,
 			height: y - offY,
-			offsetX: lastX === 0 ? offX: offX + this.#pine[3],
+			offsetX: lastX === 0 ? offX : offX + this.#pine[3],
 			offsetY: z === this.#pine[2] ? offZ : this.#sized[1] - this.#pine[2],
 			offsetZ: offY,
 		};
@@ -620,9 +625,10 @@ export default class CratesFrame {
 
 	#bluePrintExtraPineVertical({ x, y, z }, lastX, lastY) {
 		const offX = lastX + +this.#ply[1] - +this.#pine[3] / 2 + this.#pine[2];
-		const offY = lastY === 0
-			? +this.#feet[3] + this.#pine[3]
-			: this.#sized[2] - this.#pine[3] - this.#pine[2];
+		const offY =
+			lastY === 0
+				? +this.#feet[3] + this.#pine[3]
+				: this.#sized[2] - this.#pine[3] - this.#pine[2];
 		const offZ = z === this.#pine[2] ? 0 : this.#sized[1];
 
 		const pine = {
@@ -647,7 +653,7 @@ export default class CratesFrame {
 	}
 
 	#bluePrintExtraPineTop({ x, y, z }) {
-		const offX = +this.#ply[1] + +this.#ply[2] + (this.#pine[3] / 2);
+		const offX = +this.#ply[1] + +this.#ply[2] + this.#pine[3] / 2;
 		const offY = this.#sized[2] - this.#pine[2];
 		const offZ = this.#pine[3];
 
@@ -675,11 +681,12 @@ export default class CratesFrame {
 	#setFacesExtraPineHorizontal(data) {
 		let { x, y, z, faceA } = data;
 
-		if(x === 0)
-			x = this.#pine[1] > this.#sized[0]
-				? this.#sized[0] - this.#pine[3] - this.#pine[2]
-				: this.#pine[1] + this.#pine[3] + this.#pine[2];
-		y = (+this.#ply[3] - (this.#pine[3] / 2)) + this.#feet[3] + this.#pine[3] / 2;
+		if (x === 0)
+			x =
+				this.#pine[1] > this.#sized[0]
+					? this.#sized[0] - this.#pine[3] - this.#pine[2]
+					: this.#pine[1] + this.#pine[3] + this.#pine[2];
+		y = +this.#ply[3] - this.#pine[3] / 2 + this.#feet[3] + this.#pine[3] / 2;
 		z = faceA === 0 ? this.#pine[2] : this.#sized[1];
 		if (data.x > 0) x = this.#sized[0] - x - this.#pine[3] - this.#pine[2];
 		return { x, y, z };
@@ -688,19 +695,17 @@ export default class CratesFrame {
 	#setFacesExtraPineVertical(data) {
 		let { x, y, z, faceA } = data;
 
-		x += +this.#ply[1] - this.#pine[3] / 2 + this.#pine[3] + this.#pine[2]
-		y = y === 0
-			? (+this.#ply[3] - (this.#pine[3] / 2))
-			: y + this.#pine[3]
+		x += +this.#ply[1] - this.#pine[3] / 2 + this.#pine[3] + this.#pine[2];
+		y = y === 0 ? +this.#ply[3] - this.#pine[3] / 2 : y + this.#pine[3];
 		z = faceA === 0 ? this.#pine[2] : this.#sized[1] - this.#pine[2];
 		if (data.x > 0) x = this.#sized[0] - x - this.#pine[3] - this.#pine[2];
 		return { x, y, z };
 	}
 
 	#setTopExtraPine(data) {
-		let { x, y, z, } = data;
+		let { x, y, z } = data;
 
-		x = +this.#ply[1] - this.#pine[3] / 2 + this.#pine[2]
+		x = +this.#ply[1] - this.#pine[3] / 2 + this.#pine[2];
 		y = this.#sized[2];
 		z = this.#sized[1] - this.#pine[3];
 		return { x, y, z };
@@ -709,47 +714,46 @@ export default class CratesFrame {
 	#setFacesExtraPineSides(data) {
 		let { x, y, z, right } = data;
 
-		if(right === 0) x = this.#pine[2];
+		if (right === 0) x = this.#pine[2];
 		else x = this.#sized[0] - this.#pine[2];
-		y = (+this.#ply[3] - (this.#pine[3] / 2)) + this.#feet[3] + this.#pine[3] / 2;
+		y = +this.#ply[3] - this.#pine[3] / 2 + this.#feet[3] + this.#pine[3] / 2;
 		z = this.#sized[1] - this.#pine[3];
 		return { x, y, z };
 	}
 
 	#frontAndBackFacesPineJoinVertical(data, join) {
 		const { faceA, faceB } = join;
-		if( faceA === 1 && faceB === 1) return data;
+		if (faceA === 1 && faceB === 1) return data;
 		const extraPine = this.#setFacesExtraPineVertical(join);
 
 		data.push(this.#bluePrintExtraPineVertical(extraPine, join.x, join.y));
 		join.y += extraPine.y;
-		if(join.y >= this.#sized[2] && faceA === 0) {
+		if (join.y >= this.#sized[2] && faceA === 0) {
 			join.faceA = 1;
 			join.y = 0;
-		}
-		else if(faceA === 1 && join.y >= this.#sized[2]) join.faceB = 1;
+		} else if (faceA === 1 && join.y >= this.#sized[2]) join.faceB = 1;
 		return this.#frontAndBackFacesPineJoinVertical(data, join);
 	}
 
 	#frontAndBackFacesPineJoinHorizontal(data, join) {
 		const { faceA, faceB } = join;
-		if( faceA === 1 && faceB === 1) return data;
+		if (faceA === 1 && faceB === 1) return data;
 		const extraPine = this.#setFacesExtraPineHorizontal(join);
 
 		data.push(this.#bluePrintExtraPineHorizontal(extraPine, join.x));
-		if(faceA === 0) join.faceA = 1;
+		if (faceA === 0) join.faceA = 1;
 		else join.faceB = 1;
 		return this.#frontAndBackFacesPineJoinHorizontal(data, join);
 	}
 
 	#sidePineJoin(data, join) {
 		const { right, left } = join;
-		if( right === 1 && left === 1) return data;
+		if (right === 1 && left === 1) return data;
 		const extraPine = this.#setFacesExtraPineSides(join);
 
 		data.push(this.#bluePrintExtraPineDepth(extraPine, join.x, join.y));
 		join.x += extraPine.x;
-		if(right === 0) join.right = 1;
+		if (right === 0) join.right = 1;
 		else join.left = 1;
 		return this.#sidePineJoin(data, join);
 	}
@@ -759,7 +763,7 @@ export default class CratesFrame {
 
 		data.push(this.#bluePrintExtraPineTop(extraPine));
 		join.y += extraPine.x + this.#pine[3];
-		if(join.y >= this.#sized[2]) join.top = 1;
+		if (join.y >= this.#sized[2]) join.top = 1;
 		return data;
 	}
 
@@ -769,9 +773,8 @@ export default class CratesFrame {
 		const show = false;
 
 		data.map((part) => {
-			const {
-				coordinates, offsetX, offsetY, offsetZ, width, depth, height
-			} = part;
+			const { coordinates, offsetX, offsetY, offsetZ, width, depth, height } =
+				part;
 
 			trace.data = {
 				info: this.#meta,
@@ -797,18 +800,30 @@ export default class CratesFrame {
 
 	#extraPainForPlyJoins() {
 		const lengthSize = this.#sized[0] > +this.#ply[1];
-		const heightSize = this.#sized[2] > (+this.#ply[3] - +this.#feet[3]);
+		const heightSize = this.#sized[2] > +this.#ply[3] - +this.#feet[3];
 		const pineJoins = [];
 
-		if(lengthSize) {
-			this.#frontAndBackFacesPineJoinVertical(pineJoins, { x: 0, y: 0, z: 0, faceA: 0, faceB: 0 });
+		if (lengthSize) {
+			this.#frontAndBackFacesPineJoinVertical(pineJoins, {
+				x: 0,
+				y: 0,
+				z: 0,
+				faceA: 0,
+				faceB: 0,
+			});
 			this.#topJoinExtrapine(pineJoins, { x: 0, y: 0, z: 0, top: 0 });
 		}
-		if(heightSize) {
-			this.#frontAndBackFacesPineJoinHorizontal(pineJoins, { x: 0, y: 0, z: 0, faceA: 0, faceB: 0 });
+		if (heightSize) {
+			this.#frontAndBackFacesPineJoinHorizontal(pineJoins, {
+				x: 0,
+				y: 0,
+				z: 0,
+				faceA: 0,
+				faceB: 0,
+			});
 			this.#sidePineJoin(pineJoins, { x: 0, y: 0, z: 0, right: 0, left: 0 });
 		}
-		if(pineJoins.length > 0) this.#setJoins(pineJoins);
+		if (pineJoins.length > 0) this.#setJoins(pineJoins);
 	}
 
 	#setAllParts(meta, component, offsets) {
@@ -817,9 +832,7 @@ export default class CratesFrame {
 		let show = true;
 
 		Object.entries(offsets).map((part) => {
-			const {
-				type, offsetX, offsetY, offsetZ, width, depth, height
-			} = part[1];
+			const { type, offsetX, offsetY, offsetZ, width, depth, height } = part[1];
 			const design = component[type];
 			const defined = this.#definePosition(part[1], design);
 

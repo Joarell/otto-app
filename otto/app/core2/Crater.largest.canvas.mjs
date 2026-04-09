@@ -41,10 +41,11 @@ export default class CraterPythagoras {
 	}
 
 	#setPadding(innerCrate, layers) {
+		const pine = this.#materials?.materials.find((opts) => opts[5] === "Pinewood");
 		const crate = new CrateMaker(layers, this.#materials).outSizes;
 		const x = +(innerCrate[0] + crate.x).toFixed(3);
 		const z = +(innerCrate[1] + crate.z).toFixed(3);
-		const y = +(innerCrate[2] + crate.y).toFixed(3);
+		const y = +(innerCrate[2] + crate.y + +pine[2]).toFixed(3);
 		const X = x % 1 > 0 ? x : +(x).toFixed(3);
 		const Z = z % 1 > 0 ? z : +(z).toFixed(3);
 		const Y = y % 1 > 0 ? y : +(y).toFixed(3);
@@ -57,38 +58,39 @@ export default class CraterPythagoras {
 		return [+X, +Z, +Y];
 	}
 
-	#extraStructureData(baseSize, crate, hypotenusa) {
+	#extraStructureData(depth, crate, hypo, extraHeight) {
 		const MAXHEIGHT = 240;
-		const straightAngle = 180;
-		const degrees = straightAngle / Math.PI;
-		const angle1 = Math.ceil(straightAngle - (straightAngle / 2 + (Math.acos(baseSize / hypotenusa) * degrees)));
-		const angle2 = straightAngle / 2 - angle1;
-		const degree1 = angle1 * Math.PI / straightAngle;
-		const degree2 = angle2 * Math.PI / straightAngle;
-		const extraHeight = +(crate[1] / Math.sin(degree2)).toFixed(3);
-		const extraLength = Math.cos(degree1) * crate[1];
+		const RAD = Math.PI / 180;
+		const angleFirstTriangle = +(Math.acos(depth / hypo)).toFixed(5);
+		const angleUp = +(Math.atan2(hypo, crate[1])).toFixed(10);
+		const diffAngle = +(RAD * 90 - angleUp).toFixed(5);
+		const angleSecondTriangle = angleFirstTriangle - diffAngle;
+		const angle = +(RAD * 90 - angleSecondTriangle).toFixed(5);
 
-		const leanSupport = +(Math.sqrt((crate[2] ** 2) - (baseSize ** 2))).toFixed(3);
-		const totalDepth = +(baseSize + extraLength).toFixed(3);
-		this.#coordinates.finalSize = [ crate[0], totalDepth, MAXHEIGHT ];
+		const angleHeight = Math.ceil(crate[1] * Math.sin(angle));
+		const extraLength = Math.ceil(crate[1] * Math.cos(angle));
+		const extension = +(crate[2] * Math.sin(angle)).toFixed(1) + extraLength;
+		const leanSupport = Math.ceil(crate[2] * Math.cos(angle) - (angleHeight - extraHeight));
+
+		this.#coordinates.finalSize = [ crate[0], extension, MAXHEIGHT ];
 		this.#coordinates.extra = {
-			extraHeight : +(extraHeight).toFixed(3),
+			extraHeight,
 			leanSupport,
-			extraLength: +(extraLength).toFixed(3),
+			extraLength,
 			baseSize: crate,
-			angle: angle1,
+			angle,
 		};
 	}
 
 	#pitagorasTheorem(crate) {
 		const ply = this.#materials?.materials.find((opts) => opts[5] === "Plywood");
 		const feet = this.#materials?.materials.find((opts) => opts[5] === "Wooden Post");
-		const baseStructure = 2 * +ply[2] + +feet[3];
-		const MAXHEIGHT = 240;
-		const realHeightDiagonal = Math.sqrt(crate[1] ** 2) + Math.sqrt((crate[2] + baseStructure) ** 2);
-		const z = +(Math.cos(Math.asin(MAXHEIGHT / realHeightDiagonal)) * realHeightDiagonal).toFixed(3);
+		const BASE = 2 * +ply[2] + +feet[3];
+		const MAXHEIGHT = 240 - BASE;
+		const hypotenusa = +(Math.sqrt(crate[1] ** 2 + crate[2] ** 2)).toFixed(0)
+		const z = Math.floor(Math.cos(Math.asin(MAXHEIGHT / hypotenusa)) * hypotenusa);
 
-		this.#extraStructureData(z, crate, realHeightDiagonal);
+		this.#extraStructureData(z, crate, hypotenusa, BASE);
 		return [...this.#coordinates.finalSize];
 	}
 
@@ -139,6 +141,7 @@ export default class CraterPythagoras {
 		if (!this.#rawList || this.#rawList.length === 0) return { largest: false };
 
 		const crates = this.#largestCrateTrail();
+		delete this.#coordinates.defineLayer;
 		return { crates: crates };
 	}
 

@@ -5,12 +5,25 @@ import WorksLabel from "./Plotly.works.label.mjs";
 export default class DesignPlotter {
 	#data;
 	#list;
+	#angle;
+	#depth;
+	#height;
 	#baseSize;
 
-	constructor(list, data, baseSize) {
+	constructor(list, data, baseSize, info = false) {
+		if(info) {
+			const { angle, baseSize, extraHeight, extraLength } = info;
+			this.#angle = angle;
+			this.#depth = extraLength;
+			this.#height = extraHeight;
+			this.#baseSize = baseSize;
+		}
+		else {
+			this.#baseSize = baseSize;
+			this.#data = data;
+		}
 		this.#data = data;
 		this.#list = list;
-		this.#baseSize = baseSize;
 	}
 
 	#buildTraceAndFillTubes() {
@@ -64,10 +77,8 @@ export default class DesignPlotter {
 	}
 
 	#buildTraceAndFillHuge() {
-		let meta = structuredClone(this.#data);
 		const trace = new TraceMaker();
 		const fill = new DesignWalls();
-		const sizes = { dep: this.#baseSize[1], high: this.#baseSize[2] };
 		const label = new WorksLabel();
 		let tmp;
 
@@ -87,43 +98,48 @@ export default class DesignPlotter {
 				} = data;
 
 				trace.data = {
-					info: meta,
+					info: this.#data,
 					coordinates: art ? art : div,
 					name: layer ?? div,
 					show: div || tmp === layer.name ? false : true,
-					sizes,
+					angle: this.#angle,
+					base: this.#height,
+					align: this.#depth,
 				};
-				meta = trace.defineHugeTrace;
+				this.#data = trace.defineHugeTrace;
 				if(code) {
 					label.data = {
-						info: meta,
+						angle: this.#angle,
+						align: this.#depth,
+						base: this.#height,
+						info: this.#data,
 						x: offsetX + width / 2,
-						y: offsetY + depth / 2,
+						y: - this.#depth,
 						z: offsetZ + height / 2,
-						dep: depth,
-						high: height,
 						code,
 					}
-					meta = label.setHugeLabel;
+					this.#data = label.setHugeLabel;
 				}
 				fill.objectData = {
 					width,
 					depth,
 					height,
-					info: meta,
+					info: this.#data,
 					name: layer ?? div,
 					offsetX,
 					offsetY,
 					offsetZ,
-					sizes,
+					angle: this.#angle,
+					align: this.#depth,
+					base: this.#height,
 				};
-				meta = fill.largestCanvas;
+				this.#data = fill.largestCanvas;
 				tmp = div || layer.name === tmp ? tmp : layer.name;
 				return data;
 			});
 			return info;
 		});
-		return meta;
+		return this.#data;
 	}
 
 	#buildTraceAndFill() {

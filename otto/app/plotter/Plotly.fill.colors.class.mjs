@@ -169,9 +169,8 @@ export default class DesignWalls {
 	}
 
 	#defineLargestCrate() {
-		const { align, width, depth, height, offsetX, offsetZ, offsetY, info, name, sizes } =
+		const { angle, align, width, depth, height, offsetX, offsetZ, offsetY, info, name, base } =
 			this.#data;
-		const { dep, high } = sizes;
 		const color = this.#colors.get(name.color || name);
 		const vertices = [
 			[0, 0, 0],
@@ -183,13 +182,13 @@ export default class DesignWalls {
 			[width, depth, height],
 			[0, depth, height],
 		];
-		const cosAngle = Math.cos(dep / high);
-		const sinAngle = Math.sin(high / dep);
+		const cosAngle = Math.cos(angle);
+		const sinAngle = Math.sin(angle);
 		const rotX1 = (x, y, z) => [
-			x, z * sinAngle - y * cosAngle, z * cosAngle + y * sinAngle - align
+			x, z * sinAngle - y * cosAngle - align, z * cosAngle + y * sinAngle + base,
 		];
 		const rotX2 = (x, y, z) => [
-			x, y * cosAngle - z * sinAngle, y * sinAngle + z * cosAngle - align,
+			x, y * cosAngle - z * sinAngle - align, y * sinAngle + z * cosAngle + base,
 		];
 		const offsetVertices = vertices.map((v) => [
 			v[0] + offsetX,

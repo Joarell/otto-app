@@ -374,6 +374,7 @@ select {
 		bottom: 1.5rem;
 		background-color: var(--pop-bg);
 		border-radius: .3rem;
+		corner-shape: squircle;
 		padding: .3rem;
 		white-space: nowrap;
 		transition: all 3ms ease-in-out;
@@ -477,7 +478,6 @@ tbody {
 	}
 	& .otto__interface {
 		grid-area: 2 / 2 / 3 / 6;
-		border-radius: var(--lines);
 		& {
 			display: grid;
 			grid-template-columns: repeat(4, 1fr);
@@ -491,6 +491,7 @@ tbody {
 				row-gap: 2rem;
 				border: solid .1rem var(--lines);
 				border-radius: .5rem;
+				corner-shape: squircle;
 				padding: .5rem;
 				background-color: var(--panel-backcolor);
 				& .searcher {
@@ -1960,6 +1961,7 @@ tbody {
 	box-sizing: border-box;
 	border: solid .1rem var(--iframes-bg);
 	border-radius: .5rem;
+	corner-shape: squircle;
 	position: absolute;
 	transition: all 0.3s ease;
 	cursor: pointer;
@@ -2096,6 +2098,7 @@ tbody {
 		max-width: 80ch;
 		box-shadow: var(--shadow1);
 		border-radius: var(--bord);
+		corner-shape: squircle;
 		padding: 0.3rem 1rem;
 		position: absolute;
 		margin: -2.5% 0 0 7%;
