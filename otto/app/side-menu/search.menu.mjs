@@ -128,7 +128,7 @@ export async function searchEstimate() {
 								list: val[1][0].works.list,
 							};
 							addNewWorksToIndexedDB(result, true);
-						} else mod.crate(true);
+						} else mod.setPanels();
 					});
 		});
 	}

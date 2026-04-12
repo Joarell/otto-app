@@ -83,12 +83,15 @@ export default class WorksCoordinates {
 				this.reset;
 			},
 			get fillMaterials() {
-				materials.map((info) =>
-					cratesOnly.includes(info[0])
-						? this.usedMaterials.set(info[0], info)
-						: 0,
-				);
-				return materials;
+				if(materials) {
+					materials.map((info) =>
+						cratesOnly.includes(info[0])
+							? this.usedMaterials.set(info[0], info)
+							: 0,
+					);
+					return materials;
+				}
+				return false;
 			},
 		};
 		template.reset;
@@ -108,15 +111,15 @@ export default class WorksCoordinates {
 			const check = data[2] - data[0] < minGap || data[3] - data[1] < minGap;
 
 			if (data && check) removes.push(i);
-			else {
-				this.#rawList.map((info) => {
-					if (info?.coordinates) {
-						const { x, y } = info.coordinates;
-						if (data[0] === x && data[1] === y) removes.push(i);
-					}
-					return info;
-				});
-			}
+				else {
+					this.#rawList.map((info) => {
+						if (info?.coordinates) {
+							const { x, y } = info.coordinates;
+							if (data[0] === x && data[1] === y) removes.push(i);
+						}
+						return info;
+					});
+				}
 			return data;
 		});
 		removes.map((index, i) => gaps.splice(index + i, 1), 0);
@@ -311,9 +314,9 @@ export default class WorksCoordinates {
 			}
 		}
 		if (nextX[0] >= X || nextX[1] >= Y) nextX = false;
-		else if (X - nextX[0] < minGap || Y - nextX[1] < minGap) nextX = false;
+			else if (X - nextX[0] < minGap || Y - nextX[1] < minGap) nextX = false;
 		if (nextY[0] >= X || nextY[1] >= Y) nextY = false;
-		else if (X - nextY[0] < minGap || Y - nextY[1] < minGap) nextX = false;
+			else if (X - nextY[0] < minGap || Y - nextY[1] < minGap) nextX = false;
 		if (nextX[0] === nextY[0] && nextX[1] === nextY[1]) nextY = false;
 		return { nextX, nextY, plus };
 	}
@@ -433,8 +436,8 @@ export default class WorksCoordinates {
 				const Y = work.length > 4 ? work[1] : work[3];
 				const checkBeforeLast =
 					codes?.includes(thread.at(-1)) &&
-					info[0] === thread.at(-2) &&
-					!codes?.includes(newArt);
+						info[0] === thread.at(-2) &&
+						!codes?.includes(newArt);
 				const foundOnCenter = updateLinkedWorks.length
 					? updateLinkedWorks.some((data) => codes.includes(data)) &&
 						!codes?.includes(newArt)

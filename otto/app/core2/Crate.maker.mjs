@@ -64,14 +64,17 @@ export default class CrateMaker {
 		const { materials, cratesOnly } = this.#materials;
 		const crateMaterials = [];
 
-		cratesOnly.map((item) => {
-			const material = materials.find((opts) => opts[0] === item);
-			material ? crateMaterials.push(material) : 0;
-			return item;
-		});
-		if (!crateMaterials.length) return { x: 0, z: 0, y: 0 };
+		if(cratesOnly) {
+			cratesOnly.map((item) => {
+				const material = materials.find((opts) => opts[0] === item);
+				material ? crateMaterials.push(material) : 0;
+				return item;
+			});
+			if (!crateMaterials.length) return { x: 0, z: 0, y: 0 };
 
-		return this.#stablishCrateSizes(crateMaterials);
+			return this.#stablishCrateSizes(crateMaterials);
+		}
+		return false;
 	}
 
 	get outSizes() {

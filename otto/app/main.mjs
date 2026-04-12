@@ -8,10 +8,7 @@ import { copyButton1, copyButton2 } from "./panels/clip.board.caller.mjs";
 import { openDisplay } from "./plotter/layer.controller.mjs";
 import GraphicCrates from "./plotter/Plotly.Renderer.Crates.mjs";
 import { skipLayer } from "./plotter/select.menu.mjs";
-import {
-	accordionController,
-	closeMenu,
-} from "./side-menu/interactive.menu.mjs";
+import { accordionController, closeMenu, } from "./side-menu/interactive.menu.mjs";
 import * as accordion from "./side-menu/menu.currency.conversion.mjs";
 import * as unit from "./side-menu/menu.units.mjs";
 import { searchEstimate } from "./side-menu/search.menu.mjs";
@@ -85,8 +82,8 @@ globalThis.document.getElementById("main-app").addEventListener(
 				e.stopImmediatePropagation();
 			});
 		}
-		attributes.content === "crates" ? (className = "crates") : 0;
-		switch (!id ? (id = className) : id) {
+		if(attributes.content === "crates") className = "crates";
+		switch (!id ? id = className : id) {
 			case "body-app":
 				accordionController(element);
 				break;

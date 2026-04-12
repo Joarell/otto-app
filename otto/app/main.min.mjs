@@ -8588,17 +8588,20 @@ var CrateMaker = class {
 	#crateMaterialsDefined() {
 		const { materials, cratesOnly } = this.#materials;
 		const crateMaterials = [];
-		cratesOnly.map((item) => {
-			const material = materials.find((opts) => opts[0] === item);
-			material && crateMaterials.push(material);
-			return item;
-		});
-		if (!crateMaterials.length) return {
-			x: 0,
-			z: 0,
-			y: 0
-		};
-		return this.#stablishCrateSizes(crateMaterials);
+		if (cratesOnly) {
+			cratesOnly.map((item) => {
+				const material = materials.find((opts) => opts[0] === item);
+				material && crateMaterials.push(material);
+				return item;
+			});
+			if (!crateMaterials.length) return {
+				x: 0,
+				z: 0,
+				y: 0
+			};
+			return this.#stablishCrateSizes(crateMaterials);
+		}
+		return false;
 	}
 	get outSizes() {
 		if (!this.#layers) return false;
@@ -8697,8 +8700,11 @@ var WorksCoordinates = class {
 				this.reset;
 			},
 			get fillMaterials() {
-				materials.map((info) => cratesOnly.includes(info[0]) ? this.usedMaterials.set(info[0], info) : 0);
-				return materials;
+				if (materials) {
+					materials.map((info) => cratesOnly.includes(info[0]) ? this.usedMaterials.set(info[0], info) : 0);
+					return materials;
+				}
+				return false;
 			}
 		};
 		template.reset;
@@ -12042,7 +12048,6 @@ async function searchEstimate() {
 					crates: val[1][0].crates.crates,
 					list: val[1][0].works.list
 				}, true);
-				else crate$1(true);
 			});
 		});
 	}
@@ -12117,7 +12122,7 @@ globalThis.document.getElementById("main-app").addEventListener("click", (elemen
 			e.stopImmediatePropagation();
 		});
 	}
-	attributes.content === "crates" && (className = "crates");
+	if (attributes.content === "crates") className = "crates";
 	switch (!id ? id = className : id) {
 		case "body-app":
 			accordionController(element);
