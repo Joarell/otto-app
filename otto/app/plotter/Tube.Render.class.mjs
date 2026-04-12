@@ -25,11 +25,9 @@ export default class tubeCrateRender {
 				meta = walls.setWalls;
 				const padding = new PaddingCrate(meta, data.at(-1)[0]);
 				meta = padding.setPaddingTubes;
-				const position = new PositionWorksInSideCrate(
-					data.at(-1)[0], meta, "tubeCrate"
-				);
-
+				const position = new PositionWorksInSideCrate( data.at(-1)[0], meta, "tubeCrate");
 				meta = position.arrange;
+
 				return meta;
 			}
 			return data;

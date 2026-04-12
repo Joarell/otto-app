@@ -15,15 +15,17 @@ export default class SetCrateWalls {
 	#height;
 
 	constructor(meta, data) {
-		const { finalSize, innerSize, extra } = data;
-		const { baseSize, angle, extraHeight, extraLength } = extra;
 		const available = JSON.parse(localStorage.getItem("crating"));
 		const used = available.map((opt) => data.usedMaterials.get(opt));
+		const { finalSize, innerSize } = data;
 
-		this.#baseCrate = baseSize;
-		this.#angle = angle;
-		this.#depth = extraLength;
-		this.#height = extraHeight;
+		if(data.extra) {
+			const { baseSize, angle, extraHeight, extraLength } = data.extra;
+			this.#baseCrate = baseSize;
+			this.#angle = angle;
+			this.#depth = extraLength;
+			this.#height = extraHeight;
+		};
 		this.#inner = innerSize;
 		this.#pine = used.find((list) => list.at(-1) === "Pinewood");
 		this.#ply = used.find((list) => list.at(-1) === "Plywood");

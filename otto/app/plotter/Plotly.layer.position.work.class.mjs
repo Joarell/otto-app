@@ -140,25 +140,18 @@ export default class PositionWorksInSideCrate {
 		const { layers, fillGaps, artLocation } = this.#info;
 		const onLayers = [];
 		const gap = 10;
+		const alignment = 2 * this.#pine[2] + 2 * this.#pad[2];
+		const extraHeight = this.#threshold[2] + +this.#pine[2];
 		let heightSum = 0;
 		let thickness = 0;
+		let aux;
 
-		switch (layers.length) {
-			case 2:
-				this.#threshold[1] += 3 * this.#pad[2];
-				this.#threshold[2] += 2 * this.#pine[2] + 2 * this.#pad[2];
-				break;
-			case 3:
-				this.#threshold[1] *= 2;
-				this.#threshold[2] = 2 * this.#threshold[2] + this.#pine[2];
-				break;
-			default:
-				this.#threshold[1] += this.#pad[2];
-				this.#threshold[2] += 2 * this.#pine[2] + this.#pad[2];
-		}
+		this.#threshold[1] += alignment;
+		this.#threshold[2] += extraHeight;
 		layers.map((data, i) => {
 			const { vacuum, works } = data;
 			const allWorks = works.map((info) => {
+				aux = info.work;
 				const position = new WorksPosition(
 					info.work,
 					artLocation.get(info.work[0]),
@@ -166,7 +159,7 @@ export default class PositionWorksInSideCrate {
 					this.#threshold,
 					this.#pad,
 				);
-				heightSum += +info.work[3] + gap;
+				heightSum += gap + aux[3] - +this.#pine[2];
 				return position.tubes;
 			});
 			const checkGap = vacuum.length > 1;

@@ -449,13 +449,15 @@ var SetCrateWalls = class {
 	#depth;
 	#height;
 	constructor(meta, data) {
-		const { finalSize, innerSize, extra } = data;
-		const { baseSize, angle, extraHeight, extraLength } = extra;
 		const used = JSON.parse(localStorage.getItem("crating")).map((opt) => data.usedMaterials.get(opt));
-		this.#baseCrate = baseSize;
-		this.#angle = angle;
-		this.#depth = extraLength;
-		this.#height = extraHeight;
+		const { finalSize, innerSize } = data;
+		if (data.extra) {
+			const { baseSize, angle, extraHeight, extraLength } = data.extra;
+			this.#baseCrate = baseSize;
+			this.#angle = angle;
+			this.#depth = extraLength;
+			this.#height = extraHeight;
+		}
 		this.#inner = innerSize;
 		this.#pine = used.find((list) => list.at(-1) === "Pinewood");
 		this.#ply = used.find((list) => list.at(-1) === "Plywood");
@@ -3556,8 +3558,8 @@ var WorksPosition = class {
 				}
 			],
 			width: x - this.#threshold[1],
-			depth: coordinates.z,
-			height: y - this.#pad[2] - this.#threshold[2],
+			depth: this.#local.z,
+			height: this.#local.y,
 			offsetX: -x / 2,
 			offsetY: this.#threshold[1],
 			offsetZ: this.#depth + this.#threshold[2]
@@ -4306,26 +4308,19 @@ var PositionWorksInSideCrate = class {
 		const { layers, fillGaps, artLocation } = this.#info;
 		const onLayers = [];
 		const gap = 10;
+		const alignment = 2 * this.#pine[2] + 2 * this.#pad[2];
+		const extraHeight = this.#threshold[2] + +this.#pine[2];
 		let heightSum = 0;
 		let thickness = 0;
-		switch (layers.length) {
-			case 2:
-				this.#threshold[1] += 3 * this.#pad[2];
-				this.#threshold[2] += 2 * this.#pine[2] + 2 * this.#pad[2];
-				break;
-			case 3:
-				this.#threshold[1] *= 2;
-				this.#threshold[2] = 2 * this.#threshold[2] + this.#pine[2];
-				break;
-			default:
-				this.#threshold[1] += this.#pad[2];
-				this.#threshold[2] += 2 * this.#pine[2] + this.#pad[2];
-		}
+		let aux;
+		this.#threshold[1] += alignment;
+		this.#threshold[2] += extraHeight;
 		layers.map((data, i) => {
 			const { vacuum, works } = data;
 			const allWorks = works.map((info) => {
+				aux = info.work;
 				const position = new WorksPosition(info.work, artLocation.get(info.work[0]), heightSum, this.#threshold, this.#pad);
-				heightSum += +info.work[3] + gap;
+				heightSum += gap + aux[3] - +this.#pine[2];
 				return position.tubes;
 			});
 			const checkGap = vacuum.length > 1;

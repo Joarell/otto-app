@@ -21,7 +21,6 @@ export default class WorksPosition {
 		const fillX = 0;
 		const fillZ = - this.#pad[2];
 		const fillY = 0;
-
 		const work = {
 			coordinates,
 			code,
@@ -36,8 +35,8 @@ export default class WorksPosition {
 				{ x: fillX, y, z }, // Vertex 7
 			],
 			width: x - this.#threshold[1],
-			depth: coordinates.z,
-			height: y - this.#pad[2] - this.#threshold[2],
+			depth: this.#local.z,
+			height: this.#local.y,
 			offsetX: - x / 2,
 			offsetY: this.#threshold[1],
 			offsetZ: this.#depth + this.#threshold[2],
