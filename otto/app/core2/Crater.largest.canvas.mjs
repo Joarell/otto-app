@@ -59,23 +59,28 @@ export default class CraterPythagoras {
 	}
 
 	#extraStructureData(depth, crate, hypo, extraHeight) {
+		const pine = this.#materials?.materials.find((opts) => opts[5] === "Pinewood");
 		const MAXHEIGHT = 240;
 		const RAD = Math.PI / 180;
 		const angleFirstTriangle = +(Math.acos(depth / hypo)).toFixed(5);
-		const angleUp = +(Math.atan2(hypo, crate[1])).toFixed(10);
+		const angleUp = +(Math.atan2(hypo, crate[1])).toFixed(5);
 		const diffAngle = +(RAD * 90 - angleUp).toFixed(5);
 		const angleSecondTriangle = angleFirstTriangle - diffAngle;
 		const angle = +(RAD * 90 - angleSecondTriangle).toFixed(5);
 
-		const angleHeight = Math.ceil(crate[1] * Math.sin(angle));
 		const extraLength = Math.ceil(crate[1] * Math.cos(angle));
-		const extension = +(crate[2] * Math.sin(angle)).toFixed(1) + extraLength;
-		const leanSupport = Math.ceil(crate[2] * Math.cos(angle) - (angleHeight - extraHeight));
+		const extension = +(crate[2] * Math.sin(angle)).toFixed(1);
+		const baseSmaller = extension - +pine[3];
+		const oppCatect = Math.floor(baseSmaller / Math.cos(angleSecondTriangle));
+		const leanSupport = Math.floor(Math.sqrt(oppCatect ** 2 - baseSmaller ** 2) + extraHeight);
+		const catOpp = Math.floor((baseSmaller - 2 * +pine[3]) / Math.cos(angleSecondTriangle));
+		const leanSupportSec = Math.floor(Math.sqrt(catOpp ** 2 - (baseSmaller - 2 * +pine[3]) ** 2) + extraHeight);
 
-		this.#coordinates.finalSize = [ crate[0], extension, MAXHEIGHT ];
+		this.#coordinates.finalSize = [ crate[0], extension + extraLength, MAXHEIGHT ];
 		this.#coordinates.extra = {
 			extraHeight,
 			leanSupport,
+			leanSupportSec,
 			extraLength,
 			baseSize: crate,
 			angle,

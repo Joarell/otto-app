@@ -4503,11 +4503,13 @@ var LargeBottomCrate = class {
 	#extraDepth;
 	#leanPines;
 	#angle;
+	#leanSec;
 	constructor(data) {
 		const { finalSize, extra } = data;
-		const { leanSupport, baseSize, extraLength, angle } = extra;
+		const { leanSupport, leanSupportSec, baseSize, extraLength, angle } = extra;
 		const used = JSON.parse(localStorage.getItem("crating")).map((opt) => data.usedMaterials.get(opt));
 		this.#angle = angle;
+		this.#leanSec = leanSupportSec;
 		this.#leanPines = leanSupport;
 		this.#extraDepth = extraLength;
 		this.#base = structuredClone(baseSize);
@@ -4589,8 +4591,8 @@ var LargeBottomCrate = class {
 		const offZ = -this.#sized[1] - this.#base[1] + +this.#pine[3];
 		const x = offX > 0 ? offX - +this.#pine[2] : +this.#pine[2];
 		const hipotenusa = +this.#pine[3] / Math.sin(this.#angle);
-		const y = this.#leanPines - this.#foot[3];
-		const extraY = Math.floor(y + Math.sqrt(hipotenusa ** 2 - this.#pine[3] ** 2));
+		const y = this.#leanPines;
+		const extraY = Math.floor(Math.sqrt(hipotenusa ** 2 - (+this.#pine[3]) ** 2) + y);
 		const z = -this.#sized[1] - this.#base[1];
 		return { coordinates: [
 			{
@@ -4846,11 +4848,10 @@ var LargeBottomCrate = class {
 		const offY = +this.#foot[3] + 2 * +this.#ply[2];
 		const offZ = -this.#sized[1] - this.#base[1] + 3 * +this.#pine[3];
 		const x = offX > 0 ? offX - +this.#pine[2] : +this.#pine[2];
-		const hipotenusa = +this.#pine[3] / Math.sin(this.#angle);
-		const catectOpp = this.#sized[1] - this.#extraDepth - +this.#pine[3];
-		const y = Math.ceil(catectOpp / Math.sin(this.#angle)) + this.#foot[3];
-		const extraY = Math.floor(y + Math.sqrt(hipotenusa ** 2 - this.#pine[3] ** 2));
 		const z = -this.#sized[1] - this.#base[1] + 2 * +this.#pine[3];
+		const y = this.#leanSec;
+		const hipotenusa = +this.#pine[3] / Math.sin(this.#angle);
+		const extraY = Math.floor(Math.sqrt(hipotenusa ** 2 - (+this.#pine[3]) ** 2) + y);
 		return { coordinates: [
 			{
 				x: offX,
@@ -9507,24 +9508,29 @@ var CraterPythagoras = class {
 		];
 	}
 	#extraStructureData(depth, crate, hypo, extraHeight) {
+		const pine = this.#materials?.materials.find((opts) => opts[5] === "Pinewood");
 		const MAXHEIGHT = 240;
 		const RAD = Math.PI / 180;
 		const angleFirstTriangle = +Math.acos(depth / hypo).toFixed(5);
-		const angleUp = +Math.atan2(hypo, crate[1]).toFixed(10);
+		const angleUp = +Math.atan2(hypo, crate[1]).toFixed(5);
 		const angleSecondTriangle = angleFirstTriangle - +(RAD * 90 - angleUp).toFixed(5);
 		const angle = +(RAD * 90 - angleSecondTriangle).toFixed(5);
-		const angleHeight = Math.ceil(crate[1] * Math.sin(angle));
 		const extraLength = Math.ceil(crate[1] * Math.cos(angle));
-		const extension = +(crate[2] * Math.sin(angle)).toFixed(1) + extraLength;
-		const leanSupport = Math.ceil(crate[2] * Math.cos(angle) - (angleHeight - extraHeight));
+		const extension = +(crate[2] * Math.sin(angle)).toFixed(1);
+		const baseSmaller = extension - +pine[3];
+		const oppCatect = Math.floor(baseSmaller / Math.cos(angleSecondTriangle));
+		const leanSupport = Math.floor(Math.sqrt(oppCatect ** 2 - baseSmaller ** 2) + extraHeight);
+		const catOpp = Math.floor((baseSmaller - 2 * +pine[3]) / Math.cos(angleSecondTriangle));
+		const leanSupportSec = Math.floor(Math.sqrt(catOpp ** 2 - (baseSmaller - 2 * +pine[3]) ** 2) + extraHeight);
 		this.#coordinates.finalSize = [
 			crate[0],
-			extension,
+			extension + extraLength,
 			MAXHEIGHT
 		];
 		this.#coordinates.extra = {
 			extraHeight,
 			leanSupport,
+			leanSupportSec,
 			extraLength,
 			baseSize: crate,
 			angle
@@ -12048,6 +12054,7 @@ async function searchEstimate() {
 					crates: val[1][0].crates.crates,
 					list: val[1][0].works.list
 				}, true);
+				else setPanels();
 			});
 		});
 	}

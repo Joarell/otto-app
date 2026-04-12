@@ -10,14 +10,16 @@ export default class LargeBottomCrate {
 	#extraDepth;
 	#leanPines;
 	#angle;
+	#leanSec
 
 	constructor(data) {
 		const { finalSize, extra } = data;
-		const { leanSupport, baseSize, extraLength, angle } = extra;
+		const { leanSupport, leanSupportSec, baseSize, extraLength, angle } = extra;
 		const available = JSON.parse(localStorage.getItem("crating"));
 		const used = available.map((opt) => data.usedMaterials.get(opt));
 
 		this.#angle = angle;
+		this.#leanSec = leanSupportSec;
 		this.#leanPines = leanSupport;
 		this.#extraDepth = extraLength;
 		this.#base = structuredClone(baseSize);
@@ -66,9 +68,8 @@ export default class LargeBottomCrate {
 		const offZ = - this.#sized[1] - this.#base[1] + +this.#pine[3];
 		const x = offX > 0 ? offX - +this.#pine[2]: +this.#pine[2]
 		const hipotenusa = (+this.#pine[3] / Math.sin(this.#angle))
-		const y = this.#leanPines - this.#foot[3];
-		const extraY = Math.floor(y + Math.sqrt(hipotenusa ** 2 - this.#pine[3] ** 2));
-
+		const y = this.#leanPines;
+		const extraY = Math.floor(Math.sqrt(hipotenusa ** 2 - (+this.#pine[3]) ** 2) + y);
 		const z = - this.#sized[1] - this.#base[1];
 		const pine = {
 			coordinates: [
@@ -184,13 +185,11 @@ export default class LargeBottomCrate {
 		const offY = +this.#foot[3] + 2 * +this.#ply[2];
 		const offZ = - this.#sized[1] - this.#base[1] + 3 * +this.#pine[3];
 		const x = offX > 0 ? offX - +this.#pine[2]: +this.#pine[2]
-		const hipotenusa = (+this.#pine[3] / Math.sin(this.#angle))
-		const catectOpp = this.#sized[1] - this.#extraDepth - +this.#pine[3];
-		const catectAdjacent = Math.ceil(catectOpp / Math.sin(this.#angle))
-		const y = catectAdjacent + this.#foot[3];
-		const extraY = Math.floor(y + Math.sqrt(hipotenusa ** 2 - this.#pine[3] ** 2));
-
 		const z = - this.#sized[1] - this.#base[1] + 2 * +this.#pine[3];
+
+		const y = this.#leanSec;
+		const hipotenusa = (+this.#pine[3] / Math.sin(this.#angle))
+		const extraY = Math.floor(Math.sqrt(hipotenusa ** 2 - (+this.#pine[3]) ** 2) + y);
 		const pine = {
 			coordinates: [
 				{ x: offX, y: offY, z, }, // Vertex 0
